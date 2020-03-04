@@ -66,6 +66,11 @@
   --ion-color-white-shade: #e0e0e0;
   --ion-color-white-tint: #ffffff;
 
+  /** receptions **/
+  --ion-color-receptions-green: rgba(0, 170, 0, 0.75);
+  --ion-color-receptions-orange: rgba(255, 128, 0, 0.75);
+  --ion-color-receptions-red: rgba(225, 0, 0, 0.75);
+  --ion-color-receptions-white: rgba(255, 255, 255, 1);
 
   /** medium **/
   --ion-color-medium: #989aa2;
@@ -91,4 +96,5 @@
 
   --ion-color-background-zone-selected: lightskyblue;
 
+  --ion-color-size-available: #DB4437;
 }

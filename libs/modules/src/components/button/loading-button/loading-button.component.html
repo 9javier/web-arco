@@ -1,0 +1,3 @@
+<button mat-button (click)="clickBtn($event)" [ngClass]="isLoading ? 'spinner' : ''" [disabled]="isDisabled || isLoading">
+  {{isLoading ? labelLoading : label}}
+</button>

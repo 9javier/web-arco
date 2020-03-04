@@ -9,7 +9,7 @@ import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-ke
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { useAnimation, transition, trigger, style, animate } from '@angular/animations';
 import {
-  MatCheckboxModule,
+  MatCheckboxModule, MatGridListModule,
   MatPaginatorModule,
   MatRippleModule,
   MatSortModule,
@@ -51,6 +51,7 @@ const routes: Routes = [
     MatListModule,
     MatRadioModule,
     ReactiveFormsModule,
+    MatGridListModule,
     // ComponentsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

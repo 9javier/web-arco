@@ -16,6 +16,10 @@ export class ReceptionsAvelonService {
   postIsProviderAvailableUrl: string = `${environment.apiBase}/avelonProviders`;
   urlReception: string = `${environment.apiBase}/reception/expedition/lines-destiny-impress/blocked`;
   checkExpeditionsByNumberAndProviderUrl: string = `${environment.apiBase}/avelonProviders/check/expedition/provider`;
+  private checkExpeditionByReferenceUrl: string = `${environment.apiBase}/avelonProviders/check/expedition/`;
+  private checkExpeditionsByProviderUrl: string = `${environment.apiBase}/avelonProviders/check/provider/`;
+  postLoadSizesUrl: string = `${environment.apiBase}/reception/sizes/list`;
+
   private models = new BehaviorSubject([]); 
   private models$ = this.models.asObservable()
   private brands = new BehaviorSubject([]); 
@@ -33,6 +37,7 @@ export class ReceptionsAvelonService {
     private http: HttpClient
   ) {}
 
+  //region API Requests
   getReceptions(providerId: number) {
     const body: ReceptionAvelonModel.GetProvider = {
       providerId
@@ -51,36 +56,8 @@ export class ReceptionsAvelonService {
     return this.http.get<HttpRequestModel.Response>(this.getAllProvidersUrl).pipe(map(resp => resp.data));
   }
 
-  isProviderAvailable(body) {
-    return this.http.post<HttpRequestModel.Response>(this.postIsProviderAvailableUrl, body).pipe(map(resp => resp.data));
-  }
-
-  printReceptionLabel(body: ReceptionAvelonModel.Print) {
+  printReceptionLabel(body: ReceptionAvelonModel.ParamsToPrint) {
     return this.http.post<HttpRequestModel.Response>(`${this.receptionsUrl}/print-reception-label`, body).pipe(map(resp => resp.data));
-  }
-
-  ocrFake() {
-    return this.http.get<HttpRequestModel.Response>(`${this.receptionsUrl}/ocr-fake/1`).pipe(map(resp => resp.data));
-  }
-
-  ocrBrands() {
-    return this.http.get<HttpRequestModel.Response>(`${this.receptionsUrl}/ocr/brands`).pipe(map(resp => resp.data));
-  }
-
-  ocrModels() {
-    return this.http.get<HttpRequestModel.Response>(`${this.receptionsUrl}/ocr/models`).pipe(map(resp => resp.data));
-  }
-
-  ocrColors() {
-    return this.http.get<HttpRequestModel.Response>(`${this.receptionsUrl}/ocr/colors`).pipe(map(resp => resp.data));
-  }
-
-  ocrSizes() {
-    return this.http.get<HttpRequestModel.Response>(`${this.receptionsUrl}/ocr/sizes`).pipe(map(resp => resp.data));
-  }
-
-  eanProduct(ean: string) {
-    return this.http.post<HttpRequestModel.Response>(`${this.receptionsUrl}/ean-product`, {ean}).pipe(map(resp => resp.data));
   }
 
   eanProductPrint(ean: string, expedition: string, providerId: number) {
@@ -90,6 +67,21 @@ export class ReceptionsAvelonService {
   checkExpeditionsByNumberAndProvider(params: ReceptionAvelonModel.ParamsCheckExpeditionsByNumberAndProvider): Observable<ReceptionAvelonModel.ResponseCheckExpeditionsByNumberAndProvider> {
     return this.http.post<ReceptionAvelonModel.ResponseCheckExpeditionsByNumberAndProvider>(this.checkExpeditionsByNumberAndProviderUrl, params);
   }
+
+  checkExpeditionByReference(expeditionReference: string): Observable<ReceptionAvelonModel.ResponseCheckExpeditionByReference> {
+    return this.http.get<ReceptionAvelonModel.ResponseCheckExpeditionByReference>(this.checkExpeditionByReferenceUrl + expeditionReference);
+  }
+
+  checkExpeditionsByProvider(providerId: number): Observable<ReceptionAvelonModel.ResponseCheckExpeditionsByProvider> {
+    return this.http.get<ReceptionAvelonModel.ResponseCheckExpeditionsByProvider>(this.checkExpeditionsByProviderUrl + providerId);
+  }
+
+  postLoadSizesList(params: ReceptionAvelonModel.ParamsLoadSizesList): Observable<ReceptionAvelonModel.ResponseLoadSizesList> {
+    return this.http.post<ReceptionAvelonModel.ResponseLoadSizesList>(this.postLoadSizesUrl, params)
+  }
+  //endregion
+
+  //region Data getter and setter
   setModelsList(data: Array<any>){
     this.models.next(data)
   }
@@ -128,8 +120,5 @@ export class ReceptionsAvelonService {
   getEmitSizes(){
     return this.emitSize$
   }
-
- 
- 
-  
+  //endregion
 }

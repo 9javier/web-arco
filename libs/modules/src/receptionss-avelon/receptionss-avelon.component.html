@@ -166,6 +166,6 @@
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
     <ion-fab-button *ngIf="isEnableSend()" matTooltip="Liberar" matTooltipClass="tooltip" (click)="release()"><i class="material-icons">launch</i></ion-fab-button>
-    <ion-fab-button *ngIf="isEnableSend()" matTooltip="Enviar" matTooltipClass="tooltip" (click)="savePredistributions()"><i class="material-icons">send</i></ion-fab-button>
+    <ion-fab-button *ngIf="isEnableSend() && sameDestiny()" matTooltip="Lanzar Picking" matTooltipClass="tooltip" (click)="newPicking()"><i class="material-icons">send</i></ion-fab-button>
   </ion-fab>
 </ion-footer>

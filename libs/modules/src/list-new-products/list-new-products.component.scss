@@ -96,7 +96,7 @@
     width: 100%;
 
     mat-header-row, mat-row {
-      border-bottom-width: 0;
+      border-bottom-width: 1px;
     }
 
     mat-header-cell, mat-cell {
@@ -131,7 +131,6 @@
     /*region Custom sticky columns */
     mat-header-cell, mat-cell {
       min-width: 120px;
-      max-width: 120px;
     }
 
     mat-header-cell.my-sticky-col, mat-cell.my-sticky-col {
@@ -139,14 +138,12 @@
       z-index: 1;
     }
 
-    .my-sticky-col.info.checkbox{
+    .my-sticky-col.info.date{
       left: 0px;
     }
-
     .my-sticky-col.info.number {
       left: 120px;
     }
-    
     .my-sticky-col.info.type-120 {
       left: 240px;
     }

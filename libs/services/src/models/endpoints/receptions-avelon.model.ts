@@ -5,17 +5,25 @@ export namespace ReceptionAvelonModel {
     id: number;
     name: string;
     selected: boolean;
-    newSelectd?: boolean
+    newSelected?: boolean
     belongsModels?: Array<number>
     state?:number;
-    available_ids?: number[]
+    available_ids?: number[],
+    photos_models?: any,
+    color?: string
   }
 
   export interface Reception {
-    brands: Array<Data>;
-    models: Array<Data>;
-    colors: Array<Data>;
-    sizes: Array<Data>;
+    brands: Array<Data>,
+    models: Array<Data>,
+    colors: Array<Data>,
+    lines: {
+      id: number,
+      state: number,
+      brandId: number,
+      modelId: number,
+      colorId: number
+    }[],
     ean: string,
     image?: string
   }
@@ -45,19 +53,54 @@ export namespace ReceptionAvelonModel {
     brandId: number;
   }
 
+  export interface ParamsToPrint {
+    to_print: Print[]
+  }
+
   //region CheckExpeditionsByNumberAndProvider
   export interface ParamsCheckExpeditionsByNumberAndProvider {
     providerId: number,
     expeditionNumber: string
   }
-  export interface CheckExpeditionsByNumberAndProvider {
+  export interface CheckExpedition {
     expedition_available: boolean,
     has_expeditions: boolean,
     another_expeditions: Expedition[],
-    expedition: Expedition
+    expedition: Expedition,
+    expedition_reference_queried: string
+  }
+  export interface CheckExpeditionsByProvider {
+    has_expeditions: boolean,
+    expeditions: Expedition[],
+    provider_queried: string
   }
   export interface ResponseCheckExpeditionsByNumberAndProvider extends HttpRequestModel.Response {
-    data: CheckExpeditionsByNumberAndProvider
+    data: CheckExpedition
+  }
+  export interface ResponseCheckExpeditionByReference extends HttpRequestModel.Response {
+    data: CheckExpedition
+  }
+  export interface ResponseCheckExpeditionsByProvider extends HttpRequestModel.Response {
+    data: CheckExpeditionsByProvider
+  }
+  //endregion
+
+  //region LoadSizesList
+  export interface ParamsLoadSizesList {
+    modelId: number,
+    colorId: number
+  }
+  export interface LoadSizesList {
+    id: number,
+    number: string,
+    name: string,
+    reference: string,
+    available: boolean,
+    quantity: number,
+    color?: string
+  }
+  export interface ResponseLoadSizesList extends HttpRequestModel.Response {
+    data: LoadSizesList[]
   }
   //endregion
 

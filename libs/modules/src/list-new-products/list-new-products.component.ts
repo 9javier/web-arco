@@ -15,7 +15,6 @@ import { catchError } from 'rxjs/operators';
 import { from, Observable } from "rxjs";
 import { of } from 'rxjs';
 
-
 import {
   NewProductsService,
   UserTimeModel
@@ -32,8 +31,8 @@ export class ListNewProductsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
   //displayedColumns: string[] = ['select','references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
-  
-  displayedColumns: string[] = ['select','Modelo','Warehouses','Talla', 'Familia','Lifestyle','Marca','Color','Precios'];
+
+  displayedColumns: string[] = ['Fecha','Warehouses','Articulo','Talla', 'Modelo', 'Familia','Lifestyle','Marca','Color'];
 
   dataSource;
   selection = new SelectionModel<Predistribution>(true, []);
@@ -42,18 +41,21 @@ export class ListNewProductsComponent implements OnInit {
   columns = {};
 
   users:UserTimeModel.ListUsersRegisterTimeActiveInactive;
+  @ViewChild('filterButtonDates') filterButtonDates: FilterButtonComponent;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
   @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
   @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
   //@ViewChild('filterButtonDateServices') filterButtonDateServices: FilterButtonComponent;
   @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
   //@ViewChild('filterButtonProviders') filterButtonProviders: FilterButtonComponent;
-  //@ViewChild('filterButtonModels') filterButtonModels: FilterButtonComponent;
+  @ViewChild('filterButtonModels') filterButtonModels: FilterButtonComponent;
+  @ViewChild('filterButtonNameModels') filterButtonNameModels: FilterButtonComponent;
   @ViewChild('filterButtonColors') filterButtonColors: FilterButtonComponent;
   //@ViewChild('filterButtonCategory') filterButtonCategory: FilterButtonComponent;
   @ViewChild('filterButtonFamilies') filterButtonFamilies: FilterButtonComponent;
   @ViewChild('filterButtonLifestyles') filterButtonLifestyles: FilterButtonComponent;
 
+  isFilteringDates: number = 0;
   isFilteringReferences: number = 0;
   isFilteringSizes: number = 0;
   isFilteringWarehouses: number = 0;
@@ -61,12 +63,14 @@ export class ListNewProductsComponent implements OnInit {
   isFilteringBrands: number = 0;
   isFilteringProviders: number = 0;
   isFilteringModels: number = 0;
+  isFilteringNameModels: number = 0;
   isFilteringColors: number = 0;
   isFilteringCategory: number = 0;
   isFilteringFamilies: number = 0;
   isFilteringLifestyles: number = 0;
 
   /**Filters */
+  dates: Array<TagsInputOption> = [];
   references: Array<TagsInputOption> = [];
   sizes: Array<TagsInputOption> = [];
   warehouses: Array<TagsInputOption> = [];
@@ -74,6 +78,7 @@ export class ListNewProductsComponent implements OnInit {
   brands: Array<TagsInputOption> = [];
   providers: Array<TagsInputOption> = [];
   models: Array<TagsInputOption> = [];
+  nameModels: Array<TagsInputOption> = [];
   colors: Array<TagsInputOption> = [];
   category: Array<TagsInputOption> = [];
   families: Array<TagsInputOption> = [];
@@ -87,7 +92,7 @@ export class ListNewProductsComponent implements OnInit {
   formExcell: FormGroup = this.formBuilderExcell.group({
     brands: [],
     references: [],
-    size: [],
+    sizes: [],
   });
 
 
@@ -95,7 +100,9 @@ export class ListNewProductsComponent implements OnInit {
   form: FormGroup = this.formBuilder.group({
     status: 6,
     brands: [],
+    dates:[],
     models: [],
+    nameModels: [],
     colors: [],
     sizes: [],
     warehouses:[],
@@ -118,14 +125,13 @@ export class ListNewProductsComponent implements OnInit {
     private newProductsService: NewProductsService,
     private formBuilder: FormBuilder,
     private formBuilderExcell: FormBuilder,
-    private intermediaryService:IntermediaryService,
+    private intermediaryService:IntermediaryService
   ) {}
 
   ngOnInit(): void {
     this.initEntity();
     this.initForm();
     this.getFilters();
-    this.getColumns(this.form);
     this.getList(this.form);
     this.listenChanges();
   }
@@ -141,20 +147,18 @@ export class ListNewProductsComponent implements OnInit {
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
       };
-      this.getList(this.form)
-    });
-
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
       this.getList(this.form);
     });
   }
 
   initEntity() {
-   
+
     this.entities = {
       status: 6,
       brands: [],
+      dates: [],
       models: [],
+      nameModels: [],
       colors: [],
       warehouses:[],
       sizes: [],
@@ -169,7 +173,9 @@ export class ListNewProductsComponent implements OnInit {
     this.form.patchValue({
       status: 6,
       brands: [],
+      dates: [],
       models: [],
+      NameModels: [],
       colors: [],
       warehouses:[],
       sizes: [],
@@ -240,6 +246,7 @@ export class ListNewProductsComponent implements OnInit {
 
   getFilters() {
     this.newProductsService.getListNewProductsFilters(this.entities).subscribe(entities => {
+      this.dates = this.updateFilterSource(entities.dates, 'dates');
       this.references = this.updateFilterSource(entities.models, 'models');
       this.sizes = this.updateFilterSource(entities.sizes, 'sizes');
       this.warehouses = this.updateFilterSource(entities.warehouses, 'warehouses');
@@ -247,6 +254,7 @@ export class ListNewProductsComponent implements OnInit {
       this.brands = this.updateFilterSource(entities.brands, 'brands');
      // this.providers = this.updateFilterSource(entities.providers, 'providers');
       this.models = this.updateFilterSource(entities.models, 'models');
+      this.nameModels = this.updateFilterSource(entities.nameModels, 'nameModels');
       this.colors = this.updateFilterSource(entities.colors, 'colors');
       //this.category = this.updateFilterSource(entities.category, 'category');
       this.families = this.updateFilterSource(entities.families, 'families');
@@ -260,50 +268,49 @@ export class ListNewProductsComponent implements OnInit {
     })
   }
 
-  async getColumns(form?: FormGroup){
-    // await this.intermediaryService.presentLoading();
-    this.newProductsService.getListNewproducts(form.value).subscribe(
-      (resp:any) => {
-        resp.filters["ordertypes"].forEach(element => {
-          this.columns[element.name] = element.id;
-        });
-      },
-      async err => {
-        await this.intermediaryService.dismissLoading()
-      },
-      async () => {
-        await this.intermediaryService.dismissLoading()
-      }
-    )
-  }
-
   private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
-    let resultEntity;
-
+    let resultEntity = [];
     this.pauseListenFormChange = true;
     let dataValue = this.form.get(entityName).value;
 
-    resultEntity = dataEntity.map(entity => {
-      entity.id = <number>(<unknown>entity.id);
-      entity.name = entity.name;
-      entity.value = entity.name;
-      entity.checked = true;
-      entity.hide = false;
-      return entity;
-    });
+    if(entityName == "dates"){
+      resultEntity = dataEntity.map(entity => {
+        entity.id = null;
+        entity.reference = null;
+        entity.name = entity.name;
+        entity.value = entity.name;
+        entity.checked = true;
+        entity.hide = false;
+        return entity;
+      });
+    }else {
+      resultEntity = dataEntity.map(entity => {
+        entity.id = <number>(<unknown>entity.id);
+        entity.reference = entity.reference;
+        entity.name = entity.name;
+        entity.value = entity.name;
+        entity.checked = true;
+        entity.hide = false;
+        if(entityName == "warehouses"){
+          entity.value = ''+ entity.reference +' '+ entity.name +'';
+        }
+        if(entityName == "models"){
+          entity.value = ''+entity.reference+'';
+        }
+        return entity;
+      });
+    }
 
     if (dataValue && dataValue.length) {
       this.form.get(entityName).patchValue(dataValue, { emitEvent: false });
     }
 
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-
     return resultEntity;
   }
 
   async getList(form?: FormGroup){
     if(form.value.orderby.order==''){
-      console.log("solo order");
       form.value.orderby.order = 'asc';
     }
 
@@ -313,7 +320,11 @@ export class ListNewProductsComponent implements OnInit {
       if (resp.results) {
         JSON.stringify(resp.results);
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
+
         const paginator = resp.pagination;
+        resp.filters["ordertypes"].forEach(element => {
+          this.columns[element.name] = element.id;
+        });
 
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
@@ -337,7 +348,7 @@ export class ListNewProductsComponent implements OnInit {
     async () => {
       await this.intermediaryService.dismissLoading()
     })
-   
+
   }
 
   applyFilters(filtersResult, filterType) {
@@ -417,13 +428,30 @@ export class ListNewProductsComponent implements OnInit {
           }
         }
         break;
+      case 'dates':
+        let datesFiltered: string[] = [];
+        for (let date of filters) {
+          if (date.checked) datesFiltered.push(date.name);
+        }
+        if (datesFiltered.length >= this.dates.length) {
+          this.form.value.dates = [];
+          this.isFilteringDates = this.dates.length;
+        } else {
+          if (datesFiltered.length > 0) {
+            this.form.value.dates = datesFiltered;
+            this.isFilteringDates = datesFiltered.length;
+          } else {
+            this.form.value.dates = [99999];
+            this.isFilteringDates = this.dates.length;
+          }
+        }
+
+        break;
       case 'models':
         let modelsFiltered: string[] = [];
         for (let model of filters) {
-
           if (model.checked) modelsFiltered.push(model.id);
         }
-
         if (modelsFiltered.length >= this.models.length) {
           this.form.value.models = [];
           this.isFilteringModels = this.models.length;
@@ -434,6 +462,25 @@ export class ListNewProductsComponent implements OnInit {
           } else {
             this.form.value.models = [99999];
             this.isFilteringModels = this.models.length;
+          }
+        }
+
+        break;
+      case 'nameModels':
+        let nameModelsFiltered: string[] = [];
+        for (let model of filters) {
+          if (model.checked) nameModelsFiltered.push(model.id);
+        }
+        if (nameModelsFiltered.length >= this.nameModels.length) {
+          this.form.value.nameModels = [];
+          this.isFilteringNameModels = this.nameModels.length;
+        } else {
+          if (nameModelsFiltered.length > 0) {
+            this.form.value.nameModels = nameModelsFiltered;
+            this.isFilteringNameModels = nameModelsFiltered.length;
+          } else {
+            this.form.value.nameModels = [99999];
+            this.isFilteringNameModels = this.nameModels.length;
           }
         }
 
@@ -553,13 +600,16 @@ export class ListNewProductsComponent implements OnInit {
   }
 
   private reduceFilters(entities){
-    this.filterButtonReferences.listItems = this.reduceFilterEntities(this.references, entities,'models');
+    this.filterButtonDates.listItems = this.reduceFilterEntities(this.dates, entities,'dates');
+
+    //this.filterButtonReferences.listItems = this.reduceFilterEntities(this.references, entities,'references');
     this.filterButtonSizes.listItems = this.reduceFilterEntities(this.sizes, entities,'sizes');
     this.filterButtonWarehouses.listItems = this.reduceFilterEntities(this.warehouses, entities,'warehouses');
     //this.filterButtonDateServices.listItems = this.reduceFilterEntities(this.date_service, entities,'date_service');
     this.filterButtonBrands.listItems = this.reduceFilterEntities(this.brands, entities,'brands');
     //this.filterButtonProviders.listItems = this.reduceFilterEntities(this.providers, entities,'providers');
-    //this.filterButtonModels.listItems = this.reduceFilterEntities(this.models, entities,'models');
+    this.filterButtonModels.listItems = this.reduceFilterEntities(this.models, entities,'models');
+    this.filterButtonNameModels.listItems = this.reduceFilterEntities(this.nameModels, entities,'nameModels');
     this.filterButtonColors.listItems = this.reduceFilterEntities(this.colors, entities,'colors');
     //this.filterButtonCategory.listItems = this.reduceFilterEntities(this.category, entities,'category');
     this.filterButtonFamilies.listItems = this.reduceFilterEntities(this.families, entities,'families');
@@ -569,17 +619,14 @@ export class ListNewProductsComponent implements OnInit {
   private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
     if (this.lastUsedFilter !== entityName) {
       let filteredEntity = entities[entityName] as unknown as string[];
-
-      arrayEntity.forEach((item) => {
-        item.hide = filteredEntity.includes(item.value);
-      });
-
+        arrayEntity.forEach((item) => {
+          item.hide = filteredEntity.includes(item.value);
+        });
       return arrayEntity;
     }
   }
 
   async sortData(event: Sort) {
-      console.log("Evento: "+JSON.stringify(event));
       this.form.value.orderby.type = this.columns[event.active];
       this.form.value.orderby.order = event.direction;
 
@@ -619,10 +666,12 @@ export class ListNewProductsComponent implements OnInit {
   }
 
   refresh(){
-  
+
     this.form.patchValue({
         status: 6,
         brands: [],
+        dates: [],
+        nameModels: [],
         models: [],
         colors: [],
         sizes: [],
@@ -649,9 +698,9 @@ export class ListNewProductsComponent implements OnInit {
       // map(file => file.error.text)
     ).subscribe((data) => {
       this.intermediaryService.dismissLoading();
-      
+
         const blob = new Blob([data], { type: 'application/octet-stream' });
-        Filesave.saveAs(blob, `${Date.now()}.xlsx`);      
+        Filesave.saveAs(blob, `${Date.now()}.xlsx`);
     },
     async err => {
       await this.intermediaryService.dismissLoading()
