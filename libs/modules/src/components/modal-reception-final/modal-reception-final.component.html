@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Recepcion Final</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content *ngIf="modalType == 1">
+
+  <div style="text-align: center;">
+    <mat-form-field style="margin-top: 3%; width: 45%; text-align: center;">
+      <mat-label>Seleciona una tienda</mat-label>
+      <mat-select (selectionChange)="selectDestiny($event)" >
+        <mat-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+          <div>
+            {{warehouse.name}}
+          </div> 
+        </mat-option>
+      </mat-select>
+  
+  </mat-form-field>
+  <br>
+  <mat-checkbox 
+   (change)="$event ? selectionReception.toggle(row) : null"
+  [checked]="selectionReception.isSelected(row)">Recepcion Final</mat-checkbox> 
+  </div>
+ 
+</ion-content>
+
+<ion-content *ngIf="modalType == 2">
+
+  <div style="text-align: center; margin-top: 10%;" >
+    <h3>Recepciones finales a eliminar</h3>
+    <br>
+    <div *ngFor="let listRecep of ListReceptions">
+      <label>{{ listRecep.name }}</label>
+    </div>
+  </div>
+ 
+</ion-content>
+
+<ion-content *ngIf="modalType == 3">
+  <div style="text-align: center;" >
+    <h3 style="margin-top: 5%;">Editar recepción final</h3>
+    <div *ngFor="let warehouse of whUpdate">
+      <label>{{warehouse.name}}</label>
+    </div>
+    <mat-checkbox  [(ngModel)]="checked"
+    (change)="change()">Recepcion final</mat-checkbox> 
+  </div>
+</ion-content>
+
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+    <ion-button *ngIf="modalType == 1 && warehouses" [disabled]="!warehouseId" slot="end" (click)="enviar()" type="button" color="dark">Agregar</ion-button>
+    <ion-button *ngIf="modalType == 2"  slot="end" (click)="delete()" type="button" color="dark">Eliminar</ion-button>
+    <ion-button *ngIf="modalType == 3"  [disabled]="changeCheckbox == false" slot="end" (click)="update()" type="button" color="dark">Guardar</ion-button>
+  </ion-toolbar>
+</ion-footer>
+
+
+

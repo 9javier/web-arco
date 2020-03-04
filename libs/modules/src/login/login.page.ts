@@ -21,7 +21,7 @@ import { ToolbarProvider } from 'libs/services/src/providers/toolbar/toolbar.pro
 import {config} from "../../../services/src/config/config";
 
 const interUpdateVersion = interval(300000);
-
+declare let window: any;
 @Component({
   selector: 'suite-login',
   templateUrl: './login.page.html',

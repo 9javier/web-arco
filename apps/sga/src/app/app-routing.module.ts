@@ -166,6 +166,22 @@ const routes: Routes = [
     }
   },
   {
+    path: 'defective-management',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-management/defective-management.module#DefectiveManagementModule',
+    data: {
+      name: 'Gestión Defectuosos'
+    }
+  },
+  {
+    path: 'defective-registry',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-registry/defective-registry.module#DefectiveRegistryModule',
+    data: {
+      name: 'Registro de Defectuosos'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',
@@ -237,14 +253,6 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/global-variables/global-variables.module#GlobalVariablesModule',
     data: {
       name: 'Variables globales'
-    }
-  },
-  {
-    path: 'damaged-shoes',
-    canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/damaged-shoes/damaged-shoes.module#DamagedShoesModule',
-    data: {
-      name: 'Parametrización de Daños'
     }
   },
   {
@@ -364,6 +372,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/receptions-avelon/receptions-avelon.module#ReceptionsAvelonModule',
     data: {
       name: 'Recepciones'
+    }
+  },
+  {
+    path:'reception-final',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/reception-final/reception-final.module#ReceptionFinalModule',
+    data: {
+      name: 'ReceptionFinal'
     }
   },
   {

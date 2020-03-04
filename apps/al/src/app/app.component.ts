@@ -25,6 +25,8 @@ interface MenuItem {
   icon: string;
 }
 
+declare let window: any;
+
 @Component({
   selector: 'suite-root',
   templateUrl: 'app.component.html'
