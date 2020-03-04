@@ -28,6 +28,13 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   public modelIdSelected: number = null;
   public colorSelected: ReceptionAvelonModel.Data = null;
 
+  expeditionLines: {
+    id: number,
+    state: number,
+    brandId: number,
+    modelId: number,
+    colorId: number
+  }[];
   private listBrands: any[] = [];
   private listModels: any[] = [];
   private listColors: any[] = [];
@@ -84,6 +91,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     this.receptionsAvelonService
       .getReceptions(this.receptionAvelonProvider.expeditionData.providerId)
       .subscribe((res) => {
+        this.expeditionLines = res.lines;
         this.listBrands = res.brands;
         this.listModels = res.models;
         this.listColors = res.colors;
@@ -160,8 +168,10 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       if (data && data.data) {
         if (data.data.filterListType == 'Marcas') {
           this.brandSelected = data.data.itemSelected;
+          this.getModelAndColorColors(this.brandSelected.id);
         } else if (data.data.filterListType == 'Modelos') {
           this.modelSelected = data.data.itemSelected;
+          this.getColorColors(this.modelSelected.id);
         } else if (data.data.filterListType == 'Colores') {
           this.colorSelected = data.data.itemSelected;
         }
@@ -170,6 +180,84 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     });
 
     modal.present();
+  }
+
+  getModelAndColorColors(brandId: number){
+    let greenModels: number[] = [];
+    let orangeModels: number[] = [];
+    let greenColors: number[] = [];
+    let orangeColors: number[] = [];
+    for(let line of this.expeditionLines){
+      if(!brandId || line.brandId == brandId){
+        if(line.state == 2){
+          if(!greenModels.includes(line.modelId)){
+            greenModels.push(line.modelId);
+          }
+          if(!greenColors.includes(line.colorId)){
+            greenColors.push(line.colorId);
+          }
+        }else{
+          if(!orangeModels.includes(line.modelId)){
+            orangeModels.push(line.modelId);
+          }
+          if(!orangeColors.includes(line.colorId)){
+            orangeColors.push(line.colorId);
+          }
+        }
+      }
+    }
+    orangeModels = orangeModels.filter(model => {return !greenModels.includes(model)});
+    orangeColors = orangeColors.filter(color => {return !greenColors.includes(color)});
+    for(let model of this.listModels){
+      if(greenModels.includes(model.id)){
+        model.color = 'green';
+      }else{
+        if(orangeModels.includes(model.id)){
+          model.color = 'orange';
+        }else{
+          model.color = 'red';
+        }
+      }
+    }
+    for(let color of this.listColors){
+      if(greenColors.includes(color.id)){
+        color.color = 'green';
+      }else{
+        if(orangeColors.includes(color.id)){
+          color.color = 'orange';
+        }else{
+          color.color = 'red';
+        }
+      }
+    }
+  }
+
+  getColorColors(modelId: number){
+    let greenColors: number[] = [];
+    let orangeColors: number[] = [];
+    for(let line of this.expeditionLines){
+      if(!modelId || line.modelId == modelId){
+        if(line.state == 2 && !greenColors.includes(line.colorId)){
+          greenColors.push(line.colorId);
+        }else{
+          if(line.state != 2 && !orangeColors.includes(line.colorId)){
+            orangeColors.push(line.colorId);
+          }
+        }
+      }
+    }
+    orangeColors = orangeColors.filter(color => {return !greenColors.includes(color)});
+    for(let color of this.listColors){
+      if(greenColors.includes(color.id)){
+        color.color = 'green';
+      }else{
+        if(orangeColors.includes(color.id)){
+          color.color = 'orange';
+        }else{
+          color.color = 'red';
+        }
+      }
+    }
   }
 
   private updateFilterLists(filterUsed, typeFilter: string) {
