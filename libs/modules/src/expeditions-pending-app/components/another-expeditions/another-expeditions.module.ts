@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { AnotherExpeditionsComponent } from './another-expeditions.component';
 import {IonicModule} from "@ionic/angular";
 import {CommonModule} from "@angular/common";
-import {MatCardModule, MatDividerModule} from "@angular/material";
+import {MatButtonModule, MatCardModule, MatIconModule} from "@angular/material";
 
 @NgModule({
   declarations: [AnotherExpeditionsComponent],
@@ -14,7 +14,8 @@ import {MatCardModule, MatDividerModule} from "@angular/material";
     IonicModule,
     CommonModule,
     MatCardModule,
-    MatDividerModule
+    MatIconModule,
+    MatButtonModule
   ]
 })
 

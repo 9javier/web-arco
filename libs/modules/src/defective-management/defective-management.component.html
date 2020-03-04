@@ -6,7 +6,7 @@
     <ion-row>
       <ion-col>
         <mat-accordion multi="false">
-          <mat-expansion-panel *ngFor="let defect of groupsDefectiveManagement">
+          <mat-expansion-panel *ngFor="let defect of groupsDefectiveManagement; let i = index" (opened)="openGroup(defect.id)" [expanded]="defect.open">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <ion-checkbox style="margin-right: 5px" (click)="activateDelete(defect)"></ion-checkbox>
@@ -15,13 +15,13 @@
             </mat-expansion-panel-header>
 
             <ion-item class="no-border">
-              <ion-button slot="end" color="dark" *ngIf="!toSelectChildren" (click)="addDefectiveChild(defect.id)"><ion-icon name="add"></ion-icon></ion-button>
-              <ion-button slot="end" color="dark" *ngIf="groupsChildrenToSelect.length === 1" (click)="updateDefectiveChild()"><ion-icon name="create"></ion-icon></ion-button>
-              <ion-button slot="end" color="danger" *ngIf="toSelectChildren" (click)="presentDeleteChildrenAlert()"><ion-icon name="trash"></ion-icon></ion-button>
+              <ion-button slot="end" color="dark" *ngIf="defect.addedChild" (click)="addDefectiveChild(defect.id)"><ion-icon name="add"></ion-icon></ion-button>
+              <ion-button slot="end" color="dark" *ngIf="defect.updateChild" (click)="updateDefectiveChild()"><ion-icon name="create"></ion-icon></ion-button>
+              <ion-button slot="end" color="danger" *ngIf="defect.deletedChild" (click)="presentDeleteChildrenAlert(defect.id)"><ion-icon name="trash"></ion-icon></ion-button>
               <h2>Tipos de defectuosos</h2>
             </ion-item>
             <mat-selection-list *ngFor="let child of defect.defectTypeChild">
-              <mat-list-option (click)="onChanged(defect.id, child)" >
+              <mat-list-option (click)="onChanged(i, defect.id, child)" >
                 <p>{{ child.name }}</p>
               </mat-list-option>
             </mat-selection-list>

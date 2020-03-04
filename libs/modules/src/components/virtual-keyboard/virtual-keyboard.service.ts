@@ -13,11 +13,24 @@ export class VirtualKeyboardService {
     private popoverController: PopoverController
   ) {}
 
-  async openVirtualKeyboard(dataList: any[], type: Number) {
+  async openVirtualKeyboard(options: {dataList?: any[], type: Number, layout_type?: 'qwerty'|'number', placeholder?: string, initialValue?: string}) {
+    const params: any = {
+      eventOnKeyPress: this.eventEmitter,
+      type: options.type,
+      layout_type: options.layout_type || 'qwerty',
+      data: options.dataList || []
+    };
+    if (options.placeholder) {
+      params.placeholder = options.placeholder;
+    }
+    if (options.initialValue) {
+      params.initialValue = options.initialValue;
+    }
+
     const popover = await this.popoverController.create({
       component: VirtualKeyboardComponent,
       translucent: true,
-      componentProps: { eventOnKeyPress: this.eventEmitter, data: dataList, type: type },
+      componentProps: params,
       cssClass: 'virtual-keyboard-component'
     });
 

@@ -23,7 +23,7 @@
 }
 
 #sizeContainer{
-  padding-left: 10px;
+  padding-left: 8px;
 }
 
 #printContainer{
@@ -42,10 +42,10 @@
   }
 }
 
-#expeditionReference, #providerSelector{
+#expeditionReference, #providerSelector, #eanCode{
   width: 100%;
 }
-#expeditionKeyboard, #providerKeyboard{
+#expeditionKeyboard, #providerKeyboard, #eanKeyboard{
   position: absolute;
   right: 10px;
   top: 20px;
@@ -72,5 +72,127 @@ ion-row.row-selectors {
         }
       }
     }
+  }
+}
+
+div.grid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  div.row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  div.col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  div.row.headers {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    margin-bottom: 16px;
+    suite-form-header-reception, suite-info-header-reception {
+      position: absolute;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      height: 80px;
+    }
+  }
+  div.selectors {
+    height: 30vh;
+    place-content: space-between;
+    div {
+      width: 30vw;
+      ion-item {
+        height: 50px;
+        max-height: 50px;
+      }
+    }
+  }
+  div.sizes-image-ean {
+    height: calc(100% - 30vh - 96px);
+    padding-top: 16px;
+    div.images {
+      width: 40vw;
+      max-width: 40vw;
+      place-content: space-between;
+      div.row {
+        height: 45%;
+        border: 1px solid var(--ion-color-primary);
+        place-content: center;
+      }
+    }
+    div.sizes-ean {
+      width: 60vw;
+      padding-left: 16px;
+      div.row.actions {
+        height: 80px;
+        place-content: flex-end;
+      }
+      div.row.sizes {
+        height: calc(100% - 80px - 80px);
+        padding: 8px;
+        position: relative;
+        span {
+          position: absolute;
+          top: -5px;
+          left: 20px;
+          padding: 0 4px;
+          background: var(--ion-color-primary-contrast);
+        }
+        div {
+          display: flex;
+          flex-wrap: wrap;
+          place-content: center;
+          border: 1px solid var(--ion-color-primary);
+          padding: 8px;
+          width: 100%;
+        }
+        div.sizes-empty {
+          text-align: center;
+          p {
+            text-align: center;
+          }
+        }
+        div.sizes-select {
+          span {
+            position: initial;
+          }
+        }
+      }
+      div.row.ean {
+        height: 80px;
+        place-content: space-between;
+        align-items: flex-end;
+        div.col.ean {
+          width: 70%;
+          div {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            div {
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              flex: 1;
+              padding: 8px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.sizes{
+  ion-button{
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
   }
 }

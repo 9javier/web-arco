@@ -5,6 +5,7 @@ export namespace PredistributionModel {
   import Product = ProductModel.Product;
 
   export interface Predistribution {
+    expeditionLineId?: number,
     id?: number;
     warehouse?: Warehouse;
     article?: string;
@@ -69,6 +70,16 @@ export namespace PredistributionModel {
     orderBy: OrderBy
     pagination: Pagination
    }
+
+  export interface PickingRequest {
+    receptionIds: number[],
+    destinies: Destiny[]
+  }
+  export interface Destiny {
+    warehouseId: number,
+    userId: number
+  }
+
    interface Pagination {
     page:number;
     limit:number;

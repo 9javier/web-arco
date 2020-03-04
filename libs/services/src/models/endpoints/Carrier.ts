@@ -1,5 +1,7 @@
 import {HttpRequestModel} from "./HttpRequest";
 import { CarrierModel as carrierModel } from './carrier.model';
+import {FiltersModel} from "@suite/services";
+import {Request} from "./request";
 
 export namespace CarrierModel {
 

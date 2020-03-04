@@ -1,0 +1,4 @@
+<button mat-fab [matTooltip]="tooltip" matTooltipClass="tooltip" class="extended-fab" (click)="clickFab($event)">
+  <span class="text" *ngIf="label">{{label}}</span>
+  <mat-icon>{{icon}}</mat-icon>
+</button>

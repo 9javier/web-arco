@@ -23,11 +23,14 @@ export class TableRequestsOrdersOSComponent implements OnInit {
   private FILTER_QUANTITY_LAUNCH: number = 7;
 
   @Output() changeRequestOrder = new EventEmitter();
+  @Output() loadTeamAssignations = new EventEmitter();
 
   listRequestOrders: WorkwaveModel.MatchLineRequestOnlineStore[] = [];
   listRequestOrdersFinal: WorkwaveModel.MatchLineRequestOnlineStore[] = [];
   requestOrdersSelection: any = {};
+  deliveryRequestOrdersSelection: any = {};
   listRequestOrdersSelected: Array<number> = new Array<number>();
+  listDeliveryRequestOrdersSelected: Array<number> = new Array<number>();
   allRequestOrdersSelected: boolean = false;
 
   listRequestsFilters: Array<any> = new Array<any>();
@@ -51,18 +54,13 @@ export class TableRequestsOrdersOSComponent implements OnInit {
 
   private listWarehousesThresholdAndSelectedQty: any = {};
   private listRequestIdWarehouseId: any = {};
-  public buttonAvailability: boolean = true;
   public loadingListRequestOrdersOnlineStore: number = 0;
   private updating: boolean = false;
 
   constructor(
     public events: Events,
-    public pickingParametrizationProvider: PickingParametrizationProvider,
-    private serviceG: WorkwavesService
-  ) {
-
-
-  }
+    public pickingParametrizationProvider: PickingParametrizationProvider
+  ) {}
 
   showArrow(colNumber, dirDown) {
     let htmlColumn = document.getElementsByClassName('title')[colNumber] as HTMLElement;
@@ -82,11 +80,21 @@ export class TableRequestsOrdersOSComponent implements OnInit {
     switch (column) {
       case 'reference': {
         if (this.lastOrder[0]) {
-          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return b.request.requestId - a.request.requestId });
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) {
+            if(b.request && a.request) return b.request.requestId - a.request.requestId;
+            if(b.request && a.deliveryRequest) return b.request.requestId - Number(a.deliveryRequest.externalId);
+            if(b.deliveryRequest && a.request) return Number(b.deliveryRequest.externalId) - a.request.requestId;
+            if(b.deliveryRequest && a.deliveryRequest) return Number(b.deliveryRequest.externalId) - Number(a.deliveryRequest.externalId);
+          });
           this.showArrow(0, false);
         }
         else {
-          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return a.request.requestId - b.request.requestId });
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) {
+            if(a.request && b.request) return a.request.requestId - b.request.requestId;
+            if(a.request && b.deliveryRequest) return a.request.requestId - Number(b.deliveryRequest.externalId);
+            if(a.deliveryRequest && b.request) return Number(a.deliveryRequest.externalId) - b.request.requestId;
+            if(a.deliveryRequest && b.deliveryRequest) return Number(a.deliveryRequest.externalId) - Number(b.deliveryRequest.externalId);
+          });
           this.showArrow(0, true);
         }
         this.lastOrder[0] = !this.lastOrder[0];
@@ -94,11 +102,21 @@ export class TableRequestsOrdersOSComponent implements OnInit {
       }
       case 'date': {
         if (this.lastOrder[1]) {
-          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(moment(b.request.date).format('X')) - parseInt(moment(a.request.date).format('X')) });
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) {
+            if(b.request && a.request) return parseInt(moment(b.request.date).format('X')) - parseInt(moment(a.request.date).format('X'));
+            if(b.request && a.deliveryRequest) return parseInt(moment(b.request.date).format('X')) - parseInt(moment(a.createdAt).format('X'));
+            if(b.deliveryRequest && a.request) return parseInt(moment(b.createdAt).format('X')) - parseInt(moment(a.request.date).format('X'));
+            if(b.deliveryRequest && a.deliveryRequest) return parseInt(moment(b.createdAt).format('X')) - parseInt(moment(a.createdAt).format('X'));
+          });
           this.showArrow(1, false);
         }
         else {
-          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(moment(a.request.date).format('X')) - parseInt(moment(b.request.date).format('X')) });
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) {
+            if(a.request && b.request) return parseInt(moment(a.request.date).format('X')) - parseInt(moment(b.request.date).format('X'));
+            if(a.request && b.deliveryRequest) return parseInt(moment(a.request.date).format('X')) - parseInt(moment(b.createdAt).format('X'));
+            if(a.deliveryRequest && b.request) return parseInt(moment(a.createdAt).format('X')) - parseInt(moment(b.request.date).format('X'));
+            if(a.deliveryRequest && b.deliveryRequest) return parseInt(moment(a.createdAt).format('X')) - parseInt(moment(b.createdAt).format('X'));
+          });
           this.showArrow(1, true);
         }
         this.lastOrder[1] = !this.lastOrder[1];
@@ -208,27 +226,41 @@ export class TableRequestsOrdersOSComponent implements OnInit {
         if (this.listRequestOrders.length > 0) {
 
           for (let request of this.listRequestOrders) {
-            this.requestOrdersSelection[request.request.id] = true;
+            if(request.request && request.quantityMatchWarehouse > 0) this.requestOrdersSelection[request.request.id] = true;
+            if(request.deliveryRequest && request.quantityMatchWarehouse > 0) this.deliveryRequestOrdersSelection[request.deliveryRequest.id] = true;
             if (typeof this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] == 'undefined') {
               this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] = { max: request.destinyWarehouse.thresholdShippingStore, selected: 0, warehouse: request.destinyWarehouse.name };
             }
-            this.listRequestIdWarehouseId[request.request.id] = { warehouse: request.destinyWarehouse.id, qty: request.quantityMatchWarehouse };
+            if(request.request) this.listRequestIdWarehouseId[request.request.id] = { warehouse: request.destinyWarehouse.id, qty: request.quantityMatchWarehouse };
+            if(request.deliveryRequest) this.listRequestIdWarehouseId[request.deliveryRequest.id] = { warehouse: request.destinyWarehouse.id, qty: request.quantityMatchWarehouse };
           }
           this.allRequestOrdersSelected = true;
         } else {
           this.requestOrdersSelection = {};
+          this.deliveryRequestOrdersSelection = {};
         }
       }
       this.selectRequestOrder(false);
 
       this.listRequestsFilters = this.listRequestOrders.map((item) => {
-        return {
-          checked: true,
-          value: item.request.requestId,
-          id: item.request.id,
-          type: this.FILTER_REQUEST_ID,
-          hide: false
-        };
+        if(item.request) {
+          return {
+            checked: true,
+            value: item.request.requestId,
+            id: item.request.id,
+            type: this.FILTER_REQUEST_ID,
+            hide: false
+          };
+        }
+        if(item.deliveryRequest){
+          return {
+            checked: true,
+            value: item.deliveryRequest.externalId,
+            id: item.deliveryRequest.id,
+            type: this.FILTER_REQUEST_ID,
+            hide: false
+          };
+        }
       }).reduce((tempArray, currentItem) => {
         const x = tempArray.find(item => item.value === currentItem.value);
         if (!x) {
@@ -346,7 +378,9 @@ export class TableRequestsOrdersOSComponent implements OnInit {
 
     this.events.subscribe(this.DRAW_CONSOLIDATED_MATCHES, (data: Array<WorkwaveModel.AssignationsByRequests>) => {
       for (let requestOrder of this.listRequestOrders) {
-        let matchedForRequest = data.find(match => match.requestId == requestOrder.request.id);
+        let matchedForRequest;
+        if(requestOrder.request) matchedForRequest = data.find(match => match.requestId && match.requestId == requestOrder.request.id);
+        if(requestOrder.deliveryRequest) matchedForRequest = data.find(match => match.deliveryRequestId && match.deliveryRequestId == requestOrder.deliveryRequest.id);
         if (matchedForRequest) {
           requestOrder.quantityMatchWarehouse = parseInt(matchedForRequest.quantityShoes);
         }
@@ -361,19 +395,38 @@ export class TableRequestsOrdersOSComponent implements OnInit {
   }
 
   orderAssignment() {
-    this.updating = true;
-    let aux = this.serviceG.orderAssignment.value;
-    aux.store = true;
-    aux.type = true;
-    aux.data.typesShippingOrders = [];
-    if (document.getElementById('onlineCheck').getAttribute('aria-checked') == 'true') aux.data.typesShippingOrders.push(30);
-    if (document.getElementById('shopCheck').getAttribute('aria-checked') == 'true') aux.data.typesShippingOrders.push(20);
-    this.serviceG.orderAssignment.next(aux);
+    if (!this.requestsOrdersAreLoading()) {
+      this.updating = true;
+      let aux = {
+        data: {
+          store: {
+            groupsWarehousePickingId: '',
+            thresholdConsolidated: '',
+          },
+          typesShippingOrders: []
+        },
+        store: false,
+        type: false
+      };
+      aux.store = true;
+      aux.type = true;
+      aux.data.typesShippingOrders = [];
+      if (document.getElementById('onlineCheck').getAttribute('aria-checked') == 'true') {
+        aux.data.typesShippingOrders.push(30);
+      }
+      if (document.getElementById('shopCheck').getAttribute('aria-checked') == 'true') {
+        aux.data.typesShippingOrders.push(20);
+      }
+      this.changeRequestOrder.emit(aux);
+    }
   }
 
   selectAllRequestOrder() {
     for (let iRequest in this.requestOrdersSelection) {
       this.requestOrdersSelection[iRequest] = this.allRequestOrdersSelected;
+    }
+    for (let iRequest in this.deliveryRequestOrdersSelection) {
+      this.deliveryRequestOrdersSelection[iRequest] = this.allRequestOrdersSelected;
     }
     this.selectRequestOrder(true);
   }
@@ -382,6 +435,7 @@ export class TableRequestsOrdersOSComponent implements OnInit {
     for (let iObj in this.listWarehousesThresholdAndSelectedQty) {
       this.listWarehousesThresholdAndSelectedQty[iObj].selected = 0;
     }
+
     this.listRequestOrdersSelected = new Array<number>();
     for (let iRequest in this.requestOrdersSelection) {
       let warehouseId = this.listRequestIdWarehouseId[iRequest].warehouse;
@@ -393,12 +447,25 @@ export class TableRequestsOrdersOSComponent implements OnInit {
       }
     }
 
-    this.allRequestOrdersSelected = this.listRequestOrdersSelected.length == this.listRequestOrders.length;
+    this.listDeliveryRequestOrdersSelected = new Array<number>();
+    for (let iRequest in this.deliveryRequestOrdersSelection) {
+      if (this.deliveryRequestOrdersSelection[iRequest]) {
+        this.listDeliveryRequestOrdersSelected.push(parseInt(iRequest));
+      }
+    }
 
-    let aux = this.serviceG.requestUser.value;
-    aux.data.table = { listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty };
-    aux.table = incrementTeamCounter === false;
-    this.serviceG.requestUser.next(aux);
+    this.allRequestOrdersSelected = this.listRequestOrdersSelected.length + this.listDeliveryRequestOrdersSelected.length == this.listRequestOrders.length;
+    const toEmit = {
+      table: incrementTeamCounter === false,
+      data: {
+        table: {
+          listSelected: this.listRequestOrdersSelected,
+          listThreshold: this.listWarehousesThresholdAndSelectedQty,
+          listSelectedDelivery: this.listDeliveryRequestOrdersSelected
+        }
+      }
+    }
+    this.loadTeamAssignations.emit(toEmit);
   }
 
   applyFilters(filtersResult: any) {
@@ -436,7 +503,11 @@ export class TableRequestsOrdersOSComponent implements OnInit {
       let isOk = false;
 
       for (let filter in this.listRequestsFilters) {
-        if (this.listRequestsFilters[filter].value == item.request.requestId && this.listRequestsFilters[filter].checked) {
+        if (item.request && this.listRequestsFilters[filter].value == item.request.requestId && this.listRequestsFilters[filter].checked) {
+          isOk = true;
+          break;
+        }
+        if (item.deliveryRequest && this.listRequestsFilters[filter].value == item.deliveryRequest.externalId && this.listRequestsFilters[filter].checked) {
           isOk = true;
           break;
         }
@@ -530,20 +601,26 @@ export class TableRequestsOrdersOSComponent implements OnInit {
     for (let iRequest in this.requestOrdersSelection) {
       this.requestOrdersSelection[iRequest] = false;
     }
+    for (let iRequest in this.deliveryRequestOrdersSelection) {
+      this.deliveryRequestOrdersSelection[iRequest] = false;
+    }
     for (let iRequest of listRequestOrdersTemp) {
-      this.requestOrdersSelection[iRequest.request.id] = true;
+      if(iRequest.request) this.requestOrdersSelection[iRequest.request.id] = true;
+      if(iRequest.deliveryRequest) this.deliveryRequestOrdersSelection[iRequest.deliveryRequest.id] = true;
     }
     this.selectRequestOrder(true);
   }
 
   dateCreatedParsed(requestOrder): string {
     moment.locale('es');
-    return moment(requestOrder.request.date).format('ddd, DD/MM/YYYY');
+    if(requestOrder.request) return moment(requestOrder.request.date).format('ddd, DD/MM/YYYY');
+    if(requestOrder.deliveryRequest) return moment(requestOrder.createdAt).format('ddd, DD/MM/YYYY');
   }
 
   timeCreatedParsed(requestOrder): string {
     moment.locale('es');
-    return moment(requestOrder.request.date).format('LT');
+    if(requestOrder.request) return moment(requestOrder.request.date).format('LT');
+    if(requestOrder.deliveryRequest) return moment(requestOrder.createdAt).format('LT');
   }
 
   requestsOrdersAreLoading() : boolean {

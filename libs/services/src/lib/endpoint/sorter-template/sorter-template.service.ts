@@ -19,7 +19,6 @@ export class SorterTemplateService {
   private getActiveTemplateUrl: string = environment.apiSorter + '/sorter/templates/active';
 
   constructor(private http: HttpClient) { }
-  
   getIndex(): Observable<TemplateSorterModel.ResponseTemplate> {
     return this.http.get<TemplateSorterModel.ResponseTemplate>(this.getTemplateSorterUrl).pipe(map(response => {
       return response;

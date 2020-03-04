@@ -2,21 +2,21 @@
 <ng-container *ngFor="let item of datos; let i = index" >
   <ion-chip class="size" *ngIf="i < 8"  [ngClass]="{'selected': item.selected}" (click)="selected(item)" color="primary" mode="ios" >
       <ion-label>{{item.name}}</ion-label>
-      <ion-icon *ngIf="item.newSelectd" name="add"></ion-icon>
+      <ion-icon *ngIf="item.newSelected" name="add"></ion-icon>
     </ion-chip>
 </ng-container>
 <br>
 <ng-container *ngFor="let item of datos; let i = index" >
     <ion-chip  class="size" *ngIf="i > 7 && i < 16"  [ngClass]="{'selected': item.selected}"  (click)="selected(item)" color="primary" mode="ios">
       <ion-label>{{item.name}}</ion-label>
-      <ion-icon *ngIf="item.newSelectd"  name="add"></ion-icon>
+      <ion-icon *ngIf="item.newSelected" name="add"></ion-icon>
     </ion-chip>
 </ng-container>
 <br>
 <ng-container *ngFor="let item of datos; let i = index" >
     <ion-chip  class="size" *ngIf="i > 16"  [ngClass]="{'selected': item.selected}"  (click)="selected(item)" color="primary" mode="ios">
       <ion-label>{{item.name}}</ion-label>
-      <ion-icon *ngIf="item.newSelectd" name="add"></ion-icon>
+      <ion-icon *ngIf="item.newSelected" name="add"></ion-icon>
     </ion-chip>
 </ng-container>
 
