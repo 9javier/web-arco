@@ -1,8 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import { Events } from "@ionic/angular";
 import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
-import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workwaves.service';
 import AssignationsByRequests = WorkwaveModel.AssignationsByRequests;
 
 @Component({
@@ -13,6 +12,7 @@ import AssignationsByRequests = WorkwaveModel.AssignationsByRequests;
 export class TableTeamAssignationOSComponent implements OnInit {
 
   @Input() responseQuantities: WorkwaveModel.AssignationsByRequests[];
+  @Output() loadTeamAssignations = new EventEmitter();
 
   private TEAM_ASSIGNATIONS_LOADED = "team-assignations-loaded-os";
 
@@ -24,17 +24,12 @@ export class TableTeamAssignationOSComponent implements OnInit {
   private columnsMultiple: number = 10;
 
   tooltipValue: string = null;
-  public buttonAvailability: boolean = true;
   enlarged = false;
 
   constructor(
     public events: Events,
-    public pickingParametrizationProvider: PickingParametrizationProvider,
-    private serviceG: WorkwavesService
-  ) {
-
-
-  }
+    public pickingParametrizationProvider: PickingParametrizationProvider
+  ) {}
 
   ngOnInit() {
     this.events.subscribe(this.TEAM_ASSIGNATIONS_LOADED, () => {
@@ -92,10 +87,9 @@ export class TableTeamAssignationOSComponent implements OnInit {
   }
 
   userSelected() {
-    let aux = this.serviceG.requestUser.value;
-    aux.user = true;
-    aux.table = true;
-    this.serviceG.requestUser.next(aux);
+    if (!this.userAssignationsAreLoading()) {
+      this.loadTeamAssignations.emit({user: true, table: true});
+    }
   }
 
   showConsolidatedBreakdown(pickingId: number) {

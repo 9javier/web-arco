@@ -158,6 +158,30 @@ const routes: Routes = [
     }
   },
   {
+    path: 'damaged-shoes',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/damaged-shoes/damaged-shoes.module#DamagedShoesModule',
+    data: {
+      name: 'Parametrización de Daños'
+    }
+  },
+  {
+    path: 'defective-management',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-management/defective-management.module#DefectiveManagementModule',
+    data: {
+      name: 'Gestión Defectuosos'
+    }
+  },
+  {
+    path: 'defective-registry',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-registry/defective-registry.module#DefectiveRegistryModule',
+    data: {
+      name: 'Registro de Defectuosos'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',
@@ -351,6 +375,14 @@ const routes: Routes = [
     }
   },
   {
+    path:'reception-final',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/reception-final/reception-final.module#ReceptionFinalModule',
+    data: {
+      name: 'ReceptionFinal'
+    }
+  },
+  {
     path:'predistributions',
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/predistributions/predistributions.module#PredistributionsModule',
@@ -358,7 +390,7 @@ const routes: Routes = [
       name: 'Predistribuciones'
     }
   },
-  { 
+  {
     path:'receptions',
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/receptionss-avelon/receptionss-avelon.module#ReceptionssAvelonModule',
@@ -366,7 +398,7 @@ const routes: Routes = [
       name: 'Recepciones2'
     }
   },
-  { 
+  {
     path:'pr-ta-se-av',
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/products-avelon/products-avelon.module#ProductsAvelonModule',

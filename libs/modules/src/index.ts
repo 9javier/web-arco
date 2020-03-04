@@ -96,6 +96,15 @@ export * from './user-manager/user-manager.module';
 export * from './role-assignment/role-assignment.component';
 export * from './role-assignment/role-assignment.module';
 
+export * from './damaged-shoes/damaged-shoes.component';
+export * from './damaged-shoes/damaged-shoes.module';
+
+export * from './defective-management/defective-management.component';
+export * from './defective-management/defective-management.module';
+
+export * from './defective-registry/defective-registry.component';
+export * from './defective-registry/defective-registry.module';
+
 /**breadcrumb */
 export * from './components/breadcrumb/breadcrumb.component';
 export * from './components/breadcrumb/breadcrumb.module';
@@ -292,6 +301,10 @@ export  * from './regions/regions.module';
 export  * from './receptions-avelon/receptions-avelon.component'
 export  * from './receptions-avelon/receptions-avelon.module';
 
+/**Reception Final */
+export  * from './reception-final/reception-final.component'
+export  * from './reception-final/reception-final.module';
+
 // // /**Predistributions */
 export  * from './predistributions/predistributions.component'
 export  * from './predistributions/predistributions.module';
@@ -316,3 +329,4 @@ export  * from './receptions-avelon-app/receptions-avelon-app.module';
 
 export  * from './expeditions-pending-app/expeditions-pending-app.component'
 export  * from './expeditions-pending-app/expeditions-pending-app.module';
+
