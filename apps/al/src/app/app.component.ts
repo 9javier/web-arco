@@ -184,7 +184,7 @@ export class AppComponent implements OnInit {
               .then(success => {
                 this.mainHeaderShowHide(true);
                 this.menu.enable(true, 'sidebar');
-                if (this.platform.is('android') && window.cordova) {
+                if (this.platform.is('android') && (<any>window).cordova) {
                   this.scanditService.setApiKey(environment.scandit_api_key);
                   this.printerConnectionService.taskConnection();
                 }

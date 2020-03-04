@@ -302,6 +302,14 @@ const routes: Routes = [
     data: {
       name: 'Recepción mercancía'
     }
+  },
+  {
+    path: 'incidents',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/incidents/incidents.module#IncidentsModule',
+    data: {
+      name: 'Incidencias'
+    }
   }
 ];
 

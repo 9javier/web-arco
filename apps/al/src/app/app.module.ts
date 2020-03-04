@@ -24,6 +24,9 @@ import {MondayStartingDateAdapterService} from "../../../../libs/services/src/li
 import {NativeAudio} from "@ionic-native/native-audio/ngx";
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+
 
 
 registerLocaleData(localeEs);
@@ -60,7 +63,9 @@ registerLocaleData(localeEs);
     },
     NativeAudio,
     AppVersion,
-    Keyboard
+    Keyboard,
+    Camera,
+    FileTransfer
   ],
   bootstrap: [AppComponent]
 })
