@@ -153,7 +153,7 @@ export class ProductsComponent implements OnInit {
     private usersService: UsersService,
     private permisionService: PermissionsService
   ) {
-    this.isMobileApp = typeof window.cordova !== "undefined";
+    this.isMobileApp = typeof (<any>window).cordova !== "undefined";
   }
 
   eraseFilters() {

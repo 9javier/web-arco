@@ -79,7 +79,7 @@
       </ion-fab-button>
     </ion-col>
     <ion-col>
-      <ion-fab-button color="dark"  matTooltip="Deshacer cambios no guardados" matTooltipClass="tooltip" matTooltipPosition="above" (click)="ngOnInit()">
+      <ion-fab-button color="dark"  matTooltip="Deshacer cambios no guardados" matTooltipClass="tooltip" matTooltipPosition="above" (click)="ngOnInit()" *ngIf="thereAreChanges">
         <ion-icon name="undo"></ion-icon>
       </ion-fab-button>
     </ion-col>
