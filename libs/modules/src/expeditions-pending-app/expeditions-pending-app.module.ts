@@ -17,6 +17,9 @@ import {ExpeditionInfoComponent} from "./components/expedition-info/expedition-i
 import {ExpeditionInfoModule} from "./components/expedition-info/expedition-info.module";
 import {AnotherExpeditionsComponent} from "./components/another-expeditions/another-expeditions.component";
 import {AnotherExpeditionsModule} from "./components/another-expeditions/another-expeditions.module";
+import {InfoExpeditionsModule} from "./modals/info-expeditions/info-expeditions.module";
+import {FormExpeditionProviderComponent} from "./components/form-expedition-provider/form-expedition-provider.component";
+import {FormExpeditionProviderModule} from "./components/form-expedition-provider/form-expedition-provider.module";
 
 const routes: Routes = [
   {
@@ -27,7 +30,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [ExpeditionsPendingAppComponent],
-  entryComponents: [ExpeditionsPendingAppComponent, FormExpeditionInfoComponent, ExpeditionInfoComponent, AnotherExpeditionsComponent],
+  entryComponents: [ExpeditionsPendingAppComponent, FormExpeditionInfoComponent, FormExpeditionProviderComponent, ExpeditionInfoComponent, AnotherExpeditionsComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -41,8 +44,10 @@ const routes: Routes = [
     ReactiveFormsModule,
     FormsModule,
     FormExpeditionInfoModule,
+    FormExpeditionProviderModule,
     ExpeditionInfoModule,
-    AnotherExpeditionsModule
+    AnotherExpeditionsModule,
+    InfoExpeditionsModule
   ]
 })
 
