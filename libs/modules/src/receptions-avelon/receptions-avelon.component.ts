@@ -371,6 +371,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.listSizes = [];
   }
 
+  resetSizes(){
+    for(let size of this.listSizes){
+      size.quantity = 0;
+    }
+  }
+
   goBack(type: string) {
 
     switch (type) {

@@ -81,6 +81,9 @@
             <span>Tallas</span>
             <div *ngIf="result.modelId && result.colorId && listSizes.length > 0">
               <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
+              <ion-button (click)="resetSizes()" matTooltipClass="tooltip" matTooltip="Reiniciar tallas">
+                <ion-icon name="refresh"></ion-icon>
+              </ion-button>
             </div>
             <div *ngIf="result.modelId && result.colorId && (!listSizes || listSizes.length <= 0)" class="sizes-empty">
               <p>No se han podido cargar tallas para la marca, el modelo y el color seleccionados.</p>
