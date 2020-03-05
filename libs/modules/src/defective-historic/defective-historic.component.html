@@ -40,14 +40,14 @@
       </ng-container>
 
       <ng-container matColumnDef="dateDetection">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Fecha de Detección
+        <mat-header-cell class="my-sticky-col info type-120" *matHeaderCellDef mat-sort-header>Fecha de Detección
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonDateDetection [title]="'Fecha de Detección'"
                                [listItems]="entities.dateDetection"
                                [isFiltering]="isFilteringDateDetection != entities.dateDetection.length"
                                (applyFilters)="applyFilters($event, 'dateDetection')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.dateDetection | date:"dd/MM/yyyy"}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-120"> {{element.dateDetection | date:"dd/MM/yyyy"}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="statusManagementDefect">
@@ -62,14 +62,14 @@
       </ng-container>
 
       <ng-container matColumnDef="defectTypeParent">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Grupo Defectuoso
+        <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>Grupo Defectuoso
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeParent [title]="'Grupo Defectuoso'"
                                [listItems]="entities.defectTypeParent"
                                [isFiltering]="isFilteringDefectTypeParent != entities.defectTypeParent.length"
                                (applyFilters)="applyFilters($event, 'defectTypeParent')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.defectTypeParent.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> {{element.defectTypeParent.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="defectTypeChild">
