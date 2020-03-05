@@ -24,21 +24,14 @@ export class DefectiveRegistryService {
   private indexRegistryHistoricFalseUrl: string;
   private indexHistoricTrueUrl: string;
   private entitiesFiltersUrl: string;
+  private getHistoricalUrl: string;
 
-  private index2Url: string;
-  private entitiesUrl: string;
-  private updateBlockReservedUrl: string;
-  private updateBlockReservedUrl2: string;
   constructor(private http: HttpClient) {
     this.baseUrl = environment.apiSorter;
     this.indexRegistryHistoricFalseUrl = `${this.baseUrl}/defects/registry/all/false`;
     this.indexHistoricTrueUrl = `${this.baseUrl}/defects/registry/all`;
     this.entitiesFiltersUrl = `${this.baseUrl}/defects/registry/filters`;
-
-    this.entitiesUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress/entites`;
-    this.updateBlockReservedUrl = `${this.baseUrl}/reception/expedition/update-block-reserved`;
-    this.updateBlockReservedUrl2 = `${this.baseUrl}/handler/test/BlockProduct`;
-
+    this.getHistoricalUrl = `${this.baseUrl}/defects/registry/product-historial`;
   }
 
   indexHistoricTrue(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
@@ -49,46 +42,6 @@ export class DefectiveRegistryService {
 
   indexHistoricFalse(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
     return this.http.post<HttpRequestModel.Response>(this.indexRegistryHistoricFalseUrl,body).pipe(
-      map(resp => resp.data)
-    )
-  }
-
-
-  entities() {
-    const body = {
-      references: [],
-      sizes: [],
-      warehouses: [],
-      date_service: [],
-      brands: [],
-      providers: [],
-      models: [],
-      colors: [],
-      category: [],
-      family: [],
-      lifestyle: []
-    };
-
-    return this.http.post<HttpRequestModel.Response>(this.entitiesUrl,body).pipe(
-      map(resp => resp.data)
-    )
-  }
-
-
-  updateBlockReserved(data:PredistributionModel.BlockReservedRequest[]){
-    return this.http.post<HttpRequestModel.Response>(this.updateBlockReservedUrl, data).pipe(
-      map(resp => resp.data)
-    )
-  }
-
-  updateBlockReserved2(data:PredistributionModel.BlockReservedRequest[]){
-    return this.http.post<HttpRequestModel.Response>(this.updateBlockReservedUrl2, data).pipe(
-      map(resp => resp.data)
-    )
-  }
-
-  index2(body: PredistributionModel.IndexRequest): Observable<PredistributionModel.DataSource> {
-    return this.http.post<HttpRequestModel.Response>(this.index2Url,body).pipe(
       map(resp => resp.data)
     )
   }
@@ -110,6 +63,12 @@ export class DefectiveRegistryService {
     return this.http.post<HttpRequestModel.Response>(this.entitiesFiltersUrl,body).pipe(
       map(resp => resp.data)
     )
+  }
+
+  getHistorical(body):Observable<any>{
+    return this.http.post(this.getHistoricalUrl, body).pipe(map((response:any)=>{
+      return response.data;
+    }));
   }
 
 }

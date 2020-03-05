@@ -14,6 +14,8 @@ import {ScreenResult} from "./enums/screen_result.enum";
 import {FormHeaderReceptionComponent} from "./components/form-header-reception/form-header-reception.component";
 import {InfoHeaderReceptionComponent} from "./components/info-header-reception/info-header-reception.component";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {WebsocketService} from '../../../services/src/lib/endpoint/web-socket/websocket.service';
+import {type} from '../../../services/src/lib/endpoint/web-socket/enums/typeData';
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -98,7 +100,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     private virtualKeyboardService: VirtualKeyboardService,
     private productsService: ProductsService,
     private modalController: ModalController,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private websocketService : WebsocketService
   ) {}
 
   async loadProvider(){
@@ -171,7 +174,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   ngAfterViewInit() {
     this.listSelected();
     this.clickSizeSelected();
-
+    this.getEmitEan();
   }
 
   openVirtualKeyboard(list?: Array<ReceptionAvelonModel.Data>, type?: Type) {
@@ -953,6 +956,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   // check if the expedition selected by reference is available and get her data
   public checkExpedition(data) {
+    console.log(data);
     this.formHeaderReceptionComponent.checkingExpedition(true);
     this.reception
       .checkExpeditionByReference(data)
@@ -1076,5 +1080,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         this.intermediaryService.presentToastError(errorMessage);
         this.formHeaderReceptionComponent.checkingProvider(false);
       });
+  }
+
+  getEmitEan(){
+    this.websocketService.getEmitData().subscribe((x:any)=>{
+      console.log(x);
+      if(x.type !== undefined){
+        if(x.type === type.OBJECT){
+          this.result.ean = x.data.ean;
+          this.printProductsLoading();
+        }
+      }
+    });
   }
 }

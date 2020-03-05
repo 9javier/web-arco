@@ -688,7 +688,7 @@ export class MenuComponent implements OnInit {
       title: 'Configuración',
       open: false,
       type: 'wrapper',
-      icon: 'build',
+    icon: 'build',
       children: [
         {
           title: 'Ajustes',
@@ -699,7 +699,12 @@ export class MenuComponent implements OnInit {
         }
       ]
     },
-
+    {
+      id:'incidents',
+      title: 'Manejo de defectos',
+      icon:'warning',
+      url: '/defect-handler'
+    }
   ];
   private menuPages = {
     sga: this.sgaPages,
