@@ -1,0 +1,85 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>{{ registry?.product?.reference }}</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-segment [(ngModel)]="section">
+        <ion-segment-button value="information">
+            <ion-label>Información</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="historical">
+            <ion-label>Histórico</ion-label>
+        </ion-segment-button>
+    </ion-segment>
+
+    <div *ngIf="section == 'information'">
+        <ion-list>
+          <ion-item>
+              <ion-label>
+                  Detección de Tienda: {{registry?.storeDetection}}
+              </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              Fecha de Detección: {{registry?.dateDetection}}
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              Número de Observaciones: {{registry?.numberObservations}}
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              Código de Barras: {{registry?.barCode}}
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              Retorno a Fábrica: {{registry?.factoryReturn ? 'Si' : 'No'}}
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              Código de Producto: {{registry?.product.reference}}
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              Almacén: {{registry?.warehouse ? (registry?.warehouse.reference + " - " + registry?.warehouse.name) : ""}}
+            </ion-label>
+          </ion-item>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Foto
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <img src="{{registry.photo}}" alt="" />
+          </mat-expansion-panel>
+        </ion-list>
+    </div>
+
+    <div *ngIf="section == 'historical'">
+        <ion-list>
+            <ion-item *ngFor="let historical of registryHistorical; let i = index">
+                <div>
+                  <p>
+                    Fecha de Detección: {{ historical?.dateDetection | date:"dd/MM/yyyy HH:mm:ss" }}
+                  </p>
+                  <p>
+                    Detección de Tienda: {{ historical?.storeDetection }}
+                  </p>
+                </div>
+            </ion-item>
+        </ion-list>
+    </div>
+</ion-content>
+<ion-footer>
+</ion-footer>
