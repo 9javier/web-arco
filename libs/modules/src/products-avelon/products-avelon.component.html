@@ -28,13 +28,38 @@
 
   <div class="incidences-container" >
     <mat-table [dataSource]="dataSource" matSort class="table-incidences">
+      <ng-container matColumnDef="select">
+        <mat-header-cell class="my-sticky-col info checkbox" *matHeaderCellDef>
+          <div class="content-checkbox">
+            <ng-container *ngIf="dataSource !== undefined" >
+              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()"
+                            [aria-label]="checkboxLabel()">
+              </mat-checkbox>
+            </ng-container>
+          </div>
+        </mat-header-cell>
+        <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
+          <ng-container *ngIf="dataSource !== undefined" >
+            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                          [matRippleColor]="'black'" (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(row) : null"
+                          [checked]="selection.isSelected(row)"
+                          [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+
       <ng-container matColumnDef="Codigo">
-        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Código
+        <mat-header-cell class="my-sticky-col info codigo" *matHeaderCellDef mat-sort-header> Código
           <suite-filter-button #filterButtonProducts class="filter" [title]="'Código'" [listItems]="products"
                                [isFiltering]="isFilteringProducts != products.length" (applyFilters)="applyFilters($event, 'products')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.product.reference}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info codigo"> {{element.product.reference}} </mat-cell>
       </ng-container>
 
       <ng-container  matColumnDef="Ref. modelo">
@@ -115,6 +140,9 @@
 
 <ion-footer>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button matTooltip="Eliminar Productos" matTooltipClass="tooltip" (click)="presentAlertDeleteConfirm()" *ngIf="selection.hasValue()" color="danger">
+      <i class="material-icons">delete</i>
+    </ion-fab-button>
     <ion-fab-button matTooltip="Reiniciar Filtros" matTooltipClass="tooltip" (click)="refreshTable()">
       <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
