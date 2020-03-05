@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormExpeditionInfoComponent } from './form-expedition-info.component';
 import {ReactiveFormsModule} from "@angular/forms";
-import {MatAutocompleteModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from "@angular/material";
+import {MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from "@angular/material";
 import {IonicModule} from "@ionic/angular";
 import {CommonModule} from "@angular/common";
 
@@ -18,7 +18,6 @@ import {CommonModule} from "@angular/common";
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatAutocompleteModule,
     MatButtonModule
   ]
 })

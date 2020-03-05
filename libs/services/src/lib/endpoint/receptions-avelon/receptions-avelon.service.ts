@@ -16,6 +16,8 @@ export class ReceptionsAvelonService {
   postIsProviderAvailableUrl: string = `${environment.apiBase}/avelonProviders`;
   urlReception: string = `${environment.apiBase}/reception/expedition/lines-destiny-impress/blocked`;
   checkExpeditionsByNumberAndProviderUrl: string = `${environment.apiBase}/avelonProviders/check/expedition/provider`;
+  private checkExpeditionByReferenceUrl: string = `${environment.apiBase}/avelonProviders/check/expedition/`;
+  private checkExpeditionsByProviderUrl: string = `${environment.apiBase}/avelonProviders/check/provider/`;
   postLoadSizesUrl: string = `${environment.apiBase}/reception/sizes/list`;
 
   private models = new BehaviorSubject([]); 
@@ -64,6 +66,14 @@ export class ReceptionsAvelonService {
 
   checkExpeditionsByNumberAndProvider(params: ReceptionAvelonModel.ParamsCheckExpeditionsByNumberAndProvider): Observable<ReceptionAvelonModel.ResponseCheckExpeditionsByNumberAndProvider> {
     return this.http.post<ReceptionAvelonModel.ResponseCheckExpeditionsByNumberAndProvider>(this.checkExpeditionsByNumberAndProviderUrl, params);
+  }
+
+  checkExpeditionByReference(expeditionReference: string): Observable<ReceptionAvelonModel.ResponseCheckExpeditionByReference> {
+    return this.http.get<ReceptionAvelonModel.ResponseCheckExpeditionByReference>(this.checkExpeditionByReferenceUrl + expeditionReference);
+  }
+
+  checkExpeditionsByProvider(providerId: number): Observable<ReceptionAvelonModel.ResponseCheckExpeditionsByProvider> {
+    return this.http.get<ReceptionAvelonModel.ResponseCheckExpeditionsByProvider>(this.checkExpeditionsByProviderUrl + providerId);
   }
 
   postLoadSizesList(params: ReceptionAvelonModel.ParamsLoadSizesList): Observable<ReceptionAvelonModel.ResponseLoadSizesList> {
