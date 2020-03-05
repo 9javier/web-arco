@@ -1,6 +1,56 @@
-
-
 ion-item {
   --border-width: 0px !important;
 }
 
+.scroll-list {
+  height: calc(100% - 30px - 24px); // 30px from table title - 24px from legend
+  overflow: auto;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+  border-top: 1px solid var(--ion-color-secondary);
+}
+
+.scroll-list::-webkit-scrollbar {
+  width: 0 !important
+}
+
+mat-grid-list.team-assignations-line {
+  border-bottom: 1px solid var(--ion-color-secondary);
+  mat-grid-tile.employee {
+    background-color: #E5E5E5;
+    border-right: 1px solid var(--ion-color-secondary);
+    border-bottom: 1px solid var(--ion-color-secondary);
+  }
+  mat-grid-tile.assignation {
+    background-color: #E5E5E5;
+    border-right: 1px solid var(--ion-color-secondary);
+    border-bottom: 1px solid var(--ion-color-secondary);
+    color: var(--ion-color-dark);
+    div.tile-picking-type.fixed {
+      display: none;
+    }
+    div.tile-picking-type.temporal.direct {
+      width: 100%;
+      background-color: var(--ion-color-picking-direct);
+      height: 3px;
+      position: absolute;
+      bottom: 0;
+    }
+    div.tile-picking-type.temporal.consolidated {
+      width: 100%;
+      background-color: var(--ion-color-picking-consolidated);
+      height: 3px;
+      position: absolute;
+      bottom: 0;
+    }
+  }
+  mat-grid-tile.assignation.fixed {
+    background-color: #ffffff;
+    color: var(--ion-color-secondary);
+  }
+}
+
+ion-radio{
+  position: absolute;
+  left: 10px;
+}

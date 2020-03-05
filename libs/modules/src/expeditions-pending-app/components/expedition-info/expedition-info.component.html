@@ -1,3 +1,4 @@
+<p *ngIf="expedition" class="title">Expedición consultada</p>
 <mat-card *ngIf="expedition">
   <mat-card-header>
     <mat-card-title># {{expedition.reference}}</mat-card-title>
@@ -15,25 +16,17 @@
       Transportista: <span>{{expedition.shipper}}</span>
     </p>
     <p>
-      Estados: <span>{{expedition.states_list.join(', ')}}</span>
+      Estados: <span>{{stringStates(expedition)}}</span>
+    </p>
+    <p class="blocked" *ngIf="!expedition.reception_enabled">
+      <span> Esta expedición se encuentra bloqueada </span>
     </p>
   </mat-card-content>
 
   <mat-card-actions align="end">
-    <button mat-button [disabled]="!expedition.reception_enabled" (click)="reception()">
+    <button mat-button [disabled]="!expedition.reception_enabled" (click)="reception(expedition)">
       RECEPCIONAR
       <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
   </mat-card-actions>
-</mat-card>
-
-<mat-card *ngIf="!expedition && expeditionNumber && providerName">
-  <mat-card-header>
-    <mat-card-title># {{expeditionNumber}}</mat-card-title>
-    <mat-card-subtitle>{{providerName}}</mat-card-subtitle>
-  </mat-card-header>
-
-  <mat-card-content>
-    <p>No hay ninguna expedición con el número escaneado para el proveedor seleccionado.</p>
-  </mat-card-content>
 </mat-card>

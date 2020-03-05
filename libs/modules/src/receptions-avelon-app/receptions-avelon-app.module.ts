@@ -7,6 +7,7 @@ import {MatButtonModule, MatDividerModule, MatIconModule} from "@angular/materia
 import {EanScannerModule} from "./components/ean-scanner/ean-scanner.module";
 import {ManualReceptionComponent} from "./components/manual-reception/manual-reception.component";
 import {ManualReceptionModule} from "./components/manual-reception/manual-reception.module";
+import {HideKeyboardModule} from "hide-keyboard";
 
 const routes: Routes = [
   {
@@ -31,7 +32,8 @@ const routes: Routes = [
     MatButtonModule,
     MatDividerModule,
     EanScannerModule,
-    ManualReceptionModule
+    ManualReceptionModule,
+    HideKeyboardModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

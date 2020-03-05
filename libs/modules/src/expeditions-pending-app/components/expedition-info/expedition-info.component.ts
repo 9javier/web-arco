@@ -1,6 +1,7 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ReceptionAvelonModel} from "../../../../../services/src/models/endpoints/receptions-avelon.model";
 import {DateTimeParserService} from "../../../../../services/src/lib/date-time-parser/date-time-parser.service";
+import Expedition = ReceptionAvelonModel.Expedition;
 
 @Component({
   selector: 'expedition-info',
@@ -9,27 +10,28 @@ import {DateTimeParserService} from "../../../../../services/src/lib/date-time-p
 })
 export class ExpeditionInfoComponent implements OnInit {
 
+  @Input() expedition: ReceptionAvelonModel.Expedition = null;
   @Output() receptionExpedition: EventEmitter<any> = new EventEmitter();
-
-  public expedition: ReceptionAvelonModel.Expedition = null;
-  public expeditionNumber: string = null;
-  public providerName: string = null;
 
   constructor(
     public dateTimeParserService: DateTimeParserService
   ) {}
 
-  ngOnInit() {
+  ngOnInit() {}
 
+  stringStates(expedition: Expedition){
+    const stringStates: string[] = [];
+    for(let state of expedition.states_list){
+      if(state == 1){
+        stringStates.push('Bloqueado');
+      }else{
+        stringStates.push('Desconocido');
+      }
+    }
+    return stringStates.join(', ');
   }
 
-  public loadNewExpeditionInfo(newExpeditionNumber: string, newProviderName: string, newExpeditionInfo: ReceptionAvelonModel.Expedition) {
-    this.expedition = newExpeditionInfo;
-    this.expeditionNumber = newExpeditionNumber;
-    this.providerName = newProviderName;
-  }
-
-  public reception() {
-    this.receptionExpedition.next();
+  public reception(expedition) {
+    this.receptionExpedition.emit(expedition);
   }
 }

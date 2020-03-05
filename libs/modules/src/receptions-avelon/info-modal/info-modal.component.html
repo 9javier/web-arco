@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title> Información de la expedición </ion-title>
+    <ion-title> {{title}} </ion-title>
     <ion-buttons slot="end">
       <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
         <ion-icon name="close" class="toogleArrow"></ion-icon>
@@ -10,8 +10,8 @@
 </ion-header>
 
 <ion-content>
-  <mat-card>
-
+  <p *ngIf="expedition" class="title">Expedición consultada</p>
+  <mat-card *ngIf="expedition">
     <mat-card-header>
       <mat-card-title># {{expedition.reference}}</mat-card-title>
       <mat-card-subtitle>{{expedition.provider_name}}</mat-card-subtitle>
@@ -30,57 +30,49 @@
       <p>
         Estados: <span>{{stringStates(expedition)}}</span>
       </p>
-      <p id="blocked" *ngIf="!expedition.reception_enabled">
+      <p class="blocked" *ngIf="!expedition.reception_enabled">
         <span> Esta expedición se encuentra bloqueada </span>
       </p>
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button [disabled]="!expedition.reception_enabled" (click)="reception()">
+      <button mat-button [disabled]="!expedition.reception_enabled" (click)="reception(expedition)">
         RECEPCIONAR
         <mat-icon>keyboard_arrow_right</mat-icon>
       </button>
     </mat-card-actions>
-
   </mat-card>
 
-  <mat-card *ngIf="!expedition && expeditionNumber && providerName">
+  <p *ngIf="anotherExpeditions && anotherExpeditions.length > 0 && expedition" class="title">{{titleAnotherExpeditions}}</p>
+  <mat-card *ngFor="let anotherExpedition of anotherExpeditions">
     <mat-card-header>
-      <mat-card-title># {{expeditionNumber}}</mat-card-title>
-      <mat-card-subtitle>{{providerName}}</mat-card-subtitle>
+      <mat-card-title># {{anotherExpedition.reference}}</mat-card-title>
+      <mat-card-subtitle>{{anotherExpedition.provider_name}}</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
-      <p>No hay ninguna expedición con el número escaneado para el proveedor seleccionado.</p>
+      <p>
+        Nº bultos: <span>{{anotherExpedition.total_packing}}</span>
+      </p>
+      <p>
+        Fecha de envío: <span>{{dateTimeParserService.date(anotherExpedition.delivery_date)}}</span>
+      </p>
+      <p>
+        Transportista: <span>{{anotherExpedition.shipper}}</span>
+      </p>
+      <p>
+        Estados: <span>{{stringStates(anotherExpedition)}}</span>
+      </p>
+      <p class="blocked" *ngIf="!anotherExpedition.reception_enabled">
+        <span> Esta expedición se encuentra bloqueada </span>
+      </p>
     </mat-card-content>
-  </mat-card>
 
-  <mat-card *ngIf="anotherExpeditions && anotherExpeditions.length > 0">
-    <mat-card-header>
-      <mat-card-title>Otras expediciones</mat-card-title>
-    </mat-card-header>
-
-    <mat-card-content>
-      <div *ngFor="let expedition of anotherExpeditions">
-        <mat-divider></mat-divider>
-        <div>
-          <p>
-            Nº de expedición: <span>{{expedition.reference}}</span>
-          </p>
-          <p>
-            Nº bultos: <span>{{expedition.total_packing}}</span>
-          </p>
-          <p>
-            Fecha de envío: <span>{{dateTimeParserService.date(expedition.delivery_date)}}</span>
-          </p>
-          <p>
-            Transportista: <span>{{expedition.shipper}}</span>
-          </p>
-          <p>
-            Estados: <span>{{stringStates(expedition)}}</span>
-          </p>
-        </div>
-      </div>
-    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-button [disabled]="!anotherExpedition.reception_enabled" (click)="reception(anotherExpedition)">
+        RECEPCIONAR
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    </mat-card-actions>
   </mat-card>
 </ion-content>

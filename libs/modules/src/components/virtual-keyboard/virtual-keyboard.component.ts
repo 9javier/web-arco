@@ -18,6 +18,10 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
   type: number;
   @Output() eventOnKeyPress = new EventEmitter<any>();
 
+  layout_type: 'qwerty'|'number';
+  placeholder: string = 'Ingrese el texto';
+  initialValue: string = null;
+
   result = {
     keyPress: '',
     selected: null
@@ -34,11 +38,33 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.keyboard = new Keyboard({
+    let keyboardConfiguration: any = {
       onChange: input => this.onChange(input),
       onKeyPress: button => this.onKeyPress(button),
-      layout: layout
-    });
+    };
+
+    if (this.layout_type == 'qwerty') {
+      keyboardConfiguration.layout = layout;
+    } else {
+      keyboardConfiguration.layout = {
+        default: ['7 8 9', '4 5 6', '1 2 3', '{down_hide} 0 {backspace}']
+      };
+
+      keyboardConfiguration.display = {
+        "{down_hide}": "▼",
+        "{backspace}": "◄",
+      };
+      keyboardConfiguration.theme = "hg-theme-default hg-layout-numeric numeric-theme";
+      keyboardConfiguration.mergeDisplay = true;
+    }
+
+    this.keyboard = new Keyboard(keyboardConfiguration);
+
+    if (this.initialValue && this.initialValue != '' && this.initialValue != '0') {
+      this.searchTerm = this.initialValue;
+      this.result.keyPress = this.initialValue;
+      this.keyboard.setInput(this.initialValue);
+    }
   }
 
   setFilteredItems() {
@@ -52,8 +78,15 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
   };
 
   onKeyPress = (button: string) => {
-    if (button === "{shift}" || button === "{lock}") this.handleShift();
-    if (button === "{enter}" && (!this.type || this.type == Type.EXPEDITION_NUMBER)) this.selectItem(this.searchTerm);
+    if (button === "{shift}" || button === "{lock}") {
+      this.handleShift();
+    }
+    if (button === "{enter}" && (!this.type || this.type == Type.EXPEDITION_NUMBER || this.type == Type.EAN_CODE)) {
+      this.selectItem(this.searchTerm);
+    }
+    if (button === '{down_hide}') {
+      this.popoverController.dismiss();
+    }
   };
 
   handleShift = () => {

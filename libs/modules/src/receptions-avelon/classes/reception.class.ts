@@ -4,6 +4,13 @@ export class Reception implements ReceptionAvelonModel.Reception {
     models: Array<ReceptionAvelonModel.Data>;
     colors: Array<ReceptionAvelonModel.Data>;
     sizes: Array<ReceptionAvelonModel.Data>;
+    lines:{
+      id: number,
+      state: number,
+      brandId: number,
+      modelId: number,
+      colorId: number
+    }[];
     ean: string;
     
     constructor() {
@@ -11,6 +18,7 @@ export class Reception implements ReceptionAvelonModel.Reception {
         this.models = [];
         this.colors = [];
         this.sizes = [];
+        this.lines = [];
         this.ean = '';
     }
 }
