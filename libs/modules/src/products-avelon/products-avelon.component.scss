@@ -1,3 +1,21 @@
+::ng-deep {
+  .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: #000000 !important;
+  }
+
+  .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+    background-color: #000000 !important;
+  }
+
+  .mat-checkbox-checked .mat-checkbox-background {
+    background-color: #000000 !important;
+  }
+
+  .mat-checkbox:not(.mat-checkbox-disabled).mat-accent .mat-checkbox-ripple .mat-ripple-element {
+    background-color: #000000 !important;
+  }
+}
+
 ion-text {
 
   suite-breadcrumb {
@@ -26,8 +44,14 @@ table {
 .mat-cell, .mat-header-cell {
   padding: 10px 10px 10px 0;
 }
-.mat-row, .mat-header-row {
-  margin-left: 10px;
+
+.my-sticky-col.info.codigo{
+  min-width: 160px;
+}
+
+.my-sticky-col.info.checkbox{
+  max-width: 40px;
+  padding: 10px 10px 10px 10px;
 }
 
 .bt-right{

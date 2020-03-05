@@ -24,6 +24,7 @@ export class ProductsAvelonService {
   private UpdateSecondAvelon = environment.apiBase+'/global-variables/SecondsToAvelon';
   private indexRoute = environment.apiBase+'/reception/notify-avelon/search';
   private getEntities = environment.apiBase+'/reception/notify-avelon/search-filters';
+  private deleteProductReceptionsUrl = environment.apiBase+'/reception/notify-avelon/delete-product-receptions';
 
   constructor(
     private http: HttpClient,
@@ -66,5 +67,13 @@ export class ProductsAvelonService {
     return this.http.get(this.getEntities).pipe(map((data:any)=>{
       return data.data.filters;
     }));
+  }
+
+  delete_Product_Receptions(ids: number[]) {
+    let body = { ids };
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post(this.deleteProductReceptionsUrl, body, { headers })
+    }))
   }
 }

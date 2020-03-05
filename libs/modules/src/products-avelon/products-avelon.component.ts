@@ -46,9 +46,11 @@ import { parse } from 'querystring';
 export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['Codigo', 'Ref. modelo', 'Talla', 'Color', 'Brand', 'Supplier', 'Warehouse', 'Usuario'];
+  displayedColumns: string[] = ['select', 'Codigo', 'Ref. modelo', 'Talla', 'Color', 'Brand', 'Supplier', 'Warehouse', 'Usuario'];
   // displayedColumns: string[] = [];
   columns = {};
+  selection = new SelectionModel<Predistribution>(true, []);
+  results: any;
   dataSourceOriginal;
   dataSource;
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
@@ -85,7 +87,7 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   brands: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
   suppliers: Array<TagsInputOption> = [];
-  entities
+  entities;
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
   // pagerValues = [50, 100, 1000];
@@ -201,11 +203,11 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(){
-    this.initEntity()
-    this.initForm()
-    this.getFilters()
-    this.getList(this.form)
-    this.listenChanges()
+    this.initEntity();
+    this.initForm();
+    this.getFilters();
+    this.getList(this.form);
+    this.listenChanges();
     this.getSecondsAvelon();
   }
   listenChanges() {
@@ -237,9 +239,9 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
         this.getList(this.form);
       });
     });
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+/*    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
       this.getList(this.form);
-    });
+    });*/
   }
   initEntity() {
     this.entities = {
@@ -421,7 +423,8 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     await this.intermediaryService.presentLoading();
     this.productAvelonService.index(form.value).subscribe(
       (resp:any) => {
-        this.dataSource = new MatTableDataSource<any>(resp.results);
+        this.results = resp.results;
+        this.dataSource = new MatTableDataSource<any>(this.results);
         const paginator = resp.pagination;
 
         this.paginator.length = paginator.totalResults;
@@ -904,6 +907,63 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     this.listenChanges();
   }
 
+  checkboxLabel(row?): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+  }
+
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
+  }
+
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  async presentAlertDeleteConfirm() {
+    const alert = await this.alertController.create({
+      header: '¡Confirmar eliminación!',
+      message: '¿Deseas eliminar los productos seleccionados?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.selection.clear();
+          }
+        }, {
+          text: 'Si',
+          handler: async () => {
+            await this.deleteProductReceptions();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async deleteProductReceptions() {
+    let id = this.selection.selected.map((product) =>
+      product ? product.id : null)
+      .filter(product => product);
+    await this.intermediaryService.presentLoading('Borrando productos');
+    this.productAvelonService.delete_Product_Receptions(id).subscribe(async result => {
+      this.getFilters();
+      this.getList(this.form);
+      this.selection.clear();
+    }, async error => {
+      await this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError('Ha ocurrido un error el cargar los datos del sevidor')
+    });
+  }
 
   // copyValuesToForm(){
   //   this.form = this.formBuilder.group({
