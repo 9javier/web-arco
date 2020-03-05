@@ -302,6 +302,22 @@ const routes: Routes = [
     data: {
       name: 'Recepción mercancía'
     }
+  },
+  {
+    path: 'incidents',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/incidents/incidents.module#IncidentsModule',
+    data: {
+      name: 'Incidencias'
+    }
+  },
+  {
+    path: 'defect-handler',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defect-handler/defect-handler.module#DefectHandlerModule',
+    data: {
+      name: 'Manejo de defectos'
+    }
   }
 ];
 

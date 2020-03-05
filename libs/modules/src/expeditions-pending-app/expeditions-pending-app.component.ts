@@ -1,11 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from "@angular/router";
 import {FormExpeditionInfoComponent} from "./components/form-expedition-info/form-expedition-info.component";
-import {ExpeditionInfoComponent} from "./components/expedition-info/expedition-info.component";
 import {ReceptionsAvelonService} from "../../../services/src/lib/endpoint/receptions-avelon/receptions-avelon.service";
 import {IntermediaryService} from "../../../services/src/lib/endpoint/intermediary/intermediary.service";
 import {ReceptionAvelonModel} from "../../../services/src/models/endpoints/receptions-avelon.model";
-import {AnotherExpeditionsComponent} from "./components/another-expeditions/another-expeditions.component";
+import {ModalController} from "@ionic/angular";
+import {FormExpeditionProviderComponent} from "./components/form-expedition-provider/form-expedition-provider.component";
+import {InfoExpeditionsComponent} from "./modals/info-expeditions/info-expeditions.component";
 import {ReceptionAvelonProvider} from "../../../services/src/providers/reception-avelon/reception-avelon.provider";
 
 @Component({
@@ -16,57 +17,130 @@ import {ReceptionAvelonProvider} from "../../../services/src/providers/reception
 export class ExpeditionsPendingAppComponent implements OnInit {
 
   @ViewChild(FormExpeditionInfoComponent) formExpeditionInfo: FormExpeditionInfoComponent;
-  @ViewChild(ExpeditionInfoComponent) expeditionInfo: ExpeditionInfoComponent;
-  @ViewChild(AnotherExpeditionsComponent) anotherExpeditions: AnotherExpeditionsComponent;
+  @ViewChild(FormExpeditionProviderComponent) formExpeditionProvider: FormExpeditionProviderComponent;
 
   private lastExepeditionQueried = {reference: null, providerId: null};
 
   constructor(
     private router: Router,
+    private modalController: ModalController,
     private receptionsAvelonService: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
     private receptionAvelonProvider: ReceptionAvelonProvider
   ) {}
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  public searchExpeditions(data) {
+    if (data.number_expedition) {
+      this.checkExpedition(data.number_expedition);
+    } else if (data.provider_expedition) {
+      this.listByProvider(data.provider_expedition.id);
+    }
   }
 
-  public checkExpedition(data) {
+  // check if the expedition selected by reference is available and get her data
+  public checkExpedition(expeditionReference) {
     this.formExpeditionInfo.checkingExpeditionInProcess = true;
-    this.lastExepeditionQueried = {
-      reference: data.number_expedition,
-      providerId: data.provider_expedition.id
-    };
-
     this.receptionsAvelonService
-      .checkExpeditionsByNumberAndProvider({
-        expeditionNumber: data.number_expedition,
-        providerId: data.provider_expedition.id
-      })
-      .subscribe((res: ReceptionAvelonModel.ResponseCheckExpeditionsByNumberAndProvider) => {
+      .checkExpeditionByReference(expeditionReference)
+      .subscribe(async (res) => {
         if (res.code == 200) {
-          const expeditionInfo = res.data.expedition || null;
-          const anotherExpeditions = res.data.another_expeditions || [];
+          if (res.data.expedition_available) {
+            const modal = await this.modalController.create({
+              component: InfoExpeditionsComponent,
+              componentProps: {
+                expedition: res.data.expedition,
+                anotherExpeditions: res.data.another_expeditions
+              }
+            });
+            modal.onDidDismiss().then(response => {
+              if (response.data && response.data.reception && response.data.expedition) {
+                const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
+                this.lastExepeditionQueried = {
+                  reference: expedition.reference,
+                  providerId: expedition.provider_id
+                };
 
-          this.expeditionInfo.loadNewExpeditionInfo(data.number_expedition, data.provider_expedition.name, expeditionInfo);
-          this.anotherExpeditions.loadNewAnotherExpeditionsInfo(anotherExpeditions);
+                this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
+                this.router.navigate(['receptions-avelon', 'app']);
+              }
+            });
+            modal.present();
 
-          this.formExpeditionInfo.checkingExpeditionInProcess = false;
-          this.formExpeditionInfo.initForm();
-          this.formExpeditionInfo.focusInExpeditionNumberInput();
-          this.formExpeditionInfo.resetAutocompleteList();
+            this.formExpeditionInfo.checkingExpeditionInProcess = false;
+          } else {
+            this.intermediaryService.presentWarning(`No hay ninguna expedición con referencia ${res.data.expedition_reference_queried} pendiente de recepción.`, null);
+            this.formExpeditionInfo.checkingExpeditionInProcess = false;
+          }
         } else {
+          let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+          if (res.error && res.error.errors) {
+            errorMessage = res.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
           this.formExpeditionInfo.checkingExpeditionInProcess = false;
-          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar comprobar si había alguna expedición pendiente para el proveedor.', 'bottom');
         }
-      }, (error) => {
+      }, (e) => {
+        let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+        if (e.error && e.error.errors) {
+          errorMessage = e.error.errors;
+        }
+        this.intermediaryService.presentToastError(errorMessage);
         this.formExpeditionInfo.checkingExpeditionInProcess = false;
-        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar comprobar si había alguna expedición pendiente para el proveedor.', 'bottom');
       });
   }
 
-  public receptionExpedition(data) {
-    this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
-    this.router.navigate(['receptions-avelon', 'app']);
+  // check if the provider selected have expeditions to receive
+  public listByProvider(providerId) {
+    this.formExpeditionProvider.checkingExpeditionInProcess = true;
+    this.receptionsAvelonService
+      .checkExpeditionsByProvider(providerId)
+      .subscribe(async (res) => {
+        if (res.code == 200) {
+          if (res.data.has_expeditions) {
+            const modal = await this.modalController.create({
+              component: InfoExpeditionsComponent,
+              componentProps: {
+                anotherExpeditions: res.data.expeditions,
+                title: `Expediciones para ${res.data.provider_queried}`,
+                titleAnotherExpeditions: 'Listado de expediciones'
+              }
+            });
+            modal.onDidDismiss().then(response => {
+              if (response.data && response.data.reception && response.data.expedition) {
+                const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
+                this.lastExepeditionQueried = {
+                  reference: expedition.reference,
+                  providerId: expedition.provider_id
+                };
+
+                this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
+                this.router.navigate(['receptions-avelon', 'app']);
+              }
+            });
+            modal.present();
+
+            this.formExpeditionProvider.checkingExpeditionInProcess = false;
+          } else {
+            this.intermediaryService.presentWarning(`No hay expediciones pendientes para el proveedor ${res.data.provider_queried}.`, null);
+            this.formExpeditionProvider.checkingExpeditionInProcess = false;
+          }
+        } else {
+          let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+          if (res.error && res.error.errors) {
+            errorMessage = res.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+          this.formExpeditionProvider.checkingExpeditionInProcess = false;
+        }
+      }, (e) => {
+        let errorMessage = 'Ha ocurrido un error al intentar consultar las expediciones del proveedor.';
+        if (e.error && e.error.errors) {
+          errorMessage = e.error.errors;
+        }
+        this.intermediaryService.presentToastError(errorMessage);
+        this.formExpeditionProvider.checkingExpeditionInProcess = false;
+      });
   }
 }

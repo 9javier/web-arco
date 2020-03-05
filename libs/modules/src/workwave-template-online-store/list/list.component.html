@@ -20,10 +20,10 @@
     </ion-row>
   </div>
   <div class="requests-orders">
-    <table-requests-orders (changeRequestOrder)="requestOrderChanged($event)"></table-requests-orders>
+    <table-requests-orders (changeRequestOrder)="requestOrderChanged($event)" (loadTeamAssignations)="loadTeamAssignationsEmitted($event)"></table-requests-orders>
   </div>
   <div class="team-assignation">
-    <table-team-assignation [responseQuantities]="responseQuantities"></table-team-assignation>
+    <table-team-assignation [responseQuantities]="responseQuantities" (loadTeamAssignations)="loadTeamAssignationsEmitted($event)"></table-team-assignation>
   </div>
 </div>
 

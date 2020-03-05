@@ -70,6 +70,7 @@ export class DamagedShoesComponent implements OnInit {
   }
 
   async getData() {
+    this.thereAreChanges = false;
     await this.productsService.getDamagedList().then(response => {
       const list: DamagedModel.List = response.data;
       this.originalClassifications = JSON.stringify(list.classifications);

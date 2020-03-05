@@ -84,13 +84,6 @@ export class MenuComponent implements OnInit {
           icon: 'apps'
         },
         {
-          title: 'Nuevos Productos',
-          id: 'list-new-products',
-          url: '/list-new-products',
-          icon: 'basket',
-          tooltip: 'Listado de nuevos productos recibidos que aún no han sido impresos'
-        },
-        {
           title: 'Incidencias',
           id: 'incidences',
           url: '/incidences',
@@ -166,6 +159,21 @@ export class MenuComponent implements OnInit {
           url: '/roles/menu',
           icon: 'person'
         },
+      ]
+    },
+    {
+      title: 'Control de exposición',
+      open: true,
+      type: 'wrapper',
+      icon: 'cart',
+      children: [
+        {
+          title: 'Productos sin imprimir',
+          id: 'list-new-products',
+          url: '/list-new-products',
+          icon: 'basket',
+          tooltip: 'Listado de nuevos productos recibidos que aún no han sido impresos'
+        }
       ]
     },
     {
@@ -674,7 +682,7 @@ export class MenuComponent implements OnInit {
       title: 'Configuración',
       open: false,
       type: 'wrapper',
-      icon: 'build',
+    icon: 'build',
       children: [
         {
           title: 'Ajustes',
@@ -685,7 +693,12 @@ export class MenuComponent implements OnInit {
         }
       ]
     },
-
+    {
+      id:'incidents',
+      title: 'Manejo de defectos',
+      icon:'warning',
+      url: '/defect-handler'
+    }
   ];
   private menuPages = {
     sga: this.sgaPages,

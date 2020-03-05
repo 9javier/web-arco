@@ -1,10 +1,12 @@
-import { WarehouseModel } from '@suite/services';
+import { ProductModel, WarehouseModel } from '@suite/services';
 
 export namespace DefectiveRegistryModel {
   import Warehouse = WarehouseModel.Warehouse;
+  import Product = ProductModel.Product;
 
   export interface DefectiveRegistry {
     id?: number;
+    product?: Product;
     storeDetection?: number;
     dateDetection?: Date;
     statusManagementDefect?: StatusManagementDefect;
@@ -86,6 +88,7 @@ export namespace DefectiveRegistryModel {
     code: number;
   }
    export interface IndexRequest {
+     product?: (number | string)[],
      storeDetection?: (number | string)[],
      dateDetection?:(Date)[],
      statusManagementDefect?: (number | string)[],

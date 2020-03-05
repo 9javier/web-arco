@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
   }
 
   verifyNewVersion() {
-    if (window.cordova) {
+    if ((<any>window).cordova) {
       this.isMobileApp = true;
 
         this.appVersionService.getVersion().then((response: AppVersionModel.ResponseIndex) => {

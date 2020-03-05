@@ -1,11 +1,6 @@
 import {AlertController, ModalController} from '@ionic/angular';
 import {Observable, Subscription} from 'rxjs';
-import {
-  ReceptionsAvelonService,
-  ReceptionAvelonModel,
-  IntermediaryService,
-  ProductsService
-} from '@suite/services';
+import {ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService, ProductsService, environment} from '@suite/services';
 import {Component, OnInit, OnDestroy, ViewChild, AfterContentInit, ChangeDetectorRef, ElementRef, AfterViewInit} from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
@@ -14,29 +9,63 @@ import { ListsComponent } from './components/lists/lists.component';
 import {FormControl} from "@angular/forms";
 import {map, startWith} from "rxjs/operators";
 import {InfoModalComponent} from "./info-modal/info-modal.component";
+import {PositionsToast} from "../../../services/src/models/positionsToast.type";
+import {ScreenResult} from "./enums/screen_result.enum";
+import {FormHeaderReceptionComponent} from "./components/form-header-reception/form-header-reception.component";
+import {InfoHeaderReceptionComponent} from "./components/info-header-reception/info-header-reception.component";
+import {animate, state, style, transition, trigger} from "@angular/animations";
+import {WebsocketService} from '../../../services/src/lib/endpoint/web-socket/websocket.service';
+import {type} from '../../../services/src/lib/endpoint/web-socket/enums/typeData';
 
 @Component({
   selector: 'suite-receptions-avelon',
   templateUrl: './receptions-avelon.component.html',
-  styleUrls: ['./receptions-avelon.component.scss']
+  styleUrls: ['./receptions-avelon.component.scss'],
+  animations: [
+    trigger('fadein', [
+      state('out', style({ opacity: 0, display: 'none' })),
+      transition('in => out', [
+        style({ opacity: 1, display: 'flex' }),
+        animate('300ms ease-out', style({ opacity: 0, display: 'none' }))
+      ]),
+      transition('out => in', [
+        style({ opacity: 0, display: 'none' }),
+        animate('1ms ease-out', style({ opacity: 1, display: 'flex' }))
+      ])
+    ])
+  ]
 })
 export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterContentInit, AfterViewInit{
 
   @ViewChild(ListsComponent) listsComponent:ListsComponent;
   @ViewChild('provider') providerInput: ElementRef;
   @ViewChild('expedition') expeditionInput: ElementRef;
+  @ViewChild('ean') eanInput: ElementRef;
+  @ViewChild(FormHeaderReceptionComponent) formHeaderReceptionComponent: FormHeaderReceptionComponent;
+  @ViewChild(InfoHeaderReceptionComponent) infoHeaderReceptionComponent: InfoHeaderReceptionComponent;
+
+  public stateAnimationForm: string = 'in';
+  public stateAnimationInfo: string = 'out';
+
   public expedit:string="";
+  expeditionLines: {
+    id: number,
+    state: number,
+    brandId: number,
+    modelId: number,
+    colorId: number
+  }[];
   response: ReceptionAvelonModel.Reception;
-  dato: ReceptionAvelonModel.Data;
+  oldBrands: ReceptionAvelonModel.Data[] = [];
   subscriptions: Subscription;
   providers: Array<any>;
-  isProviderAvailable: boolean;
+  isReceptionStarted: boolean;
   expedition: string;
   providerId: number;
   interval: any;
   option: any;
   typeScreen: number;
-  reference: string;
+  referencesToPrint: string[];
   filter;
   objectType = Type;
   filterData: ReceptionAvelonModel.Reception;
@@ -59,9 +88,10 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   myControl = new FormControl();
   filteredProviders: Observable<any[]>;
   showCheck: boolean = true;
-  itemParent: ReceptionAvelonModel.Data;
 
   modelSelected: any = null;
+
+  public listSizes: ReceptionAvelonModel.LoadSizesList[] = [];
 
   constructor(
     private reception: ReceptionsAvelonService,
@@ -70,7 +100,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     private virtualKeyboardService: VirtualKeyboardService,
     private productsService: ProductsService,
     private modalController: ModalController,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private websocketService : WebsocketService
   ) {}
 
   async loadProvider(){
@@ -78,9 +109,15 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   }
 
-  returnHome(){
-    this.providerInput.nativeElement.value = "";
-    this.expeditionInput.nativeElement.value = "";
+  resetReceptionProcess(){
+    this.eanInput.nativeElement.value = "";
+    this.listSizes = [];
+
+    this.stateAnimationForm = 'in';
+    this.stateAnimationInfo = 'out';
+    this.isReceptionStarted = false;
+    this.formHeaderReceptionComponent.resetProcess();
+    this.infoHeaderReceptionComponent.loadInfoExpedition(null, null);
 
     this.ngOnInit();
   }
@@ -103,7 +140,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.response = new Reception();
     this.filterData = new Reception();
     this.typeScreen = undefined;
-    this.isProviderAvailable = false;
+    this.referencesToPrint = [];
+    this.isReceptionStarted = false;
     this.subscriptions = this.reception.getAllProviders().subscribe(
       (data: Array<ReceptionAvelonModel.Providers>) => {
         this.providers = data;
@@ -136,7 +174,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   ngAfterViewInit() {
     this.listSelected();
     this.clickSizeSelected();
-
+    this.getEmitEan();
   }
 
   openVirtualKeyboard(list?: Array<ReceptionAvelonModel.Data>, type?: Type) {
@@ -144,7 +182,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
     if(list) {
       list.forEach(item => {
-        dataList.push({id: item.id, value: item.name});
+        dataList.push({id: item.id, value: item.name, color: item.color});
       });
     }
 
@@ -171,6 +209,10 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             case Type.EXPEDITION_NUMBER:
               this.expeditionInput.nativeElement.value = data.selected.id;
               break;
+            case Type.EAN_CODE:
+              this.eanInput.nativeElement.value = data.selected.id;
+              this.result.ean = this.eanInput.nativeElement.value;
+              break;
             case undefined:
               this.expedition = data.selected.id;
               break;
@@ -180,7 +222,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     );
 
     this.virtualKeyboardService
-      .openVirtualKeyboard(dataList, type)
+      .openVirtualKeyboard({dataList, type})
       .then((popover: any) => {
         popover.onDidDismiss().then(() => {
           keyboardEventEmitterSubscribe.unsubscribe();
@@ -188,23 +230,22 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       });
   }
 
-  checkProvider(data: ReceptionAvelonModel.CheckProvider) {
-    this.intermediaryService.presentLoading('Cargando');
+  async checkProvider(data: ReceptionAvelonModel.CheckProvider) {
+    await this.intermediaryService.presentLoading('Cargando');
     this.reception.getReceptions(data.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
-        this.response = info;
-        this.response.brands = this.clearSelected(this.response.brands);
-        this.response.models = this.clearSelected(this.response.models);
-        this.response.colors = this.clearSelected(this.response.colors);
-        this.response.sizes = this.clearSelected(this.response.sizes);
-        this.filterData.brands = this.clearSelected(info.brands);
-        this.filterData.models = this.clearSelected(info.models);
-        this.filterData.colors = this.clearSelected(info.colors);
-        this.filterData.sizes = this.clearSelected(info.sizes);
+      this.response = info;
+      this.expeditionLines = info.lines;
+      this.response.brands = this.clearSelected(this.response.brands);
+      this.response.models = this.clearSelected(this.response.models);
+      this.response.colors = this.clearSelected(this.response.colors);
+      this.filterData.brands = this.clearSelected(info.brands);
+      this.filterData.models = this.clearSelected(info.models);
+      this.filterData.colors = this.clearSelected(info.colors);
 
-        this.reset();
-        this.expedition = data.expedition;
-        this.intermediaryService.dismissLoading();
-      });
+      this.reset();
+      this.expedition = data.expedition;
+
+    },error => {}, async () => await this.intermediaryService.dismissLoading());
   }
 
   async alertMessage(message: string) {
@@ -259,17 +300,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           }
         });
 
-        /****************************sizes*****************************/
-        const sizesFilter = this.response.sizes.filter(elem => {
-          if(elem.belongsModels.find(elem => elem === modelId)){
-            return elem
-          }
-        });
-        sizesFilter.forEach(elem => {
-          if(size.find(data => data.id === elem.id) === undefined) {
-            size.push(elem)
-          }
-        });
         /*****************************color****************************/
         const colorFilter = this.response.colors.filter(elem => {
           if(elem.belongsModels.find(elem => elem === modelId)){
@@ -299,14 +329,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         }
       });
 
-      /****************************sizes*****************************/
-      const sizesFilter = this.response.sizes.filter(elem => !!elem.belongsModels.find(model => !!dato.available_ids.find(id => id == model)));
-      sizesFilter.forEach(elem => {
-        if (size.find(data => data.id === elem.id) === undefined) {
-          size.push(elem)
-        }
-      });
-
       /*****************************color****************************/
       const colorFilter = this.response.colors.filter(elem => !!elem.belongsModels.find(model => !!dato.available_ids.find(id => id == model)));
       colorFilter.forEach(elem => {
@@ -318,40 +340,47 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
     if (model.length > 0) {
       this.response.models = model;
-      this.reception.setModelsList(model)
+      this.reception.setModelsList(model);
+      if (this.response.models.length == 1) {
+        this.result.modelId = this.response.models[0].id;
+        this.response.models[0].selected = true;
+      }
     }
     if (brand.length > 0) {
       this.response.brands = brand;
-      this.reception.setBrandsList(brand)
+      this.reception.setBrandsList(brand);
+      if (this.response.brands.length == 1) {
+        this.result.brandId = this.response.brands[0].id;
+        this.response.brands[0].selected = true;
+      }
     }
     if (color.length > 0) {
       this.response.colors = color;
-      this.reception.setColorsList(color)
+      this.reception.setColorsList(color);
+      if (this.response.colors.length == 1) {
+        this.result.colorId = this.response.colors[0].id;
+        this.response.colors[0].selected = true;
+      }
     }
-    if (size.length > 0) {
-      this.response.sizes = size;
-      this.reception.setSizesList(size)
+
+    if (this.result.modelId && this.result.colorId) {
+      this.loadSizes();
     }
   }
 
-
   reset(dato?: ReceptionAvelonModel.Data) {
     this.response.models = this.filterData.models;
-    this.response.sizes = this.filterData.sizes;
     this.response.colors = this.filterData.colors;
     this.response.brands = this.filterData.brands;
     this.reception.setModelsList(this.response.models);
     this.reception.setBrandsList(this.response.brands);
     this.reception.setColorsList(this.response.colors);
-    this.reception.setSizesList(this.response.sizes);
   }
 
   resetAll() {
     this.intermediaryService.presentLoading('Cargando');
     this.response.models = this.filterData.models;
     this.response.models.map(elem => elem.selected = false);
-    this.response.sizes = this.filterData.sizes;
-    this.response.sizes.map(elem => elem.selected = false);
     this.response.colors = this.filterData.colors;
     this.response.colors.map(elem => elem.selected = false);
     this.response.brands = this.filterData.brands;
@@ -364,135 +393,258 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.reception.setModelsList(this.response.models);
     this.reception.setBrandsList(this.response.brands);
     this.reception.setColorsList(this.response.colors);
-    this.reception.setSizesList(this.response.sizes);
     this.intermediaryService.dismissLoading();
     this.expedit =this.expedition;
     this.result.ean="";
-    this.oldEan="";
+    this.listSizes = [];
+  }
+
+  resetSizes(){
+    for(let size of this.listSizes){
+      size.quantity = 0;
+    }
+  }
+
+  goBack(type: string) {
+
+    switch (type) {
+      case 'brands':
+        if(this.oldBrands.length > 0) {
+          this.response.brands = JSON.parse(JSON.stringify(this.oldBrands));
+        }else{
+          this.response.brands = this.filterData.brands;
+        }
+        for (let brand of this.response.brands) {
+          brand.selected = false;
+        }
+        this.reception.setBrandsList(this.response.brands);
+        break;
+      case 'models':
+        const models = this.filterData.models;
+        if(this.result.colorId){
+          this.response.models = [];
+          const color = this.filterData.colors.find(c => c.id == this.result.colorId);
+          for(let model of models){
+            if(color.belongsModels.includes(model.id)){
+              model.selected = false;
+              this.response.models.push(model);
+            }else{
+              for(let modelId of model.available_ids){
+                if(color.belongsModels.includes(modelId)){
+                  model.selected = false;
+                  this.response.models.push(model);
+                  break;
+                }
+              }
+            }
+          }
+        }else{
+          for(let model of models) {
+            model.selected = false;
+          }
+          this.response.models = models;
+        }
+        this.reception.setModelsList(this.response.models);
+        break;
+      case 'colors':
+        const colors = this.filterData.colors;
+        if(this.result.modelId){
+          this.response.colors = [];
+          const model = this.filterData.models.find(m => m.id == this.result.modelId);
+          for(let color of colors){
+            if(color.belongsModels.includes(model.id)){
+              color.selected = false;
+              this.response.colors.push(color);
+            }else{
+              for(let modelId of model.available_ids){
+                if(color.belongsModels.includes(modelId)){
+                  color.selected = false;
+                  this.response.colors.push(color);
+                  break;
+                }
+              }
+            }
+          }
+        }else{
+          for(let color of colors) {
+            color.selected = false;
+          }
+          this.response.colors = colors;
+        }
+        this.reception.setColorsList(this.response.colors);
+    }
+
   }
 
   listSelected() {
-    this.reception.getEmitList().subscribe((e:any) => {
-      this.dato = e.dato;
-      if (!this.result.modelId && !this.result.brandId && !this.result.colorId) {
-        this.itemParent = this.dato;
-      }
+    this.reception.getEmitList().subscribe((event: any) => {
 
-      switch (e.type) {
+      switch (event.type) {
         case 'brands':
-          if (e.dato.selected) {
-            this.result.brandId = e.dato.id;
-            const timeout = setTimeout(() => {
-              this.updateList(this.dato);
+          if (event.dato.selected) {
+            this.oldBrands = JSON.parse(JSON.stringify(this.response.brands));
+            this.result.brandId = event.dato.id;
+            setTimeout(() => {
+              this.updateList(event.dato);
             }, 0);
           } else {
             this.result.brandId = undefined;
-
-            if (this.dato.id === this.itemParent.id) {
-              this.reset();
+            this.goBack('brands');
+            if(!this.result.modelId){
+              this.goBack('models');
+            }
+            if(!this.result.colorId){
+              this.goBack('colors');
             }
           }
+          this.getModelAndColorColors(this.result.brandId);
           break;
         case 'models':
-          if (e.dato.selected) {
-            this.result.modelId = e.dato.id;
-            this.modelSelected = e.dato;
-            const timeout = setTimeout(() => {
-              this.updateList(this.dato);
+          if (event.dato.selected) {
+            this.result.modelId = event.dato.id;
+            this.modelSelected = event.dato;
+            setTimeout(() => {
+              this.updateList(event.dato);
             }, 0);
           } else {
             this.result.modelId = undefined;
             this.modelSelected = null;
-
-            if (this.dato.id === this.itemParent.id) {
-              this.reset();
+            this.goBack('models');
+            if (!this.result.brandId) {
+              this.goBack('brands');
+            }
+            if (!this.result.colorId) {
+              this.goBack('colors');
             }
           }
+          this.getColorColors(this.result.modelId);
           break;
         case 'colors':
-          if (e.dato.selected) {
-            this.result.colorId = e.dato.id;
+          if (event.dato.selected) {
+            this.result.colorId = event.dato.id;
             if (this.modelSelected) {
-              this.result.modelId = this.modelSelected.available_ids.find(id => e.dato.belongsModels.find(model => model == id));
+              this.result.modelId = this.modelSelected.available_ids.find(id => event.dato.belongsModels.find(model => model == id));
             }
-            const timeout = setTimeout(() => {
-              this.updateList(this.dato);
+            setTimeout(() => {
+              this.updateList(event.dato);
             }, 0);
           } else {
             this.result.colorId = undefined;
-            if (this.dato.id === this.itemParent.id) {
-              this.reset();
+            this.goBack('colors');
+            if (!this.result.brandId) {
+              this.goBack('brands');
+            }
+            if (!this.result.modelId) {
+              this.goBack('models');
             }
           }
           break;
       }
+
     });
   }
 
-  enviar() {
-    if( this.result.ean != undefined &&
-      this.result.ean.length > 0 &&
-      this.oldEan !=  this.result.ean
-      ) {
-      this.onKey();
-      return;
-    }
-    if (!this.result.brandId) {
-      this.alertMessage('Debe seleccionar una marca');
-      return;
-    }
-    if (!this.result.colorId) {
-      this.alertMessage('Debe seleccionar un color');
-      return;
-    }
-    if (!this.result.modelId) {
-      this.alertMessage('Debe seleccionar un modelo');
-      return;
-    }
-    if (!this.result.sizeId) {
-      this.alertMessage('Debe seleccionar una talla');
-      return;
-    }
-
-    if (!this.result.ean) {
-      delete this.result.ean;
-    }
-    this.result.providerId = this.providerId;
-    this.result.expedition = this.expedition;
-
-    this.intermediaryService.presentLoading('Enviando');
-    const body = {
-      modelId: this.result.modelId,
-      colorId: this.result.colorId,
-      sizeId: this.result.sizeId
-    };
-    this.reception.printReceptionLabel(this.result).subscribe(
-      resp => {
-        this.reception.getReceptions(this.providerId).subscribe(
-          (info: ReceptionAvelonModel.Reception) => {
-            this.response = info;
-            this.response.brands = this.clearSelected(this.response.brands);
-            this.response.models = this.clearSelected(this.response.models);
-            this.response.colors = this.clearSelected(this.response.colors);
-            this.response.sizes = this.clearSelected(this.response.sizes);
-            this.typeScreen = resp.type;
-            this.reference = resp.reference;
-            this.intermediaryService.dismissLoading();
-          },
-          () => {
-            this.typeScreen = resp.type
-            this.reference = resp.reference
+  getModelAndColorColors(brandId: number){
+    let greenModels: number[] = [];
+    let orangeModels: number[] = [];
+    let greenColors: number[] = [];
+    let orangeColors: number[] = [];
+    for(let line of this.expeditionLines){
+      if(!brandId || line.brandId == brandId){
+        if(line.state == 2){
+          if(!greenModels.includes(line.modelId)){
+            greenModels.push(line.modelId);
           }
-        );
-      },
-      e => {
-        this.intermediaryService.dismissLoading();
-          this.intermediaryService.presentToastError(e.error.errors)
-      },
-      () => {
-        this.intermediaryService.dismissLoading();
+          if(!greenColors.includes(line.colorId)){
+            greenColors.push(line.colorId);
+          }
+        }else{
+          if(!orangeModels.includes(line.modelId)){
+            orangeModels.push(line.modelId);
+          }
+          if(!orangeColors.includes(line.colorId)){
+            orangeColors.push(line.colorId);
+          }
+        }
       }
-    );
+    }
+    orangeModels = orangeModels.filter(model => {return !greenModels.includes(model)});
+    orangeColors = orangeColors.filter(color => {return !greenColors.includes(color)});
+    for(let model of this.response.models){
+      if(greenModels.includes(model.id)){
+        model.color = 'green';
+      }else{
+        if(orangeModels.includes(model.id)){
+          model.color = 'orange';
+        }else{
+          model.color = 'red';
+        }
+      }
+    }
+    for(let color of this.response.colors){
+      if(greenColors.includes(color.id)){
+        color.color = 'green';
+      }else{
+        if(orangeColors.includes(color.id)){
+          color.color = 'orange';
+        }else{
+          color.color = 'red';
+        }
+      }
+    }
+    this.reception.setModelsList(this.response.models);
+    this.reception.setColorsList(this.response.colors);
+  }
+
+  getColorColors(modelId: number){
+    let greenColors: number[] = [];
+    let orangeColors: number[] = [];
+    for(let line of this.expeditionLines){
+      if(!modelId || line.modelId == modelId){
+        if(line.state == 2 && !greenColors.includes(line.colorId)){
+          greenColors.push(line.colorId);
+        }else{
+          if(line.state != 2 && !orangeColors.includes(line.colorId)){
+            orangeColors.push(line.colorId);
+          }
+        }
+      }
+    }
+    orangeColors = orangeColors.filter(color => {return !greenColors.includes(color)});
+    for(let color of this.response.colors){
+      if(greenColors.includes(color.id)){
+        color.color = 'green';
+      }else{
+        if(orangeColors.includes(color.id)){
+          color.color = 'orange';
+        }else{
+          color.color = 'red';
+        }
+      }
+    }
+    this.reception.setColorsList(this.response.colors);
+  }
+
+  public printProductsLoading() {
+    this.intermediaryService.presentLoading('Enviando').then(() => this.printProducts());
+  }
+
+  private printProducts() {
+    if (!this.providerId || !this.expedition) {
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError('No se detectan el proveedor y la expedición asignados. Pruebe a reiniciar el proceso. Si persiste el error contacte con su responsable.');
+    } else {
+      const eanSet = this.eanInput.nativeElement.value;
+      if (eanSet && eanSet != this.oldEan) {
+        this.checkEanAndPrint(eanSet);
+      } else {
+        if (this.checkIfSelectMandatoryFields()) {
+          this.notifyReceptionAndPrint();
+        } else {
+          this.intermediaryService.dismissLoading();
+        }
+      }
+    }
   }
 
   clearSelected(array: Array<ReceptionAvelonModel.Data>) {
@@ -523,10 +675,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           data.models,
           this.response.models
         );
-        this.response.sizes = this.mappingReceptionsNotifiedProvidersLists(
-          data.sizes,
-          this.response.sizes
-        );
       });
   }
 
@@ -537,54 +685,51 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         item => item.id === element.id
       );
       if (findIndexResult >= 0) {
-        if (element.newSelectd) {
-          array[findIndexResult].newSelectd = element.newSelectd;
+        if (element.newSelected) {
+          array[findIndexResult].newSelected = element.newSelected;
         }
       } else {
-        element.newSelectd = true;
+        element.newSelected = true;
         array.push(element);
       }
     });
     return array;
   }
 
-  onKey() {
+  onKey(ean: string) {
     this.intermediaryService.presentLoading('Enviando');
-    this.reception.eanProductPrint(this.result.ean, this.expedition, this.providerId).subscribe(
-      result => {
+    this.reception
+      .eanProductPrint(ean, this.expedition, this.providerId)
+      .subscribe((resultCheck) => {
+        this.reception
+          .printReceptionLabel({to_print: [resultCheck]})
+          .subscribe((resultPrint) => {
+
+          });
+
         this.reception.getReceptions(this.providerId).subscribe(
           (info: ReceptionAvelonModel.Reception) => {
             this.response = info;
             this.response.brands = this.clearSelected(this.response.brands);
             this.response.models = this.clearSelected(this.response.models);
             this.response.colors = this.clearSelected(this.response.colors);
-            this.response.sizes = this.clearSelected(this.response.sizes);
-            this.typeScreen = result.type;
-            this.reference = result.reference;
+            this.typeScreen = resultCheck.type;
             this.intermediaryService.dismissLoading();
           },
           () => {
-            this.typeScreen = result.type;
-            this.reference = result.reference;
+            this.typeScreen = resultCheck.type
           })
-      },
-      (err) =>  {
+      }, e => {
         this.intermediaryService.dismissLoading();
-        if (err.error.message === 'ProductsNoFoundToPrintException') {
-          this.intermediaryService.presentToastError("El producto no esta asignado a esta recepción");
-          this.resetAll();
-        } else {
-          this.intermediaryService.presentToastError("Debe seleccionar marca,modelo,color y talla");
-          this.isErrorEan = true;
-          this.oldEan = this.result.ean;
-        }
-      }
-    )
+        this.intermediaryService.presentToastError("Debe seleccionar marca,modelo,color y talla");
+        this.isErrorEan = true;
+        this.oldEan = this.result.ean;
+      });
   }
 
- async screenExit(e) {
+  async screenExit(e) {
   this.typeScreen = undefined;
-  this.reference = '';
+  this.referencesToPrint = [];
   this.resetAll();
 
   }
@@ -615,20 +760,337 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             }
           });
 
-          modal.onDidDismiss().then(response => {
+          modal.onDidDismiss().then(async response => {
             if (response.data && response.data.reception) {
               this.showCheck = false;
-              this.isProviderAvailable = true;
-              this.checkProvider(data);
+              this.isReceptionStarted = true;
+              await this.checkProvider(data);
             }
           });
 
           modal.present();
         }else{
-          this.isProviderAvailable = false;
+          this.isReceptionStarted = false;
           this.alertMessage('No se ha encontrado esa expedición');
         }
       });
     }
+  }
+
+  private loadSizes() {
+    this.reception
+      .postLoadSizesList({modelId: this.result.modelId, colorId: this.result.colorId})
+      .subscribe((res: ReceptionAvelonModel.ResponseLoadSizesList) => {
+        if (res.code == 200) {
+          this.listSizes = res.data;
+        } else {
+          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
+        }
+      }, (error) => {
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
+      });
+  }
+
+  private checkEanAndPrint(ean) {
+    this.reception
+      .eanProductPrint(ean, this.expedition, this.providerId)
+      .subscribe((resultCheck) => {
+        this.intermediaryService.dismissLoading();
+        if (resultCheck.resultToPrint && resultCheck.resultToPrint.length > 0) {
+          const resultEan = resultCheck.resultToPrint[0];
+          this.typeScreen = resultEan.type;
+          this.referencesToPrint = [resultEan.reference];
+        } else {
+          let errorMessage = 'Ha ocurrido un error al intentar comprobar el EAN '+ean+' introducido.';
+          if (resultCheck.productsWithError && resultCheck.productsWithError.length > 0) {
+            errorMessage = 'EAN ' + ean + ': '+ resultCheck.productsWithError[0].reason;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+        }
+      }, e => {
+        if (e.error.code == 400 && e.error.message == 'InvalidEanException') {
+          if (this.checkIfSelectMandatoryFields(ean)) {
+            if (this.checkOnlyOneSizeAndOneQuantity()) {
+              this.notifyReceptionAndPrint(ean);
+            } else {
+              this.intermediaryService.dismissLoading();
+            }
+          } else {
+            this.intermediaryService.dismissLoading();
+          }
+        } else {
+          this.intermediaryService.dismissLoading();
+          let errorMessage = 'Ha ocurrido un error al intentar comprobar el EAN introducido.';
+          if (e.error.errors) {
+            errorMessage = e.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+        }
+      });
+  }
+
+  // check if all fields mandatory are selected to receive the product (brand, model, color and at least one size)
+  private checkIfSelectMandatoryFields(ean?: string): boolean {
+    const errorsMessages: string[] = [];
+    const sizesToPrint = this.listSizes.filter(s => {
+      return s.quantity > 0;
+    });
+
+    if(ean && (!this.result.brandId || !this.result.modelId || !this.result.colorId || sizesToPrint.length <= 0)){
+      this.intermediaryService.presentWarning('Código EAN '+ean+ ' no registrado en el sistema. <br><br>Por favor seleccione Marca, Modelo, Color y una talla para imprimir la etiqueta y registrar el EAN en el sistema', null);
+      return false;
+    }
+
+    if (!this.result.brandId) {
+      errorsMessages.push('Una marca.');
+    }
+    if (!this.result.modelId) {
+      errorsMessages.push('Un modelo.');
+    }
+    if (!this.result.colorId) {
+      errorsMessages.push('Un color.');
+    }
+    if (sizesToPrint.length <= 0) {
+      errorsMessages.push('Al menos una talla.');
+    }
+
+    if (errorsMessages.length > 0) {
+      const messageAsList = errorsMessages.map(m => `<li>${m}</li>`);
+      this.intermediaryService.presentWarning('Se ha detectado que faltan campos por seleccionar para poder realizar la recepción del producto y la impresión de su código único. Para poder continuar compruebe que ha seleccionado: <ul>' + messageAsList + '</ul>', null);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // check that user only has selected one size and one unity for that size to associate to EAN code
+  private checkOnlyOneSizeAndOneQuantity(): boolean {
+    const sizesToPrint = this.listSizes.filter(s => {
+      return s.quantity > 0;
+    });
+    if (sizesToPrint.length > 1) {
+      this.intermediaryService.presentWarning('Seleccione solo una talla para asociar al EAN escaneado. Asegúrese de que solo ha indicado 1 Ud. de la talla que desea asociar al código.', null);
+      return false;
+    } else if (sizesToPrint[0].quantity > 1) {
+      this.intermediaryService.presentWarning('Solo puede asociar a este EAN 1 Ud. de la talla indicada.', null);
+      return false;
+    }
+
+    return true;
+  }
+
+  // notify as received all products selected (with multiple sizes) and redirect user to location page (sorter or warehouse)
+  private notifyReceptionAndPrint(eanToAssociate: string = null) {
+    const paramsRequest = [];
+
+    const sizesToPrint = this.listSizes.filter(s => {
+      return s.quantity > 0;
+    });
+    const sizesMapped = sizesToPrint.map(s => {
+      const sizeMapped: any = {
+        providerId: this.providerId,
+        expedition: this.expedition,
+        brandId: this.result.brandId,
+        colorId: this.result.colorId,
+        sizeId: s.id,
+        modelId: this.result.modelId,
+        quantity: s.quantity
+      };
+      if (eanToAssociate) {
+        sizeMapped.ean = eanToAssociate;
+      }
+      return sizeMapped;
+    });
+    for (let size of sizesMapped) {
+      for (let q = 0; q < size.quantity; q++) {
+        paramsRequest.push(size);
+      }
+    }
+
+    this.reception
+      .printReceptionLabel({to_print: paramsRequest})
+      .subscribe((res) => {
+        // refresh the data
+        this.reception
+          .getReceptions(this.providerId)
+          .subscribe((info: ReceptionAvelonModel.Reception) => {
+            this.response = info;
+            this.response.brands = this.clearSelected(this.response.brands);
+            this.response.models = this.clearSelected(this.response.models);
+            this.response.colors = this.clearSelected(this.response.colors);
+          });
+
+        if (res.resultToPrint && res.resultToPrint.length > 0) {
+          const someProductToSorter = !!res.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
+
+          if (someProductToSorter) {
+            this.typeScreen = ScreenResult.SORTER_VENTILATION;
+          }
+
+          this.referencesToPrint = res.resultToPrint.map(r => r.reference);
+        }
+
+        if (res.productsWithError && res.productsWithError.length > 0) {
+          let errorMessage = `No se han podido generar e imprimir alguna de las etiquetas necesarias (${res.productsWithError.length}). <br/>Se detalla la incidencia a continuación: <ul>`;
+          for (let error of res.productsWithError) {
+            errorMessage += `<li>${error.reason}</li>`
+          }
+          errorMessage += '</ul>';
+          this.intermediaryService.presentWarning(errorMessage, null);
+          this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.');
+        }
+        this.intermediaryService.dismissLoading();
+      }, (error) => {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.');
+      });
+  }
+
+  public getPhotoUrl(modelId): string {
+    if (modelId && this.modelSelected && this.modelSelected.photos_models && this.modelSelected.photos_models[modelId]) {
+      return environment.urlBase + this.modelSelected.photos_models[modelId];
+    } else {
+      return '../assets/img/placeholder-product.jpg';
+    }
+  }
+
+  // check if the expedition selected by reference is available and get her data
+  public checkExpedition(data) {
+    console.log(data);
+    this.formHeaderReceptionComponent.checkingExpedition(true);
+    this.reception
+      .checkExpeditionByReference(data)
+      .subscribe(async (res) => {
+        if (res.code == 200) {
+          if (res.data.expedition_available) {
+            const modal = await this.modalController.create({
+              component: InfoModalComponent,
+              componentProps: {
+                expedition: res.data.expedition,
+                anotherExpeditions: res.data.another_expeditions
+              }
+            });
+            modal.onDidDismiss().then(response => {
+              if (response.data && response.data.reception && response.data.expedition) {
+                const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
+                const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
+                  expedition: expedition.reference,
+                  providerId: expedition.provider_id
+                };
+                this.checkProvider(fieldsToLoadData);
+
+                this.stateAnimationForm = 'out';
+                this.stateAnimationInfo = 'in';
+                this.isReceptionStarted = true;
+                this.infoHeaderReceptionComponent.loadInfoExpedition(expedition.reference, {name: expedition.provider_name, id: expedition.provider_id.toString()});
+              }
+            });
+            modal.present();
+
+            this.formHeaderReceptionComponent.checkingExpedition(false);
+          } else {
+            this.isReceptionStarted = false;
+            this.alertMessage(`No hay ninguna expedición con referencia ${res.data.expedition_reference_queried} pendiente de recepción.`);
+            this.formHeaderReceptionComponent.checkingExpedition(false);
+          }
+        } else {
+          this.stateAnimationForm = 'in';
+          this.stateAnimationInfo = 'out';
+          this.isReceptionStarted = false;
+          let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+          if (res.error && res.error.errors) {
+            errorMessage = res.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+          this.formHeaderReceptionComponent.checkingExpedition(false);
+        }
+      }, (e) => {
+        this.stateAnimationForm = 'in';
+        this.stateAnimationInfo = 'out';
+        this.isReceptionStarted = false;
+        let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+        if (e.error && e.error.errors) {
+          errorMessage = e.error.errors;
+        }
+        this.intermediaryService.presentToastError(errorMessage);
+        this.formHeaderReceptionComponent.checkingExpedition(false);
+      });
+  }
+
+  // check if the provider selected have expeditions to receive
+  public listByProvider(data) {
+    this.formHeaderReceptionComponent.checkingProvider(true);
+    this.reception
+      .checkExpeditionsByProvider(data)
+      .subscribe(async (res) => {
+        if (res.code == 200) {
+          if (res.data.has_expeditions) {
+            const modal = await this.modalController.create({
+              component: InfoModalComponent,
+              componentProps: {
+                anotherExpeditions: res.data.expeditions,
+                title: `Expediciones para ${res.data.provider_queried}`,
+                titleAnotherExpeditions: 'Listado de expediciones'
+              }
+            });
+            modal.onDidDismiss().then(response => {
+              if (response.data && response.data.reception && response.data.expedition) {
+                const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
+                const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
+                  expedition: expedition.reference,
+                  providerId: expedition.provider_id
+                };
+                this.checkProvider(fieldsToLoadData);
+
+                this.stateAnimationForm = 'out';
+                this.stateAnimationInfo = 'in';
+                this.isReceptionStarted = true;
+                this.infoHeaderReceptionComponent.loadInfoExpedition(expedition.reference, {name: expedition.provider_name, id: expedition.provider_id.toString()});
+              }
+            });
+            modal.present();
+
+            this.formHeaderReceptionComponent.checkingProvider(false);
+          } else {
+            this.stateAnimationForm = 'in';
+            this.stateAnimationInfo = 'out';
+            this.isReceptionStarted = false;
+            this.alertMessage(`No hay expediciones pendientes para el proveedor ${res.data.provider_queried}.`);
+            this.formHeaderReceptionComponent.checkingProvider(false);
+          }
+        } else {
+          this.stateAnimationForm = 'in';
+          this.stateAnimationInfo = 'out';
+          this.isReceptionStarted = false;
+          let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+          if (res.error && res.error.errors) {
+            errorMessage = res.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+          this.formHeaderReceptionComponent.checkingProvider(false);
+        }
+      }, (e) => {
+        this.stateAnimationForm = 'in';
+        this.stateAnimationInfo = 'out';
+        this.isReceptionStarted = false;
+        let errorMessage = 'Ha ocurrido un error al intentar consultar las expediciones del proveedor.';
+        if (e.error && e.error.errors) {
+          errorMessage = e.error.errors;
+        }
+        this.intermediaryService.presentToastError(errorMessage);
+        this.formHeaderReceptionComponent.checkingProvider(false);
+      });
+  }
+
+  getEmitEan(){
+    this.websocketService.getEmitData().subscribe((x:any)=>{
+      console.log(x);
+      if(x.type !== undefined){
+        if(x.type === type.OBJECT){
+          this.result.ean = x.data.ean;
+          this.printProductsLoading();
+        }
+      }
+    });
   }
 }

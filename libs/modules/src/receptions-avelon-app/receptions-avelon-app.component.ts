@@ -17,11 +17,10 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.toolbarProvider.showBackArrow.next(true);
+    this.toolbarProvider.currentPage.next('Recepción de mercancía');
   }
 
   ngOnDestroy() {
-    this.toolbarProvider.showBackArrow.next(false);
     this.receptionAvelonProvider.expeditionData = null;
   }
 

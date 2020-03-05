@@ -14,6 +14,7 @@ import Brand = BrandModel.Brand;
 import Season = SeasonModel.Season;
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,12 @@ export class PredistributionsService {
   private entitiesBlockedUrl: string;
   private updateBlockReservedUrl: string;
   private updateBlockReservedUrl2: string;
-  constructor(private http: HttpClient) {
+  private newDirectPickingUrl: string;
+
+  constructor(
+    private http: HttpClient,
+    private requestsProvider: RequestsProvider
+  ) {
     this.baseUrl = environment.apiSorter;
     this.indexUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress`;
     this.entitiesUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress/entites`;
@@ -34,7 +40,7 @@ export class PredistributionsService {
     this.updateBlockReservedUrl2 = `${this.baseUrl}/handler/test/BlockProduct`;
     this.index2Url = `${this.baseUrl}/reception/expedition/lines-destiny-impress/blocked`;
     this.entitiesBlockedUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress/filters-blocked`;
-
+    this.newDirectPickingUrl = `${this.baseUrl}/workwaves/confirm/matchLineRequest-res`;
   }
 
   index(body: PredistributionModel.IndexRequest): Observable<PredistributionModel.DataSource> {
@@ -42,7 +48,6 @@ export class PredistributionsService {
       map(resp => resp.data)
     )
   }
-
 
   entities() {
     const body = {
@@ -63,7 +68,6 @@ export class PredistributionsService {
       map(resp => resp.data)
     )
   }
-
 
   updateBlockReserved(data:PredistributionModel.BlockReservedRequest[]){
     return this.http.post<HttpRequestModel.Response>(this.updateBlockReservedUrl, data).pipe(
@@ -101,6 +105,10 @@ export class PredistributionsService {
     return this.http.post<HttpRequestModel.Response>(this.entitiesBlockedUrl,body).pipe(
       map(resp => resp.data)
     )
+  }
+
+  newDirectPicking(parameters: PredistributionModel.PickingRequest): Promise<HttpRequestModel.Response>{
+    return this.requestsProvider.post(this.newDirectPickingUrl, parameters);
   }
 
 }

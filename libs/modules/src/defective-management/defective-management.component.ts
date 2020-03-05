@@ -15,7 +15,8 @@ import { DefectiveManagementChildModel } from '../../../services/src/models/endp
   styleUrls: ['./defective-management.component.scss'],
 })
 export class DefectiveManagementComponent implements OnInit {
-  toSelectChildren = false;
+  openParentId = 0;
+  toSelectChildren: (boolean)[] = [];
   toSelectGroup = false;
   groupsToSelect: DefectiveManagementModel.DefectiveManagementParent[] = [];
   groupsChildrenToSelect: DefectiveManagementChildModel.DefectiveManagementChild[] = [];
@@ -34,8 +35,18 @@ export class DefectiveManagementComponent implements OnInit {
 
   async getData() {
     // await this.intermediaryService.presentLoading();
+    this.toSelectChildren = [];
+    this.groupsChildrenToSelect = [];
     this.defectiveManagementService.getIndex().subscribe((response) => {
       this.groupsDefectiveManagement = response;
+
+      this.groupsDefectiveManagement.forEach((item) => {
+        item.deletedChild = false;
+        item.updateChild = false;
+        item.addedChild = true;
+        item.open = item.id === this.openParentId;
+      });
+
       this.intermediaryService.dismissLoading();
     }, (e) => { }, () => {
       this.intermediaryService.dismissLoading();
@@ -136,8 +147,7 @@ export class DefectiveManagementComponent implements OnInit {
     });
   }
 
-  onChanged(parentId: number, child: DefectiveManagementChildModel.DefectiveManagementChild) {
-    this.toSelectChildren = true;
+  onChanged(positionParent: number, parentId: number, child: DefectiveManagementChildModel.DefectiveManagementChild) {
     let exits: boolean = this.groupsChildrenToSelect.some((childX) => childX.id === child.id);
 
     child.defectTypeParent = parentId;
@@ -148,12 +158,24 @@ export class DefectiveManagementComponent implements OnInit {
       const indexOf = this.groupsChildrenToSelect.map((childX) => childX.id).indexOf(child.id);
       this.groupsChildrenToSelect.splice(indexOf, 1 );
     }
-    if(this.groupsChildrenToSelect.length === 0) {
-      this.toSelectChildren = false;
+
+    this.groupsDefectiveManagement[positionParent].deletedChild = false;
+    this.groupsDefectiveManagement[positionParent].updateChild = false;
+    this.groupsDefectiveManagement[positionParent].addedChild = true;
+
+    const arrayParents = this.groupsChildrenToSelect.filter((x) => x.defectTypeParent === parentId);
+
+    if (arrayParents.length === 1) {
+      this.groupsDefectiveManagement[positionParent].addedChild = false;
+      this.groupsDefectiveManagement[positionParent].deletedChild = true;
+      this.groupsDefectiveManagement[positionParent].updateChild = true;
+    } else if (arrayParents.length > 1) {
+      this.groupsDefectiveManagement[positionParent].addedChild = false;
+      this.groupsDefectiveManagement[positionParent].deletedChild = true;
     }
   }
 
-  async presentDeleteChildrenAlert() {
+  async presentDeleteChildrenAlert(parentId: number) {
     const alert = await this.alertController.create({
       header: 'Eliminar Tipos de Defectuosos',
       message: `¿Está seguro que desea eliminar los tipos de defectuosos seleccionados?`,
@@ -168,7 +190,7 @@ export class DefectiveManagementComponent implements OnInit {
         {
           text: 'Vale',
           handler: () => {
-            this.removeDefectiveType();
+            this.removeDefectiveType(parentId);
           }
         }
       ]
@@ -177,18 +199,19 @@ export class DefectiveManagementComponent implements OnInit {
     await alert.present();
   }
 
-  async removeDefectiveType() {
+  async removeDefectiveType(parentId: number) {
     await this.intermediaryService.presentLoading();
 
     let deletions: Observable<any> = new Observable(observer => observer.next());
     this.groupsChildrenToSelect.forEach(child => {
-      deletions = deletions.pipe(switchMap(() => {
-        return (this.defectiveManagementService.deleteChildren(child.id))
-      }))
+      if (child.defectTypeParent === parentId) {
+        deletions = deletions.pipe(switchMap(() => {
+          return (this.defectiveManagementService.deleteChildren(child.id))
+        }))
+      }
     });
 
     this.groupsChildrenToSelect = [];
-    this.toSelectChildren = false;
 
     deletions.subscribe(async () => {
       await this.intermediaryService.dismissLoading();
@@ -211,7 +234,6 @@ export class DefectiveManagementComponent implements OnInit {
         modal.onDidDismiss().then(async () => {
           await this.getData();
           this.groupsChildrenToSelect = [];
-          this.toSelectChildren = false;
         });
         await modal.present();
       } else {
@@ -229,5 +251,9 @@ export class DefectiveManagementComponent implements OnInit {
       await this.getData();
     });
     await modal.present();
+  }
+
+  openGroup(parentId: number) {
+    this.openParentId = parentId;
   }
 }
