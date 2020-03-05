@@ -58,13 +58,13 @@
         <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.id == -1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
+              <span *ngIf="currentType == 1 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
                 ●
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
+              <span *ngIf="currentType == 1 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
                 ●
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="currentType == 2">
                 {{market.stock}}
               </span> 
             </span>
@@ -99,13 +99,13 @@
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.id == -1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
+              <span *ngIf="currentType == 1 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
                 ●
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
+              <span *ngIf="currentType == 1 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
                 ●
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="currentType == 2">
                 {{market.stock}}
               </span> 
             </span>
@@ -118,13 +118,13 @@
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.id == -1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
+              <span *ngIf="currentType == 1 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
                 ●
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
+              <span *ngIf="currentType == 1 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
                 ●
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="currentType == 2">
                 {{market.stock}}
               </span> 
             </span>
@@ -137,13 +137,13 @@
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.id == -1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
+              <span *ngIf="currentType == 1 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
                 ●
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
+              <span *ngIf="currentType == 1 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
                 ●
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="currentType == 2">
                 {{market.stock}}
               </span> 
             </span>
@@ -156,13 +156,13 @@
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.id == -1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
+              <span *ngIf="currentType == 1 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
                 ●
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
+              <span *ngIf="currentType == 1 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
                 ●
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="currentType == 2">
                 {{market.stock}}
               </span> 
             </span> 
