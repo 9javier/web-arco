@@ -1,0 +1,47 @@
+<ion-content class="ion-padding">
+  <ion-text color="primary">
+    <suite-breadcrumb></suite-breadcrumb>
+  </ion-text>
+  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goDefect(row)"></tr>
+    <ng-container matColumnDef="barcode">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="barcode">
+        Referencia
+      </th>
+      <td mat-cell *matCellDef="let defect">
+        {{ defect?.barcode }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="registerDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="registerDate">
+        Fecha de registro
+      </th>
+      <td mat-cell *matCellDef="let defect">
+        {{ defect?.registerDate }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="defectType">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="defectType">
+        Tipo de defecto
+      </th>
+      <td mat-cell *matCellDef="let defect">
+        {{ defect?.defectTypeChild.name }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="state">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="state">
+        Estado
+      </th>
+      <td mat-cell *matCellDef="let defect">
+        {{ defect?.statusManagementDefect.id }}
+      </td>
+    </ng-container>
+  </table>
+  <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button [routerLink]="['/incidents']">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

@@ -330,3 +330,10 @@ export  * from './receptions-avelon-app/receptions-avelon-app.module';
 export  * from './expeditions-pending-app/expeditions-pending-app.component'
 export  * from './expeditions-pending-app/expeditions-pending-app.module';
 
+// incidents
+export * from './incidents/incidents.component';
+export * from './incidents/incidents.module'
+
+// defect handler list
+export * from './defect-handler/defect-handler.component'
+export * from './defect-handler/defect-handler.module'

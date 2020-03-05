@@ -3,6 +3,7 @@ export const environment = {
   apiBase: 'http://localhost:8080/api',
   apiSorter: 'http://localhost:8080/api',
   urlBase: 'http://localhost:8080',
+  uploadFiles: 'http://localhost:8081/api/upload-files',
   sga: {
     client_id: "krack-client-sga",
     client_secret: "fGx4=yU-j4^jAAjZtV+YTDsm-@R$HAK3"

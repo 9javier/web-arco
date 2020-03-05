@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FileTransfer, FileTransferObject, FileUploadOptions, FileUploadResult } from '@ionic-native/file-transfer/ngx';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { IntermediaryService } from '../../../../../services/src';
+import { IntermediaryService, environment } from '../../../../../services/src';
 import { ModalController } from '@ionic/angular';
 
 @Component({
@@ -10,7 +10,7 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./photo-modal.component.scss']
 })
 export class PhotoModalComponent implements OnInit {
-  apiURL: string = 'http://localhost:8081/api/upload-files'
+  apiURL: string = environment.uploadFiles
   imgData: string;
   imgUrl: any;
   constructor(

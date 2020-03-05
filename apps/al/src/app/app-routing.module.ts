@@ -310,6 +310,14 @@ const routes: Routes = [
     data: {
       name: 'Incidencias'
     }
+  },
+  {
+    path: 'defect-handler',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defect-handler/defect-handler.module#DefectHandlerModule',
+    data: {
+      name: 'Manejo de defectos'
+    }
   }
 ];
 
