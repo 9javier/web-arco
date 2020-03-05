@@ -105,6 +105,9 @@ export * from './defective-management/defective-management.module';
 export * from './defective-registry/defective-registry.component';
 export * from './defective-registry/defective-registry.module';
 
+export * from './defective-historic/defective-historic.component';
+export * from './defective-historic/defective-historic.module';
+
 /**breadcrumb */
 export * from './components/breadcrumb/breadcrumb.component';
 export * from './components/breadcrumb/breadcrumb.module';

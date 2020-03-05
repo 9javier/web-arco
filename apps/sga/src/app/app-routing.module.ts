@@ -182,6 +182,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'defective-historic',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-historic/defective-historic.module#DefectiveHistoricModule',
+    data: {
+      name: 'Historico Defectuosos'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',

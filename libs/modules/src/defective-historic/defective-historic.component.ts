@@ -11,23 +11,21 @@ import { DefectiveRegistryService } from '../../../services/src/lib/endpoint/def
 import { DefectiveRegistryModel } from '../../../services/src/models/endpoints/DefectiveRegistry';
 import { SelectionModel } from '@angular/cdk/collections';
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
-import { RegistryDetailsComponent } from './modals/registry-details/registry-details.component';
 
 @Component({
-  selector: 'suite-defective-registry',
-  templateUrl: './defective-registry.component.html',
-  styleUrls: ['./defective-registry.component.scss'],
+  selector: 'suite-defective-historic',
+  templateUrl: './defective-historic.component.html',
+  styleUrls: ['./defective-historic.component.scss'],
 })
-export class DefectiveRegistryComponent implements OnInit {
+export class DefectiveHistoricComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select','product','storeDetection','dateDetection','statusManagementDefect','defectTypeParent','defectTypeChild','numberObservations','barCode','photo','warehouse','factoryReturn'];
+  displayedColumns: string[] = ['select','storeDetection','dateDetection','statusManagementDefect','defectTypeParent','defectTypeChild','numberObservations','barCode','photo','warehouse','factoryReturn'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
 
   columns = {};
 
-  @ViewChild('filterButtonProduct') filterButtonProduct: FilterButtonComponent;
   @ViewChild('filterButtonStoreDetection') filterButtonStoreDetection: FilterButtonComponent;
   @ViewChild('filterButtonDateDetection') filterButtonDateDetection: FilterButtonComponent;
   @ViewChild('filterButtonStatusManagementDefect') filterButtonStatusManagementDefect: FilterButtonComponent;
@@ -39,7 +37,6 @@ export class DefectiveRegistryComponent implements OnInit {
   @ViewChild('filterButtonWarehouse') filterButtonWarehouse: FilterButtonComponent;
   @ViewChild('filterButtonFactoryReturn') filterButtonFactoryReturn: FilterButtonComponent;
 
-  isFilteringProduct: number = 0;
   isFilteringStoreDetection: number = 0;
   isFilteringDateDetection: number = 0;
   isFilteringStatusManagementDefect: number = 0;
@@ -52,7 +49,6 @@ export class DefectiveRegistryComponent implements OnInit {
   isFilteringFactoryReturn: number = 0;
 
   /**Filters */
-  product: Array<TagsInputOption> = [];
   storeDetection: Array<TagsInputOption> = [];
   dateDetection: Array<TagsInputOption> = [];
   statusManagementDefect: Array<TagsInputOption> = [];
@@ -70,7 +66,6 @@ export class DefectiveRegistryComponent implements OnInit {
   pagerValues = [10, 20, 80];
 
   form: FormGroup = this.formBuilder.group({
-    product: [],
     storeDetection: [],
     dateDetection: [],
     statusManagementDefect: [],
@@ -110,7 +105,6 @@ export class DefectiveRegistryComponent implements OnInit {
 
   initEntity() {
     this.entities = {
-      product: [],
       storeDetection: [],
       dateDetection: [],
       statusManagementDefect: [],
@@ -126,7 +120,6 @@ export class DefectiveRegistryComponent implements OnInit {
 
   initForm() {
     this.form.patchValue({
-      product: [],
       storeDetection: [],
       dateDetection: [],
       statusManagementDefect: [],
@@ -161,7 +154,6 @@ export class DefectiveRegistryComponent implements OnInit {
 
   getFilters() {
     this.defectiveRegistryService.getFiltersEntities().subscribe((entities) => {
-      this.product = this.updateFilterSource(entities.product, 'product');
       this.storeDetection = this.updateFilterSource(entities.storeDetection, 'storeDetection');
       this.dateDetection = this.updateFilterSource(entities.dateDetection, 'dateDetection');
       this.statusManagementDefect = this.updateFilterSource(entities.statusManagementDefect, 'statusManagementDefect');
@@ -182,7 +174,7 @@ export class DefectiveRegistryComponent implements OnInit {
   }
 
   async getColumns(form?: FormGroup){
-    this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe(
+    this.defectiveRegistryService.indexHistoricTrue(form.value).subscribe(
       (resp:any) => {
         resp.filters.forEach(element => {
           this.columns[element.name] = element.id;
@@ -222,7 +214,6 @@ export class DefectiveRegistryComponent implements OnInit {
   }
 
   private reduceFilters(entities){
-    this.filterButtonProduct.listItems = this.reduceFilterEntities(this.product, entities,'product');
     this.filterButtonStoreDetection.listItems = this.reduceFilterEntities(this.storeDetection, entities,'storeDetection');
     this.filterButtonDateDetection.listItems = this.reduceFilterEntities(this.dateDetection, entities,'dateDetection');
     this.filterButtonStatusManagementDefect.listItems = this.reduceFilterEntities(this.statusManagementDefect, entities,'statusManagementDefect');
@@ -257,7 +248,7 @@ export class DefectiveRegistryComponent implements OnInit {
   }
 
   async getList(form?: FormGroup){
-    this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe((resp:any) => {
+    this.defectiveRegistryService.indexHistoricTrue(form.value).subscribe((resp:any) => {
         if (resp.results) {
           this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
           const paginator = resp.pagination;
@@ -297,26 +288,6 @@ export class DefectiveRegistryComponent implements OnInit {
   applyFilters(filtersResult, filterType) {
     const filters = filtersResult.filters;
     switch (filterType) {
-      case 'product':
-        let productFiltered: string[] = [];
-        for (let product of filters) {
-
-          if (product.checked) productFiltered.push(product.id);
-        }
-
-        if (productFiltered.length >= this.storeDetection.length) {
-          this.form.value.product = [];
-          this.isFilteringProduct = this.product.length;
-        } else {
-          if (productFiltered.length > 0) {
-            this.form.value.product = productFiltered;
-            this.isFilteringProduct = productFiltered.length;
-          } else {
-            this.form.value.product = ['99999'];
-            this.isFilteringProduct = this.product.length;
-          }
-        }
-        break;
       case 'storeDetection':
         let storeDetectionFiltered: string[] = [];
         for (let storeDetection of filters) {
@@ -521,14 +492,5 @@ export class DefectiveRegistryComponent implements OnInit {
 
     this.lastUsedFilter = filterType;
     this.getList(this.form);
-  }
-
-  async goDetails(registry: DefectiveRegistryModel.DefectiveRegistry) {
-    return (await this.modalController.create({
-      component: RegistryDetailsComponent,
-      componentProps: {
-        registry: registry
-      }
-    })).present();
   }
 }
