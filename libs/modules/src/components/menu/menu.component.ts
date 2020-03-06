@@ -357,6 +357,12 @@ export class MenuComponent implements OnInit {
           id: 'state-expedition-avelon',
           url: '/state-expedition-avelon/menu',
           icon: 'cog'
+        },
+        {
+          title: 'Temporadas habilitadas',
+          id: 'seasons-enabled',
+          url: '/seasons-enabled',
+          icon: 'cog'
         }
       ]
     },
