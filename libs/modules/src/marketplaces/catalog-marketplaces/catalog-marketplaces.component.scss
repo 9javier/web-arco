@@ -50,8 +50,17 @@
       width: 100%;
 
       .symbolActivate {
-        font-size: 24px;
-        color: #216334;
+        &:before {
+          content: "●";
+          font-size: 24px;
+          color: #216334;
+        }
+
+        .hidden-value {
+          visibility: hidden;
+          position: absolute;
+        }
+
       }
 
       .symbolWithoutStock {
@@ -60,8 +69,16 @@
       }
 
       .symbolDisabled {
-        font-size: 24px;
-        color: #F93E3E;
+        &:before {
+          content: "●";
+          font-size: 24px;
+          color: #F93E3E;
+        }
+
+        .hidden-value {
+          visibility: hidden;
+          position: absolute;
+        }
       }
 
       tr {

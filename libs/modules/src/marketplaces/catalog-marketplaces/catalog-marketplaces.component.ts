@@ -73,15 +73,16 @@ export class CatalogMarketplacesComponent implements OnInit {
 
   ngOnInit() {
     this.products = [];
-    
-    this.marketplacesService.getProductCatalog().subscribe(data => {
-        this.products = data.data;
-        this.products.sort((a, b) => (a.reference.length > b.reference.length) ? 1 : ((b.reference.length > a.reference.length) ? -1 : ((parseInt(a.reference) > parseInt(b.reference)) ? 1 : ((parseInt(b.reference) > parseInt(a.reference)) ? -1 : 0))));
-        console.log('products ->', this.products);
-        this.catalogTableData = new MatTableDataSource(this.products);
-    });
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'KO', 'Mini', 'Amazon', 'Spartoo', 'Zalando', 'CDiscount'];
     this.selectedProducts = [];
+
+    this.marketplacesService.getProductCatalog().subscribe(data => {
+      this.products = data.data;
+      this.products.sort((a, b) => (a.reference.length > b.reference.length) ? 1 : ((b.reference.length > a.reference.length) ? -1 : ((parseInt(a.reference) > parseInt(b.reference)) ? 1 : ((parseInt(b.reference) > parseInt(a.reference)) ? -1 : 0))));
+
+      this.catalogTableData = new MatTableDataSource(this.products);
+    });
+
   }
 
   selectProductRow(row) {
