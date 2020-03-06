@@ -130,7 +130,9 @@ export class IncidentsComponent implements OnInit {
     console.log(e);
     this.incidenceForm.patchValue({
       gestionState: parseInt(e.detail.value)
-    })
+    });
+
+    
   }
   defectChange(e) {
     console.log(e);
