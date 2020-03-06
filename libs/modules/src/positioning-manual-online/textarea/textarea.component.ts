@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService } from "@suite/services";
 import { AlertController } from "@ionic/angular";
@@ -8,7 +8,7 @@ import { AudioProvider } from "../../../../services/src/providers/audio-provider
 import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
 import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
-import {LoadingMessageComponent} from "../../components/loading-message/loading-message.component";
+import { LoadingMessageComponent } from "../../components/loading-message/loading-message.component";
 
 @Component({
   selector: 'suite-textarea',
@@ -33,7 +33,7 @@ export class TextareaComponent implements OnInit {
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
 
-  private isScannerBlocked: boolean = false;
+  public isScannerBlocked: boolean = false;
 
   constructor(
     private alertController: AlertController,
@@ -62,7 +62,7 @@ export class TextareaComponent implements OnInit {
     }
   }
 
-  private focusToInput(playSound: boolean = false, typeSound: 'ok'|'error' = 'ok') {
+  private focusToInput(playSound: boolean = false, typeSound: 'ok' | 'error' = 'ok') {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
       if (playSound) {
@@ -72,10 +72,10 @@ export class TextareaComponent implements OnInit {
           this.audioProvider.playDefaultError();
         }
       }
-    },500);
+    }, 500);
   }
 
-  keyUpInput(event?, prova:boolean=false) {
+  keyUpInput(event?, prova: boolean = false) {
     let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
 
@@ -148,7 +148,7 @@ export class TextareaComponent implements OnInit {
         this.isScannerBlocked = false;
         this.focusToInput(true, 'error');
       }
-    } else if(event.keyCode === 13 && this.isScannerBlocked) {
+    } else if (event.keyCode === 13 && this.isScannerBlocked) {
       this.inputPositioning = null;
       this.focusToInput();
     }

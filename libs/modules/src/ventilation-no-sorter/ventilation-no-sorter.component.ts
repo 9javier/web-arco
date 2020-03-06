@@ -165,9 +165,10 @@ export class VentilationNoSorterComponent implements OnInit {
 
   async assignToPacking(){
     try {
+      let packingReference = this.destinies[this.destinyWarehouse.reference];
       let inventoryProcess = {
         productReference: this.scannedCode,
-        packingReference: this.scannedPacking,
+        packingReference: packingReference,
         force: true,
         avoidAvelonMovement: true
       };
