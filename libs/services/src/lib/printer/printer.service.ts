@@ -462,7 +462,7 @@ export class PrinterService {
               name: product.size ? product.size.name : ''
             },
             manufacturer: {
-              name: product.brand ? product.brand.name : ''
+              name: product.brand ? product.brand.name : (product.model.brand ? product.model.brand.name : '')
             },
             model: {
               name: product.model ? product.model.name : '',
@@ -471,7 +471,7 @@ export class PrinterService {
                 name: product.model.color ? product.model.color.name : ''
               },
               season: {
-                name: product.season ? product.season.name : ''
+                name: product.season ? product.season.name : (product.model.season ? product.model.season.name : '')
               }
             }
           }
