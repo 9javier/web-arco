@@ -136,7 +136,7 @@ export class JailComponent implements OnInit {
 
   displayedColumns = ['select', 'reference', 'packing', 'warehouse', 'destiny', 'products-status', 'sealed', 'isSend', "update", 'open-modal', 'buttons-print',];
   dataSource: any;
-  listAllCarriers = [];
+  listAllCarriers: any;
   expandedElement: CarrierModel.Carrier;
 
   carriers: Array<CarrierModel.Carrier> = [];
@@ -193,8 +193,8 @@ export class JailComponent implements OnInit {
       filters: null
     };
     this.intermediaryService.presentLoading();
-    await this.carrierService.getFilters().subscribe(sql_result => {
-      this.listAllCarriers = sql_result.data.results;
+    await this.carrierService.getFilters().subscribe(sql_filters_result => {
+      this.listAllCarriers = sql_filters_result.data.filters;
     });
 
     await this.carrierService.searchInContainer(body).subscribe(sql_result => {
@@ -755,11 +755,11 @@ export class JailComponent implements OnInit {
    */
   getFilters(stable: boolean = false) {
 
-    this.updateFilterSourceReferences(this.listAllCarriers, stable);
-    this.updateFilterSourceTypes(this.listAllCarriers, stable);
-    this.updateFilterSourceOrigins(this.listAllCarriers, stable);
-    this.updateFilterSourceDestinies(this.listAllCarriers, stable);
-    this.updateFilterSourceProducts(this.listAllCarriers, stable);
+    this.updateFilterSourceReferences(this.listAllCarriers.references, stable);
+    this.updateFilterSourceTypes(this.listAllCarriers.types, stable);
+    this.updateFilterSourceOrigins(this.listAllCarriers.origins, stable);
+    this.updateFilterSourceDestinies(this.listAllCarriers.destinies, stable);
+    this.updateFilterSourceProducts(this.listAllCarriers.products, stable);
 
     this.isFilteringReferences = this.references.length;
     this.isFilteringTypes = this.types.length;
@@ -777,14 +777,15 @@ export class JailComponent implements OnInit {
     });
   }
 
-  private updateFilterSourceReferences(listAllCarriers: any, stable: boolean) {
+  private updateFilterSourceReferences(references: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let referencesList: any[] = [];
-    listAllCarriers.forEach(key => {
+    references.forEach(key => {
       if(!referencesList.find( f => f.value == key['reference'])) {
         referencesList.push({value: key['reference']});
       }
     });
+    console.log("referencesList",referencesList);
     if(stable == true) {
       this.references = referencesList;
       this.form.get("references").patchValue(this.references, {emitEvent: false});
@@ -793,12 +794,12 @@ export class JailComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-  private updateFilterSourceTypes(listAllCarriers: any, stable: boolean) {
+  private updateFilterSourceTypes(types: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let typesList: any[] = [];
-    listAllCarriers.forEach(key => {
-      if(!typesList.find( f => f.value == key['type'].name)) {
-        typesList.push({value: key['type'].name});
+    types.forEach(key => {
+      if(!typesList.find( f => f.value == key['name'])) {
+        typesList.push({value: key['name']});
       }
     });
     if(stable == true) {
@@ -809,12 +810,12 @@ export class JailComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-  private updateFilterSourceOrigins(listAllCarriers: any, stable: boolean) {
+  private updateFilterSourceOrigins(origins: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let originsList: any[] = [];
-    listAllCarriers.forEach(key => {
-      if(!originsList.find( f => f.reference == key['origin'].reference)){
-        originsList.push({reference: key['origin'].reference, name: key['origin'].name});
+    origins.forEach(key => {
+      if(!originsList.find( f => f.reference == key['reference'])){
+        originsList.push({reference: key['reference'], name: key['name']});
       }
     });
     if(stable == true) {
@@ -824,15 +825,17 @@ export class JailComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-  private updateFilterSourceDestinies(listAllCarriers: any, stable: boolean) {
+  private updateFilterSourceDestinies(destinies: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let destiniesList: any[] = [];
-    listAllCarriers.forEach(key => {
-        key['destiny'].forEach(destiny => {
-          if (!destiniesList.find(f => f.reference == destiny['reference'])) {
-            destiniesList.push({reference: destiny['reference'], name: destiny['name']});
+    destinies.forEach(key => {
+          if (!destiniesList.find(f => f.reference == key['reference'])) {
+            if(key['reference'] == null) {
+              destiniesList.push({reference: 'Sin', name: 'Destino'});
+            }else {
+              destiniesList.push({reference: key['reference'], name: key['name']});
+            }
           }
-        });
     });
     if(stable == true) {
       this.destinies = destiniesList;
@@ -841,17 +844,16 @@ export class JailComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-  private updateFilterSourceProducts(listAllCarriers: any, stable: boolean) {
+  private updateFilterSourceProducts(products: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let productsList: any[] = [];
-    listAllCarriers.forEach(key => {
-      if(!productsList.find( f => f.value == key['product'])) {
-        productsList.push({value: key['product']});
+    products.forEach(key => {
+      if(!productsList.find( f => f.value == key['reference'])) {
+        productsList.push({value: key['reference']});
       }
     });
     if(stable == true) {
       this.products = productsList;
-
       this.form.get("products").patchValue(this.products, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
