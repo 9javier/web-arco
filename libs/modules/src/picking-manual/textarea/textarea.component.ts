@@ -1,7 +1,7 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import {from, Observable} from "rxjs";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import { from, Observable } from "rxjs";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {
   AuthenticationService,
   environment,
@@ -10,19 +10,19 @@ import {
   IntermediaryService,
   CarrierService
 } from '@suite/services';
-import {AlertController, Events, ModalController} from "@ionic/angular";
-import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
-import {switchMap} from "rxjs/operators";
-import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
-import {Location} from "@angular/common";
-import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
-import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
-import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
+import { AlertController, Events, ModalController } from "@ionic/angular";
+import { ShoesPickingModel } from "../../../../services/src/models/endpoints/ShoesPicking";
+import { switchMap } from "rxjs/operators";
+import { PickingProvider } from "../../../../services/src/providers/picking/picking.provider";
+import { Location } from "@angular/common";
+import { ItemReferencesProvider } from "../../../../services/src/providers/item-references/item-references.provider";
+import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
+import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
 import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
-import {LoadingMessageComponent} from "../../components/loading-message/loading-message.component";
+import { LoadingMessageComponent } from "../../components/loading-message/loading-message.component";
 
 @Component({
   selector: 'suite-textarea',
@@ -54,15 +54,15 @@ export class TextareaComponent implements OnInit {
   scanContainerToNotFound: string = null;
   intervalCleanLastCodeScanned = null;
 
-  private postVerifyPackingUrl = environment.apiBase+"/processes/picking-main/packing";
-  private getPendingListByPickingUrl = environment.apiBase+"/processes/picking-main/shoes/{{id}}/pending";
-  private putProductNotFoundUrl = environment.apiBase+"/processes/picking-main/shoes/{{workWaveOrderId}}/product-not-found/{{productId}}";
+  private postVerifyPackingUrl = environment.apiBase + "/processes/picking-main/packing";
+  private getPendingListByPickingUrl = environment.apiBase + "/processes/picking-main/shoes/{{id}}/pending";
+  private putProductNotFoundUrl = environment.apiBase + "/processes/picking-main/shoes/{{workWaveOrderId}}/product-not-found/{{productId}}";
   private postCheckContainerProductUrl = environment.apiBase + "/inventory/check-container";
 
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
 
-  private isScannerBlocked: boolean = false;
+  public isScannerBlocked: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -96,7 +96,7 @@ export class TextareaComponent implements OnInit {
     this.clearTimeoutCleanLastCodeScanned();
     this.intervalCleanLastCodeScanned = setInterval(() => {
       if (this.itemReferencesProvider.checkCodeValue(this.lastCodeScanned) === this.itemReferencesProvider.codeValue.PACKING) {
-        if(Math.abs((new Date().getTime() - this.timeLastCodeScanned) / 1000) > 4){
+        if (Math.abs((new Date().getTime() - this.timeLastCodeScanned) / 1000) > 4) {
           this.lastCodeScanned = 'start';
         }
       }
@@ -105,37 +105,37 @@ export class TextareaComponent implements OnInit {
     if (this.listProducts.length > 0) {
       this.showTextStartScanPacking(true, this.typePacking, this.packingReference || '');
     } else {
-      if(this.lastCarrierScanned) this.packingReference = this.lastCarrierScanned;
+      if (this.lastCarrierScanned) this.packingReference = this.lastCarrierScanned;
       this.jailReference = this.packingReference;
       this.processInitiated = true;
       this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
     }
   }
 
-  private async modalList(jaula: string){
+  private async modalList(jaula: string) {
     let modal = await this.modalCtrl.create({
       component: ListProductsCarrierComponent,
       componentProps: {
-        carrierReference:jaula,
+        carrierReference: jaula,
         process: 'picking'
       }
     });
 
     modal.onDidDismiss().then((data) => {
-      if(data.data === undefined && data.role === undefined){
+      if (data.data === undefined && data.role === undefined) {
         this.isScannerBlocked = false;
         this.focusToInput();
         return;
       }
 
-      if(data.data && data.role === undefined){
-        if(this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING){
+      if (data.data && data.role === undefined) {
+        if (this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING) {
           this.isScannerBlocked = false;
           this.focusToInput();
           this.inputPicking = data.data;
-          this.keyUpInput(KeyboardEvent['KeyCode'] = 13,true);
+          this.keyUpInput(KeyboardEvent['KeyCode'] = 13, true);
           return;
-        }else if(data.role === 'navigate'){
+        } else if (data.role === 'navigate') {
           this.isScannerBlocked = false;
           this.focusToInput();
         }
@@ -145,7 +145,7 @@ export class TextareaComponent implements OnInit {
     modal.present();
   }
 
-  async keyUpInput(event?,prova:boolean=false) {
+  async keyUpInput(event?, prova: boolean = false) {
     let dataWrited = (this.inputPicking || "").trim();
     if ((event.keyCode === 13 || prova && dataWrited) && !this.isScannerBlocked) {
       this.isScannerBlocked = true;
@@ -167,7 +167,7 @@ export class TextareaComponent implements OnInit {
 
       this.inputPicking = null;
       if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
-        if(this.processInitiated && this.lastCarrierScanned == dataWrited){
+        if (this.processInitiated && this.lastCarrierScanned == dataWrited) {
           if (this.listProducts && this.listProducts.length > 0) {
             if (this.typePicking === 1) {
               this.alertSealPackingIntermediate(dataWrited);
@@ -188,9 +188,9 @@ export class TextareaComponent implements OnInit {
             )
             .subscribe(data => {
               if (data) {
-                if(data.packingInventorys.length > 0 && !prova){
+                if (data.packingInventorys.length > 0 && !prova) {
                   this.modalList(data.reference);
-                }else{
+                } else {
                   if (this.listProducts.length !== 0) {
                     let typePackingScanned = 0;
                     if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
@@ -655,28 +655,28 @@ export class TextareaComponent implements OnInit {
           });
         }
       }
-    } else if(event.keyCode === 13 && this.isScannerBlocked) {
+    } else if (event.keyCode === 13 && this.isScannerBlocked) {
       this.inputPicking = null;
       this.focusToInput();
     }
   }
 
-  private postVerifyPacking(packing) : Observable<any> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+  private postVerifyPacking(packing): Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       return this.http.post<any>(this.postVerifyPackingUrl, packing, { headers });
     }));
   }
 
-  private getPendingListByPicking(pickingId: number) : Observable<ShoesPickingModel.ResponseListByPicking> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+  private getPendingListByPicking(pickingId: number): Observable<ShoesPickingModel.ResponseListByPicking> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       return this.http.get<ShoesPickingModel.ResponseListByPicking>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
     }));
   }
 
-  private putProductNotFound(pickingId: number, productId: number) : Observable<ShoesPickingModel.ResponseProductNotFound> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+  private putProductNotFound(pickingId: number, productId: number): Observable<ShoesPickingModel.ResponseProductNotFound> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       let putProductNotFoundUrl = this.putProductNotFoundUrl.replace('{{workWaveOrderId}}', pickingId.toString());
       putProductNotFoundUrl = putProductNotFoundUrl.replace('{{productId}}', productId.toString());
@@ -684,8 +684,8 @@ export class TextareaComponent implements OnInit {
     }));
   }
 
-  private postCheckContainerProduct(containerReference: string, inventoryId: number) : Observable<InventoryModel.ResponseCheckContainer> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+  private postCheckContainerProduct(containerReference: string, inventoryId: number): Observable<InventoryModel.ResponseCheckContainer> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       let params: InventoryModel.ParamsCheckContainer = { inventoryId, containerReference };
 
@@ -723,7 +723,7 @@ export class TextareaComponent implements OnInit {
 
   private showTextEndScanPacking(show: boolean, typePacking: number, packingReference: string) {
     if (show) {
-      if(packingReference){
+      if (packingReference) {
         if (typePacking === 1) {
           this.scanJail = "Escanea la Jaula " + packingReference + " para finalizar el proceso de picking.";
         } else {
@@ -745,14 +745,14 @@ export class TextareaComponent implements OnInit {
   oldReference(inventory: ShoesPickingModel.Inventory) {
     let alphabet = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
     return 'P' + inventory.rack.hall.toString().padStart(2, '0')
-      + alphabet[inventory.container.row-1]
+      + alphabet[inventory.container.row - 1]
       + inventory.container.column.toString().padStart(2, '0');
   }
 
   async productNotFound() {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
-      message: '¿Está seguro de querer reportar como no encontrado el producto <b>'+this.nexProduct.product.model.reference+'</b> en la ubicación <b>'+this.nexProduct.inventory.container.reference+'</b>?<br/>(tendrá que escanear la ubicación para confirmar el reporte).',
+      message: '¿Está seguro de querer reportar como no encontrado el producto <b>' + this.nexProduct.product.model.reference + '</b> en la ubicación <b>' + this.nexProduct.inventory.container.reference + '</b>?<br/>(tendrá que escanear la ubicación para confirmar el reporte).',
       backdropDismiss: false,
       buttons: [
         {
@@ -791,7 +791,7 @@ export class TextareaComponent implements OnInit {
   async alertSealPackingFinal(packingReference: string) {
     this.inventoryService.getPendingSeal(this.pickingId).then(async (res: InventoryModel.ResponseGlobal) => {
       const pendingSealCarrier = res.data;
-      const listPackingReferences = pendingSealCarrier.filter(c => {return c != null && c.packing != null && c.packing[0] != null}).map(c => c.packing[0].reference);
+      const listPackingReferences = pendingSealCarrier.filter(c => { return c != null && c.packing != null && c.packing[0] != null }).map(c => c.packing[0].reference);
 
       if (listPackingReferences && listPackingReferences.length > 0) {
         const listPackingReferencesToShow = listPackingReferences.join('<br/>');
@@ -997,14 +997,14 @@ export class TextareaComponent implements OnInit {
       });
   }
 
-  private clearTimeoutCleanLastCodeScanned(){
-    if(this.intervalCleanLastCodeScanned){
+  private clearTimeoutCleanLastCodeScanned() {
+    if (this.intervalCleanLastCodeScanned) {
       clearTimeout(this.intervalCleanLastCodeScanned);
       this.intervalCleanLastCodeScanned = null;
     }
   }
 
-  private focusToInput(playSound: boolean = false, typeSound: 'ok'|'error' = 'ok') {
+  private focusToInput(playSound: boolean = false, typeSound: 'ok' | 'error' = 'ok') {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
       if (playSound) {
@@ -1014,16 +1014,16 @@ export class TextareaComponent implements OnInit {
           this.audioProvider.playDefaultError();
         }
       }
-    },500);
+    }, 500);
   }
 
-  public onFocus(event){
-    if(event && event.target && event.target.id){
+  public onFocus(event) {
+    if (event && event.target && event.target.id) {
       this.keyboardService.setInputFocused(event.target.id);
     }
   }
 
-  private processFinishOk(options: {toast?: {message: string, duration: number, position: string}, focusInput?: {playSound?: boolean}, playSound?: boolean} = null) {
+  private processFinishOk(options: { toast?: { message: string, duration: number, position: string }, focusInput?: { playSound?: boolean }, playSound?: boolean } = null) {
     this.loadingMessageComponent.show(false);
 
     if (options.toast != null) {
@@ -1043,7 +1043,7 @@ export class TextareaComponent implements OnInit {
     }
   }
 
-  private processFinishError(options: {toast?: {message: string, duration?: number, position: string}, focusInput?: {playSound?: boolean}, playSound?: boolean} = null) {
+  private processFinishError(options: { toast?: { message: string, duration?: number, position: string }, focusInput?: { playSound?: boolean }, playSound?: boolean } = null) {
     this.loadingMessageComponent.show(false);
 
     if (options.toast != null) {

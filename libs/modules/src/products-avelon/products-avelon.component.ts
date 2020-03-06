@@ -46,9 +46,11 @@ import { parse } from 'querystring';
 export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['Ref. modelo', 'Talla', 'Color', 'Brand', 'Supplier', 'Warehouse'];
+  displayedColumns: string[] = ['select', 'Codigo', 'Ref. modelo', 'Talla', 'Color', 'Brand', 'Supplier', 'Warehouse', 'Usuario'];
   // displayedColumns: string[] = [];
   columns = {};
+  selection = new SelectionModel<Predistribution>(true, []);
+  results: any;
   dataSourceOriginal;
   dataSource;
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
@@ -56,6 +58,8 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
   @ViewChild('filterButtonProviders') filterButtonProviders: FilterButtonComponent;
   @ViewChild('filterButtonModels') filterButtonModels: FilterButtonComponent;
+  @ViewChild('filterButtonProducts') filterButtonProducts: FilterButtonComponent;
+  @ViewChild('filterButtonUsers') filterButtonUsers: FilterButtonComponent;
   @ViewChild('filterButtonColors') filterButtonColors: FilterButtonComponent;
   @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
   @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
@@ -63,6 +67,8 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
 
   isFilteringReferences: number = 0;
   isFilteringModels: number = 0;
+  isFilteringProducts: number = 0;
+  isFilteringUsers: number = 0;
   isFilteringColors: number = 0;
   isFilteringSizes: number = 0;
   isFilteringWarehouses: number = 0;
@@ -72,6 +78,8 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   /**Filters */
   references: Array<TagsInputOption> = [];
   models: Array<TagsInputOption> = [];
+  products: Array<TagsInputOption> = [];
+  users: Array<TagsInputOption> = [];
   colors: Array<TagsInputOption> = [];
   sizes: Array<TagsInputOption> = [];
   warehouses: Array<TagsInputOption> = [];
@@ -79,7 +87,7 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   brands: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
   suppliers: Array<TagsInputOption> = [];
-  entities
+  entities;
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
   // pagerValues = [50, 100, 1000];
@@ -92,6 +100,8 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   form: FormGroup = this.formBuilder.group({
     warehouses: [],
     models: [],
+    products: [],
+    users: [],
     colors: [],
     sizes: [],
     brands: [],
@@ -115,7 +125,7 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     GlobalVariable_value: ''
   };
 
-  
+
   constructor(
     private intermediaryService: IntermediaryService,
     private warehouseService: WarehouseService,
@@ -135,8 +145,8 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   ) {
   }
 
-  
- 
+
+
 
   getSecondsAvelon(){
     this.intermediaryService.presentLoading('Actualizando Avelon').then(() => {
@@ -172,7 +182,7 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   insertSecond(){
     this.intermediaryService.presentLoading('Actualizando tiempo de avelon').then(() => {
       let value = parseInt(this.seconds.GlobalVariable_value)*60;
-      value.toString(); 
+      value.toString();
       let body = {
         "value": value
       };
@@ -193,11 +203,11 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(){
-    this.initEntity()
-    this.initForm()
-    this.getFilters()
-    this.getList(this.form)
-    this.listenChanges()
+    this.initEntity();
+    this.initForm();
+    this.getFilters();
+    this.getList(this.form);
+    this.listenChanges();
     this.getSecondsAvelon();
   }
   listenChanges() {
@@ -229,13 +239,15 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
         this.getList(this.form);
       });
     });
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+/*    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
       this.getList(this.form);
-    });
+    });*/
   }
   initEntity() {
     this.entities = {
       models: [],
+      products: [],
+      users: [],
       colors: [],
       sizes: [],
       warehouses: [],
@@ -248,6 +260,8 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     this.form.patchValue({
       warehouses: [],
       models: [],
+      products: [],
+      users: [],
       colors: [],
       sizes: [],
       brands: [],
@@ -262,7 +276,6 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     let This = this;
-    console.log(this.dataSource);
     // setTimeout(() => {
     //   if(!!This.sort && !!this.dataSource)
     //     this.dataSource.sort = This.sort;
@@ -389,6 +402,8 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
       });
       this.updateFilterSourceBrands(entities.brands);
       this.updateFilterSourceModels(entities.models);
+      this.updateFilterSourceProducts(entities.products);
+      this.updateFilterSourceUsers(entities.users);
       this.updateFilterSourceSizes(entities.sizes);
       this.updateFilterSourceColors(entities.colors);
       this.updateFilterSourceWarehouses(entities.warehouses);
@@ -408,7 +423,8 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     await this.intermediaryService.presentLoading();
     this.productAvelonService.index(form.value).subscribe(
       (resp:any) => {
-        this.dataSource = new MatTableDataSource<any>(resp.results);
+        this.results = resp.results;
+        this.dataSource = new MatTableDataSource<any>(this.results);
         const paginator = resp.pagination;
 
         this.paginator.length = paginator.totalResults;
@@ -474,6 +490,48 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
           } else {
             this.form.value.models = [];
             this.isFilteringModels = this.models.length;
+          }
+        }
+
+        break;
+      case 'products':
+        let productsFiltered: string[] = [];
+        for (let product of filters) {
+
+          if (product.checked) productsFiltered.push(product.id);
+        }
+
+        if (productsFiltered.length >= this.products.length) {
+          this.form.value.products = [];
+          this.isFilteringProducts = this.products.length;
+        } else {
+          if (productsFiltered.length > 0) {
+            this.form.value.products = productsFiltered;
+            this.isFilteringProducts = productsFiltered.length;
+          } else {
+            this.form.value.products = [];
+            this.isFilteringProducts = this.products.length;
+          }
+        }
+
+        break;
+      case 'users':
+        let usersFiltered: string[] = [];
+        for (let user of filters) {
+
+          if (user.checked) usersFiltered.push(user.id);
+        }
+
+        if (usersFiltered.length >= this.users.length) {
+          this.form.value.users = [];
+          this.isFilteringUsers = this.users.length;
+        } else {
+          if (usersFiltered.length > 0) {
+            this.form.value.users = usersFiltered;
+            this.isFilteringUsers = usersFiltered.length;
+          } else {
+            this.form.value.users = [];
+            this.isFilteringUsers = this.users.length;
           }
         }
 
@@ -584,6 +642,20 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
       }
       this.filterButtonModels.listItems = this.models;
     }
+    if (this.lastUsedFilter !== 'products') {
+      let filteredProducts = entities['products'] as unknown as string[];
+      for (let index in this.products) {
+        this.products[index].hide = filteredProducts.includes(this.products[index].value);
+      }
+      this.filterButtonProducts.listItems = this.products;
+    }
+    if (this.lastUsedFilter !== 'users') {
+      let filteredUsers = entities['users'] as unknown as string[];
+      for (let index in this.users) {
+        this.users[index].hide = filteredUsers.includes(this.users[index].name);
+      }
+      this.filterButtonUsers.listItems = this.users;
+    }
     if (this.lastUsedFilter !== 'colors') {
       let filteredColors = entities['colors'] as unknown as string[];
       for (let index in this.colors) {
@@ -658,7 +730,7 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     let value = this.form.get("warehouses").value;
     this.warehouses = warehouses.map(warehouse => {
       warehouse.name = warehouse.name;
-      warehouse.value = warehouse.name;
+      warehouse.value = warehouse.reference;
       warehouse.checked = true;
       warehouse.hide = false;
       return warehouse;
@@ -669,14 +741,13 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-
   private updateFilterSourceModels(models: FiltersModel.Model[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("models").value;
     this.models = models.map(model => {
       model.id = <number>(<unknown>model.reference);
-      model.name = model.reference;
-      model.value = model.name;
+      model.name = model.name;
+      model.value = model.reference;
       model.checked = true;
       model.hide = false;
       return model;
@@ -687,6 +758,42 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
+
+  private updateFilterSourceProducts(products: FiltersModel.Product[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("products").value;
+    this.products = products.map(product => {
+      product.id = <number>(<unknown>product.id);
+      product.value = product.reference;
+      product.checked = true;
+      product.hide = false;
+      return product;
+    });
+
+    if (value && value.length) {
+      this.form.get("products").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  private updateFilterSourceUsers(users: FiltersModel.User[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("users").value;
+    this.users = users.map(user => {
+      user.id = <number>(<unknown>user.id);
+      user.name = user.name;
+      user.value = user.name;
+      user.checked = true;
+      user.hide = false;
+      return user;
+    });
+
+    if (value && value.length) {
+      this.form.get("users").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
   private updateFilterSourceProviders(providers: FiltersModel.Supplier[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("suppliers").value;
@@ -717,7 +824,7 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
- 
+
   private updateFilterSourceOrdertypes(ordertypes: FiltersModel.Group[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("orderby").get("type").value;
@@ -800,7 +907,64 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     this.listenChanges();
   }
 
-  
+  checkboxLabel(row?): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+  }
+
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
+  }
+
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  async presentAlertDeleteConfirm() {
+    const alert = await this.alertController.create({
+      header: '¡Confirmar eliminación!',
+      message: '¿Deseas eliminar los productos seleccionados?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.selection.clear();
+          }
+        }, {
+          text: 'Si',
+          handler: async () => {
+            await this.deleteProductReceptions();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async deleteProductReceptions() {
+    let id = this.selection.selected.map((product) =>
+      product ? product.id : null)
+      .filter(product => product);
+    await this.intermediaryService.presentLoading('Borrando productos');
+    this.productAvelonService.delete_Product_Receptions(id).subscribe(async result => {
+      this.getFilters();
+      this.getList(this.form);
+      this.selection.clear();
+    }, async error => {
+      await this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError('Ha ocurrido un error el cargar los datos del sevidor')
+    });
+  }
+
   // copyValuesToForm(){
   //   this.form = this.formBuilder.group({
   //     filters: this.currentPageFilter.filters,

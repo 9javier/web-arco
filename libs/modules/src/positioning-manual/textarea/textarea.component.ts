@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService } from "@suite/services";
 import { AlertController, ModalController } from "@ionic/angular";
@@ -10,7 +10,7 @@ import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 import { CarrierService } from '../../../../services/src/lib/endpoint/carrier/carrier.service';
 import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
-import {LoadingMessageComponent} from "../../components/loading-message/loading-message.component";
+import { LoadingMessageComponent } from "../../components/loading-message/loading-message.component";
 
 @Component({
   selector: 'suite-textarea',
@@ -35,7 +35,7 @@ export class TextareaComponent implements OnInit {
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
 
-  private isScannerBlocked: boolean = false;
+  public isScannerBlocked: boolean = false;
 
   constructor(
     private alertController: AlertController,
@@ -71,33 +71,33 @@ export class TextareaComponent implements OnInit {
    * @param event
    * @description Crear la modal
    */
-  private async modalList(jaula:string){
+  private async modalList(jaula: string) {
     let modal = await this.modalCtrl.create({
 
       component: ListProductsCarrierComponent,
       componentProps: {
-        carrierReference:jaula,
+        carrierReference: jaula,
         process: 'positioning'
       }
 
     });
 
     modal.onDidDismiss().then((data) => {
-      if(data.data === undefined && data.role === undefined){
+      if (data.data === undefined && data.role === undefined) {
         this.isScannerBlocked = false;
         this.focusToInput();
         return;
       }
 
-      if(data.data && data.role === undefined){
-        if(this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING){
+      if (data.data && data.role === undefined) {
+        if (this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING) {
           this.isScannerBlocked = false;
           this.focusToInput();
           this.inputPositioning = data.data;
           this.processInitiated = false;
-          this.keyUpInput(KeyboardEvent['KeyCode'] = 13,true);
+          this.keyUpInput(KeyboardEvent['KeyCode'] = 13, true);
           return;
-        }else if(data.role === 'navigate'){
+        } else if (data.role === 'navigate') {
           this.isScannerBlocked = false;
           this.focusToInput();
         }
@@ -107,7 +107,7 @@ export class TextareaComponent implements OnInit {
     modal.present();
   }
 
-  private focusToInput(playSound: boolean = false, typeSound: 'ok'|'error' = 'ok') {
+  private focusToInput(playSound: boolean = false, typeSound: 'ok' | 'error' = 'ok') {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
       if (playSound) {
@@ -117,10 +117,10 @@ export class TextareaComponent implements OnInit {
           this.audioProvider.playDefaultError();
         }
       }
-    },500);
+    }, 500);
   }
 
-  keyUpInput(event?,prova:boolean=false) {
+  keyUpInput(event?, prova: boolean = false) {
     let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
 
@@ -173,10 +173,10 @@ export class TextareaComponent implements OnInit {
       } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
         this.carrierService.getSingle(this.lastCodeScanned).subscribe(data => {
           if (data) {
-            if(data.packingInventorys.length > 0 && !prova){
+            if (data.packingInventorys.length > 0 && !prova) {
               this.isScannerBlocked = false;
               this.modalList(this.lastCodeScanned);
-            }else{
+            } else {
               this.processInitiated = false;
               this.intermediaryService.presentToastSuccess(`Inicio de ubicación en el embalaje ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM).then(() => {
                 this.isScannerBlocked = false;
@@ -213,7 +213,7 @@ export class TextareaComponent implements OnInit {
         this.isScannerBlocked = false;
         this.focusToInput(true, 'error');
       }
-    } else if(event.keyCode === 13 && this.isScannerBlocked) {
+    } else if (event.keyCode === 13 && this.isScannerBlocked) {
       this.inputPositioning = null;
       this.focusToInput();
     }

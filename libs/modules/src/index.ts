@@ -340,3 +340,8 @@ export * from './incidents/incidents.module'
 // defect handler list
 export * from './defect-handler/defect-handler.component'
 export * from './defect-handler/defect-handler.module'
+
+// signature
+
+export * from './signature/signature.component'
+export * from './signature/signature.module'
