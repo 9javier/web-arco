@@ -23,7 +23,30 @@
         <ion-select-option *ngFor="let item of statusManagament.statuses" [value]="item.id">{{item.name}}</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item (click)="presentModal()" detail lines="none">
+  
+
+     <!--require pass History-->
+     <ion-item *ngIf="passHistory == true">
+      <ion-label class="ion-text-capitalize">pasar a historial</ion-label>
+      <ion-checkbox formControlName="validation" slot="end" [value]="checkHistory"></ion-checkbox>
+    </ion-item>
+
+     <!--require requireContact-->
+     <div *ngIf="requireContact == true" class="contact">
+      <ion-label class="ion-text-capitalize">Contacto</ion-label><br>
+      <ion-item>
+        <ion-input placeholder="Nombre"></ion-input><br>
+      </ion-item>
+      <ion-item>
+        <ion-input type="email" placeholder="Correo"></ion-input><br>
+      </ion-item>
+      <ion-item>
+        <ion-input type="tel" placeholder="Teléfono"></ion-input>
+      </ion-item>
+     </div>
+    
+
+    <ion-item *ngIf="requirePhoto == true" (click)="presentModal()" detail lines="none">
       <ion-label class="ion-text-capitalize">foto</ion-label>
       <ion-button>
         <ion-icon name="camera"></ion-icon>
@@ -33,10 +56,15 @@
       </ion-button>
       <ion-label>{{imgUrl}}</ion-label>
     </ion-item>
-    <ion-item>
-      <ion-label class="ion-text-capitalize">requiere validacion</ion-label>
-      <ion-checkbox formControlName="validation" slot="end"></ion-checkbox>
+
+
+    <!--require imprimir-->
+    <ion-item *ngIf="requireOk == true">
+      <ion-label class="ion-text-capitalize">Firma</ion-label>
+      <ion-button><ion-icon name="finger-print-outline"></ion-icon></ion-button>
     </ion-item>
+
+
     <ion-button (click)="enviar()" expand="block" shape="round">
       enviar
     </ion-button>
