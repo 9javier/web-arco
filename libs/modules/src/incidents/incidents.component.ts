@@ -38,9 +38,7 @@ export class IncidentsComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
-    this.date = moment().format('DD-MM-YYYY')
-    console.log("dddddddddd"+this.date);
-    
+    this.date = moment().format('DD-MM-YYYY')    
     this.readed = false
     this.initDinamicFields()
   }
