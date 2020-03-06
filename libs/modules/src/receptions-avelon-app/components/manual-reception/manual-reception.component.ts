@@ -13,6 +13,8 @@ import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/too
 import {PrinterService} from "../../../../../services/src/lib/printer/printer.service";
 import {ModalModelImagesComponent} from "../modal-model-images/modal-model-images.component";
 import {PositionsToast} from "../../../../../services/src/models/positionsToast.type";
+import {Router} from "@angular/router";
+import {LocalStorageProvider} from "../../../../../services/src/providers/local-storage/local-storage.provider";
 
 @Component({
   selector: 'suite-manual-reception',
@@ -42,6 +44,8 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   public resultsList: any[] = [];
 
+  lastPrint;
+
   constructor(
     private modalController: ModalController,
     private popoverController: PopoverController,
@@ -49,10 +53,12 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     private printerService: PrinterService,
     private intermediaryService: IntermediaryService,
     private receptionAvelonProvider: ReceptionAvelonProvider,
-    private toolbarProvider: ToolbarProvider
+    private toolbarProvider: ToolbarProvider,
+    private router: Router,
+    private localStorageProvider: LocalStorageProvider
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.loadReceptions();
     this.toolbarProvider.currentPage.next('Recepción manual');
     this.toolbarProvider.optionsActions.next([
@@ -62,6 +68,13 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         action: () => this.resetData()
       }
     ]);
+    try{
+      this.lastPrint = JSON.parse(String(await this.localStorageProvider.get('lastPrint')));
+      this.brandSelected = this.lastPrint.brand;
+      this.modelSelected = this.lastPrint.model;
+      this.colorSelected = this.lastPrint.color;
+      this.listSizes = this.lastPrint.sizes;
+    }catch(error){console.log(error)}
   }
 
   ngOnDestroy() {
@@ -425,7 +438,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
           const referencesToPrint = res.resultToPrint.map(r => r.reference);
           if (referencesToPrint && referencesToPrint.length > 0) {
             this.printerService.printTagBarcode(referencesToPrint)
-              .subscribe((resPrint) => {
+              .subscribe(async (resPrint) => {
                 console.log('Print reference of reception successful');
                 if (typeof resPrint == 'boolean') {
                   console.log(resPrint);
@@ -434,6 +447,14 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
                     console.log('Print reference of reception successful two', resPrintTwo);
                   })
                 }
+                let lastPrint = {
+                  brand: this.brandSelected,
+                  model: this.modelSelected,
+                  color: this.colorSelected,
+                  sizes: this.listSizes
+                };
+                await this.localStorageProvider.set('lastPrint', JSON.stringify(lastPrint));
+                await this.router.navigate(['receptions-avelon', 'app']);
               }, (error) => {
                 console.error('Some error success to print reference of reception', error);
               });
