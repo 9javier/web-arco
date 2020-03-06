@@ -173,6 +173,13 @@ export class MenuComponent implements OnInit {
           url: '/list-new-products',
           icon: 'basket',
           tooltip: 'Listado de nuevos productos recibidos que aún no han sido impresos'
+        },
+        {
+          title: 'Ocultar alertas de recepción',
+          id: 'reception-hide-alert',
+          url: '/reception-hide-alert',
+          icon: 'alert',
+          tooltip: 'Listado de qué almacenes pueden ocultar las alertas de nuevas recepciones'
         }
       ]
     },

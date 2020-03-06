@@ -86,6 +86,10 @@ export * from './workwaves-schedule/workwaves-schedule.module';
 export * from './workwave-template-rebuild/workwave-template-rebuild.component';
 export * from './workwave-template-rebuild/workwave-template-rebuild.module';
 
+// Reception Hide Alert
+export * from './reception-hide-alert/reception-hide-alert.component';
+export * from './reception-hide-alert/reception-hide-alert.module';
+
 // Workwaves History
 export * from './workwaves-history/workwaves-history.component';
 export * from './workwaves-history/workwaves-history.module';
