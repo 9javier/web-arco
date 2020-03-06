@@ -14,6 +14,7 @@ import { AuditMultipleScanditService } from "../../../../services/src/lib/scandi
 import {AlertPopoverComponent} from "../alert-popover/alert-popover.component";
 import {WarehouseReceptionAlertService} from "../../../../services/src/lib/endpoint/warehouse-reception-alert/warehouse-reception-alert.service";
 import Warehouse = WarehouseModel.Warehouse;
+import {LocalStorageProvider} from "../../../../services/src/providers/local-storage/local-storage.provider";
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -671,6 +672,7 @@ export class MenuComponent implements OnInit {
     private tariffService: TariffService,
     private popoverController: PopoverController,
     private warehouseReceptionAlertService: WarehouseReceptionAlertService,
+    private localStorageProvider: LocalStorageProvider,
     private zona: NgZone
 
   ) {
@@ -800,12 +802,13 @@ export class MenuComponent implements OnInit {
       this.warehouseReceptionAlertService.check({warehouseId: currentWarehouse.id}).then(async response => {
         if (response.code == 200 && typeof response.data == 'boolean') {
           if (response.data) {
+            await this.localStorageProvider.set('hideAlerts', false);
             const popover = await this.popoverController.create({
               component: AlertPopoverComponent
             });
-            popover.onDidDismiss().then(response => {
-              if(typeof response.data == 'boolean' && response.data){
-                //disable alerts
+            popover.onDidDismiss().then(async response => {
+              if (typeof response.data == 'boolean' && response.data) {
+                await this.localStorageProvider.set('hideAlerts', true);
               }
               this.receptionScanditService.reception(2);
             });
