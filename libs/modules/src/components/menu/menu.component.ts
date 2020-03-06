@@ -704,6 +704,12 @@ export class MenuComponent implements OnInit {
       title: 'Manejo de defectos',
       icon:'warning',
       url: '/defect-handler'
+    },
+    {
+      id: 'firm',
+      title: 'Firma',
+      icon: 'color-wand',
+      url: '/signature'
     }
   ];
   private menuPages = {

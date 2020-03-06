@@ -5,8 +5,9 @@ import { DefectHandlerComponent } from './defect-handler.component';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatTooltipModule } from '@angular/material';
-import { BreadcrumbModule, TagsInputModule } from '..';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
+import { TagsInputModule } from '../components/tags-input/tags-input.module';
 
 @NgModule({
   declarations: [DefectHandlerComponent],

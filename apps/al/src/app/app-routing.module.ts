@@ -318,6 +318,14 @@ const routes: Routes = [
     data: {
       name: 'Manejo de defectos'
     }
+  },
+  {
+    path: 'signature',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/signature/signature.module#SignatureModule',
+    data: {
+      name: 'Manejo de defectos'
+    }
   }
 ];
 
