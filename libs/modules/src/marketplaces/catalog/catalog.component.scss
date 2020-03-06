@@ -8,7 +8,7 @@
 
   .mp-catalog-table-wrapper {
     width: 100%;
-    max-height: calc(100% - 62px);
+    max-height: calc(100% - 80px);
     overflow-x: auto;
     & > table {
       width: 100%;
@@ -105,6 +105,18 @@
             }
 
           }
+
+          &.table-empty {
+            th {
+              border-bottom: 1px solid #c7c8ce;
+
+              &:first-of-type {
+                border-bottom: none;
+              }
+
+            }
+          }
+
         }
       }
 
@@ -199,6 +211,10 @@
 
 @media (max-width: 1240px) {
   .mp-catalog-wrapper {
+
+    .mp-catalog-table-wrapper {
+      max-height: calc(100% - 223px);
+    }
 
     .mp-catalog-table-footer-wrapper {
       flex-direction: column;
