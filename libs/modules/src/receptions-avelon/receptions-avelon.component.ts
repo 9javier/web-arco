@@ -231,6 +231,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   async checkProvider(data: ReceptionAvelonModel.CheckProvider) {
+    this.expedition = data.expedition;
+    this.providerId = data.providerId;
+
     await this.intermediaryService.presentLoading('Cargando');
     this.reception.getReceptions(data.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
       this.response = info;
