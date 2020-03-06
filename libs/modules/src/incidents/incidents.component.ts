@@ -4,6 +4,7 @@ import * as moment from 'moment'
 import { IonSlides, ModalController } from '@ionic/angular';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx'
 ;
+import {formatDate} from '@angular/common';
 import { IntermediaryService, IncidentsService } from '../../../services/src';
 import { PhotoModalComponent } from './components/photo-modal/photo-modal.component';
 
@@ -21,7 +22,7 @@ export class IncidentsComponent implements OnInit {
     speed: 400
   };
   date: string;
-
+  dateNow = formatDate(new Date(), 'dd/MM/yyyy', 'es');
   incidenceForm: FormGroup;
   readed: boolean
   barcode: string = ''
@@ -38,6 +39,8 @@ export class IncidentsComponent implements OnInit {
   ngOnInit() {
     this.initForm();
     this.date = moment().format('DD-MM-YYYY')
+    console.log("dddddddddd"+this.date);
+    
     this.readed = false
     this.initDinamicFields()
   }
@@ -45,7 +48,7 @@ export class IncidentsComponent implements OnInit {
   initForm() {
     this.incidenceForm = this.fb.group({
       barcode: [''],
-      registerDate:[''],
+      registerDate:[this.dateNow],
       defectType: [0],
       observations: [''],
       gestionState: [0],
