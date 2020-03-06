@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment'
 import { IonSlides, ModalController } from '@ionic/angular';
@@ -17,7 +17,15 @@ import { PhotoModalComponent } from './components/photo-modal/photo-modal.compon
 export class IncidentsComponent implements OnInit {
   @ViewChild(IonSlides) slides: IonSlides;
   // @ViewChild(ScannerManualComponent) scanner: ScannerManualComponent;
-  
+
+
+  ticketEmit: boolean;
+  passHistory:boolean;
+  requirePhoto:boolean;
+  requireContact: boolean;
+  requireOk: boolean;
+  checkHistory: boolean;
+
   slideOpts = {
     speed: 400
   };
@@ -80,9 +88,17 @@ export class IncidentsComponent implements OnInit {
     }
     
   }
+  async print(){
+
+  }
 
   async enviar() {
     await this.intermediary.presentLoading('Enviando...')
+
+    if(this.ticketEmit == true){
+      this.print();
+    }
+    
     // setTimeout(async () => {
     //   await this.intermediary.dismissLoading()
     // }, 3000)
@@ -129,9 +145,32 @@ export class IncidentsComponent implements OnInit {
   }
   gestionChange(e) {
     console.log(e);
+
+    let id = e.detail.value;
+
+  
+    const res = this.statusManagament['classifications'].find( x => x.defectType == id);
+    
+    if(res != undefined){
+      this.ticketEmit = res.ticketEmit;
+      this.passHistory = res.passHistory;
+      this.requirePhoto = res.requirePhoto
+      this.requireContact = res.requireContact;
+      this.requireOk = res.requireOk;
+    }else{
+      this.ticketEmit = false;
+      this.passHistory = false;
+      this.requirePhoto = false;
+      this.requireContact = false;
+      this.requireOk = false;
+    }
+
+
     this.incidenceForm.patchValue({
       gestionState: parseInt(e.detail.value)
-    })
+    });
+
+    
   }
   defectChange(e) {
     console.log(e);
