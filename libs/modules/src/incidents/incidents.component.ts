@@ -89,7 +89,7 @@ export class IncidentsComponent implements OnInit {
     
   }
   async print(){
-
+    console.log("imprimir...")
   }
 
   async enviar() {
