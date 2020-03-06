@@ -1,16 +1,19 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, NgZone } from '@angular/core';
 import { app } from '../../../../services/src/environments/environment';
-import { AuthenticationService, Oauth2Service, TariffService } from '@suite/services';
+import {AuthenticationService, Oauth2Service, TariffService, WarehouseModel} from '@suite/services';
 import { Router } from '@angular/router';
 import { ScanditService } from "../../../../services/src/lib/scandit/scandit.service";
 import { ReceptionScanditService } from "../../../../services/src/lib/scandit/reception/reception.service";
 import { PrintTagsScanditService } from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
-import { MenuController } from "@ionic/angular";
+import { MenuController, PopoverController } from "@ionic/angular";
 import { SealScanditService } from "../../../../services/src/lib/scandit/seal/seal.service";
 import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/product-info/product-info.service";
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 import { LoginComponent } from '../../login/login.page';
 import { AuditMultipleScanditService } from "../../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
+import {AlertPopoverComponent} from "../alert-popover/alert-popover.component";
+import {WarehouseReceptionAlertService} from "../../../../services/src/lib/endpoint/warehouse-reception-alert/warehouse-reception-alert.service";
+import Warehouse = WarehouseModel.Warehouse;
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -666,6 +669,8 @@ export class MenuComponent implements OnInit {
     private menuController: MenuController,
     private toolbarProvider: ToolbarProvider,
     private tariffService: TariffService,
+    private popoverController: PopoverController,
+    private warehouseReceptionAlertService: WarehouseReceptionAlertService,
     private zona: NgZone
 
   ) {
@@ -783,9 +788,39 @@ export class MenuComponent implements OnInit {
     } else if (p.url === 'reception') {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
-      this.receptionScanditService.reception(2);
+      this.checkAlertsAndRedirect();
     } else if(p.url === 'audits/scan'){
       this.auditMultipleScanditService.init();
+    }
+  }
+
+  async checkAlertsAndRedirect() {
+    const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
+    if(currentWarehouse){
+      this.warehouseReceptionAlertService.check({warehouseId: currentWarehouse.id}).then(async response => {
+        if (response.code == 200 && typeof response.data == 'boolean') {
+          if (response.data) {
+            const popover = await this.popoverController.create({
+              component: AlertPopoverComponent
+            });
+            popover.onDidDismiss().then(response => {
+              if(typeof response.data == 'boolean' && response.data){
+                //disable alerts
+              }
+              this.receptionScanditService.reception(2);
+            });
+            await popover.present();
+          } else {
+            this.receptionScanditService.reception(2);
+          }
+        } else {
+          console.error(response);
+        }
+      }, error => {
+        console.error(error);
+      });
+    }else{
+      console.error('Current warehouse not found.');
     }
   }
 
@@ -800,7 +835,7 @@ export class MenuComponent implements OnInit {
     } else if (p.url === 'reception') {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
-      this.receptionScanditService.reception(2);
+      this.checkAlertsAndRedirect();
     } else if (p.url == 'print/product/relabel') {
       this.printTagsScanditService.printRelabelProducts();
     } else if (p.url == 'products/info') {
