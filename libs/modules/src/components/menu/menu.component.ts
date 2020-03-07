@@ -702,17 +702,25 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      id:'incidents',
       title: 'Manejo de defectos',
-      icon:'warning',
-      url: '/defect-handler'
+      open: false,
+      type: 'wrapper',
+      icon: 'archive',
+      children: [
+        {
+          id:'incidents',
+          title: 'Lista de defectos',
+          icon:'warning',
+          url: '/defect-handler'
+        },
+        {
+          id: 'firm',
+          title: 'Firma',
+          icon: 'color-wand',
+          url: '/signature'
+        }
+      ]
     },
-    {
-      id: 'firm',
-      title: 'Firma',
-      icon: 'color-wand',
-      url: '/signature'
-    }
   ];
   private menuPages = {
     sga: this.sgaPages,
