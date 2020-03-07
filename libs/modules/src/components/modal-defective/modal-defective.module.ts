@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonChangeStateModule } from './button-change-state/button-change-state.module';
 
 @NgModule({
-  declarations: [ShowImageComponent],
+  declarations: [],
   imports: [
     CommonModule,
     MatExpansionModule,
