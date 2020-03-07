@@ -5,22 +5,25 @@
   <ng-template #read>
     <ion-item>
       <ion-label>Fecha</ion-label>
-      <ion-datetime formControlName="registerDate" picker-format="DD -MM-YYYY" display-format="DD-MM-YYYY" format></ion-datetime>
+      <ion-datetime  formControlName="registerDate" picker-format="DD -MM-YYYY" display-format="DD-MM-YYYY" format [readonly]="barcodeRoute!=null"></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label class="ion-text-capitalize">defecto</ion-label>
-      <ion-select (ionChange)="defectChange($event)" formControlName="defectType" placeholder="Selecciona">
+      <ion-select (ionChange)="defectChange($event)" formControlName="defectType" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
         <ion-select-option *ngFor="let defect of defects" [value]="defect.id">{{defect.name}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label class="ion-text-capitalize">observaciones:</ion-label>
-      <ion-input formControlName="observations" type="text"></ion-input>
+      <ion-input formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label>Estado de gestion</ion-label>
-      <ion-select (ionChange)="gestionChange($event)" placeholder="Selecciona">
-        <ion-select-option *ngFor="let item of statusManagament.statuses" [value]="item.id">{{item.name}}</ion-select-option>
+      <ion-select *ngIf="barcodeRoute==null"  (ionChange)="gestionChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
+        <ion-select-option  *ngFor="let item of statusManagament.statuses" [value]="item.id" >{{item.name}}</ion-select-option>
+      </ion-select>
+      <ion-select *ngIf="barcodeRoute!=null" (ionChange)="gestionChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null" formControlName="defectType">
+        <ion-select-option  *ngFor="let item of types" [value]="item.id" >{{item.name}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item (click)="presentModal()" detail lines="none">
@@ -35,7 +38,7 @@
     </ion-item>
     <ion-item>
       <ion-label class="ion-text-capitalize">requiere validacion</ion-label>
-      <ion-checkbox formControlName="validation" slot="end"></ion-checkbox>
+      <ion-checkbox  formControlName="validation" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
     </ion-item>
     <ion-button (click)="enviar()" expand="block" shape="round">
       enviar

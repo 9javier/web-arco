@@ -21,14 +21,14 @@
         {{ defect?.registerDate }}
       </td>
     </ng-container>
-    <ng-container matColumnDef="defectType">
+    <!-- <ng-container matColumnDef="defectType">
       <th mat-header-cell *matHeaderCellDef mat-sort-header="defectType">
         Tipo de defecto
       </th>
       <td mat-cell *matCellDef="let defect">
         {{ defect?.defectTypeChild.name }}
       </td>
-    </ng-container>
+    </ng-container> -->
     <ng-container matColumnDef="state">
       <th mat-header-cell *matHeaderCellDef mat-sort-header="state">
         Estado
@@ -37,6 +37,15 @@
         {{ defect?.statusManagementDefect.id }}
       </td>
     </ng-container>
+
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="select">
+      </th>
+      <td mat-cell *matCellDef="let defect">
+        <i class="material-icons action-icon">send</i>
+      </td>
+    </ng-container>
+
   </table>
   <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">

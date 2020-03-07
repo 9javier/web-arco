@@ -12,6 +12,8 @@ export class IncidentsService {
   private incidentsUrl: string = environment.apiBase + '/incidents'
   private statusManagamentDefectUrl: string = environment.apiBase + '/classification'
   private getAllIncidentProductUrl: string = this.incidentsUrl + '/all'
+  private getByIdIncidentProductUrl: string = this.incidentsUrl + '/get/id'
+
   constructor(private http: HttpClient) { }
 
   getDefectTypesChild() {
@@ -27,6 +29,10 @@ export class IncidentsService {
   }
   getAllIncidentProduct(data) {
     return this.http.post<HttpRequestModel.Response>(this.getAllIncidentProductUrl, data).pipe(map(resp => resp.data));
+  }
+
+  getOneIncidentProductById(data) {
+    return this.http.post<HttpRequestModel.Response>(this.getByIdIncidentProductUrl, data).pipe(map(resp => resp.data));
   }
 
 

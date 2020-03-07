@@ -2,8 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment'
 import { IonSlides, ModalController } from '@ionic/angular';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx'
-;
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+import {Router} from '@angular/router';
 import { IntermediaryService, IncidentsService } from '../../../services/src';
 import { PhotoModalComponent } from './components/photo-modal/photo-modal.component';
 
@@ -28,18 +28,35 @@ export class IncidentsComponent implements OnInit {
   defects: any = [];
   statusManagament: any;
   imgUrl: any;
+  public barcodeRoute = null;
+  public types:any;
+
+  private varTrying;
+
   constructor(
     private fb: FormBuilder,
     private incidentsService: IncidentsService,
     private intermediary: IntermediaryService,
-    private modalController: ModalController
-  ) { }
+    private modalController: ModalController,
+    private router: Router,
+  ) { 
+
+
+  }
 
   ngOnInit() {
     this.initForm();
-    this.date = moment().format('DD-MM-YYYY')
-    this.readed = false
-    this.initDinamicFields()
+    this.date = moment().format('DD-MM-YYYY');
+    this.readed = false;
+    const navigation = this.router.getCurrentNavigation();    
+    if(navigation.extras.state!=undefined){
+      this.barcodeRoute = navigation.extras.state['reference'];
+      this.types ="Cargando";
+    }
+    this.initDinamicFields();
+    
+    
+
   }
 
   initForm() {
@@ -54,7 +71,7 @@ export class IncidentsComponent implements OnInit {
     })
   }
 
-  initDinamicFields() {
+  async initDinamicFields() {
     this.incidentsService.getDefectTypesChild().subscribe(resp => {
       console.log('getDefectTypesChild', resp);
       this.defects = resp;
@@ -64,20 +81,65 @@ export class IncidentsComponent implements OnInit {
       console.log('getDtatusManagamentDefect', resp);
       this.statusManagament = resp
     })
+    this.loadFromDBValues();
+  }
+
+  async loadFromDBValues(){
+
+    if(this.barcodeRoute){
+
+
+      let body = {
+        "id":this.barcodeRoute
+      }
+
+      await this.incidentsService.getOneIncidentProductById(body).subscribe(resp=>{
+
+          console.log('result mas op del mundo', resp);
+
+          this.types = resp.querys;
+
+          console.log("Los tipos", this.types)
+
+          resp = resp.result;
+          this.varTrying = resp.statusManagementDefectId.id;
+
+          // this.incidenceForm.setValue({gestionChange:resp.statusManagementDefectId.id})
+          this.incidenceForm.patchValue({
+            barcode: resp.barcode,
+            registerDate: resp.registerDate,
+            defectType: resp.defectTypeChildId.id,
+            observations: resp.observations,
+            gestionState: 1,
+            // gestionState: resp.defectTypeChildId.id,
+            photo: resp.photo,
+            validation: resp.validation
+          });
+
+          this.readed = true;
+
+      });
+
+      // await this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
+      //   console.log('getDtatusManagamentDefect', resp);
+      //   this.statusManagament = resp
+      // })
+
+    }
+
   }
 
   newValue(e){
-    console.log(e);
     this.barcode = e
     if (this.barcode && this.barcode.length > 0) {
       this.incidenceForm.patchValue({
         barcode: this.barcode
-      })
-      console.log(this.incidenceForm.value);
-      
+      });      
       this.readed = true
-    }
-    
+    }    
+
+    console.log("on new Value");
+    console.log(this.statusManagament);
   }
 
   async enviar() {
