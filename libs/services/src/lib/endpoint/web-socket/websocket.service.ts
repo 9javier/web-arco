@@ -5,7 +5,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import {environment} from '../../../environments/environment';
 import {BehaviorSubject} from "rxjs";
 import { type } from "./enums/typeData";
-type Socket = SocketIOClient.Socket;   
+type Socket = SocketIOClient.Socket;
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class WebsocketService {
   // public eventData = new EventEmitter();
   private socket : Socket;
   private socketUrl : string;
-  static emitData = new BehaviorSubject({}); 
+  static emitData = new BehaviorSubject({});
   private emitData$ = WebsocketService.emitData.asObservable();
   // public notificationHandler : Function = console.log;
 
@@ -47,15 +47,15 @@ export class WebsocketService {
     this.socketUrl = data.data.url;
     this.init(this.socketUrl);
   }
-  
+
   getSocket() : Socket {
     return this.socket;
   }
-  
+
   isConnected() : boolean {
     return !!this.socket;
   }
-  
+
   disconnect() : void {
     this.socket.disconnect;
     delete this.socket;

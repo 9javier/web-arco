@@ -6,6 +6,7 @@ import { AlertController, LoadingController, ModalController, NavParams } from "
 import { InventoryService } from "../../../../../services/src/lib/endpoint/inventory/inventory.service";
 import { DefectiveRegistryModel } from '../../../../../services/src/models/endpoints/DefectiveRegistry';
 import { DefectiveRegistryService } from '../../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
+import { DamagedModel } from '../../../../../services/src/models/endpoints/Damaged';
 @Component({
   selector: 'suite-registry-details',
   templateUrl: './registry-details.component.html',
@@ -14,7 +15,7 @@ import { DefectiveRegistryService } from '../../../../../services/src/lib/endpoi
 export class RegistryDetailsComponent implements OnInit {
   section = 'information';
   title = 'Ubicación ';
-
+  originalTableStatus: DamagedModel.Status[];
   registry: DefectiveRegistryModel.DefectiveRegistry;
   registryHistorical;
   date: any;
@@ -75,8 +76,9 @@ export class RegistryDetailsComponent implements OnInit {
   }
 
   getRegistryHistorical(): void {
-    this.defectiveRegistryService.getHistorical({ product: this.registry.product.reference }).subscribe(historical => {
-      this.registryHistorical = historical;
+    this.defectiveRegistryService.getHistorical({ productReference: this.registry.product.reference }).subscribe(historical => {
+      this.registryHistorical = historical.results;
+      this.originalTableStatus = historical.statuses;
     });
   }
 
@@ -99,5 +101,10 @@ export class RegistryDetailsComponent implements OnInit {
       buttons: ['OK']
     });
     await alert.present();
+  }
+
+  getStatusName(defectType: number) {
+    const status = this.originalTableStatus.find((x) => x.id === defectType);
+    return status.name;
   }
 }

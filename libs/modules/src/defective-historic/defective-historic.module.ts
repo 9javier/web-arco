@@ -16,6 +16,8 @@ import {
 import { FilterButtonModule } from '../components/filter-button/filter-button.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 import { DefectiveHistoricComponent } from './defective-historic.component';
+import { RegistryDetailsModule } from '../components/modal-defective/registry-details/registry-details.module';
+import { ShowImageModule } from '../components/modal-defective/show-image/show-image.module';
 
 const routes: Routes = [
   {
@@ -42,6 +44,8 @@ const routes: Routes = [
     MatTooltipModule,
     MatRadioModule,
     FormsModule,
+    RegistryDetailsModule,
+    ShowImageModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

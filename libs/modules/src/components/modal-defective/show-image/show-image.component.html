@@ -1,0 +1,15 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>{{ reference }}</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="image-content">
+    <img [src]="urlImage" alt="" />
+  </div>
+</ion-content>
