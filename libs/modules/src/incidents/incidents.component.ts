@@ -1,9 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment'
 import { IonSlides, ModalController } from '@ionic/angular';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import {Router} from '@angular/router';
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx'
+;
+import {formatDate} from '@angular/common';
 import { IntermediaryService, IncidentsService } from '../../../services/src';
 import { PhotoModalComponent } from './components/photo-modal/photo-modal.component';
 
@@ -16,12 +18,20 @@ import { PhotoModalComponent } from './components/photo-modal/photo-modal.compon
 export class IncidentsComponent implements OnInit {
   @ViewChild(IonSlides) slides: IonSlides;
   // @ViewChild(ScannerManualComponent) scanner: ScannerManualComponent;
-  
+
+
+  ticketEmit: boolean;
+  passHistory:boolean;
+  requirePhoto:boolean;
+  requireContact: boolean;
+  requireOk: boolean;
+  checkHistory: boolean;
+
   slideOpts = {
     speed: 400
   };
   date: string;
-
+  dateNow = formatDate(new Date(), 'dd/MM/yyyy', 'es');
   incidenceForm: FormGroup;
   readed: boolean
   barcode: string = ''
@@ -62,7 +72,7 @@ export class IncidentsComponent implements OnInit {
   initForm() {
     this.incidenceForm = this.fb.group({
       barcode: [''],
-      registerDate:[''],
+      registerDate:[this.dateNow],
       defectType: [0],
       observations: [''],
       gestionState: [0],
@@ -98,11 +108,21 @@ export class IncidentsComponent implements OnInit {
           console.log('result mas op del mundo', resp);
 
           this.types = resp.querys;
-
-          console.log("Los tipos", this.types)
-
           resp = resp.result;
+
+          this.statusManagament = {
+            'classifications' : resp.statusManagementDefectId
+          }
+          
+          // this.statusManagament["classifications"] = resp.statusManagementDefectId;
+
+
+          console.log('result mas op del mundo', resp);
+
           this.varTrying = resp.statusManagementDefectId.id;
+
+
+          
 
           // this.incidenceForm.setValue({gestionChange:resp.statusManagementDefectId.id})
           this.incidenceForm.patchValue({
@@ -110,7 +130,7 @@ export class IncidentsComponent implements OnInit {
             registerDate: resp.registerDate,
             defectType: resp.defectTypeChildId.id,
             observations: resp.observations,
-            gestionState: 1,
+            gestionState: resp.statusManagementDefectId.id,
             // gestionState: resp.defectTypeChildId.id,
             photo: resp.photo,
             validation: resp.validation
@@ -118,6 +138,13 @@ export class IncidentsComponent implements OnInit {
 
           this.readed = true;
 
+          let sendtoGestionChange = {
+            "detail":{
+              "value":resp.statusManagementDefectId.id
+            }
+          }
+
+          this.gestionChange(sendtoGestionChange);
       });
 
       // await this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
@@ -141,9 +168,17 @@ export class IncidentsComponent implements OnInit {
     console.log("on new Value");
     console.log(this.statusManagament);
   }
+  async print(){
+    console.log("imprimir...")
+  }
 
   async enviar() {
     await this.intermediary.presentLoading('Enviando...')
+
+    if(this.ticketEmit == true){
+      this.print();
+    }
+    
     // setTimeout(async () => {
     //   await this.intermediary.dismissLoading()
     // }, 3000)
@@ -189,7 +224,32 @@ export class IncidentsComponent implements OnInit {
     }
   }
   gestionChange(e) {
-    console.log(e);
+    
+    let id = e.detail.value;
+    
+    console.log("this.statusManagament",this.statusManagament);
+    
+    
+    const res = this.statusManagament.classifications!=undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find( x => x.defectType == id);
+    
+    console.log("res",res);
+    
+
+    if(res != undefined){
+      this.ticketEmit = res.ticketEmit;
+      this.passHistory = res.passHistory;
+      this.requirePhoto = res.requirePhoto
+      this.requireContact = res.requireContact;
+      this.requireOk = res.requireOk;
+    }else{
+      this.ticketEmit = false;
+      this.passHistory = false;
+      this.requirePhoto = false;
+      this.requireContact = false;
+      this.requireOk = false;
+    }
+
+
     this.incidenceForm.patchValue({
       gestionState: parseInt(e.detail.value)
     });
