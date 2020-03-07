@@ -1,21 +1,26 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, OnChanges, AfterViewInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment'
 import { IonSlides, ModalController } from '@ionic/angular';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx'
-;
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+import { Router } from '@angular/router';
 import { IntermediaryService, IncidentsService } from '../../../services/src';
 import { PhotoModalComponent } from './components/photo-modal/photo-modal.component';
-
+import {SignatureComponent} from '../signature/signature.component';
+import { SignaturePad } from 'angular2-signaturepad/signature-pad';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'suite-incidents',
   templateUrl: './incidents.component.html',
   styleUrls: ['./incidents.component.scss']
 })
-export class IncidentsComponent implements OnInit {
+export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild(IonSlides) slides: IonSlides;
   // @ViewChild(ScannerManualComponent) scanner: ScannerManualComponent;
+  @ViewChild(SignaturePad) signaturePad: SignaturePad;
+  principal: boolean = true;
+  dataUrl: string;
 
 
   ticketEmit: boolean;
@@ -40,7 +45,9 @@ export class IncidentsComponent implements OnInit {
     private fb: FormBuilder,
     private incidentsService: IncidentsService,
     private intermediary: IntermediaryService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private plt: Platform,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -48,6 +55,7 @@ export class IncidentsComponent implements OnInit {
     this.date = moment().format('DD-MM-YYYY')
     this.readed = false
     this.initDinamicFields()
+    
   }
 
   initForm() {
@@ -176,5 +184,22 @@ export class IncidentsComponent implements OnInit {
     this.incidenceForm.patchValue({
       defectType: parseInt(e.detail.value)
     })
+  }
+
+  ngAfterViewInit() {
+    // console.log(this.signaturePad);
+    //   this.signaturePad.set('minWidth', 5); // set szimek/signature_pad options at runtime
+    //   this.signaturePad.set('canvasWidth', this.plt.width())
+    //   this.signaturePad.set('canvasHeight', 300)
+    //   this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
+  }
+
+  ngOnChanges(){
+      
+  }
+  
+
+  signModal(){
+    this.router.navigate(['signature']);
   }
 }
