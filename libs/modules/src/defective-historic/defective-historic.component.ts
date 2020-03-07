@@ -5,12 +5,15 @@ import { FilterButtonComponent } from '../components/filter-button/filter-button
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
-import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
+import { IntermediaryService } from '@suite/services';
 import { ModalController } from '@ionic/angular';
 import { DefectiveRegistryService } from '../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
 import { DefectiveRegistryModel } from '../../../services/src/models/endpoints/DefectiveRegistry';
 import { SelectionModel } from '@angular/cdk/collections';
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
+import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
+import { ShowImageComponent } from '../components/modal-defective/show-image/show-image.component';
+import { RegistryDetailsComponent } from '../components/modal-defective/registry-details/registry-details.component';
 
 @Component({
   selector: 'suite-defective-historic',
@@ -20,45 +23,39 @@ import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 export class DefectiveHistoricComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select','storeDetection','dateDetection','statusManagementDefect','defectTypeParent','defectTypeChild','numberObservations','barCode','photo','warehouse','factoryReturn'];
+  displayedColumns: string[] = ['select','id','product','dateDetection','statusManagementDefect','defectTypeParent','defectTypeChild','numberObservations','photo','warehouse'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
-
+  originalTableStatus: DamagedModel.Status[];
   columns = {};
 
-  @ViewChild('filterButtonStoreDetection') filterButtonStoreDetection: FilterButtonComponent;
+  @ViewChild('filterButtonProduct') filterButtonProduct: FilterButtonComponent;
   @ViewChild('filterButtonDateDetection') filterButtonDateDetection: FilterButtonComponent;
   @ViewChild('filterButtonStatusManagementDefect') filterButtonStatusManagementDefect: FilterButtonComponent;
   @ViewChild('filterButtonDefectTypeParent') filterButtonDefectTypeParent: FilterButtonComponent;
   @ViewChild('filterButtonDefectTypeChild') filterButtonDefectTypeChild: FilterButtonComponent;
   @ViewChild('filterButtonNumberObservations') filterButtonNumberObservations: FilterButtonComponent;
-  @ViewChild('filterButtonBarCode') filterButtonBarCode: FilterButtonComponent;
   @ViewChild('filterButtonPhoto') filterButtonPhoto: FilterButtonComponent;
   @ViewChild('filterButtonWarehouse') filterButtonWarehouse: FilterButtonComponent;
-  @ViewChild('filterButtonFactoryReturn') filterButtonFactoryReturn: FilterButtonComponent;
 
-  isFilteringStoreDetection: number = 0;
+  isFilteringProduct: number = 0;
   isFilteringDateDetection: number = 0;
   isFilteringStatusManagementDefect: number = 0;
   isFilteringDefectTypeParent: number = 0;
   isFilteringDefectTypeChild: number = 0;
   isFilteringNumberObservations: number = 0;
-  isFilteringBarCode: number = 0;
   isFilteringPhoto: number = 0;
   isFilteringWarehouse: number = 0;
-  isFilteringFactoryReturn: number = 0;
 
   /**Filters */
-  storeDetection: Array<TagsInputOption> = [];
+  product: Array<TagsInputOption> = [];
   dateDetection: Array<TagsInputOption> = [];
   statusManagementDefect: Array<TagsInputOption> = [];
   defectTypeParent: Array<TagsInputOption> = [];
   defectTypeChild: Array<TagsInputOption> = [];
   numberObservations: Array<TagsInputOption> = [];
-  barCode: Array<TagsInputOption> = [];
   photo: Array<TagsInputOption> = [];
   warehouse: Array<TagsInputOption> = [];
-  factoryReturn: Array<TagsInputOption> = [];
 
   entities;
   pauseListenFormChange: boolean;
@@ -66,23 +63,22 @@ export class DefectiveHistoricComponent implements OnInit {
   pagerValues = [10, 20, 80];
 
   form: FormGroup = this.formBuilder.group({
-    storeDetection: [],
+    id: [],
+    product: [],
     dateDetection: [],
     statusManagementDefect: [],
     defectTypeParent: [],
     defectTypeChild: [],
     numberObservations:[],
-    barCode: [],
     photo: [],
     warehouse: [],
-    factoryReturn: [],
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
     }),
     orderby: this.formBuilder.group({
       type: 1,
-      order: "ASC"
+      order: "asc"
     })
   });
   length: any;
@@ -105,31 +101,36 @@ export class DefectiveHistoricComponent implements OnInit {
 
   initEntity() {
     this.entities = {
-      storeDetection: [],
+      product: [],
       dateDetection: [],
       statusManagementDefect: [],
       defectTypeParent: [],
       defectTypeChild: [],
       numberObservations:[],
-      barCode: [],
       photo: [],
       warehouse: [],
-      factoryReturn: [],
+      orderby: this.formBuilder.group({
+        type: 1,
+        order: "asc"
+      })
     }
   }
 
   initForm() {
     this.form.patchValue({
-      storeDetection: [],
+      id: [],
+      product: [],
       dateDetection: [],
       statusManagementDefect: [],
       defectTypeParent: [],
       defectTypeChild: [],
       numberObservations:[],
-      barCode: [],
       photo: [],
       warehouse: [],
-      factoryReturn: [],
+      orderby: this.formBuilder.group({
+        type: 1,
+        order: "asc"
+      })
     })
   }
 
@@ -147,23 +148,21 @@ export class DefectiveHistoricComponent implements OnInit {
       this.getList(this.form)
     });
 
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
-      this.getList(this.form);
-    });
+    // this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+    //   this.getList(this.form);
+    // });
   }
 
   getFilters() {
-    this.defectiveRegistryService.getFiltersEntities().subscribe((entities) => {
-      this.storeDetection = this.updateFilterSource(entities.storeDetection, 'storeDetection');
+    this.defectiveRegistryService.getFiltersEntitiesTrue().subscribe((entities) => {
+      this.product = this.updateFilterSource(entities.product, 'product');
       this.dateDetection = this.updateFilterSource(entities.dateDetection, 'dateDetection');
       this.statusManagementDefect = this.updateFilterSource(entities.statusManagementDefect, 'statusManagementDefect');
       this.defectTypeParent = this.updateFilterSource(entities.defectTypeParent, 'defectTypeParent');
       this.defectTypeChild = this.updateFilterSource(entities.defectTypeChild, 'defectTypeChild');
       this.numberObservations = this.updateFilterSource(entities.numberObservations, 'numberObservations');
-      this.barCode = this.updateFilterSource(entities.barCode, 'barCode');
       this.photo = this.updateFilterSource(entities.photo, 'photo');
       this.warehouse = this.updateFilterSource(entities.warehouse, 'warehouse');
-      this.factoryReturn = this.updateFilterSource(entities.factoryReturn, 'factoryReturn');
 
       this.reduceFilters(entities);
       setTimeout(() => {
@@ -214,16 +213,14 @@ export class DefectiveHistoricComponent implements OnInit {
   }
 
   private reduceFilters(entities){
-    this.filterButtonStoreDetection.listItems = this.reduceFilterEntities(this.storeDetection, entities,'storeDetection');
+    this.filterButtonProduct.listItems = this.reduceFilterEntities(this.product, entities,'product');
     this.filterButtonDateDetection.listItems = this.reduceFilterEntities(this.dateDetection, entities,'dateDetection');
     this.filterButtonStatusManagementDefect.listItems = this.reduceFilterEntities(this.statusManagementDefect, entities,'statusManagementDefect');
     this.filterButtonDefectTypeParent.listItems = this.reduceFilterEntities(this.defectTypeParent, entities,'defectTypeParent');
     this.filterButtonDefectTypeChild.listItems = this.reduceFilterEntities(this.defectTypeChild, entities,'defectTypeChild');
     this.filterButtonNumberObservations.listItems = this.reduceFilterEntities(this.numberObservations, entities,'numberObservations');
-    this.filterButtonBarCode.listItems = this.reduceFilterEntities(this.barCode, entities,'barCode');
     this.filterButtonPhoto.listItems = this.reduceFilterEntities(this.photo, entities,'photo');
     this.filterButtonWarehouse.listItems = this.reduceFilterEntities(this.warehouse, entities,'warehouse');
-    this.filterButtonFactoryReturn.listItems = this.reduceFilterEntities(this.factoryReturn, entities,'factoryReturn');
   }
 
   private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
@@ -240,7 +237,7 @@ export class DefectiveHistoricComponent implements OnInit {
 
   async sortData(event: Sort) {
     this.form.value.orderby.type = this.columns[event.active];
-    this.form.value.orderby.order = event.direction;
+    this.form.value.orderby.order = event.direction !== '' ? event.direction : 'asc';
 
     this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
       this.getList(this.form);
@@ -251,6 +248,7 @@ export class DefectiveHistoricComponent implements OnInit {
     this.defectiveRegistryService.indexHistoricTrue(form.value).subscribe((resp:any) => {
         if (resp.results) {
           this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
+          this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
           const paginator = resp.pagination;
 
           this.paginator.length = paginator.totalResults;
@@ -288,23 +286,23 @@ export class DefectiveHistoricComponent implements OnInit {
   applyFilters(filtersResult, filterType) {
     const filters = filtersResult.filters;
     switch (filterType) {
-      case 'storeDetection':
-        let storeDetectionFiltered: string[] = [];
-        for (let storeDetection of filters) {
+      case 'product':
+        let productFiltered: string[] = [];
+        for (let product of filters) {
 
-          if (storeDetection.checked) storeDetectionFiltered.push(storeDetection.id);
+          if (product.checked) productFiltered.push(product.id);
         }
 
-        if (storeDetectionFiltered.length >= this.storeDetection.length) {
-          this.form.value.storeDetection = [];
-          this.isFilteringStoreDetection = this.storeDetection.length;
+        if (productFiltered.length >= this.product.length) {
+          this.form.value.product = [];
+          this.isFilteringProduct = this.product.length;
         } else {
-          if (storeDetectionFiltered.length > 0) {
-            this.form.value.storeDetection = storeDetectionFiltered;
-            this.isFilteringStoreDetection = storeDetectionFiltered.length;
+          if (productFiltered.length > 0) {
+            this.form.value.product = productFiltered;
+            this.isFilteringProduct = productFiltered.length;
           } else {
-            this.form.value.storeDetection = ['99999'];
-            this.isFilteringStoreDetection = this.storeDetection.length;
+            this.form.value.product = ['99999'];
+            this.isFilteringProduct = this.product.length;
           }
         }
         break;
@@ -408,26 +406,6 @@ export class DefectiveHistoricComponent implements OnInit {
           }
         }
         break;
-      case 'barCode':
-        let barCodeFiltered: string[] = [];
-        for (let barCode of filters) {
-
-          if (barCode.checked) barCodeFiltered.push(barCode.id);
-        }
-
-        if (barCodeFiltered.length >= this.barCode.length) {
-          this.form.value.barCode = [];
-          this.isFilteringBarCode = this.barCode.length;
-        } else {
-          if (barCodeFiltered.length > 0) {
-            this.form.value.barCode = barCodeFiltered;
-            this.isFilteringBarCode = barCodeFiltered.length;
-          } else {
-            this.form.value.barCode = ['99999'];
-            this.isFilteringBarCode = this.barCode.length;
-          }
-        }
-        break;
       case 'photo':
         let photoFiltered: string[] = [];
         for (let photo of filters) {
@@ -468,29 +446,33 @@ export class DefectiveHistoricComponent implements OnInit {
           }
         }
         break;
-      case 'factoryReturn':
-        let factoryReturnFiltered: string[] = [];
-        for (let factoryReturn of filters) {
-
-          if (factoryReturn.checked) factoryReturnFiltered.push(factoryReturn.id);
-        }
-
-        if (factoryReturnFiltered.length >= this.factoryReturn.length) {
-          this.form.value.factoryReturn = [];
-          this.isFilteringFactoryReturn = this.factoryReturn.length;
-        } else {
-          if (factoryReturnFiltered.length > 0) {
-            this.form.value.factoryReturn = factoryReturnFiltered;
-            this.isFilteringFactoryReturn = factoryReturnFiltered.length;
-          } else {
-            this.form.value.factoryReturn = ['99999'];
-            this.isFilteringFactoryReturn = this.factoryReturn.length;
-          }
-        }
-        break;
     }
 
     this.lastUsedFilter = filterType;
     this.getList(this.form);
+  }
+
+  async goDetails(registry: DefectiveRegistryModel.DefectiveRegistry) {
+    return (await this.modalController.create({
+      component: RegistryDetailsComponent,
+      componentProps: {
+        registry: registry
+      }
+    })).present();
+  }
+
+  getStatusName(defectType: number) {
+    const status = this.originalTableStatus.find((x) => x.id === defectType);
+    return status.name;
+  }
+
+  async showImageModal(reference: string, photo: string) {
+    return (await this.modalController.create({
+      component: ShowImageComponent,
+      componentProps: {
+        reference: reference,
+        urlImage: photo
+      }
+    })).present();
   }
 }
