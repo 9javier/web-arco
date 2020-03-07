@@ -9,6 +9,7 @@ import { ModalController } from '@ionic/angular';
 })
 export class ButtonChangeStateComponent implements OnInit {
   @Input() registry: any;
+  @Input() showChangeState: boolean;
 
   constructor(
     private modalController: ModalController
