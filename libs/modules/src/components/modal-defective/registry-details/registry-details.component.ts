@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { IntermediaryService, TypesService } from '@suite/services';
+import { TypesService } from '@suite/services';
 import { PrinterService } from "../../../../../services/src/lib/printer/printer.service";
-import { WarehouseService } from "../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { AlertController, LoadingController, ModalController, NavParams } from "@ionic/angular";
-import { InventoryService } from "../../../../../services/src/lib/endpoint/inventory/inventory.service";
+import { InventoryService, WarehouseService } from '@suite/services';
 import { DefectiveRegistryModel } from '../../../../../services/src/models/endpoints/DefectiveRegistry';
 import { DefectiveRegistryService } from '../../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
 import { DamagedModel } from '../../../../../services/src/models/endpoints/Damaged';
+import { ChangeStateComponent } from '../change-state/change-state.component';
+
 @Component({
   selector: 'suite-registry-details',
   templateUrl: './registry-details.component.html',
@@ -18,12 +19,11 @@ export class RegistryDetailsComponent implements OnInit {
   originalTableStatus: DamagedModel.Status[];
   registry: DefectiveRegistryModel.DefectiveRegistry;
   registryHistorical;
+  showChangeState = false;
   date: any;
   container = null;
   warehouseId: number;
-
   listProducts: any[] = [];
-
   loading = null;
 
   actionTypes = {};
@@ -51,6 +51,7 @@ export class RegistryDetailsComponent implements OnInit {
     private loadingController: LoadingController,
   ) {
     this.registry = this.navParams.get("registry");
+    this.showChangeState = this.navParams.get("showChangeState");
   }
 
   ngOnInit() {
@@ -82,8 +83,8 @@ export class RegistryDetailsComponent implements OnInit {
     });
   }
 
-  close() {
-    this.modalController.dismiss();
+  async close() {
+    await this.modalController.dismiss();
   }
 
   async showLoading(message: string) {

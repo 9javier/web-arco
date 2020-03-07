@@ -456,7 +456,8 @@ export class DefectiveRegistryComponent implements OnInit {
     return (await this.modalController.create({
       component: RegistryDetailsComponent,
       componentProps: {
-        registry: registry
+        registry: registry,
+        showChangeState: true
       }
     })).present();
   }

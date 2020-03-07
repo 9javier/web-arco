@@ -1,24 +1,22 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
-import { MatExpansionModule, MatTooltipModule } from '@angular/material';
 import { RegistryDetailsComponent } from './registry-details.component';
-
-
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { MatExpansionModule, MatTooltipModule } from '@angular/material';
+import { ButtonChangeStateModule } from '../button-change-state/button-change-state.module';
 
 @NgModule({
   declarations: [RegistryDetailsComponent],
+  entryComponents: [RegistryDetailsComponent],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     IonicModule,
     FormsModule,
     MatTooltipModule,
-    MatExpansionModule
+    MatExpansionModule,
+    ButtonChangeStateModule
   ],
-  entryComponents: [
-    RegistryDetailsComponent
-  ]
+  exports: [RegistryDetailsComponent]
 })
-export class RegistryDetailsModule {}
+export class RegistryDetailsModule { }
