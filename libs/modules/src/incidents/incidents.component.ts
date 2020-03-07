@@ -24,7 +24,10 @@ export class IncidentsComponent implements OnInit {
   requirePhoto:boolean;
   requireContact: boolean;
   requireOk: boolean;
-  checkHistory: boolean;
+  checkHistory: true;
+  txtName
+  txtEmail;
+  txtTel;
 
   slideOpts = {
     speed: 400
@@ -53,13 +56,14 @@ export class IncidentsComponent implements OnInit {
 
   initForm() {
     this.incidenceForm = this.fb.group({
-      barcode: [''],
-      registerDate:[this.dateNow],
-      defectType: [0],
-      observations: [''],
-      gestionState: [0],
-      photo:[''], 
-      validation:[false]
+      productReference: '',
+      dateDetection:[this.dateNow],
+      numberObservations: [0],
+      observations: '',
+      factoryReturn: [false],
+      isHistory: [false],
+      defectTypeChildId: [1],
+      statusManagementDefectId: [0]
     })
   }
 
@@ -76,11 +80,16 @@ export class IncidentsComponent implements OnInit {
   }
 
   newValue(e){
+
+
+
+
     console.log(e);
     this.barcode = e
     if (this.barcode && this.barcode.length > 0) {
+
       this.incidenceForm.patchValue({
-        barcode: this.barcode
+        productReference: this.barcode
       })
       console.log(this.incidenceForm.value);
       
@@ -93,6 +102,39 @@ export class IncidentsComponent implements OnInit {
   }
 
   async enviar() {
+
+
+/*
+    this.incidenceForm = this.fb.group({
+      productId: 10,
+      productReference: this.barcode,
+      dateDetection: this.dateNow,
+      numberObservations: 1,
+      factoryReturn: false,
+      isHistory: this.checkHistory,
+      defectTypeChildId: 1,
+      statusManagementDefectId: 16,
+      contact: {
+        name: "ds",
+        email: "dsda",
+        phone: "465454654"
+      }
+    })*/
+    
+
+    this.incidenceForm.patchValue({
+      contact:{
+        name: this.txtName,
+        email: this.txtEmail,
+        phone: this.txtTel,
+      }      
+    })
+
+    console.log(this.incidenceForm.value);
+
+    
+
+
     await this.intermediary.presentLoading('Enviando...')
 
     if(this.ticketEmit == true){
@@ -103,11 +145,11 @@ export class IncidentsComponent implements OnInit {
     //   await this.intermediary.dismissLoading()
     // }, 3000)
     console.log(this.incidenceForm.value);
-    this.incidentsService.storeIncidentProduct(this.incidenceForm.value).subscribe(
+    this.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
       resp => {
         this.intermediary.dismissLoading()
-        this.intermediary.presentToastSuccess('La incidencia fue enviada exitosamente')
-        this.incidenceForm.patchValue({
+        this.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
+        /*this.incidenceForm.patchValue({
           barcode: null,
           registerDate: null,
           defectType: 0,
@@ -116,7 +158,7 @@ export class IncidentsComponent implements OnInit {
           photo: null,
           validation: false
         })
-        this.readed = false
+        this.readed = false*/
       },
       e => {
         this.intermediary.dismissLoading()
