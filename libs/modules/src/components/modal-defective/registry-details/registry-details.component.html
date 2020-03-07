@@ -5,7 +5,7 @@
                 <ion-icon name="close" class="toogleArrow"></ion-icon>
             </ion-button>
         </ion-buttons>
-        <ion-title>{{ registry?.product?.reference }}</ion-title>
+        <ion-title>{{ registry.id }}</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -21,11 +21,6 @@
     <div *ngIf="section == 'information'">
         <ion-list>
           <ion-item>
-              <ion-label>
-                  Detección de Tienda: {{registry?.storeDetection}}
-              </ion-label>
-          </ion-item>
-          <ion-item>
             <ion-label>
               Fecha de Detección: {{registry?.dateDetection}}
             </ion-label>
@@ -33,11 +28,6 @@
           <ion-item>
             <ion-label>
               Número de Observaciones: {{registry?.numberObservations}}
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              Código de Barras: {{registry?.barCode}}
             </ion-label>
           </ion-item>
           <ion-item>
@@ -71,10 +61,13 @@
             <ion-item *ngFor="let historical of registryHistorical; let i = index">
                 <div>
                   <p>
-                    Fecha de Detección: {{ historical?.dateDetection | date:"dd/MM/yyyy HH:mm:ss" }}
+                    Fecha de Detección: {{ historical?.updatedAt | date:"dd/MM/yyyy HH:mm:ss" }}
                   </p>
                   <p>
-                    Detección de Tienda: {{ historical?.storeDetection }}
+                    Producto: {{ historical?.product?.reference }}
+                  </p>
+                  <p>
+                    Estado: {{getStatusName(historical.statusManagementDefect.defectType)}}
                   </p>
                 </div>
             </ion-item>
@@ -82,4 +75,7 @@
     </div>
 </ion-content>
 <ion-footer>
+  <ion-toolbar class="ion-text-center">
+    <suite-button-change-state [registry]="registry" [showChangeState]="showChangeState"></suite-button-change-state>
+  </ion-toolbar>
 </ion-footer>

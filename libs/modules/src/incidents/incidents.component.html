@@ -67,12 +67,14 @@
     <!--require imprimir-->
     <ion-item *ngIf="requireOk == true">
       <ion-label class="ion-text-capitalize">Firma</ion-label>
-      <ion-button><ion-icon name="finger-print-outline"></ion-icon></ion-button>
+      <ion-button (click)="signModal()"><ion-icon name="finger-print-outline"></ion-icon></ion-button>
     </ion-item>
 
+   
 
     <ion-button (click)="enviar()" expand="block" shape="round">
       enviar
     </ion-button>
   </ng-template>
 </form>
+

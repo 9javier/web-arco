@@ -1,14 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnChanges } from '@angular/core';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 import { Platform } from '@ionic/angular';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'suite-signature',
   templateUrl: './signature.component.html',
   styleUrls: ['./signature.component.scss']
 })
-export class SignatureComponent implements OnInit {
+export class SignatureComponent implements OnInit,OnChanges {
 
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   // signaturePadOptions: Object = { // passed through to szimek/signature_pad constructor
@@ -17,15 +17,22 @@ export class SignatureComponent implements OnInit {
   //   'canvasHeight': 300
   // };
   dataUrl: string;
-  constructor(private plt: Platform) { }
+  constructor(private plt: Platform, private router: Router) {
+   
+   }
 
   ngOnInit() {
-  }
-
-
-  ngAfterViewInit() {
     console.log(this.plt.width());
     
+    
+  }
+
+  ngOnChanges(){
+    
+  }
+  
+  ngAfterViewInit() {
+    console.log(this.signaturePad);
     this.signaturePad.set('minWidth', 5); // set szimek/signature_pad options at runtime
     this.signaturePad.set('canvasWidth', this.plt.width())
     this.signaturePad.set('canvasHeight', 300)
@@ -36,12 +43,14 @@ export class SignatureComponent implements OnInit {
     // will be notified of szimek/signature_pad's onEnd event
     this.dataUrl = this.signaturePad.toDataURL('png')
     console.log(this.dataUrl);
+    this.router.navigate(['incidents']);
     
   }
 
   drawStart() {
     // will be notified of szimek/signature_pad's onBegin event
     console.log('begin drawing');
+   
   }
 
   clear() {

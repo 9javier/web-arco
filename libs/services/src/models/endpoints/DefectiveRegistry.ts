@@ -7,13 +7,11 @@ export namespace DefectiveRegistryModel {
   export interface DefectiveRegistry {
     id?: number;
     product?: Product;
-    storeDetection?: number;
     dateDetection?: Date;
     statusManagementDefect?: StatusManagementDefect;
     defectTypeParent?: DefectTypeParent;
     defectTypeChild?: DefectTypeChild;
     numberObservations?: number;
-    barCode?: string;
     photo?: string;
     warehouse?: Warehouse;
     factoryReturn?: boolean;
@@ -89,13 +87,11 @@ export namespace DefectiveRegistryModel {
   }
    export interface IndexRequest {
      product?: (number | string)[],
-     storeDetection?: (number | string)[],
      dateDetection?:(Date)[],
      statusManagementDefect?: (number | string)[],
      defectTypeParent?: (number | string)[],
      defectTypeChild?: (number | string)[],
      numberObservations?: (number | string)[],
-     barCode?: (number | string)[],
      photo?: (number | string)[],
      warehouse?: (number | string)[],
      factoryReturn?: (boolean)[],
