@@ -83,8 +83,9 @@ export class IncidentsComponent implements OnInit {
       factoryReturn: [false],
       isHistory: [false],
       statusManagementDefectId: [0],
-      defectTypeChildId: [0]
-        
+      defectTypeChildId: [0],
+      defectType: [0],  
+      gestionState: [0],
     })
   }
 

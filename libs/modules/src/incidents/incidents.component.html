@@ -9,7 +9,7 @@
     </ion-item>
     <ion-item>
       <ion-label class="ion-text-capitalize">defecto</ion-label>
-      <ion-select (ionChange)="defectChange($event)" formControlName="defectType" placeholder="Selecciona">
+      <ion-select (ionChange)="defectChange($event)" formControlName="defectType" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
         <ion-select-option *ngFor="let defect of defects" [value]="defect.id">{{defect.name +" - "+ defect.defectTypeParent.name}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -22,8 +22,8 @@
       <ion-select *ngIf="barcodeRoute==null"  (ionChange)="gestionChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
         <ion-select-option  *ngFor="let item of statusManagament.statuses" [value]="item.id" >{{item.name}}</ion-select-option>
       </ion-select>
-      <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" [disabled]="barcodeRoute!=null" formControlName="defectType">
-        <ion-select-option  *ngFor="let item of types" [value]="item.id" >{{item.name}}</ion-select-option>
+      <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" [disabled]="barcodeRoute!=null" formControlName="gestionState">
+        <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name || Hola}}</ion-select-option>
       </ion-select>
     </ion-item>
   
