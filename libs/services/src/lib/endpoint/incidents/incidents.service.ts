@@ -9,7 +9,8 @@ import { HttpRequestModel } from '../../../models/endpoints/HttpRequest';
 })
 export class IncidentsService {
   private defectTypesChildUrl: string = environment.apiBase + '/defects/child'
-  private incidentsUrl: string = environment.apiBase + '/incidents'
+  private incidentsUrl: string = environment.apiBase + '/incidents';
+  private addRegistryUrl: string = environment.apiBase + '/defects/registry/add';
   private statusManagamentDefectUrl: string = environment.apiBase + '/classification'
   private getAllIncidentProductUrl: string = this.incidentsUrl + '/all'
   private getByIdIncidentProductUrl: string = this.incidentsUrl + '/get/id'
@@ -27,6 +28,11 @@ export class IncidentsService {
   storeIncidentProduct(data) {
     return this.http.post<HttpRequestModel.Response>(this.incidentsUrl, data).pipe(map(resp => resp.data));
   }
+
+  addRegistry(data) {
+    return this.http.post<HttpRequestModel.Response>(this.addRegistryUrl, data).pipe(map(resp => resp.data));
+  }
+
   getAllIncidentProduct(data) {
     return this.http.post<HttpRequestModel.Response>(this.getAllIncidentProductUrl, data).pipe(map(resp => resp.data));
   }

@@ -25,13 +25,18 @@ export class IncidentsComponent implements OnInit {
   requirePhoto:boolean;
   requireContact: boolean;
   requireOk: boolean;
-  checkHistory: boolean;
-
+  checkHistory: true;
+  txtName
+  txtEmail;
+  txtTel;
+  managementId;
+  defectChildId;
   slideOpts = {
     speed: 400
   };
   date: string;
   dateNow = formatDate(new Date(), 'dd/MM/yyyy', 'es');
+  dateDetection;
   incidenceForm: FormGroup;
   readed: boolean
   barcode: string = ''
@@ -71,13 +76,15 @@ export class IncidentsComponent implements OnInit {
 
   initForm() {
     this.incidenceForm = this.fb.group({
-      barcode: [''],
-      registerDate:[this.dateNow],
-      defectType: [0],
-      observations: [''],
-      gestionState: [0],
-      photo:[''], 
-      validation:[false]
+      productReference: '',
+      dateDetection:[this.dateNow],
+      numberObservations: [0],
+      observations: '',
+      factoryReturn: [false],
+      isHistory: [false],
+      statusManagementDefectId: [0],
+      defectTypeChildId: [0]
+        
     })
   }
 
@@ -119,10 +126,7 @@ export class IncidentsComponent implements OnInit {
 
           console.log('result mas op del mundo', resp);
 
-          this.varTrying = resp.statusManagementDefectId.id;
-
-
-          
+          this.varTrying = resp.statusManagementDefectId.id;          
 
           // this.incidenceForm.setValue({gestionChange:resp.statusManagementDefectId.id})
           this.incidenceForm.patchValue({
@@ -157,11 +161,19 @@ export class IncidentsComponent implements OnInit {
   }
 
   newValue(e){
+
+
+
+
+    console.log(e);
     this.barcode = e
     if (this.barcode && this.barcode.length > 0) {
+
       this.incidenceForm.patchValue({
-        barcode: this.barcode
-      });      
+        productReference: this.barcode
+      })
+      console.log(this.incidenceForm.value);
+      
       this.readed = true
     }    
 
@@ -173,7 +185,21 @@ export class IncidentsComponent implements OnInit {
   }
 
   async enviar() {
-    await this.intermediary.presentLoading('Enviando...')
+
+    this.incidenceForm.patchValue({
+      statusManagementDefectId: this.managementId,
+      defectTypeChildId: this.defectChildId,
+      contact:{
+        name: this.txtName,
+        email: this.txtEmail,
+        phone: this.txtTel,
+      }      
+    })
+
+    console.log(this.incidenceForm.value);
+
+    let This = this;
+    await This.intermediary.presentLoading('Enviando...')
 
     if(this.ticketEmit == true){
       this.print();
@@ -183,24 +209,15 @@ export class IncidentsComponent implements OnInit {
     //   await this.intermediary.dismissLoading()
     // }, 3000)
     console.log(this.incidenceForm.value);
-    this.incidentsService.storeIncidentProduct(this.incidenceForm.value).subscribe(
+    This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
       resp => {
-        this.intermediary.dismissLoading()
-        this.intermediary.presentToastSuccess('La incidencia fue enviada exitosamente')
-        this.incidenceForm.patchValue({
-          barcode: null,
-          registerDate: null,
-          defectType: 0,
-          observations: null,
-          gestionState: 0,
-          photo: null,
-          validation: false
-        })
-        this.readed = false
+        This.intermediary.dismissLoading()
+        This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
+  
       },
       e => {
-        this.intermediary.dismissLoading()
-        this.intermediary.presentToastError(e.error)
+        This.intermediary.dismissLoading()
+        This.intermediary.presentToastError(e.error)
       }
     );
 
@@ -226,11 +243,15 @@ export class IncidentsComponent implements OnInit {
   gestionChange(e) {
     
     let id = e.detail.value;
-    
     console.log("this.statusManagament",this.statusManagament);
-    
-    
-    const res = this.statusManagament.classifications!=undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find( x => x.defectType == id);
+    let res;
+    if(this.barcodeRoute == null || this.barcodeRoute == undefined){
+      res = this.statusManagament['classifications'].find( x => x.defectType == id);
+
+    }else{
+      res = this.statusManagament.classifications!=undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find( x => x.defectType == id);
+
+    }
     
     console.log("res",res);
     
@@ -241,6 +262,9 @@ export class IncidentsComponent implements OnInit {
       this.requirePhoto = res.requirePhoto
       this.requireContact = res.requireContact;
       this.requireOk = res.requireOk;
+      this.managementId = res.id;
+      this.defectChildId = id;
+      console.log(this.managementId+"----"+this.defectChildId)
     }else{
       this.ticketEmit = false;
       this.passHistory = false;
