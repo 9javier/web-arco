@@ -51,6 +51,14 @@ export class RegistryDetailsComponent implements OnInit {
     private loadingController: LoadingController,
   ) {
     this.registry = this.navParams.get("registry");
+    // ToDo: Delete Mock
+    this.registry.photos = [
+      'https://ccc1.krackonline.com/img/krackonline-logo-1503048892.jpg',
+      'https://ccc1.krackonline.com/img/krackonline-logo-1503048892.jpg',
+      'https://ccc1.krackonline.com/img/krackonline-logo-1503048892.jpg',
+      'https://ccc1.krackonline.com/img/krackonline-logo-1503048892.jpg',
+    ];
+
     this.showChangeState = this.navParams.get("showChangeState");
   }
 
@@ -80,6 +88,13 @@ export class RegistryDetailsComponent implements OnInit {
     this.defectiveRegistryService.getHistorical({ productReference: this.registry.product.reference }).subscribe(historical => {
       this.registryHistorical = historical.results;
       this.originalTableStatus = historical.statuses;
+
+      this.registryHistorical.photos = [
+        'https://ccc1.krackonline.com/img/krackonline-logo-1503048892.jpg',
+        'https://ccc1.krackonline.com/img/krackonline-logo-1503048892.jpg',
+        'https://ccc1.krackonline.com/img/krackonline-logo-1503048892.jpg',
+        'https://ccc1.krackonline.com/img/krackonline-logo-1503048892.jpg',
+      ];
     });
   }
 

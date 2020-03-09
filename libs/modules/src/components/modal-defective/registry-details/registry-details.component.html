@@ -45,13 +45,15 @@
               Almacén: {{registry?.warehouse ? (registry?.warehouse.reference + " - " + registry?.warehouse.name) : ""}}
             </ion-label>
           </ion-item>
-          <mat-expansion-panel>
+          <mat-expansion-panel *ngIf="registry.photos.length > 0">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 Foto
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <img src="{{registry.photo}}" alt="" />
+            <ion-item *ngFor="let photo of registry.photos">
+              <img src="{{photo}}" alt="" />
+            </ion-item>
           </mat-expansion-panel>
         </ion-list>
     </div>
@@ -70,6 +72,16 @@
                     Estado: {{getStatusName(historical.statusManagementDefect.defectType)}}
                   </p>
                 </div>
+              <mat-expansion-panel *ngIf="registryHistorical.photos.length > 0">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Foto
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <ion-item *ngFor="let photo of registryHistorical.photos">
+                  <img src="{{photo}}" alt="" />
+                </ion-item>
+              </mat-expansion-panel>
             </ion-item>
         </ion-list>
     </div>
