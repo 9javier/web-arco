@@ -12,6 +12,7 @@ import {Router} from "@angular/router";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 import {PrinterService} from "../../printer/printer.service";
+import {LocalStorageProvider} from "../../../providers/local-storage/local-storage.provider";
 
 declare let ScanditMatrixSimple;
 
@@ -44,6 +45,7 @@ export class ReceptionScanditService {
     private printerService: PrinterService,
     private scanditProvider: ScanditProvider,
     private receptionProvider: ReceptionProvider,
+    private localStorageProvider: LocalStorageProvider,
     private itemReferencesProvider: ItemReferencesProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
@@ -162,7 +164,7 @@ export class ReceptionScanditService {
       ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje a recepcionar...');
       this.receptionService
         .getCheckPacking(code)
-        .then((res: ReceptionModel.ResponseCheckPacking) => {
+        .then(async (res: ReceptionModel.ResponseCheckPacking) => {
           ScanditMatrixSimple.hideLoadingDialog();
           if (res.code == 200) {
             ScanditMatrixSimple.setText(
@@ -173,6 +175,11 @@ export class ReceptionScanditService {
             this.hideTextMessage(1500);
             setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
             ScanditMatrixSimple.showFixedTextBottom(false, '');
+            const hideAlerts: boolean = Boolean(await this.localStorageProvider.get('hideAlerts'));
+            if(hideAlerts){
+              ScanditMatrixSimple.finish();
+              this.router.navigate(['new-products']);
+            }
           } else if (res.code == 428) {
             // Process custom status-code response to check packing
             ScanditMatrixSimple.showWarning(true, `¿Quedan productos sin recepcionar en ${code}?`, 'reception_incomplete', 'Sí', 'No');
@@ -323,7 +330,7 @@ export class ReceptionScanditService {
     ScanditMatrixSimple.showLoadingDialog('Recepcionando producto...');
     this.receptionService
       .postReceiveProduct(params)
-      .then((response: ReceptionModel.ResponseReceptionProduct) => {
+      .then(async (response: ReceptionModel.ResponseReceptionProduct) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (response.code == 201) {
           ScanditMatrixSimple.setText(
@@ -336,7 +343,8 @@ export class ReceptionScanditService {
           // Update the stock of this product in this warehouse.
           this.receptionService.postUpdateStock({productReference: referenceProduct});
 
-          if (response.data.hasNewProducts) {
+          const hideAlerts: boolean = Boolean(await this.localStorageProvider.get('hideAlerts'));
+          if (response.data.hasNewProducts && !hideAlerts) {
             ScanditMatrixSimple.showWarning(true, `El producto escaneado es nuevo en la tienda. ¿Quiere imprimir su código de exposición ahora?`, 'new_product_expo', 'Sí', 'No');
           } else {
             this.refenceProductToPrint = null;

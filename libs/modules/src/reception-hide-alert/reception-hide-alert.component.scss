@@ -1,0 +1,21 @@
+ion-grid{
+  margin: 0;
+  padding: 0;
+}
+
+ion-row{
+  margin-right: 5vw;
+  margin-left: 5vw;
+}
+
+ion-content{
+  height: calc(100% - 62px); //62px is the height of the top non-scrollable row
+}
+
+.checkboxColumn{
+  text-align: center;
+}
+
+ion-fab-button{
+  margin-right: 10px;
+}

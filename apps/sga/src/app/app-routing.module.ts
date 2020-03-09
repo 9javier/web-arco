@@ -296,6 +296,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'reception-hide-alert',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/reception-hide-alert/reception-hide-alert.module#ReceptionHideAlertModule',
+    data: {
+      name: 'Ocultar Alertas'
+    }
+  },
+  {
     path: 'assign/user/picking',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-assignment-picking/user-assignment-picking.module#UserAssignmentPickingModule',
