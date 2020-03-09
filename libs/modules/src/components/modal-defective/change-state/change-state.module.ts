@@ -1,24 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChangeStateComponent } from './change-state.component';
 import { IonicModule } from '@ionic/angular';
 import { MatExpansionModule, MatTooltipModule } from '@angular/material';
-import { RegistryDetailsComponent } from './registry-details.component';
-
-
 
 @NgModule({
-  declarations: [RegistryDetailsComponent],
+  declarations: [ChangeStateComponent],
+  entryComponents: [ChangeStateComponent],
+  exports: [ChangeStateComponent],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     IonicModule,
-    FormsModule,
     MatTooltipModule,
     MatExpansionModule
-  ],
-  entryComponents: [
-    RegistryDetailsComponent
   ]
 })
-export class RegistryDetailsModule {}
+export class ChangeStateModule { }

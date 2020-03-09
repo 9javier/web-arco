@@ -3,7 +3,7 @@ import { SortModel } from '../../../services/src/models/endpoints/Sort';
 import { MatPaginator } from '@angular/material';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { IntermediaryService, IncidentsService } from '../../../services/src';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import * as moment from 'moment';
 
 @Component({
@@ -20,7 +20,7 @@ export class DefectHandlerComponent implements OnInit {
   private sortValues: any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
-  displayedColumns: string[] = ['barcode', 'registerDate', 'defectType', 'state'];
+  displayedColumns: string[] = ['barcode', 'registerDate', 'state', 'select'];
   dataSource: any;
 
   constructor(
@@ -61,7 +61,8 @@ export class DefectHandlerComponent implements OnInit {
     }
     this.incidentsService.getAllIncidentProduct(body).subscribe(
       resp => {
-        this.defects = resp.results
+
+        this.defects = resp.results;
         console.log(this.defects);
         this.defects.map(elem => {
           elem.registerDate = moment(elem.registerDate).format('DD-MM-YYYY')
@@ -81,6 +82,7 @@ export class DefectHandlerComponent implements OnInit {
       }
     )
   }
+
 
   getList(page: number, limit: number, sort: any) {
     console.log('sort', sort);
@@ -128,8 +130,13 @@ export class DefectHandlerComponent implements OnInit {
   }
 
   goDefect(row) {
-    console.log(row);
-    
+    const navigationExtras: NavigationExtras = {
+      state : {
+        "reference" : row.id,
+      }      
+    };
+
+    this.router.navigate(['/incidents'], navigationExtras);
   }
 
 }
