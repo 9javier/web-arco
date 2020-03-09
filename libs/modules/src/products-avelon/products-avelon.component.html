@@ -41,6 +41,7 @@
             </ng-container>
           </div>
         </mat-header-cell>
+
         <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
           <ng-container *ngIf="dataSource !== undefined" >
             <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
@@ -119,12 +120,10 @@
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row">
-      </mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row"></mat-row>
     </mat-table>
-
-
   </div>
+
   <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
 </ion-content>
 
