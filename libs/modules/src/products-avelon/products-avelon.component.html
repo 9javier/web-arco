@@ -109,16 +109,6 @@
         <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.provider.name}} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="Warehouse">
-        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Almacén
-          <suite-filter-button #filterButtonWarehouses class="filter" [title]="'Almacén'" [listItems]="warehouses"
-                                [isFiltering]="isFilteringWarehouses != warehouses.length"
-                                (applyFilters)="applyFilters($event, 'warehouses')">
-          </suite-filter-button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.warehouse.reference}} </mat-cell>
-      </ng-container>
-
       <ng-container matColumnDef="Usuario">
         <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Usuario
           <suite-filter-button #filterButtonUsers class="filter" [title]="'Usuario'" [listItems]="users"
