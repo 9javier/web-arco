@@ -170,7 +170,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/defective-management/defective-management.module#DefectiveManagementModule',
     data: {
-      name: 'Gestión Defectuosos'
+      name: 'Tipos de defectos'
     }
   },
   {
