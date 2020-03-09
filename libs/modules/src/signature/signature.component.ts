@@ -42,7 +42,7 @@ export class SignatureComponent implements OnInit,OnChanges {
     console.log(this.signaturePad);
     this.signaturePad.set('minWidth', 5); // set szimek/signature_pad options at runtime
     this.signaturePad.set('canvasWidth', this.plt.width())
-    this.signaturePad.set('canvasHeight', 300)
+    this.signaturePad.set('canvasHeight', this.plt.height())
     this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
   }
 
@@ -50,7 +50,7 @@ export class SignatureComponent implements OnInit,OnChanges {
     // will be notified of szimek/signature_pad's onEnd event
     this.dataUrl = this.signaturePad.toDataURL('png')
     console.log(this.dataUrl);
-    
+    this.uploadSignature()
     
   }
   dismiss() {

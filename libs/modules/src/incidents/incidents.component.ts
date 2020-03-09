@@ -12,6 +12,7 @@ import {SignatureComponent} from '../signature/signature.component';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 import { Platform } from '@ionic/angular';
 import { FileTransfer, FileUploadOptions, FileTransferObject, FileUploadResult } from '@ionic-native/file-transfer/ngx';
+import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
 @Component({
   selector: 'suite-incidents',
@@ -81,6 +82,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       if (resp) {
         this.signatures.push(resp)
       }
+      if (!this.signatureList) {
+        this.openSignatureList()
+      }
       console.log(resp);
     })
 
@@ -97,6 +101,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
 
   initForm() {
     this.incidenceForm = this.fb.group({
+      productId: 1,
       productReference: '',
       dateDetection:[this.dateNow],
       numberObservations: [0],
@@ -107,6 +112,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       defectTypeChildId: [0],
       defectType: [0],  
       gestionState: [0],
+      photosFileIds: [0],
+      signFileId: [0],
+      contact: this.fb.group({
+        name: '',
+        email: '',
+        phone: ''
+      })
     })
   }
 
@@ -126,12 +138,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   async loadFromDBValues(){
 
     if(this.barcodeRoute){
-
-
       let body = {
         "id":this.barcodeRoute
       }
-
       await this.incidentsService.getOneIncidentProductById(body).subscribe(resp=>{
 
           console.log('result mas op del mundo', resp);
@@ -183,10 +192,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   newValue(e){
-
-
-
-
     console.log(e);
     this.barcode = e
     if (this.barcode && this.barcode.length > 0) {
@@ -215,12 +220,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
       photosFileIds: photos,
-      signFileId: this.signatures[0],
-      contact:{
-        name: this.txtName,
-        email: this.txtEmail,
-        phone: this.txtTel,
-      },
+      signFileId: this.signatures[0].id,
+      // contact:{
+      //   name: this.txtName,
+      //   email: this.txtEmail,
+      //   phone: this.txtTel,
+      // },
     })
 
     console.log(this.incidenceForm.value);
@@ -238,13 +243,36 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     console.log(this.incidenceForm.value);
     This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
       resp => {
+        this.readed = false
+        this.incidenceForm.patchValue({
+          productId: 1,
+          productReference: '',
+          dateDetection: this.dateNow,
+          numberObservations: 0,
+          observations: '',
+          factoryReturn: false,
+          isHistory: false,
+          statusManagementDefectId: 0,
+          defectTypeChildId: 0,
+          defectType: 0,
+          gestionState: 0,
+          photosFileIds: 0,
+          signFileId: 0,
+          contact: {
+            name: '',
+            email: '',
+            phone: ''
+          }
+        })
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
   
       },
       e => {
+        console.log(e);
+        
         This.intermediary.dismissLoading()
-        This.intermediary.presentToastError(e.errors.errors)
+        This.intermediary.presentToastError(e.error.errors)
       }
     );
 
@@ -414,6 +442,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
         this.img = response.data
         this.photos.push(this.img);
         console.log('subido');
+        if (!this.photoList) {
+          this.openPhotoList()
+        }
         this.intermediaryService.presentToastSuccess('la imagen cargada correctamente')
 
       })
@@ -423,6 +454,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
 
           this.intermediaryService.dismissLoading()
           const error = JSON.parse(e.body)
+
           this.intermediaryService.presentToastError(error.errors)
         }
       );
@@ -453,5 +485,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       }
     )
   }
-
+  async onOpenReviewModal(item) {
+    const modal = await this.modalController.create({
+    component: ReviewImagesComponent,
+    componentProps: { imgSrc: item.pathMedium  }
+    });
+  
+    await modal.present();
+  
+  }
 }

@@ -713,12 +713,12 @@ export class MenuComponent implements OnInit {
           icon:'warning',
           url: '/defect-handler'
         },
-        {
-          id: 'firm',
-          title: 'Firma',
-          icon: 'color-wand',
-          url: '/signature'
-        }
+        // {
+        //   id: 'firm',
+        //   title: 'Firma',
+        //   icon: 'color-wand',
+        //   url: '/signature'
+        // }
       ]
     },
   ];
