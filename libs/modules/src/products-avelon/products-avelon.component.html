@@ -77,16 +77,6 @@
         <mat-cell *matCellDef="let element"> {{element.provider.name}} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="Warehouse">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Tienda
-          <suite-filter-button #filterButtonWarehouses [title]="'Almacén'" [listItems]="warehouses"
-                                [isFiltering]="isFilteringWarehouses != warehouses.length"
-                                (applyFilters)="applyFilters($event, 'warehouses')">
-          </suite-filter-button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.warehouse.name}} </mat-cell>
-      </ng-container>
-
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;">
       </mat-row>

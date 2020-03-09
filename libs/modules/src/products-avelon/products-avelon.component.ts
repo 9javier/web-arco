@@ -34,14 +34,13 @@ export class ProductsAvelonComponent implements OnInit {
 
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
   @ViewChild('filterButtonProviders') filterButtonProviders: FilterButtonComponent;
   @ViewChild('filterButtonModels') filterButtonModels: FilterButtonComponent;
   @ViewChild('filterButtonColors') filterButtonColors: FilterButtonComponent;
   @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
   @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
 
-  displayedColumns: string[] = ['Ref. modelo', 'Talla', 'Color', 'Brand', 'Supplier', 'Warehouse'];
+  displayedColumns: string[] = ['Ref. modelo', 'Talla', 'Color', 'Brand', 'Supplier'];
   columns = {};
   dataSourceOriginal;
   dataSource;
@@ -449,13 +448,6 @@ export class ProductsAvelonComponent implements OnInit {
         this.sizes[index].hide = filteredSizes.includes(this.sizes[index].value);
       }
       this.filterButtonSizes.listItems = this.sizes;
-    }
-    if (this.lastUsedFilter !== 'warehouses') {
-      let filteredWarehouses = entities['warehouses'] as unknown as (string | number)[];
-      for (let index in this.warehouses) {
-        this.warehouses[index].hide = filteredWarehouses.includes(this.warehouses[index].reference);
-      }
-      this.filterButtonWarehouses.listItems = this.warehouses;
     }
     if (this.lastUsedFilter !== 'brands') {
       let filteredBrands = entities['brands'] as unknown as string[];
