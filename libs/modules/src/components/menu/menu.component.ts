@@ -1,16 +1,20 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, NgZone } from '@angular/core';
 import { app } from '../../../../services/src/environments/environment';
-import { AuthenticationService, Oauth2Service, TariffService } from '@suite/services';
+import {AuthenticationService, Oauth2Service, TariffService, WarehouseModel} from '@suite/services';
 import { Router } from '@angular/router';
 import { ScanditService } from "../../../../services/src/lib/scandit/scandit.service";
 import { ReceptionScanditService } from "../../../../services/src/lib/scandit/reception/reception.service";
 import { PrintTagsScanditService } from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
-import { MenuController } from "@ionic/angular";
+import { MenuController, PopoverController } from "@ionic/angular";
 import { SealScanditService } from "../../../../services/src/lib/scandit/seal/seal.service";
 import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/product-info/product-info.service";
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 import { LoginComponent } from '../../login/login.page';
 import { AuditMultipleScanditService } from "../../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
+import {AlertPopoverComponent} from "../alert-popover/alert-popover.component";
+import {WarehouseReceptionAlertService} from "../../../../services/src/lib/endpoint/warehouse-reception-alert/warehouse-reception-alert.service";
+import Warehouse = WarehouseModel.Warehouse;
+import {LocalStorageProvider} from "../../../../services/src/providers/local-storage/local-storage.provider";
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -173,7 +177,50 @@ export class MenuComponent implements OnInit {
           url: '/list-new-products',
           icon: 'basket',
           tooltip: 'Listado de nuevos productos recibidos que aún no han sido impresos'
+        },
+        {
+          title: 'Ocultar alertas de recepción',
+          id: 'reception-hide-alert',
+          url: '/reception-hide-alert',
+          icon: 'alert',
+          tooltip: 'Listado de qué almacenes pueden ocultar las alertas de nuevas recepciones'
         }
+      ]
+    },
+    {
+      title: 'Defectuosos',
+      open: true,
+      type: 'wrapper',
+      icon: 'paper',
+      children: [
+        {
+          title: 'Registro',
+          id: 'defective-registry',
+          url: '/defective-registry',
+          icon: 'list-box',
+          tooltip: 'Listado de registro de defectusosos'
+        },
+        {
+          title: 'Histórico',
+          id: 'defective-historic',
+          url: '/defective-historic',
+          icon: 'filing',
+          tooltip: 'Listado de registro histórico de defectuosos'
+        },
+        {
+          title: 'Parametrización',
+          id: 'damaged-shoes',
+          url: '/damaged-shoes',
+          icon: 'options',
+          tooltip: 'Parametrización de estados'
+        },
+        {
+          title: 'Tipos de daños',
+          id: 'defective-management',
+          url: '/defective-management',
+          icon: 'flag',
+          tooltip: 'Tipos de daños'
+        },
       ]
     },
     {
@@ -203,34 +250,10 @@ export class MenuComponent implements OnInit {
           icon: 'cog'
         },
         {
-          title: 'Parametrización de Daños',
-          id: 'damaged-shoes',
-          url: '/damaged-shoes',
-          icon: 'cog'
-        },
-        {
-          title: 'Gestión Defectuosos',
-          id: 'defective-management',
-          url: '/defective-management',
-          icon: 'cog'
-        },
-        {
           title: 'Recepcion Final',
           id: 'reception-final',
           url: '/reception-final',
           icon: 'pricetags'
-        },
-        {
-          title: 'Registro de Defectuosos',
-          id: 'defective-registry',
-          url: '/defective-registry',
-          icon: 'cog'
-        },
-        {
-          title: 'Historico de Defectuosos',
-          id: 'defective-historic',
-          url: '/defective-historic',
-          icon: 'cog'
         },
         {
           title: 'Almacenes',
@@ -743,6 +766,9 @@ export class MenuComponent implements OnInit {
     private menuController: MenuController,
     private toolbarProvider: ToolbarProvider,
     private tariffService: TariffService,
+    private popoverController: PopoverController,
+    private warehouseReceptionAlertService: WarehouseReceptionAlertService,
+    private localStorageProvider: LocalStorageProvider,
     private zona: NgZone
 
   ) {
@@ -860,9 +886,40 @@ export class MenuComponent implements OnInit {
     } else if (p.url === 'reception') {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
-      this.receptionScanditService.reception(2);
+      this.checkAlertsAndRedirect();
     } else if(p.url === 'audits/scan'){
       this.auditMultipleScanditService.init();
+    }
+  }
+
+  async checkAlertsAndRedirect() {
+    const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
+    if(currentWarehouse){
+      this.warehouseReceptionAlertService.check({warehouseId: currentWarehouse.id}).then(async response => {
+        if (response.code == 200 && typeof response.data == 'boolean') {
+          if (response.data) {
+            await this.localStorageProvider.set('hideAlerts', false);
+            const popover = await this.popoverController.create({
+              component: AlertPopoverComponent
+            });
+            popover.onDidDismiss().then(async response => {
+              if (typeof response.data == 'boolean' && response.data) {
+                await this.localStorageProvider.set('hideAlerts', true);
+              }
+              this.receptionScanditService.reception(2);
+            });
+            await popover.present();
+          } else {
+            this.receptionScanditService.reception(2);
+          }
+        } else {
+          console.error(response);
+        }
+      }, error => {
+        console.error(error);
+      });
+    }else{
+      console.error('Current warehouse not found.');
     }
   }
 
@@ -877,7 +934,7 @@ export class MenuComponent implements OnInit {
     } else if (p.url === 'reception') {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
-      this.receptionScanditService.reception(2);
+      this.checkAlertsAndRedirect();
     } else if (p.url == 'print/product/relabel') {
       this.printTagsScanditService.printRelabelProducts();
     } else if (p.url == 'products/info') {

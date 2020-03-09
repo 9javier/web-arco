@@ -1,0 +1,26 @@
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      <h3>Tienda</h3>
+    </ion-col>
+    <ion-col>
+      <h3>Puede ocultar alertas nuevos recepción</h3>
+    </ion-col>
+  </ion-row>
+  <ion-content>
+    <ion-row *ngFor="let warehouse of warehouses">
+      <ion-col>
+        <span>{{warehouse.reference}} - {{warehouse.name}}</span>
+      </ion-col>
+      <ion-col class="checkboxColumn">
+        <ion-checkbox [(ngModel)]="warehouse.allowed"></ion-checkbox>
+      </ion-col>
+    </ion-row>
+  </ion-content>
+</ion-grid>
+
+<ion-fab vertical="bottom" horizontal="end">
+  <ion-fab-button (click)="save()" matTooltip="Guardar cambios" matTooltipClass="tooltip">
+    <ion-icon name="save"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

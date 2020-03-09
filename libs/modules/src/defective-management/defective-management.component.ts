@@ -102,8 +102,8 @@ export class DefectiveManagementComponent implements OnInit {
 
   async presentDeleteAlert() {
     const alert = await this.alertController.create({
-      header: 'Eliminar Grupos Defectuosos',
-      message: `¿Está seguro que desea eliminar los grupos seleccionados?`,
+      header: 'Advertencia',
+      message: `¿Está seguro que desea eliminar los tipos de defectos seleccionados?`,
       buttons: [
         {
           text: 'Cancelar',
@@ -112,7 +112,7 @@ export class DefectiveManagementComponent implements OnInit {
           handler: () => {}
         },
         {
-          text: 'Vale',
+          text: 'Eliminar',
           handler: () => {
             this.removeDefective();
           }
@@ -177,8 +177,8 @@ export class DefectiveManagementComponent implements OnInit {
 
   async presentDeleteChildrenAlert(parentId: number) {
     const alert = await this.alertController.create({
-      header: 'Eliminar Tipos de Defectuosos',
-      message: `¿Está seguro que desea eliminar los tipos de defectuosos seleccionados?`,
+      header: 'Advertencia',
+      message: `¿Está seguro que desea eliminar los subtipos de defectos seleccionados?`,
       buttons: [
         {
           text: 'Cancelar',
@@ -188,7 +188,7 @@ export class DefectiveManagementComponent implements OnInit {
           }
         },
         {
-          text: 'Vale',
+          text: 'Eliminar',
           handler: () => {
             this.removeDefectiveType(parentId);
           }
@@ -216,11 +216,11 @@ export class DefectiveManagementComponent implements OnInit {
     deletions.subscribe(async () => {
       await this.intermediaryService.dismissLoading();
       await this.getData();
-      await this.intermediaryService.presentToastSuccess("Tipos de defectuosos eliminados con exito");
+      await this.intermediaryService.presentToastSuccess("Tipos de defectos eliminados con exito");
     }, async () => {
       await this.intermediaryService.dismissLoading();
       await this.getData();
-      await this.intermediaryService.presentToastError("No se pudieron eliminar algunos de los tipos de defectuosos");
+      await this.intermediaryService.presentToastError("No se pudieron eliminar algunos de los tipos de defectos");
     });
   }
 

@@ -170,7 +170,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/defective-management/defective-management.module#DefectiveManagementModule',
     data: {
-      name: 'Gestión Defectuosos'
+      name: 'Tipos de defectos'
     }
   },
   {
@@ -293,6 +293,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/workwaves-history/workwaves-history.module#WorkwavesHistoryModule',
     data: {
       name: 'Historial'
+    }
+  },
+  {
+    path: 'reception-hide-alert',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/reception-hide-alert/reception-hide-alert.module#ReceptionHideAlertModule',
+    data: {
+      name: 'Ocultar Alertas'
     }
   },
   {

@@ -228,7 +228,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       // },
     })
 
-    console.log(this.incidenceForm.value);
 
     let This = this;
     await This.intermediary.presentLoading('Enviando...')
@@ -240,7 +239,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     // setTimeout(async () => {
     //   await this.intermediary.dismissLoading()
     // }, 3000)
-    console.log(this.incidenceForm.value);
     This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
       resp => {
         this.readed = false
@@ -266,7 +264,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
         })
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
-  
+        this.router.navigateByUrl('/defect-handler');
       },
       e => {
         console.log(e);
