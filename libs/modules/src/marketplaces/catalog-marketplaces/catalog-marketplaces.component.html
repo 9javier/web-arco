@@ -57,7 +57,7 @@
         <th mat-header-cell *matHeaderCellDef><span>KO</span></th>
         <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == -1">
+            <span *ngIf="market.market.name == 'KrackOnline'">
               <span *ngIf="currentType == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
                 <span class="hidden-value">✓</span>
               </span>
@@ -76,7 +76,7 @@
         <th mat-header-cell *matHeaderCellDef><span>Mini</span></th>
         <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == 1">
+            <span *ngIf="market.market.name == 'Miniprecios'">
               <span *ngIf="currentType == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
                 <span class="hidden-value">✓</span>
               </span>
@@ -95,7 +95,7 @@
         <th mat-header-cell *matHeaderCellDef><span>Amazon</span></th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == -1">
+            <span *ngIf="market.market.name == 'Amazon'">
               <span *ngIf="currentType == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
                 <span class="hidden-value">✓</span>
               </span>
@@ -114,7 +114,7 @@
         <th mat-header-cell *matHeaderCellDef><span>Spartoo</span></th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == -1">
+            <span *ngIf="market.market.name == 'Spartoo'">
               <span *ngIf="currentType == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
                 <span class="hidden-value">✓</span>
               </span>
@@ -133,7 +133,7 @@
         <th mat-header-cell *matHeaderCellDef><span>Zalando</span></th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == -1">
+            <span *ngIf="market.market.name == 'Zalando'">
               <span *ngIf="currentType == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
                 <span class="hidden-value">✓</span>
               </span>
@@ -152,7 +152,7 @@
         <th mat-header-cell *matHeaderCellDef><span>CDiscount</span></th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == -1">
+            <span *ngIf="market.market.name == 'CDiscount'">
               <span *ngIf="currentType == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
                 <span class="hidden-value">✓</span>
               </span>

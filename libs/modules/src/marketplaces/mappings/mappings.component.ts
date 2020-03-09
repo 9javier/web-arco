@@ -64,11 +64,6 @@ export class MappingsComponent implements OnInit {
     private marketplacesPrestaService: MarketplacesPrestaService,
     private http: HttpClient
   ) {
-    switch (this.route.snapshot.data['name']) {
-      case "Miniprecios":
-        this.market = "1";
-        break;
-    }
   }
 
   ngOnInit() {
@@ -91,6 +86,30 @@ export class MappingsComponent implements OnInit {
     this.featuresList = [];
 
     this.displayedColumns = ['blank', 'avelonData', 'marketData'];
+
+    this.marketplacesService.getMarkets().subscribe((data: any) => {
+      this.market = null;
+      if (data && data.length) {
+        for (let market of data) {
+          switch (this.route.snapshot.data['name']) {
+            case "Miniprecios":
+              this.market = market.id;
+              break;
+          }
+
+          if (this.market) {
+            break;
+          }
+        }
+      }
+
+      this.getMappingValue();
+
+    });
+
+  }
+
+  getMappingValue() {
 
     forkJoin([
       this.marketplacesService.getBrands(),

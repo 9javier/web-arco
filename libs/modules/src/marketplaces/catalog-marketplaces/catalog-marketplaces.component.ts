@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
+import { MatTableDataSource } from '@angular/material';
 import * as XLSX from 'xlsx';
 import { MarketplacesService } from 'libs/services/src/lib/endpoint/marketplaces/marketplaces.service';
 

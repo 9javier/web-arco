@@ -24,18 +24,31 @@ export class CatalogComponent implements OnInit {
     private modalController: ModalController,
     private marketplacesService: MarketplacesService
   ) {
-    switch (this.route.snapshot.data['name']) {
-      case "Miniprecios":
-        this.market = "1";
-        break;
-    }
   }
 
   ngOnInit() {
     this.catalogData = [];
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'color', 'family', 'description', 'pvp', 'discount', 'units', 'active'];
     this.selectedProducts = [];
-    this.getProducts();
+    this.marketplacesService.getMarkets().subscribe((data: any) => {
+      this.market = null;
+      if (data && data.length) {
+        for (let market of data) {
+          switch (this.route.snapshot.data['name']) {
+            case "Miniprecios":
+              this.market = market.id;
+              break;
+          }
+
+          if (this.market) {
+            break;
+          }
+        }
+      }
+
+      this.getProducts();
+
+    });
   }
 
   getProducts() {
