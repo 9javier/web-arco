@@ -6,11 +6,12 @@ import {Router} from '@angular/router';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx'
 ;
 import {formatDate} from '@angular/common';
-import { IntermediaryService, IncidentsService } from '../../../services/src';
+import { IntermediaryService, IncidentsService, environment, UploadFilesService } from '../../../services/src';
 import { PhotoModalComponent } from './components/photo-modal/photo-modal.component';
 import {SignatureComponent} from '../signature/signature.component';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 import { Platform } from '@ionic/angular';
+import { FileTransfer, FileUploadOptions, FileTransferObject, FileUploadResult } from '@ionic-native/file-transfer/ngx';
 
 @Component({
   selector: 'suite-incidents',
@@ -47,11 +48,17 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   barcode: string = ''
   defects: any = [];
   statusManagament: any;
-  imgUrl: any;
   public barcodeRoute = null;
   public types:any;
 
   private varTrying;
+  apiURL: string = environment.uploadFiles + '?type=defects'
+  imgData: string;
+  img: any;
+  photos: Array<any> = []
+  signatures: Array<any> = []
+  photoList: boolean = false;
+  signatureList: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -60,12 +67,23 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     private modalController: ModalController,
     private router: Router,
     private plt: Platform,
+    private camera: Camera,
+    private transfer: FileTransfer,
+    private intermediaryService: IntermediaryService,
+    private uploadService: UploadFilesService
   ) { 
 
 
   }
 
   ngOnInit() {
+    this.uploadService.signatureEventAsign().subscribe(resp => {
+      if (resp) {
+        this.signatures.push(resp)
+      }
+      console.log(resp);
+    })
+
     this.initForm();
     this.date = moment().format('DD-MM-YYYY');
     this.readed = false;
@@ -75,9 +93,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       this.types ="Cargando";
     }
     this.initDinamicFields();
-    
-    
-
   }
 
   initForm() {
@@ -192,15 +207,20 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   async enviar() {
-
+    let photos = []
+    this.photos.forEach(elem => {
+      photos.push({id: elem.id});
+    });
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
+      photosFileIds: photos,
+      signFileId: this.signatures[0],
       contact:{
         name: this.txtName,
         email: this.txtEmail,
         phone: this.txtTel,
-      }      
+      },
     })
 
     console.log(this.incidenceForm.value);
@@ -224,29 +244,29 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       },
       e => {
         This.intermediary.dismissLoading()
-        This.intermediary.presentToastError(e.error)
+        This.intermediary.presentToastError(e.errors.errors)
       }
     );
 
   }
 
-  async presentModal() {
-    const modal = await this.modalController.create({
-    component: PhotoModalComponent,
-    componentProps: { value: 123 }
-    });
+  // async presentModal() {
+  //   const modal = await this.modalController.create({
+  //   component: PhotoModalComponent,
+  //   componentProps: { value: 123 }
+  //   });
   
-    await modal.present();
+  //   await modal.present();
   
-    const data = await modal.onDidDismiss();
-    console.log(data)
-    if (data.data.imgUrl) {
-      this.imgUrl = data.data.imgUrl
-      this.incidenceForm.patchValue({
-        photo: data.data.imgUrl
-      })
-    }
-  }
+  //   const data = await modal.onDidDismiss();
+  //   console.log(data)
+  //   if (data.data.imgUrl) {
+  //     this.imgUrl = data.data.imgUrl
+  //     this.incidenceForm.patchValue({
+  //       photo: data.data.imgUrl
+  //     })
+  //   }
+  // }
   gestionChange(e) {
     
     let id = e.detail.value;
@@ -307,7 +327,131 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   }
   
 
-  signModal(){
-    this.router.navigate(['signature']);
+  async signModal(){
+    const modal = await this.modalController.create({
+      component: SignatureComponent,
+    });
+
+    await modal.present();
+    // this.router.navigate(['signature']);
   }
+
+ 
+
+  takePhoto() {
+    const options: CameraOptions = {
+      quality: 50,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      encodingType: this.camera.EncodingType.PNG,
+      mediaType: this.camera.MediaType.PICTURE,
+      sourceType: this.camera.PictureSourceType.CAMERA,
+      correctOrientation: true
+    }
+    this.camera.getPicture(options).then((imageData) => {
+      // imageData is either a base64 encoded string or a file URI
+      // If it's base64 (DATA_URL):
+      console.log(imageData);
+      this.imgData = imageData
+      this.uploadImage()
+
+    }, (err) => {
+      // Handle error
+    });
+  }
+  searchPhoto() {
+    const options: CameraOptions = {
+      quality: 50,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      encodingType: this.camera.EncodingType.PNG,
+      mediaType: this.camera.MediaType.PICTURE,
+      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+      correctOrientation: true
+    }
+    this.camera.getPicture(options).then((imageData) => {
+      // imageData is either a base64 encoded string or a file URI
+      // If it's base64 (DATA_URL):
+      this.imgData = imageData
+      this.uploadImage()
+    }, (err) => {
+      // Handle error
+    })
+  }
+  async uploadImage() {
+    if (!this.imgData || this.imgData.length == 0) {
+      this.intermediaryService.presentToastError('Debe seleccionar una imagen o tomar una foto')
+      return
+    }
+    this.intermediaryService.presentLoading()
+    // Destination URL
+    let url = this.apiURL;
+
+    // File for Upload
+    var targetPath = this.imgData;
+    const imgDataSplit = this.imgData.split('/')
+    let name = imgDataSplit[imgDataSplit.length - 1]
+    if (name.split('?').length > 1) {
+      name = name.split('?')[0]
+    }
+
+
+    var options: FileUploadOptions = {
+      fileKey: 'file',
+      chunkedMode: false,
+      mimeType: 'image/png',
+      fileName: name
+      // params: { 'desc': desc }
+    };
+
+    const fileTransfer: FileTransferObject = this.transfer.create();
+
+    // Use the FileTransfer to upload the image
+    fileTransfer.upload(targetPath, url, options)
+      .then((result: FileUploadResult) => {
+        this.intermediaryService.dismissLoading()
+        const response: any = JSON.parse(result.response)
+        console.log('response: ', response);
+
+        this.img = response.data
+        this.photos.push(this.img);
+        console.log('subido');
+        this.intermediaryService.presentToastSuccess('la imagen cargada correctamente')
+
+      })
+      .catch(
+        e => {
+          console.log(e);
+
+          this.intermediaryService.dismissLoading()
+          const error = JSON.parse(e.body)
+          this.intermediaryService.presentToastError(error.errors)
+        }
+      );
+
+  }
+
+  openPhotoList(){
+    this.photoList = !this.photoList
+  }
+  openSignatureList() {
+    this.signatureList = !this.signatureList
+
+  }
+
+  deleteImage(item, index, arr) {
+    this.intermediary.presentLoading()
+    this.uploadService.deleteFile(item.id).subscribe(
+      resp => {
+        this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
+        arr.splice(index, 1);
+      },
+      err => {
+        this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
+        this.intermediary.dismissLoading()
+      },
+      () => {
+        this.intermediary.dismissLoading()
+      }
+    )
+  }
+
 }

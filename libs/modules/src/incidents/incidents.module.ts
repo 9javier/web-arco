@@ -11,10 +11,11 @@ import { InputCodesComponent } from './components/input-codes/input-codes.compon
 import { HideKeyboardModule } from 'hide-keyboard';
 import { CdkTableModule } from '@angular/cdk/table';
 import { SignatureComponent } from '../signature/signature.component';
+import { SignatureModule } from '../signature/signature.module';
 
 @NgModule({
   declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent,],
-  entryComponents: [IncidentsComponent, PhotoModalComponent, ],
+  entryComponents: [IncidentsComponent, PhotoModalComponent],
   imports: [
     CommonModule,
     IncidentsRoutingModule,
@@ -24,6 +25,7 @@ import { SignatureComponent } from '../signature/signature.component';
     ScannerManualModule,
     HideKeyboardModule,
     CdkTableModule,
+    SignatureModule
   ],
   exports: [
     
