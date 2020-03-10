@@ -26,7 +26,7 @@ export class DefectHandlerComponent implements OnInit {
   constructor(
     private intermediaryService: IntermediaryService,
     private router: Router,
-    private incidentsService: IncidentsService
+    private incidentsService: IncidentsService,
 
   ) { }
 
