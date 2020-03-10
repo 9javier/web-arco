@@ -20,7 +20,7 @@ declare let ScanditMatrixSimple;
 export class PickingScanditService {
 
   private timeoutHideText;
-  private packingReferences: string[] = [];
+  private packingReferences: string[];
 
   private packing: boolean;
   private readonly timeMillisToResetScannedCode: number = 1000;
@@ -51,6 +51,8 @@ export class PickingScanditService {
     let listRejectionReasons = this.pickingProvider.listRejectionReasonsToStorePickings;
     this.lastCodeScanned = 'start';
     this.processed = listProductsProcessed;
+    this.packingReferences = [];
+    this.packing = false;
     let typePacking: number = 1;
     let scannerPaused: boolean = false;
     let scanMode = 'products';
