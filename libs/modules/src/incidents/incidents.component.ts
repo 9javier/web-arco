@@ -11,6 +11,10 @@ import { PhotoModalComponent } from './components/photo-modal/photo-modal.compon
 import {SignatureComponent} from '../signature/signature.component';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 import { Platform } from '@ionic/angular';
+import { ProductModel, ProductsService } from '@suite/services';
+import { AlertController } from "@ionic/angular";
+import { PositionsToast } from '../../../services/src/models/positionsToast.type';
+
 
 @Component({
   selector: 'suite-incidents',
@@ -50,6 +54,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   imgUrl: any;
   public barcodeRoute = null;
   public types:any;
+  public differentState:boolean = true;
+  private typeIdBC:number;
+
 
   private varTrying;
 
@@ -60,6 +67,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     private modalController: ModalController,
     private router: Router,
     private plt: Platform,
+    private productsService: ProductsService,
+    private intermediaryService: IntermediaryService,
+    private alertController: AlertController,
   ) { 
 
 
@@ -72,7 +82,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     const navigation = this.router.getCurrentNavigation();    
     if(navigation.extras.state!=undefined){
       this.barcodeRoute = navigation.extras.state['reference'];
-      this.types ="Cargando";
     }
     this.initDinamicFields();
     
@@ -114,54 +123,62 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
 
 
       let body = {
-        "id":this.barcodeRoute
+        // "productId":12,
+        "productId":this.barcodeRoute,
+        "productReference":""
       }
+
+      console.log("body", body);
+
+      await this.incidentsService.getDtatusManagamentDefect().subscribe(resp=>{
+        // console.log("resp no se que", resp);
+        this.types = resp.statuses;
+      });
 
       await this.incidentsService.getOneIncidentProductById(body).subscribe(resp=>{
 
-          console.log('result mas op del mundo', resp);
-
-          this.types = resp.querys;
-          resp = resp.result;
+        
+          // this.types = resp.data;
+          resp = resp.data;
+          console.log('result', resp);
 
           this.statusManagament = {
-            'classifications' : resp.statusManagementDefectId
+            'classifications' : resp.statusManagementDefect
           }
           
-          // this.statusManagament["classifications"] = resp.statusManagementDefectId;
+          // console.log("resp status ", resp.statusManagementDefect);
 
+          this.statusManagament["classifications"] = resp.statusManagementDefect;
 
-          console.log('result mas op del mundo', resp);
-
-          this.varTrying = resp.statusManagementDefectId.id;          
-
-          // this.incidenceForm.setValue({gestionChange:resp.statusManagementDefectId.id})
+          this.varTrying = resp.statusManagementDefect.id;        
+          
+          this.incidenceForm.patchValue({gestionChange:resp.statusManagementDefect.id})
+          this.incidenceForm.patchValue({productReference: resp.product.reference})
           this.incidenceForm.patchValue({
-            barcode: resp.barcode,
-            registerDate: resp.registerDate,
-            defectType: resp.defectTypeChildId.id,
+            barcode: resp.product.reference,
+            registerDate: Date.now(),
+            defectType: resp.defectTypeChild.id,
             observations: resp.observations,
-            gestionState: resp.statusManagementDefectId.id,
+            gestionState: resp.statusManagementDefect.id,
             // gestionState: resp.defectTypeChildId.id,
             photo: resp.photo,
-            validation: resp.validation
+            validation: resp.validation,
+            
           });
 
+
           this.readed = true;
+          this.typeIdBC = resp.statusManagementDefect.id;
 
           let sendtoGestionChange = {
             "detail":{
-              "value":resp.statusManagementDefectId.id
+              "value":resp.statusManagementDefect.id
             }
           }
-
           this.gestionChange(sendtoGestionChange);
+      }, error=>{
+        console.log("here is error ", error);
       });
-
-      // await this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
-      //   console.log('getDtatusManagamentDefect', resp);
-      //   this.statusManagament = resp
-      // })
 
     }
 
@@ -181,7 +198,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       })
       console.log(this.incidenceForm.value);
       
-      this.readed = true
+
+      this.getSizeListByReference(e);
+      
     }    
 
     console.log("on new Value");
@@ -191,7 +210,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     console.log("imprimir...")
   }
 
-  async enviar() {
+  async enviaryarn() {
 
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
@@ -223,6 +242,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       e => {
         This.intermediary.dismissLoading()
         This.intermediary.presentToastError(e.error)
+        console.log("e,",e);
       }
     );
 
@@ -257,11 +277,16 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       res = this.statusManagament.classifications!=undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find( x => x.defectType == id);
 
     }
-    
-    console.log("res",res);
-    
 
     if(res != undefined){
+      console.log("res",res);
+
+      if(res instanceof Array){
+        res = res.find( x  => x.id == id);
+      }
+
+
+      
       this.ticketEmit = res.ticketEmit;
       this.passHistory = res.passHistory;
       this.requirePhoto = res.requirePhoto
@@ -269,7 +294,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       this.requireOk = res.requireOk;
       this.managementId = res.id;
       this.defectChildId = id;
-      console.log(this.managementId+"----"+this.defectChildId)
     }else{
       this.ticketEmit = false;
       this.passHistory = false;
@@ -308,4 +332,73 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   signModal(){
     this.router.navigate(['signature']);
   }
+
+
+  onChange(value){
+    if(value != this.typeIdBC){
+      this.differentState = false;
+    }else{
+      this.differentState = true;
+    }
+
+  }
+
+
+  private getSizeListByReference(dataWrote: string) {
+    this.productsService.getInfo(dataWrote).then(async (res: ProductModel.ResponseInfo) => {
+        if (res.code === 200) {
+          this.readed = true
+        } else if (res.code === 0) {
+          this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
+            this.readed = false
+          });
+
+        } else {
+          this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+            this.readed = false
+          });
+
+        }
+      }, (error) => {
+        console.error('Error::Subscribe::GetInfo -> ', error);
+        this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+          this.readed = false
+        });
+
+      })
+      .catch((error) => {
+        console.error('Error::Subscribe::GetInfo -> ', error);
+        this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+          this.readed = false
+        });
+
+      });
+  }
+
+
+  private async presentAlertInput(modelId: number, sizeId: number) {
+    const alert = await this.alertController.create({
+      header: 'Ubicación del producto',
+      message: 'Introduce la referencia de la ubicación o el embalaje en que está el producto. Si no está en ninguno de estos sitios continúa sin rellenar este campo.',
+      inputs: [{
+        name: 'reference',
+        type: 'text',
+        placeholder: 'Referencia '
+      }],
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'Continuar',
+          handler: (data) => {
+            let reference = data.reference.trim();
+            
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+  
+
 }

@@ -1,11 +1,11 @@
 <form [formGroup]="incidenceForm">
   <ng-container *ngIf="!readed;else read">
-    <scanner-manual (newValue)=newValue($event)  placeholder="PRODUCTO"></scanner-manual>
+    <scanner-manual  (newValue)=newValue($event)  placeholder="PRODUCTO"></scanner-manual>
   </ng-container>
   <ng-template #read>
     <ion-item>
       <ion-label>Fecha</ion-label>
-      <ion-datetime formControlName="dateDetection" picker-format="DD -MM-YYYY" display-format="DD-MM-YYYY" format></ion-datetime>
+      <ion-datetime formControlName="dateDetection" picker-format="DD -MM-YYYY" display-format="DD-MM-YYYY" format [disabled]="barcodeRoute!=null"></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label class="ion-text-capitalize">defecto</ion-label>
@@ -22,7 +22,7 @@
       <ion-select *ngIf="barcodeRoute==null"  (ionChange)="gestionChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
         <ion-select-option  *ngFor="let item of statusManagament.statuses" [value]="item.id" >{{item.name}}</ion-select-option>
       </ion-select>
-      <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" [disabled]="barcodeRoute!=null" formControlName="gestionState">
+      <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" formControlName="gestionState" #typeID (ionChange)="onChange(typeID.value); gestionChange($event)">
         <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name || Hola}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -72,8 +72,12 @@
 
    
 
-    <ion-button (click)="enviar()" expand="block" shape="round">
+    <ion-button *ngIf="barcodeRoute==null" (click)="enviar()" expand="block" shape="round">
       enviar
+    </ion-button>
+    
+    <ion-button *ngIf="barcodeRoute!=null" [disabled]="differentState" (click)="enviaryarn()" expand="block" shape="round" >
+      actualizar
     </ion-button>
   </ng-template>
 </form>
