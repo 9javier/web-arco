@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import {  MatSort, Sort ,MatTableDataSource, MatCheckboxChange } from '@angular/material';
+import { MatSort, Sort, MatTableDataSource, MatCheckboxChange } from '@angular/material';
 import receprionFinal = ReceptionFinalModel.receptionFinalData;
 import { IntermediaryService } from '../../../services/src/lib/endpoint/intermediary/intermediary.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -13,7 +13,7 @@ import * as Filesave from 'file-saver';
 import { catchError } from 'rxjs/operators';
 import { from, Observable } from "rxjs";
 import { of } from 'rxjs';
-import { ModalController,  AlertController} from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { ModalReceptionFinalComponent } from "../components/modal-reception-final/modal-reception-final.component";
 import { ReceptionFinalService } from '../../../services/src/lib/endpoint/reception-final/reception-final.service';
 import { ReceptionFinalModel } from 'libs/services/src/models/endpoints/reception-final';
@@ -35,19 +35,19 @@ export class ReceptionFinalComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
   //displayedColumns: string[] = ['select','references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
-  
+
   //displayedColumns: string[] = ['select','Warehouses'];
-  displayedColumns: string[] = ['select','Warehouses','reception'];
-  
-  
+  displayedColumns: string[] = ['select', 'Warehouses', 'reception'];
+
+
   selection = new SelectionModel<receprionFinal>(true, []);
   selectionReception = new SelectionModel<receprionFinal>(true, []);
   selectionPredistribution = new SelectionModel<receprionFinal>(true, []);
   //selectionReserved = new SelectionModel<Predistribution>(true, []);
   columns = {};
   pagerValues = [10, 20, 80];
-  
-  pagination={
+
+  pagination = {
     page: 1,
     limit: this.pagerValues[0]
   }
@@ -55,20 +55,20 @@ export class ReceptionFinalComponent implements OnInit {
 
 
   dataSource
-  
 
-  
+
+
   constructor(
     private predistributionsService: PredistributionsService,
     private receptionFinalService: ReceptionFinalService,
     private newProductsService: NewProductsService,
     private formBuilder: FormBuilder,
     private formBuilderExcell: FormBuilder,
-    private intermediaryService:IntermediaryService,
+    private intermediaryService: IntermediaryService,
     private modalController: ModalController,
     private alertController: AlertController
 
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     //this.initEntity();
@@ -97,39 +97,43 @@ export class ReceptionFinalComponent implements OnInit {
       this.getList(this.pagination);
     });
   }
- 
 
-  close():void{
+
+  close(): void {
+  }
+
+  sortData(event) {
+
   }
 
 
-  getListReceptions(){
-    let receptionList =[];
-        receptionList.length=0;
-       for(let i=0; i<this.selection.selected.length; i++){
-        // let distribution =JSON.stringify(this.selection.selected[i].distribution);
-         //let reserved =JSON.stringify(this.selection.selected[i].reserved);
-         let idReception = JSON.stringify(this.selection.selected[i].id);
-         let warehouseId = JSON.stringify(this.selection.selected[i].warehouseId.id);
-         let reference = this.selection.selected[i].warehouseId.reference;
-         let name = reference + ' '+this.selection.selected[i].warehouseId.name;
-           receptionList.push({
-          id: idReception,
-           warehouseId: warehouseId,
-           name: name,
+  getListReceptions() {
+    let receptionList = [];
+    receptionList.length = 0;
+    for (let i = 0; i < this.selection.selected.length; i++) {
+      // let distribution =JSON.stringify(this.selection.selected[i].distribution);
+      //let reserved =JSON.stringify(this.selection.selected[i].reserved);
+      let idReception = JSON.stringify(this.selection.selected[i].id);
+      let warehouseId = JSON.stringify(this.selection.selected[i].warehouseId.id);
+      let reference = this.selection.selected[i].warehouseId.reference;
+      let name = reference + ' ' + this.selection.selected[i].warehouseId.name;
+      receptionList.push({
+        id: idReception,
+        warehouseId: warehouseId,
+        name: name,
 
-         });
+      });
 
-       }
+    }
 
 
-       return receptionList;
+    return receptionList;
   }
 
-  isEnableSend(): boolean{
-    
+  isEnableSend(): boolean {
+
     let ListReceptions = this.getListReceptions();
-    if(ListReceptions.length>0){
+    if (ListReceptions.length > 0) {
       return true
     }
   }
@@ -154,13 +158,13 @@ export class ReceptionFinalComponent implements OnInit {
   }
 
 
-  async getList(pagination){
+  async getList(pagination) {
 
     this.intermediaryService.presentLoading("Cargando Reception Final...");
-    this.receptionFinalService.getIndex(pagination).subscribe((resp:any) => {
+    this.receptionFinalService.getIndex(pagination).subscribe((resp: any) => {
       this.intermediaryService.dismissLoading();
       if (resp.results) {
-      
+
         this.dataSource = new MatTableDataSource<ReceptionFinalModel.receptionFinal>(resp.results);
         const paginator = resp.pagination;
 
@@ -173,48 +177,48 @@ export class ReceptionFinalComponent implements OnInit {
           if (row.receptionFinal == true) {
             this.selectionReception.select(row);
           }
-         
+
         });
       }
     },
-    async err => {
-      await this.intermediaryService.dismissLoading()
-    },
-    async () => {
-      await this.intermediaryService.dismissLoading()
-    })
-   
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      })
+
   }
 
-  delete(){
+  delete() {
     this.deleteTemplate();
   }
-  
 
-  save(){
+
+  save() {
     this.presentModal();
   }
 
-    async presentModal() {
-      const modalType=1;
-      const modal = await this.modalController.create({
-        component: ModalReceptionFinalComponent,
-        componentProps: {
-          modalType
-        }
-      })
-      modal.onDidDismiss().then(() => {
-          this.selection.clear();
-          this.getList(this.pagination);
-          this.listenChanges();
-      });;
+  async presentModal() {
+    const modalType = 1;
+    const modal = await this.modalController.create({
+      component: ModalReceptionFinalComponent,
+      componentProps: {
+        modalType
+      }
+    })
+    modal.onDidDismiss().then(() => {
+      this.selection.clear();
+      this.getList(this.pagination);
+      this.listenChanges();
+    });;
 
-      return await modal.present();
+    return await modal.present();
 
   }
 
   async presentModalDelete(ListReceptions) {
-    const modalType=2;
+    const modalType = 2;
     const modal = await this.modalController.create({
       component: ModalReceptionFinalComponent,
       componentProps: {
@@ -223,45 +227,45 @@ export class ReceptionFinalComponent implements OnInit {
       }
     })
     modal.onDidDismiss().then(() => {
-        this.selection.clear();
-        this.getList(this.pagination);
-        this.listenChanges();
+      this.selection.clear();
+      this.getList(this.pagination);
+      this.listenChanges();
     });;
 
     return await modal.present();
 
-}
+  }
 
-async presentModalUpdate(whUpdate) {
-  const modalType=3;
-  const modal = await this.modalController.create({
-    component: ModalReceptionFinalComponent,
-    componentProps: {
-      modalType,
-      whUpdate
-    }
-  })
-  modal.onDidDismiss().then(() => {
+  async presentModalUpdate(whUpdate) {
+    const modalType = 3;
+    const modal = await this.modalController.create({
+      component: ModalReceptionFinalComponent,
+      componentProps: {
+        modalType,
+        whUpdate
+      }
+    })
+    modal.onDidDismiss().then(() => {
       this.selection.clear();
       this.getList(this.pagination);
       this.listenChanges();
-  });
+    });
 
-  return await modal.present();
+    return await modal.present();
 
-}
+  }
 
 
-edit(id,idWh, warehouse){
-  let whUpdate=[];
-  let object = {
-    id: id,
-    idWh: idWh,
-    name: warehouse
-  };
-  whUpdate.push(object);
- this.presentModalUpdate(whUpdate);
-}
+  edit(id, idWh, warehouse) {
+    let whUpdate = [];
+    let object = {
+      id: id,
+      idWh: idWh,
+      name: warehouse
+    };
+    whUpdate.push(object);
+    this.presentModalUpdate(whUpdate);
+  }
 
   reservedToggle() {
 
@@ -301,12 +305,12 @@ edit(id,idWh, warehouse){
         }, {
           text: 'Ok',
           handler: (data) => {
-           let ListReceptions= this.getListReceptions();
+            let ListReceptions = this.getListReceptions();
             ListReceptions.forEach(element => {
               this.deleteReception(element.id);
-          });  
-            
-        }
+            });
+
+          }
         }
       ]
     })
@@ -314,24 +318,24 @@ edit(id,idWh, warehouse){
       this.selection.clear();
       this.getList(this.pagination);
       this.listenChanges();
-  })
+    })
     await prompt.present();
 
   }
 
-  async deleteReception(idReceptionFinal){
+  async deleteReception(idReceptionFinal) {
     let This = this;
-   await this.receptionFinalService.destroyReceptionFinal(idReceptionFinal).subscribe(function(data){
+    await this.receptionFinalService.destroyReceptionFinal(idReceptionFinal).subscribe(function (data) {
       This.intermediaryService.presentToastSuccess("Eliminando Recepcion Final");
       This.intermediaryService.dismissLoading();
       This.close();
-      }, (error) => {
-       This.intermediaryService.presentToastError("Error al eliminar la recepcion final");
-       This.intermediaryService.dismissLoading();
-     }, () => {
-       This.intermediaryService.dismissLoading();
-     });
-     this.close();
+    }, (error) => {
+      This.intermediaryService.presentToastError("Error al eliminar la recepcion final");
+      This.intermediaryService.dismissLoading();
+    }, () => {
+      This.intermediaryService.dismissLoading();
+    });
+    this.close();
 
   }
 
