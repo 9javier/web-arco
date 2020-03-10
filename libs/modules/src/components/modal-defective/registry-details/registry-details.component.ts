@@ -17,7 +17,8 @@ export class RegistryDetailsComponent implements OnInit {
   section = 'information';
   title = 'Ubicación ';
   originalTableStatus: DamagedModel.Status[];
-  registry: DefectiveRegistryModel.DefectiveRegistry;
+  productId: string;
+  registry: any = {};
   registryHistorical;
   showChangeState = false;
   date: any;
@@ -50,7 +51,7 @@ export class RegistryDetailsComponent implements OnInit {
     private inventoryService: InventoryService,
     private loadingController: LoadingController,
   ) {
-    this.registry = this.navParams.get("registry");
+    this.productId = this.navParams.get("productId");
     this.showChangeState = this.navParams.get("showChangeState");
   }
 
@@ -64,6 +65,7 @@ export class RegistryDetailsComponent implements OnInit {
     this.listReferences = this.warehouseService.listReferences;
 
     this.warehouseSelected = null;
+    this.getRegistryDetail();
     this.getRegistryHistorical();
     this.getActionTypes();
   }
@@ -77,9 +79,15 @@ export class RegistryDetailsComponent implements OnInit {
   }
 
   getRegistryHistorical(): void {
-    this.defectiveRegistryService.getHistorical({ productReference: this.registry.product.reference }).subscribe(historical => {
-      this.registryHistorical = historical.results;
-      this.originalTableStatus = historical.statuses;
+    this.defectiveRegistryService.getHistorical({ productId: this.productId, productReference: '' }).subscribe(historical => {
+      this.registryHistorical = historical;
+    });
+  }
+
+  getRegistryDetail(): void {
+    this.defectiveRegistryService.getLastHistorical({ productId: this.productId }).subscribe(lastHistorical => {
+      this.registry = lastHistorical.data;
+      this.originalTableStatus = lastHistorical.statuses;
     });
   }
 
@@ -106,6 +114,6 @@ export class RegistryDetailsComponent implements OnInit {
 
   getStatusName(defectType: number) {
     const status = this.originalTableStatus.find((x) => x.id === defectType);
-    return status.name;
+    return status.name ? status.name : '-';
   }
 }
