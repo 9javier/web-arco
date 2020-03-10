@@ -346,6 +346,9 @@ export * from './defect-handler/defect-handler.component'
 export * from './defect-handler/defect-handler.module'
 
 // signature
-
 export * from './signature/signature.component'
 export * from './signature/signature.module'
+
+//seasons enabled reception
+export  * from './seasons-enabled/seasons-enabled.component'
+export  * from './seasons-enabled/seasons-enabled.module';

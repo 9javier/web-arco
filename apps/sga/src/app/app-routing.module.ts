@@ -421,6 +421,14 @@ const routes: Routes = [
     data: {
       name: 'ProductsAvelon'
     }
+  },
+  {
+    path:'seasons-enabled',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/seasons-enabled/seasons-enabled.module#SeasonsEnabledModule',
+    data: {
+      name: 'SeasonsEnabled'
+    }
   }
 ];
 
