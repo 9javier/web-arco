@@ -456,7 +456,7 @@ export class DefectiveHistoricComponent implements OnInit {
     return (await this.modalController.create({
       component: RegistryDetailsComponent,
       componentProps: {
-        registry: registry
+        productId: registry.product.id
       }
     })).present();
   }
@@ -466,13 +466,14 @@ export class DefectiveHistoricComponent implements OnInit {
     return status.name;
   }
 
-  async showImageModal(reference: string, photo: string) {
-    return (await this.modalController.create({
-      component: ShowImageComponent,
-      componentProps: {
-        reference: reference,
-        urlImage: photo
-      }
-    })).present();
+  async showImageModal(reference: string, photo: any[]) {
+    console.log(photo);
+    // return (await this.modalController.create({
+    //   component: ShowImageComponent,
+    //   componentProps: {
+    //     reference: reference,
+    //     urlImage: photo
+    //   }
+    // })).present();
   }
 }

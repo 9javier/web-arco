@@ -22,7 +22,7 @@
         <ion-list>
           <ion-item>
             <ion-label>
-              Fecha de Detección: {{registry?.dateDetection}}
+              Fecha de Detección: {{registry?.dateDetection | date:"dd/MM/yyyy"}}
             </ion-label>
           </ion-item>
           <ion-item>
@@ -37,7 +37,7 @@
           </ion-item>
           <ion-item>
             <ion-label>
-              Código de Producto: {{registry?.product.reference}}
+              Código de Producto: {{registry?.product?.reference}}
             </ion-label>
           </ion-item>
           <ion-item>
@@ -45,14 +45,14 @@
               Almacén: {{registry?.warehouse ? (registry?.warehouse.reference + " - " + registry?.warehouse.name) : ""}}
             </ion-label>
           </ion-item>
-          <mat-expansion-panel *ngIf="registry.photos.length > 0">
+          <mat-expansion-panel *ngIf="registry?.photos?.length > 0">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 Foto
               </mat-panel-title>
             </mat-expansion-panel-header>
             <ion-item *ngFor="let photo of registry.photos">
-              <img src="{{photo}}" alt="" />
+              <img src="{{photo.path}}" alt="" />
             </ion-item>
           </mat-expansion-panel>
         </ion-list>
@@ -72,14 +72,14 @@
                     Estado: {{getStatusName(historical.statusManagementDefect.defectType)}}
                   </p>
                 </div>
-              <mat-expansion-panel *ngIf="registryHistorical.photos.length > 0">
+              <mat-expansion-panel *ngIf="historical?.photos?.length > 0">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     Foto
                   </mat-panel-title>
                 </mat-expansion-panel-header>
-                <ion-item *ngFor="let photo of registryHistorical.photos">
-                  <img src="{{photo}}" alt="" />
+                <ion-item *ngFor="let photo of historical.photos">
+                  <img src="{{photo.path}}" alt="" />
                 </ion-item>
               </mat-expansion-panel>
             </ion-item>

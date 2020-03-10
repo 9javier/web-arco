@@ -108,7 +108,7 @@
                                (applyFilters)="applyFilters($event, 'photo')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number" (click)="$event.stopPropagation()"><a href="javascript:;" (click)="showImageModal(element.product.reference, element.photo)">{{element.photo}}</a></mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number" (click)="$event.stopPropagation()"><a href="javascript:;" (click)="showImageModal(element.product.reference, element.photos)"><ion-icon *ngIf="element?.photos?.length > 0" class="icon-images" name="images"></ion-icon></a></mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="warehouse">
