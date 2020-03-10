@@ -16,8 +16,18 @@ export class CatalogComponent implements OnInit {
   private catalogTableData;
   private catalogTableHeader;
   private selectedProducts;
-  private products;
   private market;
+  private unfilteredCatalogData;
+
+  private searchReference;
+  private searchModel;
+  private searchBrand;
+  private searchColor;
+  private searchFamily;
+  private searchDescription;
+  private searchPrice;
+  private searchDiscount;
+  private searchStock;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,6 +37,17 @@ export class CatalogComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.searchReference = "";
+    this.searchModel = "";
+    this.searchBrand = "";
+    this.searchColor = "";
+    this.searchFamily = "";
+    this.searchDescription = "";
+    this.searchPrice = "";
+    this.searchDiscount = "";
+    this.searchStock = "";
+
     this.catalogData = [];
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'color', 'family', 'description', 'pvp', 'discount', 'units', 'active'];
     this.selectedProducts = [];
@@ -51,6 +72,111 @@ export class CatalogComponent implements OnInit {
     });
   }
 
+  changeSelectedFilters() {
+    this.catalogData = this.unfilteredCatalogData.slice();
+
+    if (this.searchReference != "" && this.searchReference.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.ref.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchReference.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchModel != "" && this.searchModel.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.model.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchModel.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchBrand != "" && this.searchBrand.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.brand.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchBrand.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchColor != "" && this.searchColor.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.color.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchColor.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchFamily != "" && this.searchFamily.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.family.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchFamily.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchDescription != "" && this.searchDescription.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.description.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchDescription.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchPrice != "" && this.searchPrice.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.pvp.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchPrice.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchDiscount != "" && this.searchDiscount.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.discount.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchDiscount.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchStock != "" && this.searchStock.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.units.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchStock.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    this.catalogTableData = new MatTableDataSource(this.catalogData);
+  }
+
   getProducts() {
     this.marketplacesService.getProductCatalog().subscribe(data => {
       let serverData = data.data;
@@ -73,6 +199,7 @@ export class CatalogComponent implements OnInit {
         }
       }
       this.catalogData.sort((a, b) => (a.ref.length > b.ref.length) ? 1 : ((b.ref.length > a.ref.length) ? -1 : ((parseInt(a.ref) > parseInt(b.ref)) ? 1 : ((parseInt(b.ref) > parseInt(a.ref)) ? -1 : 0))));
+      this.unfilteredCatalogData = this.catalogData.slice();
 
       this.catalogTableData = new MatTableDataSource(this.catalogData);
     });
