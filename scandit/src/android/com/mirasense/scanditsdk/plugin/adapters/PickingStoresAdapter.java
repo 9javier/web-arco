@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mirasense.scanditsdk.plugin.MatrixPickingStores;
@@ -44,21 +45,34 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
     TextView tvSizeValue = itemView.findViewById(resources.getIdentifier("tvSizeValue", "id", packageName));
     TextView tvBrandValue = itemView.findViewById(resources.getIdentifier("tvBrandValue", "id", packageName));
 
+    LinearLayout sizeLayout = itemView.findViewById(resources.getIdentifier("sizeLayout", "id", packageName));
+    LinearLayout brandLayout = itemView.findViewById(resources.getIdentifier("brandLayout", "id", packageName));
+
     try {
-      if (!products.get(position).isNull("model")) {
-        tvModelValue.setText(products.get(position).getJSONObject("model").getString("reference"));
-        if (!products.get(position).getJSONObject("model").isNull("brand")) {
-          tvBrandValue.setText(products.get(position).getJSONObject("model").getJSONObject("brand").getString("name"));
+      if (products.get(position).isNull("id")) {
+        sizeLayout.setVisibility(View.INVISIBLE);
+        brandLayout.setVisibility(View.INVISIBLE);
+
+        tvModelValue.setText(products.get(position).getString("reference"));
+      }else{
+        sizeLayout.setVisibility(View.VISIBLE);
+        brandLayout.setVisibility(View.VISIBLE);
+
+        if (!products.get(position).isNull("model")) {
+          tvModelValue.setText(products.get(position).getJSONObject("model").getString("reference"));
+          if (!products.get(position).getJSONObject("model").isNull("brand")) {
+            tvBrandValue.setText(products.get(position).getJSONObject("model").getJSONObject("brand").getString("name"));
+          }
         }
-      }
-      if (!products.get(position).isNull("size")) {
-        tvSizeValue.setText(products.get(position).getJSONObject("size").getString("name"));
+        if (!products.get(position).isNull("size")) {
+          tvSizeValue.setText(products.get(position).getJSONObject("size").getString("name"));
+        }
+
+        itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForProduct(new LineRequestsProduct(products.get(position)), resources, packageName, false));
       }
     } catch (JSONException e) {
       e.printStackTrace();
     }
-
-    itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForProduct(new LineRequestsProduct(products.get(position)), resources, packageName, false));
 
     return itemView;
   }

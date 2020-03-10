@@ -449,6 +449,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Traspasos pendientes de realizar'
         },
         {
+          title: 'Asociar pares a embalaje',
+          id: 'picking-scan-packing',
+          icon: 'qr-scanner',
+          url: '/picking-scan-packing',
+          tooltip: 'Asociar pares procesados de traspaso a un embalaje y precintarlo'
+        },
+        {
           title: 'Tareas de picking con cámara',
           id: 'picking-task',
           icon: 'qr-scanner',
