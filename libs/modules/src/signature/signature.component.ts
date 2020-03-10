@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, OnChanges } from '@angular/core';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
-import { Platform } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { UploadFilesService, IntermediaryService } from '../../../services/src';
 
 @Component({
   selector: 'suite-signature',
@@ -17,7 +18,13 @@ export class SignatureComponent implements OnInit,OnChanges {
   //   'canvasHeight': 300
   // };
   dataUrl: string;
-  constructor(private plt: Platform, private router: Router) {
+  constructor(
+    private plt: Platform, 
+    private router: Router,
+    private uploadFile: UploadFilesService,
+    private intermediary: IntermediaryService,
+    private modalController: ModalController
+  ) {
    
    }
 
@@ -35,7 +42,7 @@ export class SignatureComponent implements OnInit,OnChanges {
     console.log(this.signaturePad);
     this.signaturePad.set('minWidth', 5); // set szimek/signature_pad options at runtime
     this.signaturePad.set('canvasWidth', this.plt.width())
-    this.signaturePad.set('canvasHeight', 300)
+    this.signaturePad.set('canvasHeight', this.plt.height())
     this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
   }
 
@@ -43,10 +50,12 @@ export class SignatureComponent implements OnInit,OnChanges {
     // will be notified of szimek/signature_pad's onEnd event
     this.dataUrl = this.signaturePad.toDataURL('png')
     console.log(this.dataUrl);
-    this.router.navigate(['incidents']);
+    this.uploadSignature()
     
   }
-
+  dismiss() {
+    this.modalController.dismiss()
+  }
   drawStart() {
     // will be notified of szimek/signature_pad's onBegin event
     console.log('begin drawing');
@@ -55,6 +64,26 @@ export class SignatureComponent implements OnInit,OnChanges {
 
   clear() {
     this.signaturePad.clear()
+  }
+
+
+  uploadSignature() {
+    this.intermediary.presentLoading()
+    this.uploadFile.uploadFileBase(this.dataUrl).subscribe(
+      resp => {
+        this.uploadFile.setSignature(resp)
+        this.modalController.dismiss()
+      },
+      err => {
+        this.intermediary.presentToastError('ocurrio un erro al subir firma')
+        this.intermediary.dismissLoading()
+      },
+      () => {
+        this.intermediary.presentToastSuccess('Firma guardada exitosamente')
+        this.intermediary.dismissLoading()
+      }
+    )
+
   }
 
 }

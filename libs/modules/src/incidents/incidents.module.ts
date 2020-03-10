@@ -11,10 +11,12 @@ import { InputCodesComponent } from './components/input-codes/input-codes.compon
 import { HideKeyboardModule } from 'hide-keyboard';
 import { CdkTableModule } from '@angular/cdk/table';
 import { SignatureComponent } from '../signature/signature.component';
+import { SignatureModule } from '../signature/signature.module';
+import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
 @NgModule({
-  declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent,],
-  entryComponents: [IncidentsComponent, PhotoModalComponent, ],
+  declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent, ReviewImagesComponent,],
+  entryComponents: [IncidentsComponent, PhotoModalComponent, ReviewImagesComponent],
   imports: [
     CommonModule,
     IncidentsRoutingModule,
@@ -24,6 +26,7 @@ import { SignatureComponent } from '../signature/signature.component';
     ScannerManualModule,
     HideKeyboardModule,
     CdkTableModule,
+    SignatureModule
   ],
   exports: [
     
