@@ -156,3 +156,6 @@ export * from './models/endpoints/country.model';
 //incidents
 export * from './models/endpoints/incidents.model'
 export * from './lib/endpoint/incidents/incidents.service';
+
+// uploas file
+export * from './lib/endpoint/ulpload-files/upload-files.service';
