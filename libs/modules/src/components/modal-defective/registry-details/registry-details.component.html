@@ -52,7 +52,7 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
             <ion-item *ngFor="let photo of registry.photos">
-              <img src="{{photo.path}}" alt="" />
+              <img src="{{photo.pathOriginal}}" alt="" />
             </ion-item>
           </mat-expansion-panel>
         </ion-list>
@@ -79,7 +79,7 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <ion-item *ngFor="let photo of historical.photos">
-                  <img src="{{photo.path}}" alt="" />
+                  <img src="{{photo.pathOriginal}}" alt="" />
                 </ion-item>
               </mat-expansion-panel>
             </ion-item>
