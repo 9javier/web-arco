@@ -26,6 +26,7 @@ export class DefectiveRegistryService {
   private entitiesFiltersFalseUrl: string;
   private entitiesFiltersTrueUrl: string;
   private getHistoricalUrl: string;
+  private getDefectList: string;
 
   constructor(private http: HttpClient) {
     this.baseUrl = environment.apiSorter;
@@ -34,6 +35,7 @@ export class DefectiveRegistryService {
     this.entitiesFiltersTrueUrl = `${this.baseUrl}/defects/registry/filters`;
     this.entitiesFiltersFalseUrl = `${this.baseUrl}/defects/registry/filters/false`;
     this.getHistoricalUrl = `${this.baseUrl}/defects/registry/product-historial`;
+    this.getDefectList = `${this.baseUrl}/defects/registry/listDefects`;
   }
 
   indexHistoricTrue(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
@@ -88,6 +90,12 @@ export class DefectiveRegistryService {
 
   getHistorical(body):Observable<any>{
     return this.http.post(this.getHistoricalUrl, body).pipe(map((response:any)=>{
+      return response.data;
+    }));
+  }
+
+  getListDefect(body){
+    return this.http.post(this.getDefectList, body).pipe(map((response:any)=>{
       return response.data;
     }));
   }

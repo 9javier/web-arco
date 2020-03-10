@@ -10,7 +10,7 @@
         Referencia
       </th>
       <td mat-cell *matCellDef="let defect">
-        {{ defect?.barcode }}
+        {{ defect?.product.reference }}
       </td>
     </ng-container>
     <ng-container matColumnDef="registerDate">
@@ -18,7 +18,7 @@
         Fecha de registro
       </th>
       <td mat-cell *matCellDef="let defect">
-        {{ defect?.registerDate }}
+        {{ defect?.dateDetection }}
       </td>
     </ng-container>
     <!-- <ng-container matColumnDef="defectType">
@@ -34,7 +34,7 @@
         Estado
       </th>
       <td mat-cell *matCellDef="let defect">
-        {{ defect?.statusManagementDefect.id }}
+        {{ defect?.statusManagementDefect.defectType }}
       </td>
     </ng-container>
 
