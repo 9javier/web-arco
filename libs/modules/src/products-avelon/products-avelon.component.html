@@ -132,10 +132,10 @@
     <ion-fab-button matTooltip="Eliminar Productos" matTooltipClass="tooltip" (click)="presentAlertDeleteConfirm()" *ngIf="selection.hasValue()" color="danger">
       <i class="material-icons">delete</i>
     </ion-fab-button>
-    <ion-fab-button matTooltip="Reiniciar Filtros" matTooltipClass="tooltip" (click)="refreshTable()">
+    <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="refreshTable()">
       <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button matTooltip="Notificar Avelon Predistribucion" matTooltipClass="tooltip" (click)="notifyAvelonPredistribution()">
+    <ion-fab-button matTooltip="Notificar recepción de productos en Avelon" matTooltipClass="tooltip" (click)="notifyAvelonPredistribution()">
       <ion-icon name="notifications"></ion-icon>
     </ion-fab-button>
   </ion-fab>
