@@ -1,26 +1,27 @@
 <ion-content>
   <div class="incidences-container" >
-    <mat-table [dataSource]="dataSource" matSort class="table-incidences">
+    <mat-table [dataSource]="dataSource" matSort multiTemplateDataRows class="table-incidences">
 
-      <ng-container  matColumnDef="Temporada">
+      <ng-container matColumnDef="Temporada">
         <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Temporada
-          <suite-filter-button class="ion-margin-vertical" #filterButtonSeasons [title]="'Temporadas'" [listItems]="entities.seasons"
-                              [isFiltering]="isFilteringSeasons != entities.seasons.length"
+          <suite-filter-button class="ion-margin-vertical" #filterButtonSeasons [title]="'Temporada'" [listItems]="seasons"
+                              [isFiltering]="isFilteringSeasons != seasons.length"
                               (applyFilters)="applyFilters($event, 'seasons')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.season.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="Habilitada">
         <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Habilitada
-          <suite-filter-button #filterButtonSizes class="filter" [title]="'Hanilitada'" [listItems]="enableds"
+          <suite-filter-button #filterButtonEnableds class="filter" [title]="'Habilitada'" [listItems]="enableds"
                               [isFiltering]="isFilteringEnableds != enableds.length"
                               (applyFilters)="applyFilters($event, 'enableds')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info">
-          <ion-checkbox [formControl]="toUpdate['controls']?.enableds['controls'][i]['controls']?.selected"></ion-checkbox>
+        <mat-cell *matCellDef="let element; let i = dataIndex" class="my-sticky-col info">
+          <ion-checkbox [formControl]="toUpdate['controls']?.seasons['controls'][i]['controls']?.selected">
+          </ion-checkbox>
         </mat-cell>
       </ng-container>
 
@@ -39,8 +40,8 @@
     <ion-fab-button matTooltip="Reiniciar Filtros" matTooltipClass="tooltip" (click)="refreshTable()">
       <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button matTooltip="Guardar" matTooltipClass="tooltip" (click)="saveChanges()">
-      <ion-icon name="notifications"></ion-icon>
+    <ion-fab-button matTooltip="Guardar" matTooltipClass="tooltip" (click)="update()">
+      <ion-icon name="save"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-footer>
