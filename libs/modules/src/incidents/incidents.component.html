@@ -5,7 +5,7 @@
   <ng-template #read>
     <ion-item>
       <ion-label>Fecha</ion-label>
-      <ion-datetime formControlName="dateDetection" picker-format="DD -MM-YYYY" display-format="DD-MM-YYYY" format></ion-datetime>
+      <ion-datetime formControlName="dateDetection"   picker-format="DD-MM-YYYY" display-format="DD-MM-YYYY" format></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label class="ion-text-capitalize">defecto</ion-label>
@@ -34,22 +34,21 @@
       <ion-checkbox formControlName="isHistory" slot="end"></ion-checkbox>
     </ion-item>
 
-     <!--require requireContact-->
-     <div *ngIf="requireContact == true" class="contact">
-      <ion-label class="ion-text-capitalize">Contacto</ion-label><br>
-      <ion-item>
-        <ion-input type="text" placeholder="Nombre"  [value]="txtName"></ion-input><br>
-      </ion-item>
-      <ion-item>
-        <ion-input type="text" placeholder="Correo"  [value]="txtEmail"></ion-input><br>
-      </ion-item>
-      <ion-item>
-        <ion-input type="text" placeholder="Teléfono"  [value]="txtTel"></ion-input>
-      </ion-item>
-     </div>
-    
-
-    <ion-item *ngIf="requirePhoto == true" (click)="presentModal()" detail lines="none">
+   
+      <div *ngIf="requireContact == true" class="contact">
+        <ion-label class="ion-text-capitalize">Contacto</ion-label><br>
+        <ion-item>
+          <ion-input type="text" (keyup)="onKeyName($event)" placeholder="Nombre" maxlength="15"></ion-input><br>
+        </ion-item>
+        <ion-item>
+          <ion-input type="email" (keyup)="onKeyEmail($event)" placeholder="Correo" maxlength="20"></ion-input><br>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" (keyup)="onKeyTel($event)" placeholder="Teléfono" maxlength="12"></ion-input>
+        </ion-item>
+      </div>
+   
+    <ion-item *ngIf="requirePhoto == true" (click)="presentModal()">
       <ion-label class="ion-text-capitalize">foto</ion-label>
       <ion-button>
         <ion-icon name="camera"></ion-icon>
@@ -57,7 +56,7 @@
       <ion-button>
         <ion-icon name="images"></ion-icon>      
       </ion-button>
-      <ion-label>{{imgUrl}}</ion-label>
+     <!-- <ion-label>{{imgUrl}}</ion-label>-->
     </ion-item>
     <ion-item>
       <ion-label class="ion-text-capitalize">retorno fabrica</ion-label>
@@ -67,12 +66,10 @@
     <!--require imprimir-->
     <ion-item *ngIf="requireOk == true">
       <ion-label class="ion-text-capitalize">Firma</ion-label>
-      <ion-button (click)="signModal()"><ion-icon name="finger-print-outline"></ion-icon></ion-button>
+      <ion-button (click)="signModal()"><ion-icon name="finger-print"></ion-icon></ion-button>
     </ion-item>
 
-   
-
-    <ion-button (click)="enviar()" expand="block" shape="round">
+    <ion-button type="submit" (click)="send()" expand="block" shape="round">
       enviar
     </ion-button>
   </ng-template>

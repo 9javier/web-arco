@@ -11,6 +11,7 @@ import { PhotoModalComponent } from './components/photo-modal/photo-modal.compon
 import {SignatureComponent} from '../signature/signature.component';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 import { Platform } from '@ionic/angular';
+import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 
 @Component({
   selector: 'suite-incidents',
@@ -31,9 +32,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   requireContact: boolean;
   requireOk: boolean;
   checkHistory: true;
-  txtName
-  txtEmail;
-  txtTel;
+  txtName =""
+  txtEmail="";
+  txtTel="";
+  name;
+  email;
+  phone;
   managementId;
   defectChildId;
   slideOpts = {
@@ -43,6 +47,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   dateNow = formatDate(new Date(), 'dd/MM/yyyy', 'es');
   dateDetection;
   incidenceForm: FormGroup;
+  defectContacto: FormGroup;
   readed: boolean
   barcode: string = ''
   defects: any = [];
@@ -55,6 +60,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
 
   constructor(
     private fb: FormBuilder,
+    private fbContact: FormBuilder,
     private incidentsService: IncidentsService,
     private intermediary: IntermediaryService,
     private modalController: ModalController,
@@ -66,8 +72,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnInit() {
-    this.initForm();
+    this.defectType();
     this.date = moment().format('DD-MM-YYYY');
+    this.initForm();
     this.readed = false;
     const navigation = this.router.getCurrentNavigation();    
     if(navigation.extras.state!=undefined){
@@ -80,29 +87,40 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
 
   }
 
+  defectType(){
+    //let res = this.statusManagament['classifications'].find( x => x.defectType == id);
+
+  }
+
   initForm() {
     this.incidenceForm = this.fb.group({
       productReference: '',
-      dateDetection:[this.dateNow],
-      numberObservations: [0],
-      observations: '',
+      dateDetection:[this.date],
+      observations: '.',
+      numberObservations: 1,
       factoryReturn: [false],
       isHistory: [false],
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
       defectType: [0],  
       gestionState: [0],
-    })
+      contact: this.fb.group({
+        name:'',
+        email:'',
+        phone:''
+      })
+    });
+  
   }
 
   async initDinamicFields() {
     this.incidentsService.getDefectTypesChild().subscribe(resp => {
-      console.log('getDefectTypesChild', resp);
+      //console.log('getDefectTypesChild', resp);
       this.defects = resp;
       
     })
     this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
-      console.log('getDtatusManagamentDefect', resp);
+      //console.log('getDtatusManagamentDefect', resp);
       this.statusManagament = resp
     })
     this.loadFromDBValues();
@@ -119,7 +137,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
 
       await this.incidentsService.getOneIncidentProductById(body).subscribe(resp=>{
 
-          console.log('result mas op del mundo', resp);
 
           this.types = resp.querys;
           resp = resp.result;
@@ -131,7 +148,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
           // this.statusManagament["classifications"] = resp.statusManagementDefectId;
 
 
-          console.log('result mas op del mundo', resp);
 
           this.varTrying = resp.statusManagementDefectId.id;          
 
@@ -191,7 +207,54 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     console.log("imprimir...")
   }
 
-  async enviar() {
+  validate(){
+
+    let regex = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
+     let validation = true;
+     let msg;
+     let This = this;
+     console.log(this.txtName.length);
+
+     if( this.txtName.length < 4){
+      console.log("name false");
+      msg="Nombre debe tener minimo 4 digítos...";
+       validation = false;
+     }if(this.txtEmail.length < 1){
+         msg="Campo email vacío";
+         validation = false;
+     }
+     if(this.txtTel.length < 6){
+      console.log("telefono false");
+      msg="Teléfono debe tener minimo 6 digítos...";
+      validation = false;
+    }
+    if(!regex.test(this.txtEmail)){
+      console.log("email validation true");
+      msg="Email invalido...";
+      validation = false;
+      console.log("email false");
+    }
+
+    if(msg == undefined){ 
+
+    }else{
+      if(msg.length > 0){
+        This.intermediary.presentToastError(msg); 
+      }
+    }
+
+    return validation;
+  }
+  onKeyName(event){
+    this.txtName = event.target.value;
+  }
+  onKeyEmail(event){
+    this.txtEmail = event.target.value;
+  }
+  onKeyTel(event){
+    this.txtTel = event.target.value;
+  }
+  send(){
 
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
@@ -199,33 +262,40 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       contact:{
         name: this.txtName,
         email: this.txtEmail,
-        phone: this.txtTel,
-      }      
+        phone: this.txtTel
+      }
+
     })
-
-
-    let This = this;
-    await This.intermediary.presentLoading('Enviando...')
-
-    if(this.ticketEmit == true){
-      this.print();
+    console.log("validacion "+this.validate());  
+    if(this.validate()){
+      this.sendToIncidents();
     }
     
-    // setTimeout(async () => {
-    //   await this.intermediary.dismissLoading()
-    // }, 3000)
-    This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
-      resp => {
-        This.intermediary.dismissLoading()
-        This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
-        this.router.navigateByUrl('/defect-handler');
-      },
-      e => {
-        This.intermediary.dismissLoading()
-        This.intermediary.presentToastError(e.error)
-      }
-    );
+  }
 
+  async sendToIncidents() {
+
+    
+
+    console.log("aqui mero", this.incidenceForm)
+      let This = this;
+      await This.intermediary.presentLoading('Enviando...')
+  
+      if(this.ticketEmit == true){
+        this.print();
+      }
+      This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
+        resp => {
+          This.intermediary.dismissLoading()
+          This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
+          this.router.navigateByUrl('/defect-handler');
+        },
+        e => {
+          This.intermediary.dismissLoading()
+          This.intermediary.presentToastError(e.error)
+        }
+      );
+     
   }
 
   async presentModal() {
