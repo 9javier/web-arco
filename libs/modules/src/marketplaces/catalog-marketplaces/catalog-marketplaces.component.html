@@ -17,7 +17,7 @@
         </mat-option>
       </mat-select>
     </div>
-    <mat-select [(ngModel)]="actionSelected">
+    <mat-select [(ngModel)]="actionSelected" (selectionChange)="changeAction()">
       <mat-option *ngFor="let item of actions" [value]="item.id">
         {{item.name}}
       </mat-option>
@@ -39,22 +39,34 @@
       </ng-container>
 
       <ng-container matColumnDef="ref">
-        <th mat-header-cell *matHeaderCellDef><span>Ref.</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Ref.</span>
+          <input matInput type="text" placeholder="" (keyup)="changeSelectedFilters()" [(ngModel)]="searchReference"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.reference}} </td>
       </ng-container>
 
       <ng-container matColumnDef="model">
-        <th mat-header-cell *matHeaderCellDef><span>Modelo</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Modelo</span>
+          <input matInput type="text" placeholder="" (keyup)="changeSelectedFilters()" [(ngModel)]="searchModel"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.model}} </td>
       </ng-container>
 
       <ng-container matColumnDef="brand">
-        <th mat-header-cell *matHeaderCellDef><span>Marca</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Marca</span>
+          <input matInput type="text" placeholder="" (keyup)="changeSelectedFilters()" [(ngModel)]="searchBrand"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.brand}} </td>
       </ng-container>
 
       <ng-container matColumnDef="KO">
-        <th mat-header-cell *matHeaderCellDef><span>KO</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>KO</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="" (keyup)="changeSelectedFilters()" [(ngModel)]="searchKO"/>
+        </th>
         <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'KrackOnline'">
@@ -73,7 +85,10 @@
       </ng-container>
 
       <ng-container matColumnDef="Mini">
-        <th mat-header-cell *matHeaderCellDef><span>Mini</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Mini</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="" (keyup)="changeSelectedFilters()" [(ngModel)]="searchMini"/>
+        </th>
         <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'Miniprecios'">
@@ -92,7 +107,10 @@
       </ng-container>
 
       <ng-container matColumnDef="Amazon">
-        <th mat-header-cell *matHeaderCellDef><span>Amazon</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Amazon</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="" (keyup)="changeSelectedFilters()" [(ngModel)]="searchAmazon"/>
+        </th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'Amazon'">
@@ -111,7 +129,10 @@
       </ng-container>
 
       <ng-container matColumnDef="Spartoo">
-        <th mat-header-cell *matHeaderCellDef><span>Spartoo</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Spartoo</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="" (keyup)="changeSelectedFilters()" [(ngModel)]="searchSpartoo"/>
+        </th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'Spartoo'">
@@ -130,7 +151,10 @@
       </ng-container>
 
       <ng-container matColumnDef="Zalando">
-        <th mat-header-cell *matHeaderCellDef><span>Zalando</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Zalando</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="" (keyup)="changeSelectedFilters()" [(ngModel)]="searchZalando"/>
+        </th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'Zalando'">
@@ -149,7 +173,10 @@
       </ng-container>
 
       <ng-container matColumnDef="CDiscount">
-        <th mat-header-cell *matHeaderCellDef><span>CDiscount</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>CDiscount</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="" (keyup)="changeSelectedFilters()" [(ngModel)]="searchCDiscount"/>
+        </th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'CDiscount'">

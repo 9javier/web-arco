@@ -26,6 +26,15 @@ export class CatalogMarketplacesComponent implements OnInit {
   private marketSelected;
   private descriptionSelected;
   private familySelected;
+  private searchReference;
+  private searchModel;
+  private searchBrand;
+  private searchKO;
+  private searchMini;
+  private searchAmazon;
+  private searchSpartoo;
+  private searchZalando;
+  private searchCDiscount;
 
   constructor(
     private marketplacesService: MarketplacesService
@@ -58,6 +67,16 @@ export class CatalogMarketplacesComponent implements OnInit {
     this.families = [{id: 0, name: 'Familia'}];
     this.familySelected = this.families[0].id;
 
+    this.searchReference = "";
+    this.searchModel = "";
+    this.searchBrand = "";
+    this.searchKO = "";
+    this.searchMini = "";
+    this.searchAmazon = "";
+    this.searchSpartoo = "";
+    this.searchZalando = "";
+    this.searchCDiscount = "";
+
     this.marketplacesService.getProductCatalog().subscribe(data => {
       this.products = data.data;
       this.products.sort((a, b) => (a.reference.length > b.reference.length) ? 1 : ((b.reference.length > a.reference.length) ? -1 : ((parseInt(a.reference) > parseInt(b.reference)) ? 1 : ((parseInt(b.reference) > parseInt(a.reference)) ? -1 : 0))));
@@ -81,7 +100,21 @@ export class CatalogMarketplacesComponent implements OnInit {
     console.log(row);
   }
 
+  changeAction() {
+    if (this.actionSelected == 1) {
+      this.searchKO = "";
+      this.searchMini = "";
+      this.searchAmazon = "";
+      this.searchSpartoo = "";
+      this.searchZalando = "";
+      this.searchCDiscount = "";
+    }
+
+    this.changeSelectedFilters();
+  }
+
   changeSelectedFilters() {
+
     this.products = this.unFilteredProducts.slice();
 
     if (this.marketSelected != 0) {
@@ -119,7 +152,141 @@ export class CatalogMarketplacesComponent implements OnInit {
       this.products = filteredProducts.slice();
     }
 
+    if (this.searchReference != "" && this.searchReference.trim() != "") {
+      let products = [];
+      for (let product of this.products) {
+        if (product.reference.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchReference.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.products = products.slice();
+    }
+
+    if (this.searchModel != "" && this.searchModel.trim() != "") {
+      let products = [];
+      for (let product of this.products) {
+        if (product.model.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchModel.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.products = products.slice();
+    }
+
+    if (this.searchBrand != "" && this.searchBrand.trim() != "") {
+      let products = [];
+      for (let product of this.products) {
+        if (product.brand.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchBrand.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.products = products.slice();
+    }
+
+    if (this.actionSelected == 2) {
+
+      if (this.searchKO != "" && this.searchKO.trim() != "") {
+        let products = [];
+        for (let product of this.products) {
+          for (let productMarket of product.productsMarkets) {
+            if (productMarket.market.name == "KrackOnline") {
+              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchKO.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+                !== -1) {
+                products.push(product);
+              }
+              break;
+            }
+          }
+        }
+        this.products = products.slice();
+      }
+
+      if (this.searchMini != "" && this.searchMini.trim() != "") {
+        let products = [];
+        for (let product of this.products) {
+          for (let productMarket of product.productsMarkets) {
+            if (productMarket.market.name == "Miniprecios") {
+              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchMini.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+                !== -1) {
+                products.push(product);
+              }
+              break;
+            }
+          }
+        }
+        this.products = products.slice();
+      }
+
+      if (this.searchAmazon != "" && this.searchAmazon.trim() != "") {
+        let products = [];
+        for (let product of this.products) {
+          for (let productMarket of product.productsMarkets) {
+            if (productMarket.market.name == "Amazon") {
+              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchAmazon.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+                !== -1) {
+                products.push(product);
+              }
+              break;
+            }
+          }
+        }
+        this.products = products.slice();
+      }
+
+      if (this.searchSpartoo != "" && this.searchSpartoo.trim() != "") {
+        let products = [];
+        for (let product of this.products) {
+          for (let productMarket of product.productsMarkets) {
+            if (productMarket.market.name == "Spartoo") {
+              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchSpartoo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+                !== -1) {
+                products.push(product);
+              }
+              break;
+            }
+          }
+        }
+        this.products = products.slice();
+      }
+
+      if (this.searchZalando != "" && this.searchZalando.trim() != "") {
+        let products = [];
+        for (let product of this.products) {
+          for (let productMarket of product.productsMarkets) {
+            if (productMarket.market.name == "Zalando") {
+              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchZalando.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+                !== -1) {
+                products.push(product);
+              }
+              break;
+            }
+          }
+        }
+        this.products = products.slice();
+      }
+
+      if (this.searchCDiscount != "" && this.searchCDiscount.trim() != "") {
+        let products = [];
+        for (let product of this.products) {
+          for (let productMarket of product.productsMarkets) {
+            if (productMarket.market.name == "CDiscount") {
+              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchCDiscount.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+                !== -1) {
+                products.push(product);
+              }
+              break;
+            }
+          }
+        }
+        this.products = products.slice();
+      }
+
+    }
+
     this.catalogTableData = new MatTableDataSource(this.products);
+
   }
 
   exportToExcel() {
