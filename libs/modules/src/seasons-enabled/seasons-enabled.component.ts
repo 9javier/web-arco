@@ -191,7 +191,7 @@ export class SeasonsEnabledComponent implements OnInit {
   async getList(form?: FormGroup){
     await this.intermediaryService.presentLoading();
     this.seasonsEnabledService.index(form.value).subscribe(
-      (resp:any) => {
+      async (resp:any) => {
         this.toUpdate.removeControl("seasons");
         this.toUpdate.addControl("seasons", this.formBuilder.array(resp.results.map(season => {
           return this.formBuilder.group({
@@ -207,7 +207,7 @@ export class SeasonsEnabledComponent implements OnInit {
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
         this.paginator.lastPage = paginator.lastPage;
-
+        await this.intermediaryService.dismissLoading()
       },
       async err => {
         await this.intermediaryService.dismissLoading()
@@ -327,23 +327,18 @@ export class SeasonsEnabledComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-  update() {
-    let observable = new Observable(observer => observer.next());
-    this.seasonsEnabledService.updateSeasons(this.toUpdate.value).subscribe(async result => {});
-    this.intermediaryService.presentLoading();
-    observable.subscribe(
-      () => {
+  async update() {
+    await this.intermediaryService.presentLoading();
+    this.seasonsEnabledService.updateSeasons(this.toUpdate.value).subscribe(async result => {
         this.intermediaryService.dismissLoading();
         this.intermediaryService.presentToastSuccess(
-          'Temporada actualizada con exito'
+          'Temporadas actualizadas con éxito'
         );
-        this.getList(this.form);
       },
       () => {
         this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastSuccess('Error actualizando temporada');
-      }
-    );
+        this.intermediaryService.presentToastSuccess('Error actualizando temporadas');
+      });
   }
 
   refreshTable() {
