@@ -13,7 +13,7 @@ export class IncidentsService {
   private addRegistryUrl: string = environment.apiBase + '/defects/registry/add';
   private statusManagamentDefectUrl: string = environment.apiBase + '/classification'
   private getAllIncidentProductUrl: string = this.incidentsUrl + '/all'
-  private getByIdIncidentProductUrl: string = this.incidentsUrl + '/get/id'
+  private getByIdIncidentProductUrl: string = environment.apiBase + '/defects/registry/get-last-historial-product'
 
   constructor(private http: HttpClient) { }
 

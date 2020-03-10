@@ -13,6 +13,10 @@ import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 import { Platform } from '@ionic/angular';
 import { FileTransfer, FileUploadOptions, FileTransferObject, FileUploadResult } from '@ionic-native/file-transfer/ngx';
 import { ReviewImagesComponent } from './components/review-images/review-images.component';
+import { ProductModel, ProductsService } from '@suite/services';
+import { AlertController } from "@ionic/angular";
+import { PositionsToast } from '../../../services/src/models/positionsToast.type';
+
 
 @Component({
   selector: 'suite-incidents',
@@ -55,6 +59,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   statusManagament: any;
   public barcodeRoute = null;
   public types:any;
+  public differentState:boolean = true;
+  private typeIdBC:number;
+
 
   private varTrying;
   apiURL: string = environment.uploadFiles + '?type=defects'
@@ -75,8 +82,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     private plt: Platform,
     private camera: Camera,
     private transfer: FileTransfer,
+    private uploadService: UploadFilesService,
+    private productsService: ProductsService,
     private intermediaryService: IntermediaryService,
-    private uploadService: UploadFilesService
+    private alertController: AlertController,
   ) { 
 
 
@@ -101,7 +110,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     const navigation = this.router.getCurrentNavigation();    
     if(navigation.extras.state!=undefined){
       this.barcodeRoute = navigation.extras.state['reference'];
-      this.types ="Cargando";
     }
     this.initDinamicFields();
   }
@@ -151,51 +159,62 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
 
     if(this.barcodeRoute){
       let body = {
-        "id":this.barcodeRoute
+        // "productId":12,
+        "productId":this.barcodeRoute,
+        "productReference":""
       }
+
+      console.log("body", body);
+
+      await this.incidentsService.getDtatusManagamentDefect().subscribe(resp=>{
+        // console.log("resp no se que", resp);
+        this.types = resp.statuses;
+      });
+
       await this.incidentsService.getOneIncidentProductById(body).subscribe(resp=>{
 
-
-          this.types = resp.querys;
-          resp = resp.result;
+        
+          // this.types = resp.data;
+          resp = resp.data;
+          console.log('result', resp);
 
           this.statusManagament = {
-            'classifications' : resp.statusManagementDefectId
+            'classifications' : resp.statusManagementDefect
           }
           
-          // this.statusManagament["classifications"] = resp.statusManagementDefectId;
+          // console.log("resp status ", resp.statusManagementDefect);
 
+          this.statusManagament["classifications"] = resp.statusManagementDefect;
 
-
-          this.varTrying = resp.statusManagementDefectId.id;          
-
-          // this.incidenceForm.setValue({gestionChange:resp.statusManagementDefectId.id})
+          this.varTrying = resp.statusManagementDefect.id;        
+          
+          this.incidenceForm.patchValue({gestionChange:resp.statusManagementDefect.id})
+          this.incidenceForm.patchValue({productReference: resp.product.reference})
           this.incidenceForm.patchValue({
-            barcode: resp.barcode,
-            registerDate: resp.registerDate,
-            defectType: resp.defectTypeChildId.id,
+            barcode: resp.product.reference,
+            registerDate: Date.now(),
+            defectType: resp.defectTypeChild.id,
             observations: resp.observations,
-            gestionState: resp.statusManagementDefectId.id,
+            gestionState: resp.statusManagementDefect.id,
             // gestionState: resp.defectTypeChildId.id,
             photo: resp.photo,
-            validation: resp.validation
+            validation: resp.validation,
+            
           });
 
+
           this.readed = true;
+          this.typeIdBC = resp.statusManagementDefect.id;
 
           let sendtoGestionChange = {
             "detail":{
-              "value":resp.statusManagementDefectId.id
+              "value":resp.statusManagementDefect.id
             }
           }
-
           this.gestionChange(sendtoGestionChange);
+      }, error=>{
+        console.log("here is error ", error);
       });
-
-      // await this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
-      //   console.log('getDtatusManagamentDefect', resp);
-      //   this.statusManagament = resp
-      // })
 
     }
 
@@ -211,7 +230,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       })
       console.log(this.incidenceForm.value);
       
-      this.readed = true
+
+      this.getSizeListByReference(e);
+      
     }    
 
     console.log("on new Value");
@@ -286,6 +307,67 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     }
     
   }
+
+async enviaryarn() {
+    let photos = []
+    this.photos.forEach(elem => {
+      photos.push({id: elem.id});
+    });
+    this.incidenceForm.patchValue({
+      statusManagementDefectId: this.managementId,
+      defectTypeChildId: this.defectChildId,
+      photosFileIds: photos,
+      signFileId: this.signatures[0].id,
+      // contact:{
+      //   name: this.txtName,
+      //   email: this.txtEmail,
+      //   phone: this.txtTel,
+      // },
+    })
+    let This = this;
+    await This.intermediary.presentLoading('Enviando...')
+    if(this.ticketEmit == true){
+      this.print();
+    }
+    // setTimeout(async () => {
+    //   await this.intermediary.dismissLoading()
+    // }, 3000)
+    This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
+      resp => {
+        this.readed = false
+        this.incidenceForm.patchValue({
+          productId: 1,
+          productReference: '',
+          dateDetection: this.dateNow,
+          numberObservations: 0,
+          observations: '',
+          factoryReturn: false,
+          isHistory: false,
+          statusManagementDefectId: 0,
+          defectTypeChildId: 0,
+          defectType: 0,
+          gestionState: 0,
+          photosFileIds: 0,
+          signFileId: 0,
+          contact: {
+            name: '',
+            email: '',
+            phone: ''
+          }
+        })
+        This.intermediary.dismissLoading()
+        This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
+        this.router.navigateByUrl('/defect-handler');
+      },
+      e => {
+        console.log(e);
+        This.intermediary.dismissLoading()
+        This.intermediary.presentToastError(e.error)
+        console.log("e,",e);
+      }
+    );
+
+    }
 
 
 
@@ -402,11 +484,16 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       res = this.statusManagament.classifications!=undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find( x => x.defectType == id);
 
     }
-    
-    console.log("res",res);
-    
 
     if(res != undefined){
+      console.log("res",res);
+
+      if(res instanceof Array){
+        res = res.find( x  => x.id == id);
+      }
+
+
+      
       this.ticketEmit = res.ticketEmit;
       this.passHistory = res.passHistory;
       this.requirePhoto = res.requirePhoto
@@ -414,7 +501,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       this.requireOk = res.requireOk;
       this.managementId = res.id;
       this.defectChildId = id;
-      console.log(this.managementId+"----"+this.defectChildId)
     }else{
       this.ticketEmit = false;
       this.passHistory = false;
@@ -589,4 +675,73 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     await modal.present();
   
   }
+
+
+  onChange(value){
+    if(value != this.typeIdBC){
+      this.differentState = false;
+    }else{
+      this.differentState = true;
+    }
+
+  }
+
+
+  private getSizeListByReference(dataWrote: string) {
+    this.productsService.getInfo(dataWrote).then(async (res: ProductModel.ResponseInfo) => {
+        if (res.code === 200) {
+          this.readed = true
+        } else if (res.code === 0) {
+          this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
+            this.readed = false
+          });
+
+        } else {
+          this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+            this.readed = false
+          });
+
+        }
+      }, (error) => {
+        console.error('Error::Subscribe::GetInfo -> ', error);
+        this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+          this.readed = false
+        });
+
+      })
+      .catch((error) => {
+        console.error('Error::Subscribe::GetInfo -> ', error);
+        this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+          this.readed = false
+        });
+
+      });
+  }
+
+
+  private async presentAlertInput(modelId: number, sizeId: number) {
+    const alert = await this.alertController.create({
+      header: 'Ubicación del producto',
+      message: 'Introduce la referencia de la ubicación o el embalaje en que está el producto. Si no está en ninguno de estos sitios continúa sin rellenar este campo.',
+      inputs: [{
+        name: 'reference',
+        type: 'text',
+        placeholder: 'Referencia '
+      }],
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'Continuar',
+          handler: (data) => {
+            let reference = data.reference.trim();
+            
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+  
+
 }
