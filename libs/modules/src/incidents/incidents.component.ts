@@ -109,6 +109,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     this.readed = false;
     const navigation = this.router.getCurrentNavigation();    
     if(navigation.extras.state!=undefined){
+      this.readed = true;
       this.barcodeRoute = navigation.extras.state['reference'];
     }
     this.initDinamicFields();
@@ -203,7 +204,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
           });
 
 
-          this.readed = true;
+          
           this.typeIdBC = resp.statusManagementDefect.id;
 
           let sendtoGestionChange = {
