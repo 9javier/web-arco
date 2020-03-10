@@ -175,7 +175,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
 
         
           // this.types = resp.data;
-          resp = resp.data;
+          // resp = resp.data;
           console.log('result', resp);
 
           this.statusManagament = {
@@ -316,6 +316,7 @@ async enviaryarn() {
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
+      defectTypeParentId: 1,
       photosFileIds: photos,
       signFileId: this.signatures[0].id,
       // contact:{
@@ -412,6 +413,7 @@ async enviaryarn() {
           isHistory: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectTypeParentId: 1,
           defectType: 0,
           gestionState: 0,
           photosFileIds: [{ "id": 1 }],
