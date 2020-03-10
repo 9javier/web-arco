@@ -180,14 +180,14 @@ export class DefectHandlerComponent implements OnInit {
   //   this.getList(this.page, this.limit, this.sortValues);
   // }
 
-  // goDefect(row) {
-  //   const navigationExtras: NavigationExtras = {
-  //     state : {
-  //       "reference" : row.id,
-  //     }      
-  //   };
+  goDefect(row) {
+    const navigationExtras: NavigationExtras = {
+      state : {
+        "reference" : row.id,
+      }      
+    };
 
-  //   this.router.navigate(['/incidents'], navigationExtras);
-  // }
+    this.router.navigate(['/incidents'], navigationExtras);
+  }
 
 }
