@@ -62,6 +62,10 @@ export * from './incidences-list/incidences-list.module';
 export * from './incidences-popover/incidences-popover.component';
 export * from './incidences-popover/incidences-popover.module';
 
+// Picking Scan Packing
+export * from './picking-scan-packing/picking-scan-packing.component';
+export * from './picking-scan-packing/picking-scan-packing.module';
+
 // Simple Incidence
 export * from './incidence-simple/incidence-simple.component';
 export * from './incidence-simple/incidence-simple.module';

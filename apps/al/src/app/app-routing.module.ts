@@ -52,6 +52,13 @@ const routes: Routes = [
     }
   },
   {
+    path: 'picking-scan-packing',
+    loadChildren: '../../../../libs/modules/src/picking-scan-packing/picking-scan-packing.module#PickingScanPackingModule',
+    data: {
+      name: 'Asociar pares a embalaje'
+    }
+  },
+  {
     path: 'products',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/products-al/products-al.module#ProductsAlModule',
