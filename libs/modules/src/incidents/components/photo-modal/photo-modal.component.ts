@@ -10,15 +10,15 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./photo-modal.component.scss']
 })
 export class PhotoModalComponent implements OnInit {
-  apiURL: string = environment.uploadFiles
+  apiURL: string = environment.uploadFiles;
   imgData: string;
   imgUrl: any;
   constructor(
-    private camera: Camera, 
+    private camera: Camera,
     private transfer: FileTransfer,
     private intermediaryService: IntermediaryService,
     private modalController: ModalController
-    ) { }
+  ) { }
 
   ngOnInit() {
   }
@@ -37,7 +37,7 @@ export class PhotoModalComponent implements OnInit {
       // If it's base64 (DATA_URL):
       console.log(imageData);
       this.imgData = imageData
-  
+
     }, (err) => {
       // Handle error
     });
@@ -60,7 +60,7 @@ export class PhotoModalComponent implements OnInit {
     })
   }
   async uploadImage() {
-    if (!this.imgData || this.imgData.length == 0){
+    if (!this.imgData || this.imgData.length == 0) {
       this.intermediaryService.presentToastError('Debe seleccionar una imagen o tomar una foto')
       return
     }
@@ -71,10 +71,10 @@ export class PhotoModalComponent implements OnInit {
     // File for Upload
     var targetPath = this.imgData;
     const imgDataSplit = this.imgData.split('/')
-    let name = imgDataSplit[imgDataSplit.length -1]
-      if (name.split('?').length > 1) {
-        name = name.split('?')[0]
-      }
+    let name = imgDataSplit[imgDataSplit.length - 1]
+    if (name.split('?').length > 1) {
+      name = name.split('?')[0]
+    }
 
 
     var options: FileUploadOptions = {
@@ -91,24 +91,24 @@ export class PhotoModalComponent implements OnInit {
     fileTransfer.upload(targetPath, url, options)
       .then((result: FileUploadResult) => {
         this.intermediaryService.dismissLoading()
-        const response:any  = JSON.parse(result.response)
+        const response: any = JSON.parse(result.response)
         console.log('response: ', response);
-        
+
         this.imgUrl = response.data
         console.log('subido');
         this.intermediaryService.presentToastSuccess('la imagen cargada correctamente')
-        
+
       })
       .catch(
-        e =>{
+        e => {
           console.log(e);
-          
+
           this.intermediaryService.dismissLoading()
           const error = JSON.parse(e.body)
           this.intermediaryService.presentToastError(error.errors)
         }
       );
-    
+
   }
 
   back() {

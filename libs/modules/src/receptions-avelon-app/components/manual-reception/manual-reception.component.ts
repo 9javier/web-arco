@@ -1,20 +1,20 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ModalController, PopoverController} from "@ionic/angular";
-import {FilterItemsListComponent} from "../filter-items-list/filter-items-list.component";
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ModalController, PopoverController } from "@ionic/angular";
+import { FilterItemsListComponent } from "../filter-items-list/filter-items-list.component";
 import {
   environment,
   IntermediaryService,
   ReceptionAvelonModel,
   ReceptionsAvelonService
 } from "@suite/services";
-import {ReceptionAvelonProvider} from "../../../../../services/src/providers/reception-avelon/reception-avelon.provider";
-import {LoadingMessageComponent} from "../../../components/loading-message/loading-message.component";
-import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
-import {PrinterService} from "../../../../../services/src/lib/printer/printer.service";
-import {ModalModelImagesComponent} from "../modal-model-images/modal-model-images.component";
-import {PositionsToast} from "../../../../../services/src/models/positionsToast.type";
-import {Router} from "@angular/router";
-import {LocalStorageProvider} from "../../../../../services/src/providers/local-storage/local-storage.provider";
+import { ReceptionAvelonProvider } from "../../../../../services/src/providers/reception-avelon/reception-avelon.provider";
+import { LoadingMessageComponent } from "../../../components/loading-message/loading-message.component";
+import { ToolbarProvider } from "../../../../../services/src/providers/toolbar/toolbar.provider";
+import { PrinterService } from "../../../../../services/src/lib/printer/printer.service";
+import { ModalModelImagesComponent } from "../modal-model-images/modal-model-images.component";
+import { PositionsToast } from "../../../../../services/src/models/positionsToast.type";
+import { Router } from "@angular/router";
+import { LocalStorageProvider } from "../../../../../services/src/providers/local-storage/local-storage.provider";
 
 @Component({
   selector: 'suite-manual-reception',
@@ -37,10 +37,10 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     modelId: number,
     colorId: number
   }[];
-  private listBrands: any[] = [];
-  private listModels: any[] = [];
-  private listColors: any[] = [];
-  private listSizes: ReceptionAvelonModel.LoadSizesList[] = [];
+  public listBrands: any[] = [];
+  public listModels: any[] = [];
+  public listColors: any[] = [];
+  public listSizes: ReceptionAvelonModel.LoadSizesList[] = [];
 
   public resultsList: any[] = [];
 
@@ -68,21 +68,21 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         action: () => this.resetData()
       }
     ]);
-    try{
+    try {
       this.lastPrint = JSON.parse(String(await this.localStorageProvider.get('lastPrint')));
       this.brandSelected = this.lastPrint.brand;
       this.modelSelected = this.lastPrint.model;
       this.colorSelected = this.lastPrint.color;
       this.listSizes = this.lastPrint.sizes;
-    }catch(error){console.log(error)}
+    } catch (error) { console.log(error) }
   }
 
   ngOnDestroy() {
     this.toolbarProvider.optionsActions.next([]);
   }
 
-  resetSizes(){
-    for(let size of this.listSizes){
+  resetSizes() {
+    for (let size of this.listSizes) {
       size.quantity = 0;
     }
   }
@@ -118,7 +118,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
             const colorInList = this.listColors.find(c => c.id == color.id);
             if (!!colorInList) {
               for (let model of color.belongsModels) {
-                if (!colorInList.belongsModels.find(m => m == model )) {
+                if (!colorInList.belongsModels.find(m => m == model)) {
                   colorInList.belongsModels.push(model);
                 }
               }
@@ -195,78 +195,78 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     modal.present();
   }
 
-  getModelAndColorColors(brandId: number){
+  getModelAndColorColors(brandId: number) {
     let greenModels: number[] = [];
     let orangeModels: number[] = [];
     let greenColors: number[] = [];
     let orangeColors: number[] = [];
-    for(let line of this.expeditionLines){
-      if(!brandId || line.brandId == brandId){
-        if(line.state == 2){
-          if(!greenModels.includes(line.modelId)){
+    for (let line of this.expeditionLines) {
+      if (!brandId || line.brandId == brandId) {
+        if (line.state == 2) {
+          if (!greenModels.includes(line.modelId)) {
             greenModels.push(line.modelId);
           }
-          if(!greenColors.includes(line.colorId)){
+          if (!greenColors.includes(line.colorId)) {
             greenColors.push(line.colorId);
           }
-        }else{
-          if(!orangeModels.includes(line.modelId)){
+        } else {
+          if (!orangeModels.includes(line.modelId)) {
             orangeModels.push(line.modelId);
           }
-          if(!orangeColors.includes(line.colorId)){
+          if (!orangeColors.includes(line.colorId)) {
             orangeColors.push(line.colorId);
           }
         }
       }
     }
-    orangeModels = orangeModels.filter(model => {return !greenModels.includes(model)});
-    orangeColors = orangeColors.filter(color => {return !greenColors.includes(color)});
-    for(let model of this.listModels){
-      if(greenModels.includes(model.id)){
+    orangeModels = orangeModels.filter(model => { return !greenModels.includes(model) });
+    orangeColors = orangeColors.filter(color => { return !greenColors.includes(color) });
+    for (let model of this.listModels) {
+      if (greenModels.includes(model.id)) {
         model.color = 'green';
-      }else{
-        if(orangeModels.includes(model.id)){
+      } else {
+        if (orangeModels.includes(model.id)) {
           model.color = 'orange';
-        }else{
+        } else {
           model.color = 'red';
         }
       }
     }
-    for(let color of this.listColors){
-      if(greenColors.includes(color.id)){
+    for (let color of this.listColors) {
+      if (greenColors.includes(color.id)) {
         color.color = 'green';
-      }else{
-        if(orangeColors.includes(color.id)){
+      } else {
+        if (orangeColors.includes(color.id)) {
           color.color = 'orange';
-        }else{
+        } else {
           color.color = 'red';
         }
       }
     }
   }
 
-  getColorColors(modelId: number){
+  getColorColors(modelId: number) {
     let greenColors: number[] = [];
     let orangeColors: number[] = [];
-    for(let line of this.expeditionLines){
-      if(!modelId || line.modelId == modelId){
-        if(line.state == 2 && !greenColors.includes(line.colorId)){
+    for (let line of this.expeditionLines) {
+      if (!modelId || line.modelId == modelId) {
+        if (line.state == 2 && !greenColors.includes(line.colorId)) {
           greenColors.push(line.colorId);
-        }else{
-          if(line.state != 2 && !orangeColors.includes(line.colorId)){
+        } else {
+          if (line.state != 2 && !orangeColors.includes(line.colorId)) {
             orangeColors.push(line.colorId);
           }
         }
       }
     }
-    orangeColors = orangeColors.filter(color => {return !greenColors.includes(color)});
-    for(let color of this.listColors){
-      if(greenColors.includes(color.id)){
+    orangeColors = orangeColors.filter(color => { return !greenColors.includes(color) });
+    for (let color of this.listColors) {
+      if (greenColors.includes(color.id)) {
         color.color = 'green';
-      }else{
-        if(orangeColors.includes(color.id)){
+      } else {
+        if (orangeColors.includes(color.id)) {
           color.color = 'orange';
-        }else{
+        } else {
           color.color = 'red';
         }
       }
@@ -343,7 +343,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       this.listModels = listModels;
       if (!this.modelSelected && this.listModels.length == 1) {
         this.modelSelected = this.listModels[0];
-        this.modelIdSelected =  this.modelSelected.id;
+        this.modelIdSelected = this.modelSelected.id;
       }
 
       if (this.colorSelected && this.modelSelected) {
@@ -432,7 +432,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       }
 
       this.receptionsAvelonService
-        .printReceptionLabel({to_print: params})
+        .printReceptionLabel({ to_print: params })
         .subscribe((res) => {
           this.loadingMessageComponent.show(false);
           const referencesToPrint = res.resultToPrint.map(r => r.reference);
@@ -481,7 +481,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   private loadSizes() {
     this.receptionsAvelonService
-      .postLoadSizesList({modelId: this.modelIdSelected, colorId: this.colorSelected.id})
+      .postLoadSizesList({ modelId: this.modelIdSelected, colorId: this.colorSelected.id })
       .subscribe((res: ReceptionAvelonModel.ResponseLoadSizesList) => {
         if (res.code == 200) {
           this.listSizes = res.data;
