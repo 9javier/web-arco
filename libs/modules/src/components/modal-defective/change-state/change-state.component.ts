@@ -22,7 +22,7 @@ export class ChangeStateComponent implements OnInit {
       const modal = await this.modalController.create({
         component: RegistryDetailsComponent,
         componentProps: {
-          registry: this.registry,
+          productId: this.registry.product.id,
           showChangeState: true
         }
       });
