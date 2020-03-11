@@ -7,7 +7,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
   styleUrls: ['./loading-message.component.scss'],
   animations: [
     trigger('fadein', [
-      state('out', style({ opacity: 0 })),
+      state('out', style({ opacity: 0, display: 'none' })),
       transition('in => out', [
         style({ opacity: 1, display: 'block' }),
         animate('300ms ease-out', style({ opacity: 0, display: 'none' }))
