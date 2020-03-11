@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, OnChanges, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment'
 import { IonSlides, ModalController } from '@ionic/angular';
@@ -23,9 +23,7 @@ import { PositionsToast } from '../../../services/src/models/positionsToast.type
   templateUrl: './incidents.component.html',
   styleUrls: ['./incidents.component.scss']
 })
-export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
-  @ViewChild(IonSlides) slides: IonSlides;
-  // @ViewChild(ScannerManualComponent) scanner: ScannerManualComponent;
+export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   principal: boolean = true;
   dataUrl: string;
@@ -93,6 +91,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngOnInit() {
     
+
+    this.signatures = [];
+    this.photos = [];
+    console.log(this.photos);
+    console.log(this.signatures);
+
+  
     this.uploadService.signatureEventAsign().subscribe(resp => {
       if (resp) {
         this.signatures.push(resp)
@@ -112,6 +117,15 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       this.barcodeRoute = navigation.extras.state['reference'];
     }
     this.initDinamicFields();
+  }
+  ngOnDestroy() {
+    this.photos = []
+    this.signatures = []
+    console.log('OnDestroy');
+    console.log(this.photos);
+    console.log(this.signatures);
+    this.uploadService.setSignature(null)
+    
   }
 
   defectType(defecType_){
@@ -297,7 +311,11 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   onKeyTel(event){
     this.txtTel = event.target.value;
   }
+  
+  
+  
   send(){
+
     console.log("aqui "+this.requireContact);
 
     if(this.requireContact == true){
@@ -308,16 +326,30 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     else{
       this.incidenceForm.patchValue({
         statusManagementDefectId: this.managementId,
-        defectTypeChildId: this.defectChildId,})
+        defectTypeChildId: this.defectChildId,});
       let object = this.incidenceForm.value;
       delete object.contact;
       this.sendToDefectsWithoutContact(object);
     }
-    
 
-    
-    
+    let photos = []
+    this.photos.forEach(elem => {
+      photos.push({ id: elem.id });
+    });
+    this.incidenceForm.patchValue({
+      statusManagementDefectId: this.managementId,
+      defectTypeChildId: this.defectChildId,
+      signFileId: this.signatures[0].id,
+      photosFileIds: photos,
+      contact:{
+        name: this.txtName,
+        email: this.txtEmail,
+        phone: this.txtTel
+      }
+    })
+  
   }
+
 
 async enviaryarn() {
     let photos = []
@@ -381,8 +413,6 @@ async enviaryarn() {
 
     }
 
-
-
   async enviar() {
     let photos = []
     this.photos.forEach(elem => {
@@ -391,7 +421,7 @@ async enviaryarn() {
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
-      photosFileIds: [{ "id": 1 }],
+      photosFileIds: photos,
       signFileId: this.signatures[0].id,
       // contact:{
       //   name: this.txtName,
@@ -432,9 +462,9 @@ async enviaryarn() {
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
           defectTypeParentId: 1,
-          defectType: 0,
+          defectType: 0,  
           gestionState: 0,
-          photosFileIds: [{ "id": 1 }],
+          photosFileIds: [],
           signFileId: 0,
           contact: {
             name: '',
@@ -442,6 +472,8 @@ async enviaryarn() {
             phone: ''
           }
         })
+        this.photos = [];
+        this.signatures = [];
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
         this.router.navigateByUrl('/defect-handler');
