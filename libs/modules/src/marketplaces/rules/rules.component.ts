@@ -65,20 +65,13 @@ export class RulesComponent implements OnInit {
     this.dataSourceEnabling = [];
     this.dataSourceCategories = [];
     this.marketplacesService.getRulesConfigurations().subscribe((data: any) => {
-      if (data && data.length) {
-        for (let ruleConfiguration of data) {
-          let type = "";
+      if (data.data && data.data.length) {
+        for (let ruleConfiguration of data.data) {
+          let type = "enabling";
           let categories = [];
-          switch (ruleConfiguration.ruleType) {
-            case 0:
-              break;
-            case 1:
-              type = "enabling";
-              break;
-            case 2:
-              type = "categories";
-              categories = ruleConfiguration.productCategories;
-              break;
+          if(ruleConfiguration.productCategories && ruleConfiguration.productCategories.length) {
+            type = "categories";
+            categories = ruleConfiguration.productCaregories;
           }
           let rule = {
             id: ruleConfiguration.id,
@@ -167,7 +160,7 @@ export class RulesComponent implements OnInit {
           name: data.data.name,
           description: data.data.description,
           ruleType: 0,
-          status: 1,
+          status: "active",
           rulesFilters: [],
           marketsIds: [
             this.market
