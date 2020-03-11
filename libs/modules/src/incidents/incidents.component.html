@@ -8,6 +8,7 @@
       <ion-label>Fecha</ion-label>
       <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format [disabled]="barcodeRoute!=null"></ion-datetime>
     </ion-item>
+    <ion-item>
       <ion-label>Producto:</ion-label>
       <ion-input class="input-barcode" type="text" readonly>{{barcode}}</ion-input><br>
     </ion-item>
@@ -19,7 +20,7 @@
       <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" formControlName="gestionState" #typeID (ionChange)="onChange(typeID.value); gestionChange($event)">
         <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name || Hola}}</ion-select-option>
       </ion-select>
-    </ion-item>
+    </ion-item> 
 
     <ion-item>
       <ion-label class="ion-text-capitalize">defecto</ion-label>

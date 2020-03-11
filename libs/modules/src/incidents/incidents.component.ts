@@ -191,9 +191,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
                 
           // this.types = resp.data;
           resp = resp.data;
-          let contact = resp.contact;
+          // let contact = resp.contact;
           console.log('result', resp);
-          console.log('contact', contact);
+          // console.log('contact', contact);
 
           this.statusManagament = {
             'classifications' : resp.statusManagementDefect
@@ -221,11 +221,11 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
             defectTypeChildId: resp.defectTypeChild.id,
             // photosFileIds: [ [{ "id": 1 }]],
             // signFileId: [1],
-            contact: this.fb.group({
-              name: contact.name,
-              email: contact.email,
-              phone: contact.phone
-            })            
+            // contact: this.fb.group({
+            //   name: contact.name,
+            //   email: contact.email,
+            //   phone: contact.phone
+            // })            
           });          
           this.typeIdBC = resp.statusManagementDefect.id;
 
@@ -357,35 +357,34 @@ async enviaryarn() {
     this.photos.forEach(elem => {
       photos.push({id: elem.id});
     });
-    this.incidenceForm.patchValue({
-      statusManagementDefectId: this.managementId,
-      defectTypeChildId: this.defectChildId,
-      defectTypeParentId: 1,
-      photosFileIds: photos,
-      signFileId: this.signatures[0].id,
-      // contact:{
-      //   name: this.txtName,
-      //   email: this.txtEmail,
-      //   phone: this.txtTel,
-      // },
-    })
+    console.log("hello world",this.incidenceForm);
     let This = this;
     await This.intermediary.presentLoading('Enviando...')
     if(this.ticketEmit == true){
       this.print();
     }
+
+    if(this.incidenceForm.value.observations==null){
+      this.incidenceForm.patchValue({
+        observations:"None",
+      })
+    }
+
+    let object = this.incidenceForm.value;
+    if(!this.requireContact){      
+      delete object.contact;
+    }
     // setTimeout(async () => {
     //   await this.intermediary.dismissLoading()
     // }, 3000)
-    This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
+    This.incidentsService.addRegistry(object).subscribe(
       resp => {
         this.readed = false
         this.incidenceForm.patchValue({
-          productId: 1,
+          // productId: 1,
           productReference: '',
           dateDetection: this.dateNow,
-          numberObservations: 0,
-          observations: '',
+
           factoryReturn: false,
           isHistory: false,
           statusManagementDefectId: 0,
@@ -395,9 +394,9 @@ async enviaryarn() {
           photosFileIds: 0,
           signFileId: 0,
           contact: {
-            name: '',
-            email: '',
-            phone: ''
+            name: this.txtName,
+            email: this.txtEmail,
+            phone: this.txtTel
           }
         })
         This.intermediary.dismissLoading()

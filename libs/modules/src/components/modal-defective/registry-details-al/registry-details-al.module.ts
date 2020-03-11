@@ -15,7 +15,7 @@ import { ButtonChangeStateModule } from '../button-change-state/button-change-st
     FormsModule,
     MatTooltipModule,
     MatExpansionModule,
-    ButtonChangeStateModule
+    ButtonChangeStateModule,
   ],
   exports: [RegistryDetailsComponent]
 })
