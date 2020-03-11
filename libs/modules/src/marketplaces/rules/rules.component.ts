@@ -64,14 +64,21 @@ export class RulesComponent implements OnInit {
   getValues() {
     this.dataSourceEnabling = [];
     this.dataSourceCategories = [];
-    this.marketplacesService.getRulesConfigurations().subscribe((data: any) => {
+    this.marketplacesService.getRulesConfigurations(/*this.market*/).subscribe((data: any) => {
       if (data.data && data.data.length) {
         for (let ruleConfiguration of data.data) {
-          let type = "enabling";
+          let type = "";
           let categories = [];
-          if(ruleConfiguration.productCategories && ruleConfiguration.productCategories.length) {
-            type = "categories";
-            categories = ruleConfiguration.productCaregories;
+          switch (ruleConfiguration.ruleType) {
+            case 0:
+              break;
+            case 1:
+              type = "enabling";
+              break;
+            case 2:
+              type = "categories";
+              categories = ruleConfiguration.productCategories;
+              break;
           }
           let rule = {
             id: ruleConfiguration.id,
@@ -162,7 +169,7 @@ export class RulesComponent implements OnInit {
           ruleType: 0,
           status: "active",
           rulesFilters: [],
-          marketsIds: [
+          marketsIDs: [
             this.market
           ],
           /*referenceExceptions: {},
@@ -263,7 +270,6 @@ export class RulesComponent implements OnInit {
 
   async editRule(ruleToEdit): Promise<void> {
     let rule = JSON.parse(JSON.stringify(ruleToEdit));
-    console.log(rule)
     let modal = await this.modalController.create({
       component: NewRuleComponent,
       componentProps: {

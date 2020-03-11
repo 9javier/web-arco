@@ -224,11 +224,8 @@ export class MappingsComponent implements OnInit {
         this.dataDBsave = [];
       }
 
-      console.log(this.dataDBsave)
-
       this.dataDBsave.forEach(item => {
         switch (item.type) {
-          case 2:
           case 'feature':
             let dataFeature = this.dataSourceFeatures;
 
@@ -255,7 +252,6 @@ export class MappingsComponent implements OnInit {
               this.searchOnMappingList('feature');
             }
             break;
-          case 3:
           case 'color':
             let dataColor = this.dataSourceColors;
 
@@ -283,7 +279,6 @@ export class MappingsComponent implements OnInit {
               this.searchOnMappingList('color');
             }
             break;
-          case 4:
           case 'size':
             let dataSize = this.dataSourceSizes;
 
@@ -310,7 +305,6 @@ export class MappingsComponent implements OnInit {
               this.searchOnMappingList('size');
             }
             break;
-          case 5:
           case 'brand':
             let dataBrand = this.dataSourceBrands;
 
@@ -470,7 +464,7 @@ export class MappingsComponent implements OnInit {
       marketDataId,
       type: "brand",
       marketId: 1,
-      additionalMapInfo: "more info"
+      additionalMapInfo: ""
     };
 
     let update: boolean = false;
@@ -520,7 +514,7 @@ export class MappingsComponent implements OnInit {
       marketDataId,
       type: 'color',
       marketId: 1,
-      additionalMapInfo: "more info"
+      additionalMapInfo: ""
     };
 
     let update: boolean = false;
@@ -570,7 +564,7 @@ export class MappingsComponent implements OnInit {
       marketDataId,
       type: 'size',
       marketId: 1,
-      additionalMapInfo: "more info"
+      additionalMapInfo: ""
     };
 
     let update: boolean = false;
