@@ -5,12 +5,12 @@
   </ng-container>
   <ng-template #read>
     <ion-item>
-      <ion-label>Fecha</ion-label>
-      <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format [disabled]="barcodeRoute!=null"></ion-datetime>
+      <ion-label class="label-text">Producto:</ion-label>
+      <ion-input class="input-barcode" type="text" readonly>{{barcode}}</ion-input><br>
     </ion-item>
     <ion-item>
-      <ion-label>Producto:</ion-label>
-      <ion-input class="input-barcode" type="text" readonly>{{barcode}}</ion-input><br>
+      <ion-label class="label-text">Fecha</ion-label>
+      <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format [disabled]="barcodeRoute!=null"></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label class="label-text">Estado de gestion</ion-label>
