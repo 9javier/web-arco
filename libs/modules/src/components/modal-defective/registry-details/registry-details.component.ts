@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TypesService } from '@suite/services';
+import { IncidentsService, TypesService } from '@suite/services';
 import { PrinterService } from "../../../../../services/src/lib/printer/printer.service";
 import { AlertController, LoadingController, ModalController, NavParams } from "@ionic/angular";
 import { InventoryService, WarehouseService } from '@suite/services';
@@ -39,6 +39,7 @@ export class RegistryDetailsComponent implements OnInit {
   warehouseSelected: number;
   columnSelected: number;
   dates: any[] = [];
+  statusManagement;
 
   constructor(
     private typeService: TypesService,
@@ -50,6 +51,7 @@ export class RegistryDetailsComponent implements OnInit {
     private alertController: AlertController,
     private inventoryService: InventoryService,
     private loadingController: LoadingController,
+    private incidentsService: IncidentsService,
   ) {
     this.productId = this.navParams.get("productId");
     this.showChangeState = this.navParams.get("showChangeState");
@@ -68,6 +70,7 @@ export class RegistryDetailsComponent implements OnInit {
     this.getRegistryDetail();
     this.getRegistryHistorical();
     this.getActionTypes();
+    this.getStatusManagement();
   }
 
   getActionTypes(): void {
@@ -75,6 +78,15 @@ export class RegistryDetailsComponent implements OnInit {
       ActionTypes.forEach(actionType => {
         this.actionTypes[actionType.id] = actionType.name
       })
+    })
+  }
+
+  getStatusManagement() {
+    this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
+      this.statusManagement = resp;
+
+      console.log('THIS.STATUSMANAGEMENT');
+      console.log(this.statusManagement);
     })
   }
 
@@ -113,7 +125,26 @@ export class RegistryDetailsComponent implements OnInit {
   }
 
   getStatusName(defectType: number) {
-    const status = this.originalTableStatus.find((x) => x.id === defectType);
-    return status.name ? status.name : '-';
+    const tableStatus = this.originalTableStatus.find((x) => x.id === defectType);
+    return tableStatus.name ? tableStatus.name : '-';
+  }
+
+  getRequireStatus(defectType: number, statusName: string) {
+    const status = this.statusManagement.classifications.find((x) => x.defectType === defectType);
+
+    switch (statusName) {
+      case 'contact':
+        return status.requireContact;
+      case 'history':
+        return status.passHistory;
+      case 'photo':
+        return status.requirePhoto;
+      case 'signature':
+        return status.requireOk;
+      case 'ticket':
+        return status.ticketEmit;
+      case 'orders':
+        return status.allowOrders;
+    }
   }
 }

@@ -236,23 +236,13 @@
     </LinearLayout>
 
     <Button
-      android:id="@+id/btnFinishPickingStore"
+      android:id="@+id/btnFinish"
       android:layout_width="match_parent"
       android:layout_height="56dp"
       android:layout_alignParentBottom="true"
       android:background="@color/black"
       android:textColor="@color/white"
-      android:text="Finalizar picking"
-      android:visibility="gone"/>
-
-    <Button
-      android:id="@+id/btnPackingPickingStore"
-      android:layout_width="match_parent"
-      android:layout_height="56dp"
-      android:layout_alignParentBottom="true"
-      android:background="@color/black"
-      android:textColor="@color/white"
-      android:text="Escanear embalajes"
+      android:text="Finalizar"
       />
 
   </LinearLayout>

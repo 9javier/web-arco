@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { RegistryDetailsComponent } from './registry-details.component';
+import { PickingScanPackingComponent } from './picking-scan-packing.component';
 
-describe('ProductDetailsComponent', () => {
-  let component: RegistryDetailsComponent;
-  let fixture: ComponentFixture<RegistryDetailsComponent>;
+describe('PickingScanPackingComponent', () => {
+  let component: PickingScanPackingComponent;
+  let fixture: ComponentFixture<PickingScanPackingComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RegistryDetailsComponent ]
+      declarations: [ PickingScanPackingComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RegistryDetailsComponent);
+    fixture = TestBed.createComponent(PickingScanPackingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

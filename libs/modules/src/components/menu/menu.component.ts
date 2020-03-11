@@ -386,6 +386,12 @@ export class MenuComponent implements OnInit {
           id: 'state-expedition-avelon',
           url: '/state-expedition-avelon/menu',
           icon: 'cog'
+        },
+        {
+          title: 'Temporadas habilitadas',
+          id: 'seasons-enabled',
+          url: '/seasons-enabled',
+          icon: 'cog'
         }
       ]
     },
@@ -520,6 +526,13 @@ export class MenuComponent implements OnInit {
           icon: 'qr-scanner',
           url: '/picking-tasks',
           tooltip: 'Traspasos pendientes de realizar'
+        },
+        {
+          title: 'Asociar pares a embalajes',
+          id: 'picking-scan-packing',
+          icon: 'qr-scanner',
+          url: '/picking-scan-packing',
+          tooltip: 'Asociar pares procesados para traspasos a embalajes y precintarlos'
         },
         {
           title: 'Tareas de picking con cámara',
