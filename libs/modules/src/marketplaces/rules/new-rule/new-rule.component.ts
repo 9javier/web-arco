@@ -280,10 +280,10 @@ export class NewRuleComponent implements OnInit {
         this.marketplacesService.getMarketCategories().subscribe(data => {
           this.destinationCategories = data;
           this.destinationCategories.sort((a, b) => {
-            if (isNaN(a.market_category_id) || isNaN(b.market_category_id)) {
-              return ((a.market_category_id > b.market_category_id) ? 1 : ((b.market_category_id > a.market_category_id) ? -1 : 0));
+            if (isNaN(a.marketCategoryID) || isNaN(b.marketCategoryID)) {
+              return ((a.marketCategoryID > b.marketCategoryID) ? 1 : ((b.marketCategoryID > a.marketCategoryID) ? -1 : 0));
             } else {
-              return ((parseInt(a.market_category_id) > parseInt(b.market_category_id)) ? 1 : ((parseInt(b.market_category_id) > parseInt(a.market_category_id)) ? -1 : 0));
+              return ((parseInt(a.marketCategoryID) > parseInt(b.marketCategoryID)) ? 1 : ((parseInt(b.marketCategoryID) > parseInt(a.marketCategoryID)) ? -1 : 0));
             }
           });
         });
