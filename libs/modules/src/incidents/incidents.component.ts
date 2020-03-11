@@ -112,7 +112,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       console.log(resp);
     })
 
-    this.initForm();
+   
     this.date = moment().format('DD-MM-YYYY');
     this.initForm();
     this.readed = false;
@@ -612,7 +612,7 @@ async enviaryarn() {
       this.requireContact = res.requireContact;
       this.requireOk = res.requireOk;
       this.managementId = res.id;
-      this.defectChildId = id;
+      
     }else{
       this.ticketEmit = false;
       this.passHistory = false;
@@ -629,10 +629,11 @@ async enviaryarn() {
     
   }
   defectChange(e) {
-    console.log(e);
     this.incidenceForm.patchValue({
       defectType: parseInt(e.detail.value)
     })
+
+    this.defectChildId = e.detail.value;
   }
 
   ngAfterViewInit() {
