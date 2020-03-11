@@ -109,6 +109,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
 
   private static ViewGroup viewGroup;
 
+  private boolean packing = false;
   private static String urlBase = "";
   private static Dialog dialogInfoForProduct = null;
 
@@ -127,6 +128,10 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       colorTitle = b.getString("colorTitle", "#424242");
       textInit = b.getString("textInit", "");
       urlBase = b.getString("urlBase", "");
+    }
+
+    if(textInit.equals("Escanee los embalajes a usar")){
+      packing = true;
     }
 
     String package_name = getApplication().getPackageName();
@@ -149,6 +154,12 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     tvPackingStart.setVisibility(View.VISIBLE);
 
     ScanditSDK.setViewDataMatrixSimple(this.findViewById(android.R.id.content).getRootView());
+
+    if(this.packing){
+      TabLayout tabLayout = findViewById(resources.getIdentifier("tlProductsLists", "id", package_name));
+      TabLayout.Tab tab = tabLayout.getTabAt(0);
+      if(tab != null) tab.setText("Embalajes");
+    }
 
     initializeScanditPicker(resources, package_name);
     initializeListManagement(resources, package_name);
@@ -307,33 +318,23 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
   }
 
   private void initializeBottomButtons(Resources resources, String package_name) {
-    Button btnFinishPickingStore = findViewById(resources.getIdentifier("btnFinishPickingStore", "id", package_name));
-    Button btnPackingPickingStore = findViewById(resources.getIdentifier("btnPackingPickingStore", "id", package_name));
-    btnFinishPickingStore.setOnClickListener(v -> {
+    Button btnFinish = findViewById(resources.getIdentifier("btnFinish", "id", package_name));
+
+    if(packing) {
+      btnFinish.setText("Precintar");
+    }
+
+    btnFinish.setOnClickListener(v -> {
       JSONObject jsonObject = new JSONObject();
       try {
         jsonObject.put("result", true);
-        jsonObject.put("action", "matrix_simple_finish_picking");
-      } catch (JSONException e) {
-
-      }
+        jsonObject.put("action", "matrix_simple_finish");
+      } catch (JSONException ignored) {}
       PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
       pResult.setKeepCallback(true);
       ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
     });
 
-    btnPackingPickingStore.setOnClickListener(v -> {
-      JSONObject jsonObject = new JSONObject();
-      try {
-        jsonObject.put("result", true);
-        jsonObject.put("action", "matrix_simple_scan_packings");
-      } catch (JSONException e) {
-
-      }
-      PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
-      pResult.setKeepCallback(true);
-      ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
-    });
   }
 
   private void initializeFilters(Resources resources, String package_name) {

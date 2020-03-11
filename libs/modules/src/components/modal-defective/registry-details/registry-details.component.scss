@@ -10,6 +10,10 @@ ion-list {
   color: var(--ion-color-secondary);
 }
 
+.signature, .photos, ion-item-divider {
+  margin-top: 20px;
+}
+
 .form-fields {
   margin-top: 24px;
   ion-row {

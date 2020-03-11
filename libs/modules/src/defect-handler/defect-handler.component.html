@@ -1,9 +1,6 @@
 <ion-content class="ion-padding">
-  <ion-text color="primary">
-    <suite-breadcrumb></suite-breadcrumb>
-  </ion-text>
-  <div class="mat-table-wrapper-overflow-x">
-  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" style="width: 100%;">
+  
+  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goDefect(row)"></tr>
     <ng-container matColumnDef="barcode">
