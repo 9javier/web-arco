@@ -29,7 +29,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   principal: boolean = true;
   dataUrl: string;
-
+  select1: boolean = false;
+  select2: boolean = false;
   allDefectType=[];
   ticketEmit: boolean;
   passHistory:boolean;
@@ -323,7 +324,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   send(){
 
     console.log("aqui "+this.requireContact);
-
+    console.log(this.incidenceForm);
     if(this.requireContact == true){
       if(this.validate()){
         this.sendToIncidents();
@@ -596,7 +597,6 @@ async enviaryarn() {
   //   }
   // }
   gestionChange(e) {
-    
     let id = e.detail.value;
     console.log("this.statusManagament",this.statusManagament);
     let res;
@@ -632,7 +632,8 @@ async enviaryarn() {
       this.requireOk = false;
     }
 
-
+    this.select1 = true;
+    console.log(this.select1, this.select2);
     this.incidenceForm.patchValue({
       gestionState: parseInt(e.detail.value)
     });
@@ -640,6 +641,8 @@ async enviaryarn() {
     
   }
   defectChange(e) {
+    this.select2 = true;
+    console.log(e);
     this.incidenceForm.patchValue({
       defectType: parseInt(e.detail.value)
     })
@@ -656,7 +659,6 @@ async enviaryarn() {
   }
 
   ngOnChanges(){
-      
   }
   
 
