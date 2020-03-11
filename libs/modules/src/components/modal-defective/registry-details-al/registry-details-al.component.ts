@@ -7,11 +7,12 @@ import { DefectiveRegistryModel } from '../../../../../services/src/models/endpo
 import { DefectiveRegistryService } from '../../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
 import { DamagedModel } from '../../../../../services/src/models/endpoints/Damaged';
 import { ChangeStateComponent } from '../change-state/change-state.component';
+import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'suite-registry-details',
-  templateUrl: './registry-details.component.html',
-  styleUrls: ['./registry-details.component.scss']
+  templateUrl: './registry-details-al.component.html',
+  styleUrls: ['./registry-details-al.component.scss']
 })
 export class RegistryDetailsComponent implements OnInit {
   section = 'information';
@@ -50,6 +51,7 @@ export class RegistryDetailsComponent implements OnInit {
     private alertController: AlertController,
     private inventoryService: InventoryService,
     private loadingController: LoadingController,
+    private router: Router,
   ) {
     this.productId = this.navParams.get("productId");
     this.showChangeState = this.navParams.get("showChangeState");
@@ -80,15 +82,14 @@ export class RegistryDetailsComponent implements OnInit {
 
   getRegistryHistorical(): void {
     this.defectiveRegistryService.getHistorical({ productId: this.productId, productReference: '' }).subscribe(historical => {
-      this.registryHistorical = historical.results;
-      this.originalTableStatus = historical.statuses;
-      console.log(this.registryHistorical)
+      this.registryHistorical = historical;      
     });
   }
 
   getRegistryDetail(): void {
     this.defectiveRegistryService.getLastHistorical({ productId: this.productId }).subscribe(lastHistorical => {
-      this.registry = lastHistorical;
+      this.registry = lastHistorical.data;
+      this.originalTableStatus = lastHistorical.statuses;
     });
   }
 
@@ -117,4 +118,19 @@ export class RegistryDetailsComponent implements OnInit {
     const status = this.originalTableStatus.find((x) => x.id === defectType);
     return status.name ? status.name : '-';
   }
+
+  changeState(id:number){
+
+    console.log(id);
+
+    const navigationExtras: NavigationExtras = {
+      state : {
+        "reference" : id,
+      }      
+    };    
+    this.router.navigate(['/incidents'], navigationExtras);
+    // this.alertController.dismiss();
+    this.modalController.dismiss();
+  }
+
 }

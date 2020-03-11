@@ -6,6 +6,10 @@ import { IntermediaryService } from '../../../services/src';
 import { DefectiveRegistryService } from '../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
 import { Router, NavigationExtras } from '@angular/router';
 import * as moment from 'moment';
+import { DefectiveRegistryModel } from '../../../services/src/models/endpoints/DefectiveRegistry';
+import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
+import { ModalController } from '@ionic/angular';
+import { RegistryDetailsComponent } from '../components/modal-defective/registry-details-al/registry-details-al.component';
 
 @Component({
   selector: 'suite-defect-handler',
@@ -21,7 +25,7 @@ export class DefectHandlerComponent implements OnInit {
   private sortValues: any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
-  displayedColumns: string[] = ['barcode', 'registerDate', 'state', 'select'];
+  displayedColumns: string[] = ['barcode', 'registerDate', 'state'];
   dataSource: any;
 
   body: any = {
@@ -46,7 +50,8 @@ export class DefectHandlerComponent implements OnInit {
   constructor(
     private intermediaryService: IntermediaryService,
     private router: Router,
-    private defectiveRegistryService: DefectiveRegistryService
+    private defectiveRegistryService: DefectiveRegistryService,
+    private modalController: ModalController,
 
   ) { }
 
@@ -121,7 +126,7 @@ export class DefectHandlerComponent implements OnInit {
     this.defectiveRegistryService.getListDefect(this.body).subscribe(
       resp => {
         console.log(resp);
-        this.defects = resp.results
+        this.defects = resp.results;
         console.log(this.defects);
         this.defects.map(elem => {
           elem.dateDetection = moment(elem.dateDetection).format('DD-MM-YYYY')
@@ -181,13 +186,27 @@ export class DefectHandlerComponent implements OnInit {
   // }
 
   goDefect(row) {
-    const navigationExtras: NavigationExtras = {
-      state : {
-        "reference" : row.id,
-      }      
-    };
+    
+    // const navigationExtras: NavigationExtras = {
+    //   state : {
+    //     "reference" : row.id,
+    //   }      
+    // };
 
-    this.router.navigate(['/incidents'], navigationExtras);
+    // this.router.navigate(['/incidents'], navigationExtras);
+
+    this.goDetails(row);
+
+  }
+
+  async goDetails(registry: DefectiveRegistryModel.DefectiveRegistry) {
+    return (await this.modalController.create({
+      component: RegistryDetailsComponent,
+      componentProps: {
+        productId: registry.product.id,
+        showChangeState: true
+      }
+    })).present();
   }
 
 }

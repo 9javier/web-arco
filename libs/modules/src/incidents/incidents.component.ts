@@ -150,8 +150,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       
     })
     this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
-      //console.log('getDtatusManagamentDefect', resp);
       this.statusManagament = resp
+      this.types = resp.statuses;
     })
     this.loadFromDBValues();
   }
@@ -164,26 +164,19 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
         "productId":this.barcodeRoute,
         "productReference":""
       }
-
-      console.log("body", body);
-
-      await this.incidentsService.getDtatusManagamentDefect().subscribe(resp=>{
-        // console.log("resp no se que", resp);
-        this.types = resp.statuses;
-      });
-
       await this.incidentsService.getOneIncidentProductById(body).subscribe(resp=>{
-
-        
+                
           // this.types = resp.data;
-          // resp = resp.data;
+          resp = resp.data;
+          let contact = resp.contact;
           console.log('result', resp);
+          console.log('contact', contact);
 
           this.statusManagament = {
             'classifications' : resp.statusManagementDefect
           }
           
-          // console.log("resp status ", resp.statusManagementDefect);
+          console.log("resp status ", resp.statusManagementDefect);
 
           this.statusManagament["classifications"] = resp.statusManagementDefect;
 
@@ -200,11 +193,17 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
             // gestionState: resp.defectTypeChildId.id,
             photo: resp.photo,
             validation: resp.validation,
-            
-          });
-
-
-          
+            isHistory: resp.isHistory,
+            statusManagementDefectId: resp.statusManagementDefect.id,
+            defectTypeChildId: resp.defectTypeChild.id,
+            // photosFileIds: [ [{ "id": 1 }]],
+            // signFileId: [1],
+            contact: this.fb.group({
+              name: contact.name,
+              email: contact.email,
+              phone: contact.phone
+            })            
+          });          
           this.typeIdBC = resp.statusManagementDefect.id;
 
           let sendtoGestionChange = {
@@ -223,7 +222,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
 
   newValue(e){
     console.log(e);
-    this.barcode = e
+    this.barcode = e;
     if (this.barcode && this.barcode.length > 0) {
 
       this.incidenceForm.patchValue({
