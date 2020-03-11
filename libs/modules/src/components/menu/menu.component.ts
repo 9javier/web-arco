@@ -792,6 +792,10 @@ export class MenuComponent implements OnInit {
     this.menuTitle.emit(item.title);
   }
 
+  setTitle(title){
+    this.toolbarProvider.currentPage.next(title);
+  }
+
   loadUpdate() {
     window.open('https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o', '_blank')
   }
