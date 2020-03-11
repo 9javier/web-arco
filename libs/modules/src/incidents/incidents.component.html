@@ -19,7 +19,7 @@
         <ion-select-option  *ngFor="let item of allDefectType" [value]="item.id" >{{item.name}}</ion-select-option>
       </ion-select>
       <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" formControlName="gestionState" #typeID (ionChange)="onChange(typeID.value); gestionChange($event)">
-        <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name || Hola}}</ion-select-option>
+        <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name}}</ion-select-option>
       </ion-select>
     </ion-item>
 
@@ -101,7 +101,7 @@
         <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
       </ion-item>
     
-    <ion-button *ngIf="barcodeRoute==null" (click)="send()" expand="block" shape="round">
+    <ion-button *ngIf="barcodeRoute==null"  [attr.disabled]="!select1 || !select2" (click)="send()" expand="block" shape="round">
       enviar
     </ion-button>
     
