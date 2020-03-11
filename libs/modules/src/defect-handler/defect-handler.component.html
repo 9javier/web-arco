@@ -1,6 +1,6 @@
 <ion-content class="ion-padding">
-  
-  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+  <div >
+  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" style="width: 100%;">
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goDefect(row)"></tr>
     <ng-container matColumnDef="barcode">
@@ -16,7 +16,7 @@
         Fecha de registro
       </th>
       <td mat-cell *matCellDef="let defect">
-        {{ defect?.dateDetection }}
+        {{ defect?.dateDetection | date:"dd/MM/yyyy"}}
       </td>
     </ng-container>
     <!-- <ng-container matColumnDef="defectType">
@@ -36,15 +36,16 @@
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="select">
+    <!-- <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef mat-sort-header="select">
       </th>
       <td mat-cell *matCellDef="let defect">
         <i class="material-icons action-icon">send</i>
       </td>
-    </ng-container>
+    </ng-container> -->
 
   </table>
+</div>
   <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button [routerLink]="['/incidents']">

@@ -8,6 +8,7 @@ import { MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatTo
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 import {BreadcrumbModule} from "../components/breadcrumb/breadcrumb.module";
 import {TagsInputModule} from "../components/tags-inputag/tags-input.module";
+import { RegistryDetailsModule } from '../components/modal-defective/registry-details-al/registry-details-al.module';
 
 @NgModule({
   declarations: [DefectHandlerComponent],
@@ -24,7 +25,8 @@ import {TagsInputModule} from "../components/tags-inputag/tags-input.module";
     TagsInputModule,
     MatSortModule,
     PaginatorComponentModule,
-    MatTooltipModule
+    MatTooltipModule,
+    RegistryDetailsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

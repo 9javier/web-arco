@@ -5,14 +5,13 @@
   </ng-container>
   <ng-template #read>
     <ion-item>
-      <ion-label class="label-text">Producto:</ion-label>
-      <ion-input class="input-barcode" type="text" readonly>{{barcode}}</ion-input><br>
-    </ion-item>
-    <ion-item>
-      <ion-label class="label-text">Fecha</ion-label>
+      <ion-label>Fecha</ion-label>
       <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format [disabled]="barcodeRoute!=null"></ion-datetime>
     </ion-item>
-
+    <ion-item>
+      <ion-label>Producto:</ion-label>
+      <ion-input class="input-barcode" type="text" readonly>{{barcode}}</ion-input><br>
+    </ion-item>
     <ion-item>
       <ion-label class="label-text">Estado de gestion</ion-label>
       <ion-select *ngIf="barcodeRoute==null"  (ionChange)="gestionChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
@@ -21,7 +20,7 @@
       <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" formControlName="gestionState" #typeID (ionChange)="onChange(typeID.value); gestionChange($event)">
         <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name}}</ion-select-option>
       </ion-select>
-    </ion-item>
+    </ion-item> 
 
     <ion-item>
       <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
@@ -44,10 +43,10 @@
          <ion-input type="text" formControlName="name"  (keyup)="onKeyName($event)" placeholder="Nombre" maxlength="15"></ion-input><br>
        </ion-item>
        <ion-item lines="none">
-         <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo" maxlength="20"></ion-input><br>
+         <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo" maxlength="50"></ion-input><br>
        </ion-item>
        <ion-item lines="none">
-         <ion-input type="number"  (keyup)="onKeyTel($event)" placeholder="Teléfono" maxlength="12"></ion-input>
+         <ion-input type="number" formControlName="phone"  (keyup)="onKeyTel($event)" placeholder="Teléfono" maxlength="25"></ion-input>
        </ion-item>
       </div>
     </div>
