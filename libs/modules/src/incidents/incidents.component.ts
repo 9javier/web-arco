@@ -30,13 +30,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   principal: boolean = true;
   dataUrl: string;
 
-
+  allDefectType=[];
   ticketEmit: boolean;
   passHistory:boolean;
   requirePhoto:boolean;
-  requireContact: boolean;
+  requireContact: boolean = false;
   requireOk: boolean;
-  checkHistory: true;
+  checkHistory: boolean;
   txtName =""
   txtEmail="";
   txtTel="";
@@ -92,7 +92,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnInit() {
-    this.defectType();
+    
     this.uploadService.signatureEventAsign().subscribe(resp => {
       if (resp) {
         this.signatures.push(resp)
@@ -114,8 +114,16 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     this.initDinamicFields();
   }
 
-  defectType(){
-    //let res = this.statusManagament['classifications'].find( x => x.defectType == id);
+  defectType(defecType_){
+
+      let defecType =[];
+      defecType_['classifications'].forEach(element => {
+        let res = defecType_['statuses'].find( x => x.id == element.defectType);
+        if(res != undefined){
+          defecType.push(res);
+        }
+      });
+      this.allDefectType = defecType;
 
   }
 
@@ -124,7 +132,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       productId: 1,
       productReference: '',
       dateDetection:[this.date],
-      observations: '.',
+      observations: '',
       numberObservations: 1,
       factoryReturn: [false],
       isHistory: [false],
@@ -133,24 +141,24 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
       defectType: [0],  
       gestionState: [0],
       photosFileIds: [ [{ "id": 1 }]],
-      signFileId: [1],
+      signFileId: [1], 
       contact: this.fb.group({
         name: '',
         email: '',
         phone: ''
-      })
+      }) 
+      
     })
   }
 
   async initDinamicFields() {
     this.incidentsService.getDefectTypesChild().subscribe(resp => {
-      //console.log('getDefectTypesChild', resp);
       this.defects = resp;
       
     })
     this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
-      //console.log('getDtatusManagamentDefect', resp);
       this.statusManagament = resp
+      this.defectType(resp);
     })
     this.loadFromDBValues();
   }
@@ -290,21 +298,24 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges {
     this.txtTel = event.target.value;
   }
   send(){
+    console.log("aqui "+this.requireContact);
 
-    this.incidenceForm.patchValue({
-      statusManagementDefectId: this.managementId,
-      defectTypeChildId: this.defectChildId,
-      contact:{
-        name: this.txtName,
-        email: this.txtEmail,
-        phone: this.txtTel
+    if(this.requireContact == true){
+      if(this.validate()){
+        this.sendToIncidents();
       }
-
-    })
-    console.log("validacion "+this.validate());  
-    if(this.validate()){
-      this.sendToIncidents();
     }
+    else{
+      this.incidenceForm.patchValue({
+        statusManagementDefectId: this.managementId,
+        defectTypeChildId: this.defectChildId,})
+      let object = this.incidenceForm.value;
+      delete object.contact;
+      this.sendToDefectsWithoutContact(object);
+    }
+    
+
+    
     
   }
 
@@ -395,6 +406,13 @@ async enviaryarn() {
   
 
   async sendToIncidents() {
+    //this.incidenceForm.value.contact.phone = this.incidenceForm.value.contact.phone +"";
+    this.incidenceForm.patchValue({
+      statusManagementDefectId: this.managementId,
+      defectTypeChildId: this.defectChildId,
+
+    })
+   
 
     let This = this;
     // setTimeout(async () => {
@@ -457,6 +475,65 @@ async enviaryarn() {
      
   }
 
+
+
+  async sendToDefectsWithoutContact(object) {
+
+    let This = this;
+    // setTimeout(async () => {
+    //   await this.intermediary.dismissLoading()
+    // }, 3000)
+    This.incidentsService.addRegistry(object).subscribe(
+      resp => {
+        this.readed = false
+        this.incidenceForm.patchValue({
+          productId: 1,
+          productReference: '',
+          dateDetection: this.dateNow,
+          numberObservations: 0,
+          observations: '',
+          factoryReturn: false,
+          isHistory: false,
+          statusManagementDefectId: 0,
+          defectTypeChildId: 0,
+          defectTypeParentId: 1,
+          defectType: 0,
+          gestionState: 0,
+          photosFileIds: [{ "id": 1 }],
+          signFileId: 0
+        })
+        This.intermediary.dismissLoading()
+        This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
+        this.router.navigateByUrl('/defect-handler');
+      },
+      e => {
+        console.log(e);
+        
+        This.intermediary.dismissLoading()
+        This.intermediary.presentToastError(e.error.errors)
+      }
+    );
+
+    console.log("aqui mero", this.incidenceForm)
+     
+      await This.intermediary.presentLoading('Enviando...')
+  
+      if(this.ticketEmit == true){
+        this.print();
+      }
+      This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
+        resp => {
+          This.intermediary.dismissLoading()
+          This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
+          this.router.navigateByUrl('/defect-handler');
+        },
+        e => {
+          This.intermediary.dismissLoading()
+          This.intermediary.presentToastError(e.error)
+        }
+      );
+     
+  }
   // async presentModal() {
   //   const modal = await this.modalController.create({
   //   component: PhotoModalComponent,

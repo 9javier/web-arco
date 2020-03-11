@@ -724,7 +724,7 @@ export class MenuComponent implements OnInit {
         }
       ]
     },
-    {
+   /* {
       title: 'Manejo de defectos',
       open: false,
       type: 'wrapper',
@@ -732,7 +732,7 @@ export class MenuComponent implements OnInit {
       children: [
         {
           id:'incidents',
-          title: 'Lista de defectos',
+          title: 'Registro defectuso',
           icon:'warning',
           url: '/defect-handler'
         },
@@ -743,7 +743,15 @@ export class MenuComponent implements OnInit {
         //   url: '/signature'
         // }
       ]
-    },
+    },*/
+
+    {
+      id:'incidents',
+      title: 'Defectuosos',
+      icon:'warning',
+      url: '/defect-handler'
+    }
+
   ];
   private menuPages = {
     sga: this.sgaPages,
