@@ -13,7 +13,7 @@ import { ToolbarProvider } from "../../../../../services/src/providers/toolbar/t
 import { PrinterService } from "../../../../../services/src/lib/printer/printer.service";
 import { ModalModelImagesComponent } from "../modal-model-images/modal-model-images.component";
 import { PositionsToast } from "../../../../../services/src/models/positionsToast.type";
-import { Router } from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import { LocalStorageProvider } from "../../../../../services/src/providers/local-storage/local-storage.provider";
 
 @Component({
@@ -29,6 +29,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   public modelSelected: ReceptionAvelonModel.Data = null;
   public modelIdSelected: number = null;
   public colorSelected: ReceptionAvelonModel.Data = null;
+  public eanCode: string = null;
 
   expeditionLines: {
     id: number,
@@ -47,6 +48,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   lastPrint;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private modalController: ModalController,
     private popoverController: PopoverController,
     private receptionsAvelonService: ReceptionsAvelonService,
@@ -60,6 +62,8 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.loadReceptions();
+    this.eanCode = this.activatedRoute.snapshot.paramMap.get("ean");
+    this.toolbarProvider.showBackArrow.next(true);
     this.toolbarProvider.currentPage.next('Recepción manual');
     this.toolbarProvider.optionsActions.next([
       {
@@ -68,16 +72,22 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         action: () => this.resetData()
       }
     ]);
-    try {
-      this.lastPrint = JSON.parse(String(await this.localStorageProvider.get('lastPrint')));
-      this.brandSelected = this.lastPrint.brand;
-      this.modelSelected = this.lastPrint.model;
-      this.colorSelected = this.lastPrint.color;
-      this.listSizes = this.lastPrint.sizes;
-    } catch (error) { console.log(error) }
+    if (!this.eanCode) {
+      try {
+        this.lastPrint = JSON.parse(String(await this.localStorageProvider.get('lastPrint')));
+        this.brandSelected = this.lastPrint.brand;
+        this.modelSelected = this.lastPrint.model;
+        this.modelIdSelected = this.modelSelected.id;
+        this.colorSelected = this.lastPrint.color;
+        this.listSizes = this.lastPrint.sizes;
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 
   ngOnDestroy() {
+    this.toolbarProvider.showBackArrow.next(false);
     this.toolbarProvider.optionsActions.next([]);
   }
 
@@ -405,6 +415,46 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   }
 
   public printCodes() {
+    if (this.eanCode) {
+      this.checksEanAndPrint(this.eanCode);
+    } else {
+      this.checksNotifyReceptionAndPrint();
+    }
+  }
+
+  public getPhotoUrl(modelId): string | boolean {
+    if (modelId && this.modelSelected.photos_models && this.modelSelected.photos_models[modelId]) {
+      return environment.urlBase + this.modelSelected.photos_models[modelId];
+    }
+
+    return false;
+  }
+
+  private loadSizes() {
+    this.receptionsAvelonService
+      .postLoadSizesList({ modelId: this.modelIdSelected, colorId: this.colorSelected.id })
+      .subscribe((res: ReceptionAvelonModel.ResponseLoadSizesList) => {
+        if (res.code == 200) {
+          this.listSizes = res.data;
+        } else {
+          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
+        }
+      }, (error) => {
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
+      });
+  }
+
+  public removeEanCode() {
+    this.eanCode = null;
+  }
+
+  private checksEanAndPrint(eanCode: string) {
+    if (this.checkOnlyOneSizeAndOneQuantity()) {
+      this.checksNotifyReceptionAndPrint(eanCode);
+    }
+  }
+
+  private checksNotifyReceptionAndPrint(eanToAssociate: string = null) {
     const sizesToPrint = this.listSizes.filter(s => {
       return s.quantity > 0;
     });
@@ -413,7 +463,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       this.loadingMessageComponent.show(true, 'Imprimiendo códigos');
 
       const sizesMapped = sizesToPrint.map(s => {
-        return {
+        const sizeMapped: any = {
           providerId: this.receptionAvelonProvider.expeditionData.providerId,
           expedition: this.receptionAvelonProvider.expeditionData.reference,
           brandId: this.brandSelected.id,
@@ -422,6 +472,10 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
           modelId: this.modelIdSelected,
           quantity: s.quantity
         };
+        if (eanToAssociate) {
+          sizeMapped.ean = eanToAssociate;
+        }
+        return sizeMapped;
       });
 
       const params = [];
@@ -471,25 +525,22 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     }
   }
 
-  public getPhotoUrl(modelId): string | boolean {
-    if (modelId && this.modelSelected.photos_models && this.modelSelected.photos_models[modelId]) {
-      return environment.urlBase + this.modelSelected.photos_models[modelId];
+  // check that user only has selected one size and one unity for that size to associate to EAN code
+  private checkOnlyOneSizeAndOneQuantity(): boolean {
+    const sizesToPrint = this.listSizes.filter(s => {
+      return s.quantity > 0;
+    });
+    if (!sizesToPrint || sizesToPrint.length < 1) {
+      this.intermediaryService.presentWarning('Seleccione 1 Ud. de una talla para asociar al EAN escaneado.', null);
+      return false;
+    } else if (sizesToPrint.length > 1) {
+      this.intermediaryService.presentWarning('Seleccione solo una talla para asociar al EAN escaneado. Asegúrese de que solo ha indicado 1 Ud. de la talla que desea asociar al código.', null);
+      return false;
+    } else if (sizesToPrint[0].quantity > 1) {
+      this.intermediaryService.presentWarning('Solo puede asociar a este EAN 1 Ud. de la talla indicada.', null);
+      return false;
     }
 
-    return false;
-  }
-
-  private loadSizes() {
-    this.receptionsAvelonService
-      .postLoadSizesList({ modelId: this.modelIdSelected, colorId: this.colorSelected.id })
-      .subscribe((res: ReceptionAvelonModel.ResponseLoadSizesList) => {
-        if (res.code == 200) {
-          this.listSizes = res.data;
-        } else {
-          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
-        }
-      }, (error) => {
-        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
-      });
+    return true;
   }
 }

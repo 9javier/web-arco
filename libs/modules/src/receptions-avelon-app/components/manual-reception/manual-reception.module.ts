@@ -2,7 +2,14 @@ import { IonicModule } from '@ionic/angular';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ManualReceptionComponent } from './manual-reception.component';
-import {MatButtonModule, MatIconModule, MatListModule, MatRippleModule} from "@angular/material";
+import {
+  MatButtonModule,
+  MatCardModule,
+  MatIconModule,
+  MatListModule,
+  MatRippleModule,
+  MatTooltipModule
+} from "@angular/material";
 import {FilterItemsListModule} from "../filter-items-list/filter-items-list.module";
 import {LoadingMessageModule} from "../../../components/loading-message/loading-message.module";
 import {FabExtendedModule} from "../../../components/button/fab/fab-extended/fab-extended.module";
@@ -23,7 +30,9 @@ import {ModalModelImagesModule} from "../modal-model-images/modal-model-images.m
     LoadingMessageModule,
     FabExtendedModule,
     SizeInputModule,
-    ModalModelImagesModule
+    ModalModelImagesModule,
+    MatTooltipModule,
+    MatCardModule
   ],
   exports: [ManualReceptionComponent]
 })
