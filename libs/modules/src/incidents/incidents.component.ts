@@ -266,7 +266,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     console.log("on new Value");
     console.log(this.statusManagament);
   }
-  async print(){
+   print(){
     console.log("imprimir...")
   }
 
@@ -454,6 +454,11 @@ async enviaryarn() {
 
     This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
       resp => {
+
+        if(this.ticketEmit == true){
+          this.print();
+        }
+
         this.readed = false
         this.incidenceForm.patchValue({
           productId: 1,
@@ -515,9 +520,15 @@ async enviaryarn() {
 
   async sendToDefectsWithoutContact(object) {
 
+
     let This = this;
     This.incidentsService.addRegistry(object).subscribe(
       resp => {
+
+        if(this.ticketEmit == true){
+          this.print();
+        }
+
         this.readed = false
         this.incidenceForm.patchValue({
           productId: 1,
