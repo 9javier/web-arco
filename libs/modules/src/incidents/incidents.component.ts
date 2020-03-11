@@ -16,7 +16,9 @@ import { ReviewImagesComponent } from './components/review-images/review-images.
 import { ProductModel, ProductsService } from '@suite/services';
 import { AlertController } from "@ionic/angular";
 import { PositionsToast } from '../../../services/src/models/positionsToast.type';
+import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
 
+//import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
 @Component({
   selector: 'suite-incidents',
@@ -27,7 +29,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   principal: boolean = true;
   dataUrl: string;
-
+  select1: boolean = false;
+  select2: boolean = false;
   allDefectType=[];
   ticketEmit: boolean;
   passHistory:boolean;
@@ -84,6 +87,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     private productsService: ProductsService,
     private intermediaryService: IntermediaryService,
     private alertController: AlertController,
+    private toolbarProvider: ToolbarProvider
+
   ) { 
 
 
@@ -91,7 +96,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   ngOnInit() {
     
-
+    this.toolbarProvider.currentPage.next("Registro defectuoso")
     this.signatures = [];
     this.photos = [];
     console.log(this.photos);
@@ -108,7 +113,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       console.log(resp);
     })
 
-    this.initForm();
+   
     this.date = moment().format('DD-MM-YYYY');
     this.initForm();
     this.readed = false;
@@ -143,6 +148,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   initForm() {
+
+    let phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     this.incidenceForm = this.fb.group({
       productId: 1,
       productReference: '',
@@ -160,7 +167,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       contact: this.fb.group({
         name: '',
         email: '',
-        phone: ''
+        phone: ['']
       }) 
       
     })
@@ -318,7 +325,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   send(){
 
     console.log("aqui "+this.requireContact);
-
+    console.log(this.incidenceForm);
     if(this.requireContact == true){
       if(this.validate()){
         this.sendToIncidents();
@@ -337,7 +344,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.photos.forEach(elem => {
       photos.push({ id: elem.id });
     });
-    this.incidenceForm.patchValue({
+   /* this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
       signFileId: this.signatures[0].id,
@@ -347,7 +354,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         email: this.txtEmail,
         phone: this.txtTel
       }
-    })
+    })*/
   
   }
 
@@ -436,7 +443,7 @@ async enviaryarn() {
   
 
   async sendToIncidents() {
-    //this.incidenceForm.value.contact.phone = this.incidenceForm.value.contact.phone +"";
+    this.incidenceForm.value.contact.phone = this.txtTel+"";
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
@@ -445,9 +452,7 @@ async enviaryarn() {
    
 
     let This = this;
-    // setTimeout(async () => {
-    //   await this.intermediary.dismissLoading()
-    // }, 3000)
+
     This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
       resp => {
         this.readed = false
@@ -512,9 +517,6 @@ async enviaryarn() {
   async sendToDefectsWithoutContact(object) {
 
     let This = this;
-    // setTimeout(async () => {
-    //   await this.intermediary.dismissLoading()
-    // }, 3000)
     This.incidentsService.addRegistry(object).subscribe(
       resp => {
         this.readed = false
@@ -584,7 +586,6 @@ async enviaryarn() {
   //   }
   // }
   gestionChange(e) {
-    
     let id = e.detail.value;
     console.log("this.statusManagament",this.statusManagament);
     let res;
@@ -611,7 +612,7 @@ async enviaryarn() {
       this.requireContact = res.requireContact;
       this.requireOk = res.requireOk;
       this.managementId = res.id;
-      this.defectChildId = id;
+      
     }else{
       this.ticketEmit = false;
       this.passHistory = false;
@@ -620,7 +621,8 @@ async enviaryarn() {
       this.requireOk = false;
     }
 
-
+    this.select1 = true;
+    console.log(this.select1, this.select2);
     this.incidenceForm.patchValue({
       gestionState: parseInt(e.detail.value)
     });
@@ -628,10 +630,13 @@ async enviaryarn() {
     
   }
   defectChange(e) {
+    this.select2 = true;
     console.log(e);
     this.incidenceForm.patchValue({
       defectType: parseInt(e.detail.value)
     })
+
+    this.defectChildId = e.detail.value;
   }
 
   ngAfterViewInit() {
@@ -643,7 +648,6 @@ async enviaryarn() {
   }
 
   ngOnChanges(){
-      
   }
   
 

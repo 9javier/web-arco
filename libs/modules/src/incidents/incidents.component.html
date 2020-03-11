@@ -13,31 +13,31 @@
       <ion-input class="input-barcode" type="text" readonly>{{barcode}}</ion-input><br>
     </ion-item>
     <ion-item>
-      <ion-label>Estado de gestion</ion-label>
+      <ion-label class="label-text">Estado de gestion</ion-label>
       <ion-select *ngIf="barcodeRoute==null"  (ionChange)="gestionChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
         <ion-select-option  *ngFor="let item of allDefectType" [value]="item.id" >{{item.name}}</ion-select-option>
       </ion-select>
       <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" formControlName="gestionState" #typeID (ionChange)="onChange(typeID.value); gestionChange($event)">
-        <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name || Hola}}</ion-select-option>
+        <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name}}</ion-select-option>
       </ion-select>
     </ion-item> 
 
     <ion-item>
-      <ion-label class="ion-text-capitalize">defecto</ion-label>
+      <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
       <ion-select (ionChange)="defectChange($event)" formControlName="defectType" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
         <ion-select-option *ngFor="let defect of defects" [value]="defect.id">{{defect.name +" - "+ defect.defectTypeParent.name}}</ion-select-option>
       </ion-select>
     </ion-item>
  
     <ion-item>
-      <ion-label position="floating">Observaciones</ion-label>
+      <ion-label position="floating" class="label-text">Observaciones</ion-label>
       <ion-textarea  formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-textarea>
     </ion-item>
 
     <div *ngIf="requireContact == true" class="contact">
       <div formGroupName = "contact">
         <ion-item lines="none">
-          <ion-label class="ion-text-capitalize">Contacto</ion-label><br>
+          <ion-label class="ion-text-capitalize label-text">Contacto</ion-label><br>
         </ion-item>
        <ion-item lines="none">
          <ion-input type="text" formControlName="name"  (keyup)="onKeyName($event)" placeholder="Nombre" maxlength="15"></ion-input><br>
@@ -46,13 +46,13 @@
          <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo" maxlength="20"></ion-input><br>
        </ion-item>
        <ion-item lines="none">
-         <ion-input type="text" formControlName="phone" (keyup)="onKeyTel($event)" placeholder="Teléfono" maxlength="12"></ion-input>
+         <ion-input type="number"  (keyup)="onKeyTel($event)" placeholder="Teléfono" maxlength="12"></ion-input>
        </ion-item>
       </div>
     </div>
   
       <ion-item lines="none" *ngIf="requirePhoto == true" lines="none">
-        <ion-label class="ion-text-capitalize">capturar / buscar fotos</ion-label>
+        <ion-label class="ion-text-capitalize label-text">capturar / buscar fotos</ion-label>
         <ion-button (click)="takePhoto()">
           <ion-icon name="camera"></ion-icon>
         </ion-button>
@@ -61,7 +61,7 @@
         </ion-button>
       </ion-item>
       <ion-item *ngIf="requirePhoto == true" (click)="openPhotoList()" lines="none">
-        <ion-label>Fotos</ion-label>
+        <ion-label class="label-text">Fotos</ion-label>
         <ion-icon slot="end" *ngIf="photoList" name="arrow-down"></ion-icon>
         <ion-icon slot="end" *ngIf="!photoList" name="arrow-up"></ion-icon>
       </ion-item>
@@ -76,13 +76,13 @@
      
   
       <ion-item lines="none" *ngIf="requireOk == true">
-        <ion-label lines="none" class="ion-text-capitalize">generar firma</ion-label>
+        <ion-label lines="none" class="ion-text-capitalize label-text">generar firma</ion-label>
         <ion-button (click)="signModal()">
           <ion-icon name="finger-print"></ion-icon>
         </ion-button>
       </ion-item>
       <ion-item *ngIf="requireOk == true" (click)="openSignatureList()" lines="none">
-        <ion-label>Firma</ion-label>
+        <ion-label class="label-text">Firma</ion-label>
         <ion-icon slot="end" *ngIf="signatureList" name="arrow-down"></ion-icon>
         <ion-icon slot="end" *ngIf="!signatureList" name="arrow-up"></ion-icon>
       </ion-item>
@@ -96,11 +96,11 @@
       </ion-list>
       <ion-label>{{imgUrl}}</ion-label>
       <ion-item lines="none">
-        <ion-label class="ion-text-capitalize">devolución a fabrica</ion-label>
+        <ion-label class="ion-text-capitalize label-text">devolución a fabrica</ion-label>
         <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
       </ion-item>
     
-    <ion-button *ngIf="barcodeRoute==null" (click)="send()" expand="block" shape="round">
+    <ion-button *ngIf="barcodeRoute==null"  [attr.disabled]="!select1 || !select2" (click)="send()" expand="block" shape="round">
       enviar
     </ion-button>
     
