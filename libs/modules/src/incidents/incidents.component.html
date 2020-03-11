@@ -95,15 +95,11 @@
           </ion-button>
         </ion-item>
       </ion-list>
-<<<<<<< HEAD
       <ion-label>{{imgUrl}}</ion-label>
       <ion-item lines="none">
         <ion-label class="ion-text-capitalize">devolución a fabrica</ion-label>
         <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
       </ion-item>
-=======
-      <!-- <ion-label>{{imgUrl}}</ion-label> -->
->>>>>>> dev
     
     <ion-button *ngIf="barcodeRoute==null" (click)="send()" expand="block" shape="round">
       enviar
