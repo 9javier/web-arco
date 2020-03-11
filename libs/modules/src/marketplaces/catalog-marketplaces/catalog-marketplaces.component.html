@@ -1,32 +1,32 @@
 <div class="catalog-marketplaces">
   <div class="catalog-selects">
     <div>
-      <mat-select [(ngModel)]="marketPreselect">
-        <mat-option *ngFor="let item of marketplaces" [value]="item.name" (click)="getMarket(item)">
+      <mat-select [(ngModel)]="marketSelected" (selectionChange)="changeSelectedFilters()">
+        <mat-option *ngFor="let item of marketplaces" [value]="item.id">
           {{item.name}}
         </mat-option>
       </mat-select>
-      <mat-select [(ngModel)]="descriptionPreselect">
-        <mat-option *ngFor="let item of description" [value]="item" (click)="getDescription(item)">
-          {{item}}
+      <mat-select [(ngModel)]="descriptionSelected" (selectionChange)="changeSelectedFilters()">
+        <mat-option *ngFor="let item of descriptions" [value]="item.id">
+          {{item.name}}
         </mat-option>
       </mat-select>
-      <mat-select [(ngModel)]="familyPreselect">
-        <mat-option *ngFor="let item of family" [value]="item" (click)="getFamily(item)">
-          {{item}}
+      <mat-select [(ngModel)]="familySelected" (selectionChange)="changeSelectedFilters()">
+        <mat-option *ngFor="let item of families" [value]="item.id">
+          {{item.name}}
         </mat-option>
       </mat-select>
     </div>
-    <mat-select [(ngModel)]="actionPreselect">
-      <mat-option *ngFor="let item of tableValueSelect" [value]="item.name" (click)="getType(item.type)">
+    <mat-select [(ngModel)]="actionSelected" (selectionChange)="changeAction()">
+      <mat-option *ngFor="let item of actions" [value]="item.id">
         {{item.name}}
       </mat-option>
     </mat-select>
   </div>
-  <div class="mp-catalog-table-wrapper" #TABLE>
-    <table mat-table #table [dataSource]="catalogTableData">
+  <div class="mp-catalog-table-wrapper" #catalogTable>
+    <table mat-table [dataSource]="catalogTableData">
 
-      <tr mat-header-row *matHeaderRowDef="catalogTableHeader; sticky: true;"></tr>
+      <tr mat-header-row *matHeaderRowDef="catalogTableHeader; sticky: true;" [ngClass]="products.length ? '' : 'table-empty'"></tr>
       <tr mat-row *matRowDef="let row; columns: catalogTableHeader;"></tr>
 
       <ng-container matColumnDef="select">
@@ -39,51 +39,66 @@
       </ng-container>
 
       <ng-container matColumnDef="ref">
-        <th mat-header-cell *matHeaderCellDef><span>Ref.</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Ref.</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchReference"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.reference}} </td>
       </ng-container>
 
       <ng-container matColumnDef="model">
-        <th mat-header-cell *matHeaderCellDef><span>Modelo</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Modelo</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchModel"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.model}} </td>
       </ng-container>
 
       <ng-container matColumnDef="brand">
-        <th mat-header-cell *matHeaderCellDef><span>Marca</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Marca</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchBrand"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.brand}} </td>
       </ng-container>
 
       <ng-container matColumnDef="KO">
-        <th mat-header-cell *matHeaderCellDef><span>KO</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>KO</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchKO"/>
+        </th>
         <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == -1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
-                ●
+            <span *ngIf="market.market.name == 'KrackOnline'">
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
+                <span class="hidden-value">✓</span>
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
-                ●
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
+                <span class="hidden-value">✗</span>
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="actionSelected == 2">
                 {{market.stock}}
-              </span> 
+              </span>
             </span>
           </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="Mini">
-        <th mat-header-cell *matHeaderCellDef><span>Mini</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Mini</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchMini"/>
+        </th>
         <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == 1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
-                ●
+            <span *ngIf="market.market.name == 'Miniprecios'">
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
+                <span class="hidden-value">✓</span>
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
-                ●
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
+                <span class="hidden-value">✗</span>
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="actionSelected == 2">
                 {{market.stock}}
               </span> 
             </span>
@@ -92,36 +107,42 @@
       </ng-container>
 
       <ng-container matColumnDef="Amazon">
-        <th mat-header-cell *matHeaderCellDef><span>Amazon</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Amazon</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchAmazon"/>
+        </th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == -1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
-                ●
+            <span *ngIf="market.market.name == 'Amazon'">
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
+                <span class="hidden-value">✓</span>
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
-                ●
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
+                <span class="hidden-value">✗</span>
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="actionSelected == 2">
                 {{market.stock}}
-              </span> 
+              </span>
             </span>
           </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="Spartoo">
-        <th mat-header-cell *matHeaderCellDef><span>Spartoo</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Spartoo</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchSpartoo"/>
+        </th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == -1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
-                ●
+            <span *ngIf="market.market.name == 'Spartoo'">
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
+                <span class="hidden-value">✓</span>
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
-                ●
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
+                <span class="hidden-value">✗</span>
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="actionSelected == 2">
                 {{market.stock}}
               </span> 
             </span>
@@ -130,17 +151,20 @@
       </ng-container>
 
       <ng-container matColumnDef="Zalando">
-        <th mat-header-cell *matHeaderCellDef><span>Zalando</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Zalando</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchZalando"/>
+        </th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == -1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
-                ●
+            <span *ngIf="market.market.name == 'Zalando'">
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
+                <span class="hidden-value">✓</span>
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
-                ●
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
+                <span class="hidden-value">✗</span>
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="actionSelected == 2">
                 {{market.stock}}
               </span> 
             </span>
@@ -149,19 +173,22 @@
       </ng-container>
 
       <ng-container matColumnDef="CDiscount">
-        <th mat-header-cell *matHeaderCellDef><span>Cdiscount</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>CDiscount</span>
+          <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchCDiscount"/>
+        </th>
         <td mat-cell *matCellDef="let product"> 
           <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.id == -1">
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock !== 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolActivate' : 'symbolDisabled'">
-                ●
+            <span *ngIf="market.market.name == 'CDiscount'">
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
+                <span class="hidden-value">✓</span>
               </span>
-              <span *ngIf="currentType == 1 && product.productsMarkets.length > 0 && market.available && market.stock == 0" class="symbol" [ngClass]="market.onboardStatus == '1' ? 'symbolWithoutStock' : 'symbolDisabled'">
-                ●
+              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
+                <span class="hidden-value">✗</span>
               </span>
-              <span *ngIf="currentType == 2 && product.productsMarkets.length > 0">
+              <span *ngIf="actionSelected == 2">
                 {{market.stock}}
-              </span> 
+              </span>
             </span> 
           </span>
         </td>
@@ -174,7 +201,7 @@
         ACCIONES MASIVAS
       </div>
       <div class="mp-catalog-results">
-        {{products?.length}} <span>resultados</span>
+        {{products.length}} <span *ngIf="products.length != 1">resultados</span><span *ngIf="products.length == 1">resultado</span>
       </div>
     </div>
     <div class="exportExcel">

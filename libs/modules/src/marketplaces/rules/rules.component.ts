@@ -20,22 +20,13 @@ export class RulesComponent implements OnInit {
   private dataSourceRulesEnabling;
   private displayedEnablingColumns;
 
-  /*private dataSourceStocks;
-  private dataSourceRulesStocks;
-  private displayedStocksColumns;*/
-
-  private market = "";
+  private market;
 
   constructor(
     private route: ActivatedRoute,
     private modalController: ModalController,
     private marketplacesService: MarketplacesService,
   ) {
-    switch (this.route.snapshot.data['name']) {
-      case "Miniprecios":
-        this.market = "1";
-        break;
-    }
   }
 
   ngOnInit() {
@@ -48,11 +39,25 @@ export class RulesComponent implements OnInit {
     this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
     this.displayedEnablingColumns = ['name', 'categories', 'products', 'edit'];
 
-    /*this.dataSourceStocks = [];
-    this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
-    this.displayedStocksColumns = ['name', 'stock', 'products', 'edit'];*/
+    this.marketplacesService.getMarkets().subscribe((data: any) => {
+      this.market = null;
+      if (data && data.length) {
+        for (let market of data) {
+          switch (this.route.snapshot.data['name']) {
+            case "Miniprecios":
+              this.market = market.id;
+              break;
+          }
 
-    this.getValues();
+          if (this.market) {
+            break;
+          }
+        }
+      }
+      this.getValues();
+    });
+
+
 
   }
 
@@ -60,14 +65,20 @@ export class RulesComponent implements OnInit {
     this.dataSourceEnabling = [];
     this.dataSourceCategories = [];
     this.marketplacesService.getRulesConfigurations().subscribe((data: any) => {
-      if (data.data && data.data.length) {
-        for (let ruleConfiguration of data.data) {
-          console.log(ruleConfiguration)
-          let type = "enabling";
+      if (data && data.length) {
+        for (let ruleConfiguration of data) {
+          let type = "";
           let categories = [];
-          if (ruleConfiguration.productCategories && ruleConfiguration.productCategories.length) {
-            type = "categories";
-            categories = ruleConfiguration.categories;
+          switch (ruleConfiguration.ruleType) {
+            case 0:
+              break;
+            case 1:
+              type = "enabling";
+              break;
+            case 2:
+              type = "categories";
+              categories = ruleConfiguration.productCategories;
+              break;
           }
           let rule = {
             id: ruleConfiguration.id,
@@ -76,10 +87,8 @@ export class RulesComponent implements OnInit {
             categoriesFilter: [],
             minPriceFilter: "0.00",
             maxPriceFilter: "0.00",
-            // stockFilter: 0,
             products: 132824,
             destinationCategories: [],
-            // stockToReduce: 0,
             referencesExceptions: [],
             description: ruleConfiguration.description,
             categories: categories
@@ -146,7 +155,8 @@ export class RulesComponent implements OnInit {
       component: NewRuleComponent,
       componentProps: {
         ruleFilterType,
-        mode: 'create'
+        mode: 'create',
+        market: this.market
       }
     });
 
@@ -156,9 +166,10 @@ export class RulesComponent implements OnInit {
         let ruleConfiguration = {
           name: data.data.name,
           description: data.data.description,
-          status: 'active',
+          ruleType: 0,
+          status: 1,
           rulesFilters: [],
-          marketsIDs: [
+          marketsIds: [
             this.market
           ],
           /*referenceExceptions: {},
@@ -166,6 +177,16 @@ export class RulesComponent implements OnInit {
           ],*/
           categories: []
         };
+
+        switch (data.data.filterType) {
+          case "enabling":
+            ruleConfiguration.ruleType = 1;
+            break;
+
+          case "categories":
+            ruleConfiguration.ruleType = 2;
+            break;
+        }
 
         for (let category of data.data.categoriesFilter) {
           switch (category.type) {
@@ -258,13 +279,12 @@ export class RulesComponent implements OnInit {
         selectedCategories: rule.categoriesFilter,
         minPriceFilter: rule.minPriceFilter,
         maxPriceFilter: rule.maxPriceFilter,
-        // stockFilter: rule.stockFilter,
         numberOfProducts: rule.products,
         selectedDestinationCategories: rule.categories,
-        // stockToReduce: rule.stockToReduce,
         referencesExceptions: rule.referencesExceptions,
         id: rule.id,
-        mode: 'edit'
+        mode: 'edit',
+        market: this.market
       }
     });
     modal.onDidDismiss().then((data) => {
@@ -274,6 +294,7 @@ export class RulesComponent implements OnInit {
           id: ruleToEdit.id,
           name: data.data.name,
           description: data.data.description,
+          ruleType: 0,
           status: 1,
           rulesFilterIds: [],
           marketsIds: [
@@ -284,6 +305,16 @@ export class RulesComponent implements OnInit {
           ],
           categories: data.data.destinationCategories
         };
+
+        switch (data.data.filterType) {
+          case "enabling":
+            ruleConfiguration.ruleType = 1;
+            break;
+
+          case "categories":
+            ruleConfiguration.ruleType = 2;
+            break;
+        }
 
         for (let category of data.data.categoriesFilter) {
           switch (category.type) {

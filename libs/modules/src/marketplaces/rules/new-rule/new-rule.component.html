@@ -66,9 +66,6 @@
             </div>
           </div>
         </div>
-        <!--<div class="rule-filter-stock" *ngIf="ruleFilterType == 'stock'">
-          <input matInput #stockInput type="text" placeholder="Stock de seguridad" [ngClass]="formatStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockFilter" (keydown)="checkEnterKeyStockInput($event);" (blur)="blurStockInput()"/>
-        </div>-->
       </div>
       <div class="nr-filter-selected-wrapper">
         <div>Filtro</div>
@@ -113,10 +110,6 @@
 
           </div>
         </div>
-        <!--<div class="action-stock" *ngIf="ruleFilterType == 'stock'">
-          <div>Indicar stock a restar</div>
-          <input matInput #reduceStockInput type="text" placeholder="Stock a restar" [ngClass]="formatReduceStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockToReduce" (keydown)="checkEnterKeyReduceStockInput($event);" (blur)="blurReduceStockInput()"/>
-        </div>-->
         <div *ngIf="ruleFilterType == 'enabling'">
           &nbsp;
         </div>
@@ -132,11 +125,6 @@
         <span *ngIf="selectedDestinationCategories.length == 1">categoría seleccionada</span>
         <span *ngIf="selectedDestinationCategories.length != 1">categorías seleccionadas</span>
       </span>
-      <!--<span *ngIf="ruleFilterType == 'stock'">
-        Stock a reducir:
-        <span *ngIf="stockToReduceDescription != ''">{{stockToReduceDescription}}</span>
-        <span *ngIf="stockToReduceDescription == ''">0</span>
-        </span>-->
       <span *ngIf="ruleFilterType == 'enabling'"></span>
     </div>
     <div *ngIf="createRuleButtonActivation();" class="nr-rule-button" (click)="createRule()">

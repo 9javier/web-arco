@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import {ModalController} from "@ionic/angular";
 import {CategorizeProductsComponent} from "./modals/categorize-products/categorize-products.component";
 import {MatTableDataSource} from "@angular/material";
+import {MarketplacesService} from "../../../../services/src/lib/endpoint/marketplaces/marketplaces.service";
 
 @Component({
   selector: 'suite-catalog',
@@ -15,73 +16,194 @@ export class CatalogComponent implements OnInit {
   private catalogTableData;
   private catalogTableHeader;
   private selectedProducts;
-  private products;
+  private market;
+  private unfilteredCatalogData;
+
+  private searchReference;
+  private searchModel;
+  private searchBrand;
+  private searchColor;
+  private searchFamily;
+  private searchDescription;
+  private searchPrice;
+  private searchDiscount;
+  private searchStock;
 
   constructor(
     private route: ActivatedRoute,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private marketplacesService: MarketplacesService
   ) {
-    console.log(this.route.snapshot.data['name'])
   }
 
   ngOnInit() {
-    this.getProducts();
-    this.catalogTableData = new MatTableDataSource(this.catalogData);
+
+    this.searchReference = "";
+    this.searchModel = "";
+    this.searchBrand = "";
+    this.searchColor = "";
+    this.searchFamily = "";
+    this.searchDescription = "";
+    this.searchPrice = "";
+    this.searchDiscount = "";
+    this.searchStock = "";
+
+    this.catalogData = [];
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'color', 'family', 'description', 'pvp', 'discount', 'units', 'active'];
     this.selectedProducts = [];
+    this.marketplacesService.getMarkets().subscribe((data: any) => {
+      this.market = null;
+      if (data && data.length) {
+        for (let market of data) {
+          switch (this.route.snapshot.data['name']) {
+            case "Miniprecios":
+              this.market = market.id;
+              break;
+          }
+
+          if (this.market) {
+            break;
+          }
+        }
+      }
+
+      this.getProducts();
+
+    });
+  }
+
+  changeSelectedFilters() {
+    this.catalogData = this.unfilteredCatalogData.slice();
+
+    if (this.searchReference != "" && this.searchReference.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.ref.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchReference.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchModel != "" && this.searchModel.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.model.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchModel.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchBrand != "" && this.searchBrand.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.brand.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchBrand.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchColor != "" && this.searchColor.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.color.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchColor.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchFamily != "" && this.searchFamily.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.family.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchFamily.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchDescription != "" && this.searchDescription.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.description.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchDescription.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchPrice != "" && this.searchPrice.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.pvp.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchPrice.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchDiscount != "" && this.searchDiscount.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.discount.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchDiscount.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    if (this.searchStock != "" && this.searchStock.trim() != "") {
+      let products = [];
+      for (let product of this.catalogData) {
+        if (product.units.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchStock.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          products.push(product);
+        }
+      }
+      this.catalogData = products.slice();
+    }
+
+    this.catalogTableData = new MatTableDataSource(this.catalogData);
   }
 
   getProducts() {
-    this.catalogData = [
-      {
-        ref: 1,
-        model: 'model1',
-        brand: 'brand1',
-        color: 'color1',
-        family: 'family1',
-        description: 'description1',
-        pvp: 22.5,
-        discount: 19.5,
-        units: 5,
-        active: false
-      },
-      {
-        ref: 2,
-        model: 'model2',
-        brand: 'brand2',
-        color: 'color2',
-        family: 'family2',
-        description: 'description2',
-        pvp: 12.5,
-        discount: 8.15,
-        units: 8,
-        active: false
-      },
-      {
-        ref: 3,
-        model: 'model3',
-        brand: 'brand3',
-        color: 'color3',
-        family: 'family3',
-        description: 'description3',
-        pvp: 49.99,
-        discount: 24.99,
-        units: 13,
-        active: true
-      },
-      {
-        ref: 4,
-        model: 'model4',
-        brand: 'brand4',
-        color: 'color4',
-        family: 'family4',
-        description: 'description4',
-        pvp: 38.2,
-        discount: 32.79,
-        units: 5,
-        active: false
+    this.marketplacesService.getProductCatalog().subscribe(data => {
+      let serverData = data.data;
+      for (let product of serverData) {
+        for (let productMarket of product.productsMarkets) {
+          if (productMarket.market.id == this.market && productMarket.onboardStatus == '1') {
+            this.catalogData.push({
+              ref: product.reference,
+              model: product.model,
+              brand: product.brand,
+              color: product.color ? product.color : '-',
+              family: product.family ? product.family : '-',
+              description: product.description ? product.description : '-',
+              pvp: productMarket.price ? productMarket.price : '-',
+              discount: productMarket.discount ? productMarket.discount : '-',
+              units: productMarket.stock,
+              active: productMarket.available
+            });
+          }
+        }
       }
-    ];
+      this.catalogData.sort((a, b) => (a.ref.length > b.ref.length) ? 1 : ((b.ref.length > a.ref.length) ? -1 : ((parseInt(a.ref) > parseInt(b.ref)) ? 1 : ((parseInt(b.ref) > parseInt(a.ref)) ? -1 : 0))));
+      this.unfilteredCatalogData = this.catalogData.slice();
+
+      this.catalogTableData = new MatTableDataSource(this.catalogData);
+    });
+
   }
 
   selectProductRow(product) {
