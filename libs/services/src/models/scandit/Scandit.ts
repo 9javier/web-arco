@@ -68,7 +68,8 @@ export namespace ScanditModel {
     packing = 'matrix_simple_scan_packings',
     filters = 'filters',
     request_reject = 'request_reject',
-    products_out_of_packing = 'products_out_of_packing'
+    products_out_of_packing = 'products_out_of_packing',
+    finish = 'matrix_simple_finish'
   }
 
   enum ActionsPrintTags {
