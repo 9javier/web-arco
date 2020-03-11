@@ -40,17 +40,13 @@
 
       <ng-container matColumnDef="destiny">
         <th mat-header-cell *matHeaderCellDef>
-          <span class="title" (click)="sort('destiny')">Destino</span>
-          <suite-filter-button #filterButtonDestinies class="filter" [title]="'Destino'" [listItems]="destinies"
-                               [isFiltering]="isFilteringDestinies != destinies.length"
-                               (applyFilters)="applyFilters($event, 'destinies')">
-          </suite-filter-button>
+          <span class="title">Destino</span>
         </th>
         <td mat-cell *matCellDef="let element">
           <div *ngIf="element.destiny.length == 0" class="no-warehouse">Sin destinos</div>
           <div *ngIf="element.destiny.length == 1">
-            {{element.destiny[0].reference }}
-            {{element.destiny[0].name }}</div>
+            {{element.destiny[0].destinyWarehouse.reference }}
+            {{element.destiny[0].destinyWarehouse.name }}</div>
           <div *ngIf="element.destiny.length > 1"
                (click)="showDestinations($event, element)"><span class="show-various-destinations">Varios destinos</span></div>
         </td>
@@ -73,12 +69,8 @@
       <ng-container matColumnDef="products-status">
         <th mat-header-cell *matHeaderCellDef>
           <span class="title" (click)="sort('product')">Productos</span>
-          <suite-filter-button #filterButtonProducts class="filter" [title]="'Productos'" [listItems]="products"
-                               [isFiltering]="isFilteringProducts != products.length"
-                               (applyFilters)="applyFilters($event, 'products')">
-          </suite-filter-button>
         </th>
-        <td mat-cell *matCellDef="let element" class="right-content right-space">
+        <td mat-cell *matCellDef="let element" >
           {{ element.product && element.product > 0 ? element.product : 'vacía' }}
         </td>
       </ng-container>

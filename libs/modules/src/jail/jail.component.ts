@@ -73,15 +73,15 @@ export class JailComponent implements OnInit {
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
   @ViewChild('filterButtonTypes') filterButtonTypes: FilterButtonComponent;
   @ViewChild('filterButtonOrigins') filterButtonOrigins: FilterButtonComponent;
-  @ViewChild('filterButtonDestinies') filterButtonDestinies: FilterButtonComponent;
-  @ViewChild('filterButtonProducts') filterButtonProducts: FilterButtonComponent;
+/*  @ViewChild('filterButtonDestinies') filterButtonDestinies: FilterButtonComponent;*/
+/*  @ViewChild('filterButtonProducts') filterButtonProducts: FilterButtonComponent;*/
 
   form: FormGroup = this.formBuilder.group({
     references: [],
     types: [],
     origins: [],
-    destinies: [],
-    products: [],
+/*    destinies: [],*/
+/*    products: [],*/
     packingReferencePattern: [],
     pagination: this.formBuilder.group({
       page: 1,
@@ -89,7 +89,7 @@ export class JailComponent implements OnInit {
     }),
     orderby: this.formBuilder.group({
       type: null,
-      order: "DESC"
+      order: "ASC"
     })
   });
 
@@ -97,15 +97,15 @@ export class JailComponent implements OnInit {
   references: Array<TagsInputOption> = [];
   types: Array<TagsInputOption> = [];
   origins: Array<TagsInputOption> = [];
-  destinies: Array<TagsInputOption> = [];
-  products: Array<TagsInputOption> = [];
+/*  destinies: Array<TagsInputOption> = [];*/
+/*  products: Array<TagsInputOption> = [];*/
 
   /** Filters save **/
   referencesSelected: Array<any> = [];
   typesSelected: Array<any> = [];
   originsSelected: Array<any> = [];
-  destiniesSelected: Array<any> = [];
-  productsSelected: Array<any> = [];
+/*  destiniesSelected: Array<any> = [];*/
+/*  productsSelected: Array<any> = [];*/
   packingReferencePatternSelected: Array<any> = [];
   orderbySelected: Array<any> = [];
 
@@ -119,8 +119,8 @@ export class JailComponent implements OnInit {
   isFilteringReferences: number = 0;
   isFilteringTypes: number = 0;
   isFilteringOrigins: number = 0;
-  isFilteringDestinies: number = 0;
-  isFilteringProducts: number = 0;
+/*  isFilteringDestinies: number = 0;*/
+/*  isFilteringProducts: number = 0;*/
 
   lastUsedFilter: string = '';
   isMobileApp: boolean = false;
@@ -145,11 +145,6 @@ export class JailComponent implements OnInit {
   toDelete: FormGroup = this.formBuilder.group({
     jails: this.formBuilder.array([])
   });
-
-/*  /!**form to select elements to print or for anything *!/
-  selectedForm: FormGroup = this.formBuilder.group({}, {
-    validators: validators.haveItems("toSelect")
-  });*/
 
   constructor(
     private formBuilder: FormBuilder,
@@ -201,7 +196,6 @@ export class JailComponent implements OnInit {
       this.results = sql_result.data.results;
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<CarrierModel.SearchInContainer>(this.results);
-
       let paginator: any = sql_result.data.pagination;
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.selectPage;
@@ -233,7 +227,7 @@ export class JailComponent implements OnInit {
         }
         this.filterButtonOrigins.listItems = this.origins;
       }
-      if (this.lastUsedFilter != 'destinies') {
+/*      if (this.lastUsedFilter != 'destinies') {
         for (let index in this.destinies) {
           this.destinies[index].hide = false;
           this.destinies[index].checked = true;
@@ -241,15 +235,15 @@ export class JailComponent implements OnInit {
         }
 
         this.filterButtonDestinies.listItems = this.destinies;
-      }
-      if (this.lastUsedFilter != 'products') {
+      }*/
+/*      if (this.lastUsedFilter != 'products') {
         for (let index in this.products) {
           this.products[index].hide = false;
           this.products[index].checked = true;
         }
 
         this.filterButtonProducts.listItems = this.products;
-      }
+      }*/
     });
     this.intermediaryService.dismissLoading();
   }
@@ -259,8 +253,8 @@ export class JailComponent implements OnInit {
       references: [],
       types: [],
       origins: [],
-      destinies: [],
-      products: [],
+/*      destinies: [],*/
+/*      products: [],*/
       packingReferencePattern: [],
       pagination: this.formBuilder.group({
         page: 1,
@@ -268,7 +262,7 @@ export class JailComponent implements OnInit {
       }),
       orderby: this.formBuilder.group({
         type: null,
-        order: "DESC"
+        order: "ASC"
       })
     });
     JailComponent.deleteArrow();
@@ -436,7 +430,7 @@ export class JailComponent implements OnInit {
           }
         }
         break;
-      case 'destinies':
+      /*case 'destinies':
         let destiniesFiltered: number[] = [];
         for (let destiny of filters) {
           if (destiny.checked) destiniesFiltered.push(destiny);
@@ -458,8 +452,8 @@ export class JailComponent implements OnInit {
             this.isFilteringDestinies = 0;
           }
         }
-        break;
-      case 'products':
+        break;*/
+      /*case 'products':
         let productsFiltered: number[] = [];
         for (let product of filters) {
           if (product.checked) productsFiltered.push(product);
@@ -481,7 +475,7 @@ export class JailComponent implements OnInit {
             this.isFilteringProducts = 0;
           }
         }
-        break;
+        break;*/
     }
     this.lastUsedFilter = filterType;
     let flagApply = true;
@@ -527,8 +521,9 @@ export class JailComponent implements OnInit {
    */
   selectAll(event): void {
     let value = event.detail.checked;
-    (<FormArray>this.toDelete.value.jails).controls.forEach(control => {
-      control.setValue(value);
+    console.log("toDelete",this.toDelete['controls'].jails['controls']);
+    this.toDelete['controls'].jails['controls'].forEach(control => {
+      control['controls'].selected.setValue(value);
     });
 
     if (value) {
@@ -582,8 +577,8 @@ export class JailComponent implements OnInit {
     this.referencesSelected = this.form.value.references;
     this.typesSelected = this.form.value.types;
     this.originsSelected = this.form.value.origins;
-    this.destiniesSelected = this.form.value.destinies;
-    this.productsSelected = this.form.value.products;
+/*    this.destiniesSelected = this.form.value.destinies;*/
+/*    this.productsSelected = this.form.value.products;*/
     this.packingReferencePatternSelected = this.form.value.packingReferencePattern;
     this.orderbySelected = this.form.value.orderby;
   }
@@ -592,8 +587,8 @@ export class JailComponent implements OnInit {
     this.form.get("references").patchValue(this.referencesSelected, { emitEvent: false });
     this.form.get("types").patchValue( this.typesSelected, { emitEvent: false });
     this.form.get("origins").patchValue(this.originsSelected, { emitEvent: false });
-    this.form.get("destinies").patchValue(this.destiniesSelected, { emitEvent: false });
-    this.form.get("products").patchValue(this.productsSelected, { emitEvent: false });
+/*    this.form.get("destinies").patchValue(this.destiniesSelected, { emitEvent: false });*/
+/*    this.form.get("products").patchValue(this.productsSelected, { emitEvent: false });*/
     this.form.get("packingReferencePattern").patchValue(this.packingReferencePatternSelected, { emitEvent: false });
     this.form.get("orderby").patchValue(this.orderbySelected, { emitEvent: false });
   }
@@ -614,8 +609,6 @@ export class JailComponent implements OnInit {
         selected: false
       });
     })));
-/*    this.selectedForm.removeControl("toSelect");
-    this.selectedForm.addControl("toSelect", this.formBuilder.array(this.searchsInContainer.map(carrier => new FormControl(false))));*/
   }
 
   /**
@@ -635,8 +628,8 @@ export class JailComponent implements OnInit {
         references: parameters.references,
         types: parameters.types,
         origins: parameters.origins,
-        destinies: parameters.destinies,
-        products: parameters.products,
+/*        destinies: parameters.destinies,*/
+/*        products: parameters.products,*/
       }
     };
 
@@ -649,12 +642,12 @@ export class JailComponent implements OnInit {
     if(this.isFilteringOrigins == this.origins.length){
       body.filters.origins = null;
     }
-    if(this.isFilteringDestinies == this.destinies.length){
+/*    if(this.isFilteringDestinies == this.destinies.length){
       body.filters.destinies = null;
-    }
-    if(this.isFilteringProducts == this.products.length) {
+    }*/
+/*    if(this.isFilteringProducts == this.products.length) {
       body.filters.products = null;
-    }
+    }*/
 
     this.intermediaryService.presentLoading();
     this.carrierService.searchInContainer(body).subscribe(sql_result => {
@@ -758,14 +751,14 @@ export class JailComponent implements OnInit {
     this.updateFilterSourceReferences(this.listAllCarriers.references, stable);
     this.updateFilterSourceTypes(this.listAllCarriers.types, stable);
     this.updateFilterSourceOrigins(this.listAllCarriers.origins, stable);
-    this.updateFilterSourceDestinies(this.listAllCarriers.destinies, stable);
-    this.updateFilterSourceProducts(this.listAllCarriers.products, stable);
+/*    this.updateFilterSourceDestinies(this.listAllCarriers.destinies, stable);*/
+/*    this.updateFilterSourceProducts(this.listAllCarriers.products, stable);*/
 
     this.isFilteringReferences = this.references.length;
     this.isFilteringTypes = this.types.length;
     this.isFilteringOrigins = this.origins.length;
-    this.isFilteringDestinies = this.destinies.length;
-    this.isFilteringProducts = this.products.length;
+/*    this.isFilteringDestinies = this.destinies.length;*/
+/*    this.isFilteringProducts = this.products.length;*/
 
   }
 
@@ -785,7 +778,6 @@ export class JailComponent implements OnInit {
         referencesList.push({value: key['reference']});
       }
     });
-    console.log("referencesList",referencesList);
     if(stable == true) {
       this.references = referencesList;
       this.form.get("references").patchValue(this.references, {emitEvent: false});
@@ -825,7 +817,7 @@ export class JailComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-  private updateFilterSourceDestinies(destinies: any, stable: boolean) {
+/*  private updateFilterSourceDestinies(destinies: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let destiniesList: any[] = [];
     destinies.forEach(key => {
@@ -842,9 +834,9 @@ export class JailComponent implements OnInit {
       this.form.get("destinies").patchValue(this.destinies, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
+  }*/
 
-  private updateFilterSourceProducts(products: any, stable: boolean) {
+/*  private updateFilterSourceProducts(products: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let productsList: any[] = [];
     products.forEach(key => {
@@ -857,7 +849,7 @@ export class JailComponent implements OnInit {
       this.form.get("products").patchValue(this.products, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
+  }*/
 
   /**
    * Return a type
@@ -957,8 +949,8 @@ export class JailComponent implements OnInit {
         references: parameters.references,
         types: parameters.types,
         origins: parameters.origins,
-        destinies: parameters.destinies,
-        products: parameters.products,
+/*        destinies: parameters.destinies,*/
+/*        products: parameters.products,*/
       }
     };
 
@@ -971,12 +963,12 @@ export class JailComponent implements OnInit {
     if(this.isFilteringOrigins == this.origins.length){
       body.filters.origins = null;
     }
-    if(this.isFilteringDestinies == this.destinies.length){
+/*    if(this.isFilteringDestinies == this.destinies.length){
       body.filters.destinies = null;
-    }
-    if(this.isFilteringProducts == this.products.length) {
+    }*/
+/*    if(this.isFilteringProducts == this.products.length) {
       body.filters.products = null;
-    }
+    }*/
 
     this.intermediaryService.presentLoading("Actualizando...");
     this.carrierService.searchInContainer(body).subscribe(sql_result => {
