@@ -22,6 +22,11 @@
         <ion-list class="ion-padding">
           <ion-item>
             <ion-label>
+              Usuario: {{registry?.user?.name}}
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
               Almacén: {{registry?.warehouse ? (registry?.warehouse.reference + " - " + registry?.warehouse.name) : ""}}
             </ion-label>
           </ion-item>
@@ -59,7 +64,7 @@
             <ion-label>Observaciones:</ion-label>
             <ion-textarea class="text-observations" type="text" rows="4" value="{{registry?.observations}}" readonly="true"></ion-textarea>
           </ion-item>
-          <mat-expansion-panel *ngIf="registry?.photos?.length > 0">
+          <mat-expansion-panel *ngIf="registry?.statusManagementDefect?.requirePhoto && registry?.photos?.length > 0">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 Fotos
@@ -70,7 +75,7 @@
             </ion-item>
           </mat-expansion-panel>
           <br/>
-          <mat-expansion-panel *ngIf="registry?.signature?.pathMedium">
+          <mat-expansion-panel *ngIf="registry?.statusManagementDefect?.requireOk && registry?.signature?.pathMedium">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 Firma
@@ -88,10 +93,7 @@
           <div *ngFor="let historical of registryHistorical; let i = index" class="ion-padding">
             <div>
               <p>
-                Fecha de Detección: {{ historical?.updatedAt | date:"dd/MM/yyyy HH:mm:ss" }}
-              </p>
-              <p>
-                Producto: {{ historical?.product?.reference }}
+                Usuario: {{ historical?.user?.name }}
               </p>
             </div>
             <mat-expansion-panel>
@@ -100,10 +102,18 @@
                   Estado: {{getStatusName(historical.statusManagementDefect.defectType)}}
                 </mat-panel-title>
               </mat-expansion-panel-header>
-              <ion-item class="history" *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'history')">
-                <ion-label style="opacity: 1 !important;">Pasar a Historial</ion-label>
-                <ion-checkbox style="opacity: 1 !important;" slot="end" [disabled]="true" checked="{{historical?.isHistory}}"></ion-checkbox>
-              </ion-item>
+              <ion-list>
+                <ion-item>
+                  <ion-label>
+                    Fecha de Detección: {{ historical?.updatedAt | date:"dd/MM/yyyy HH:mm:ss" }}
+                  </ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-label>
+                    Producto: {{ historical?.product?.reference }}
+                  </ion-label>
+                </ion-item>
+              </ion-list>
               <div *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'contact')" class="contact">
                 <ion-list>
                   <ion-list-header>
@@ -126,29 +136,28 @@
                   </ion-item>
                 </ion-list>
               </div>
+              <mat-expansion-panel class="photos" *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'photo') && historical?.photos?.length > 0">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Fotos
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <ion-item lines="none" *ngFor="let photo of historical.photos">
+                  <img src="{{photo.pathMedium}}" alt="" />
+                  <ion-item-divider></ion-item-divider>
+                </ion-item>
+              </mat-expansion-panel>
+              <mat-expansion-panel class="signature" *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'signature') && historical?.signature?.pathMedium">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Firma
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <ion-item lines="none">
+                  <img src="{{historical?.signature?.pathMedium}}" alt="" />
+                </ion-item>
+              </mat-expansion-panel>
             </mat-expansion-panel>
-            <mat-expansion-panel class="photos" *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'photo') && historical?.photos?.length > 0">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  Fotos
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-              <ion-item lines="none" *ngFor="let photo of historical.photos">
-                <img src="{{photo.pathMedium}}" alt="" />
-                <ion-item-divider></ion-item-divider>
-              </ion-item>
-            </mat-expansion-panel>
-            <mat-expansion-panel class="signature" *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'signature') && historical?.signature?.pathMedium">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  Firma
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-              <ion-item lines="none">
-                <img src="{{historical?.signature?.pathMedium}}" alt="" />
-              </ion-item>
-            </mat-expansion-panel>
-            <ion-item-divider></ion-item-divider>
           </div>
         </ion-list>
         <ion-item-divider></ion-item-divider>

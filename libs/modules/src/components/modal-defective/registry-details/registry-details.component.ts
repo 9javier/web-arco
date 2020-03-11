@@ -84,23 +84,19 @@ export class RegistryDetailsComponent implements OnInit {
   getStatusManagement() {
     this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
       this.statusManagement = resp;
-
-      console.log('THIS.STATUSMANAGEMENT');
-      console.log(this.statusManagement);
     })
   }
 
   getRegistryHistorical(): void {
     this.defectiveRegistryService.getHistorical({ productId: this.productId, productReference: '' }).subscribe(historical => {
-      this.registryHistorical = historical.results;
-      this.originalTableStatus = historical.statuses;
-      console.log(this.registryHistorical)
+      this.registryHistorical = historical;
     });
   }
 
   getRegistryDetail(): void {
     this.defectiveRegistryService.getLastHistorical({ productId: this.productId }).subscribe(lastHistorical => {
-      this.registry = lastHistorical;
+      this.registry = lastHistorical.data;
+      this.originalTableStatus = lastHistorical.statuses;
     });
   }
 
