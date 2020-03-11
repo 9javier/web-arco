@@ -64,21 +64,14 @@ export class RulesComponent implements OnInit {
   getValues() {
     this.dataSourceEnabling = [];
     this.dataSourceCategories = [];
-    this.marketplacesService.getRulesConfigurations(this.market).subscribe((data: any) => {
-      if (data && data.length) {
-        for (let ruleConfiguration of data) {
-          let type = "";
+    this.marketplacesService.getRulesConfigurations().subscribe((data: any) => {
+      if (data.data && data.data.length) {
+        for (let ruleConfiguration of data.data) {
+          let type = "enabling";
           let categories = [];
-          switch (ruleConfiguration.ruleType) {
-            case 0:
-              break;
-            case 1:
-              type = "enabling";
-              break;
-            case 2:
-              type = "categories";
-              categories = ruleConfiguration.categories;
-              break;
+          if(ruleConfiguration.productCategories && ruleConfiguration.productCategories.length) {
+            type = "categories";
+            categories = ruleConfiguration.productCaregories;
           }
           let rule = {
             id: ruleConfiguration.id,
@@ -167,15 +160,15 @@ export class RulesComponent implements OnInit {
           name: data.data.name,
           description: data.data.description,
           ruleType: 0,
-          status: 1,
-          rulesFilterIds: [],
+          status: "active",
+          rulesFilters: [],
           marketsIds: [
             this.market
           ],
-          referenceExceptions: {},
+          /*referenceExceptions: {},
           ruleDataValidactionAttributes: [
-          ],
-          categories: data.data.destinationCategories
+          ],*/
+          categories: []
         };
 
         switch (data.data.filterType) {
@@ -191,54 +184,54 @@ export class RulesComponent implements OnInit {
         for (let category of data.data.categoriesFilter) {
           switch (category.type) {
             case 2:
-              ruleConfiguration.rulesFilterIds.push(
+              ruleConfiguration.rulesFilters.push(
                 {
                   id: category.id,
                   name: category.name,
                   ruleFilterType: category.type,
                   externalId: category.externalId,
                   dataGroup: category.group,
-                  status: 1
+                  status: 'active'
                 }
               );
               break;
             case 3:
-              ruleConfiguration.rulesFilterIds.push(
+              ruleConfiguration.rulesFilters.push(
                 {
                   id: category.id,
                   name: category.name,
                   ruleFilterType: category.type,
                   externalId: category.externalId,
-                  status: 1
+                  status: 'active'
                 }
               );
               break;
             case 4:
-              ruleConfiguration.rulesFilterIds.push(
+              ruleConfiguration.rulesFilters.push(
                 {
                   id: category.id,
                   name: category.name,
                   ruleFilterType: category.type,
                   externalId: category.externalId,
-                  status: 1
+                  status: 'active'
                 }
               );
               break;
             case 5:
-              ruleConfiguration.rulesFilterIds.push(
+              ruleConfiguration.rulesFilters.push(
                 {
                   id: category.id,
                   name: category.name,
                   ruleFilterType: category.type,
                   externalId: category.externalId,
-                  status: 1
+                  status: 'active'
                 }
               );
               break;
           }
         }
 
-        let exceptions = {};
+        /*let exceptions = {};
         data.data.referencesExceptions.forEach(item => {
           if (item.type == 'include') {
             exceptions[item.reference] = 1;
@@ -247,7 +240,17 @@ export class RulesComponent implements OnInit {
           }
         });
         
-        ruleConfiguration.referenceExceptions = exceptions;
+        ruleConfiguration.referenceExceptions = exceptions;*/
+
+        let categoriesToSend = [];
+        data.data.destinationCategories.forEach(category => {
+          categoriesToSend.push({
+            name: category.name,
+            marketCategoryID: category.market_category_id
+          });
+        });
+
+        ruleConfiguration.categories = categoriesToSend;
 
         this.marketplacesService.postRulesConfigurations(ruleConfiguration).subscribe(data => {
           this.getValues();
@@ -260,6 +263,7 @@ export class RulesComponent implements OnInit {
 
   async editRule(ruleToEdit): Promise<void> {
     let rule = JSON.parse(JSON.stringify(ruleToEdit));
+    console.log(rule)
     let modal = await this.modalController.create({
       component: NewRuleComponent,
       componentProps: {

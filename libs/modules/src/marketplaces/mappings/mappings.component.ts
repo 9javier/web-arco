@@ -219,14 +219,17 @@ export class MappingsComponent implements OnInit {
   updateDataSaved() {
     this.marketplacesService.getMapDataRules().subscribe(data => {
       if (data) {
-        this.dataDBsave = data;
+        this.dataDBsave = data.data;
       } else {
         this.dataDBsave = [];
       }
 
+      console.log(this.dataDBsave)
+
       this.dataDBsave.forEach(item => {
-        switch (item.typeMapped) {
+        switch (item.type) {
           case 2:
+          case 'feature':
             let dataFeature = this.dataSourceFeatures;
 
             let featureMarket = {id: -1, name: null};
@@ -238,7 +241,7 @@ export class MappingsComponent implements OnInit {
             });
 
             dataFeature.forEach(data => {
-              if (data.avelonData.id == item.originDataId && data.avelonData.group == item.aditionalMapInfo) {
+              if (data.avelonData.id == item.originDataId && data.avelonData.group == item.additionalMapInfo) {
                 data.marketData = {
                   id: featureMarket.id,
                   name: featureMarket.name
@@ -253,6 +256,7 @@ export class MappingsComponent implements OnInit {
             }
             break;
           case 3:
+          case 'color':
             let dataColor = this.dataSourceColors;
 
             let colorMarket = {id: -1, name: null};
@@ -280,6 +284,7 @@ export class MappingsComponent implements OnInit {
             }
             break;
           case 4:
+          case 'size':
             let dataSize = this.dataSourceSizes;
 
             let sizeMarket = {id: -1, name: null};
@@ -306,6 +311,7 @@ export class MappingsComponent implements OnInit {
             }
             break;
           case 5:
+          case 'brand':
             let dataBrand = this.dataSourceBrands;
 
             let brandMarket = {id: -1, name: null};
@@ -462,16 +468,16 @@ export class MappingsComponent implements OnInit {
     let dataSend = {
       originDataId: element.avelonData.id,
       marketDataId,
-      typeMapped: 5,
+      type: "brand",
       marketId: 1,
-      aditionalMapInfo: ""
+      additionalMapInfo: "more info"
     };
 
     let update: boolean = false;
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id && item.typeMapped == 5) {
+      if (item.originDataId == element.avelonData.id && item.type == 'brand') {
         update = true;
         idToUpdate = item.id;
       }
@@ -512,16 +518,16 @@ export class MappingsComponent implements OnInit {
     let dataSend = {
       originDataId: element.avelonData.id,
       marketDataId,
-      typeMapped: 3,
+      type: 'color',
       marketId: 1,
-      aditionalMapInfo: ""
+      additionalMapInfo: "more info"
     };
 
     let update: boolean = false;
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id && item.typeMapped == 3) {
+      if (item.originDataId == element.avelonData.id && item.type == 'color') {
         update = true;
         idToUpdate = item.id;
       }
@@ -562,16 +568,16 @@ export class MappingsComponent implements OnInit {
     let dataSend = {
       originDataId: element.avelonData.id,
       marketDataId,
-      typeMapped: 4,
+      type: 'size',
       marketId: 1,
-      aditionalMapInfo: ""
+      additionalMapInfo: "more info"
     };
 
     let update: boolean = false;
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id && item.typeMapped == 4) {
+      if (item.originDataId == element.avelonData.id && item.type == 'size') {
         update = true;
         idToUpdate = item.id;
       }
@@ -612,16 +618,16 @@ export class MappingsComponent implements OnInit {
     let dataSend = {
       originDataId: element.avelonData.id,
       marketDataId,
-      typeMapped: 2,
+      type: 'feature',
       marketId: 1,
-      aditionalMapInfo: element.avelonData.group
+      additionalMapInfo: element.avelonData.group
     };
 
     let update: boolean = false;
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id && item.typeMapped == 2 && item.aditionalMapInfo == element.avelonData.group) {
+      if (item.originDataId == element.avelonData.id && item.type == 'feature' && item.additionalMapInfo == element.avelonData.group) {
         update = true;
         idToUpdate = item.id;
       }

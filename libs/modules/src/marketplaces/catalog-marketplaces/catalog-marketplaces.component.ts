@@ -41,6 +41,12 @@ export class CatalogMarketplacesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    
+    this.marketplacesService.getProductCatalog().subscribe(data => {
+        console.log(data.data)
+        this.products = data.data;
+        this.catalogTableData = new MatTableDataSource(this.products);
+    });
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'KO', 'Mini', 'Amazon', 'Spartoo', 'Zalando', 'CDiscount'];
 
     this.products = [];
