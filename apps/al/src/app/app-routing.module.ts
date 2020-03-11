@@ -55,7 +55,7 @@ const routes: Routes = [
     path: 'picking-scan-packing',
     loadChildren: '../../../../libs/modules/src/picking-scan-packing/picking-scan-packing.module#PickingScanPackingModule',
     data: {
-      name: 'Asociar pares a embalaje'
+      name: 'Asociar pares a embalajes'
     }
   },
   {

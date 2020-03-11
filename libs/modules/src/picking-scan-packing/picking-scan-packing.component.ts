@@ -59,7 +59,7 @@ export class PickingScanPackingComponent implements OnInit {
                   if (this.pickingProvider.listProductsProcessedToStorePickings && this.pickingProvider.listProductsProcessedToStorePickings.length > 0) {
                     await this.pickingScanditService.picking(true);
                   } else {
-                    this.message = 'No hay ningún producto procesado para asociar a un embalaje.';
+                    this.message = 'No hay ningún producto procesado para asociar a embalajes.';
                   }
                 }
               });
@@ -74,7 +74,7 @@ export class PickingScanPackingComponent implements OnInit {
         }
 
       } else {
-        console.error('Error Subscribe::List line-requests by store::', res);
+        this.message = 'No hay ningún producto procesado para asociar a embalajes.';
       }
     },(error) => {
       console.error('Error Subscribe::List line-requests by store::', error);
