@@ -21,11 +21,11 @@ import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
 @Component({
-  selector: 'suite-incidents',
-  templateUrl: './incidents.component.html',
-  styleUrls: ['./incidents.component.scss']
+  selector: 'defects-sga',
+  templateUrl: './defects-sga.component.html',
+  styleUrls: ['./defects-sga.component.scss']
 })
-export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class DefectsSgaComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   principal: boolean = true;
   dataUrl: string;
@@ -154,9 +154,14 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       productReference: '',
       dateDetection:[this.date],
       observations: '',
+      numberObservations: 1,
       factoryReturn: [false],
+      isHistory: [false],
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
+      defectType: [0],  
+      gestionState: [0],
+      photosFileIds: [ [{ "id": 1 }]],
       signFileId: [1], 
       contact: this.fb.group({
         name: '',
@@ -217,6 +222,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           this.incidenceForm.patchValue({
             barcode: resp.product.reference,
             registerDate: Date.now(),
+            defectType: resp.defectTypeChild.id,
             observations: resp.observations,
             gestionState: resp.statusManagementDefect.id,
             // gestionState: resp.defectTypeChildId.id,
@@ -327,8 +333,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     else{
       this.incidenceForm.patchValue({
         statusManagementDefectId: this.managementId,
-        defectTypeChildId: this.defectChildId,
-      });
+        defectTypeChildId: this.defectChildId,});
       let object = this.incidenceForm.value;
       delete object.contact;
       this.sendToDefectsWithoutContact(object);
@@ -385,10 +390,13 @@ async enviaryarn() {
           productId: 1,
           productReference: '',
           dateDetection: this.dateNow,
+          numberObservations: 0,
           observations: '',
           factoryReturn: false,
+          isHistory: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectType: 0,
           gestionState: 0,
           photosFileIds: 0,
           signFileId: 0,
@@ -457,10 +465,15 @@ async enviaryarn() {
           productId: 1,
           productReference: '',
           dateDetection: this.dateNow,
+          numberObservations: 0,
           observations: '',
           factoryReturn: false,
+          isHistory: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectTypeParentId: 1,
+          defectType: 0,  
+          gestionState: 0,
           photosFileIds: [],
           signFileId: 0,
           contact: {
@@ -483,7 +496,25 @@ async enviaryarn() {
       }
     );
 
-   
+    console.log("aqui mero", this.incidenceForm)
+     
+      await This.intermediary.presentLoading('Enviando...')
+  
+      if(this.ticketEmit == true){
+        this.print();
+      }
+      This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
+        resp => {
+          This.intermediary.dismissLoading()
+          This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
+          this.router.navigateByUrl('/defect-handler');
+        },
+        e => {
+          This.intermediary.dismissLoading()
+          This.intermediary.presentToastError(e.error)
+        }
+      );
+     
   }
 
 
@@ -504,10 +535,16 @@ async enviaryarn() {
           productId: 1,
           productReference: '',
           dateDetection: this.dateNow,
+          numberObservations: 0,
           observations: '',
           factoryReturn: false,
+          isHistory: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectTypeParentId: 1,
+          defectType: 0,
+          gestionState: 0,
+          photosFileIds: [{ "id": 1 }],
           signFileId: 0
         })
         This.intermediary.dismissLoading()
@@ -522,7 +559,24 @@ async enviaryarn() {
       }
     );
 
-   
+    console.log("aqui mero", this.incidenceForm)
+     
+      await This.intermediary.presentLoading('Enviando...')
+  
+      if(this.ticketEmit == true){
+        this.print();
+      }
+      This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
+        resp => {
+          This.intermediary.dismissLoading()
+          This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
+          this.router.navigateByUrl('/defect-handler');
+        },
+        e => {
+          This.intermediary.dismissLoading()
+          This.intermediary.presentToastError(e.error)
+        }
+      );
      
   }
   // async presentModal() {
@@ -579,12 +633,20 @@ async enviaryarn() {
     }
 
     this.select1 = true;
-  
+    console.log(this.select1, this.select2);
+    this.incidenceForm.patchValue({
+      gestionState: parseInt(e.detail.value)
+    });
+
     
   }
   defectChange(e) {
     this.select2 = true;
     console.log(e);
+    this.incidenceForm.patchValue({
+      defectType: parseInt(e.detail.value)
+    })
+
     this.defectChildId = e.detail.value;
   }
 

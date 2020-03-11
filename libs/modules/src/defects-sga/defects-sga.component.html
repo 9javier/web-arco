@@ -25,7 +25,7 @@
 
     <ion-item>
       <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
-      <ion-select (ionChange)="defectChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
+      <ion-select (ionChange)="defectChange($event)" formControlName="defectType" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
         <ion-select-option *ngFor="let defect of defects" [value]="defect.id">{{defect.name +" - "+ defect.defectTypeParent.name}}</ion-select-option>
       </ion-select>
     </ion-item>
