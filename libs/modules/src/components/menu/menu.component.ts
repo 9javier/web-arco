@@ -763,7 +763,13 @@ export class MenuComponent implements OnInit {
       title: 'Defectuosos',
       icon:'warning',
       url: '/defect-handler'
-    }
+    },
+    {
+      title: 'Drop Files',
+      id: 'drop-file',
+      url: '/drop-files',
+      icon: 'folder'
+    },
 
   ];
   private menuPages = {
