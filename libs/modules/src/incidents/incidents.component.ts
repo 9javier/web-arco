@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input, OnChanges, AfterViewInit, OnDestroy } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import * as moment from 'moment'
 import { IonSlides, ModalController } from '@ionic/angular';
 import {Router} from '@angular/router';
@@ -105,10 +105,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   
     this.uploadService.signatureEventAsign().subscribe(resp => {
-      this.intermediary.presentLoading()
       console.log(this.signatures);
       
       if (resp) {
+        this.intermediary.presentLoading()
         if(this.signatures) {
 
           this.uploadService.deleteFile(this.signatures.id).subscribe(
@@ -123,8 +123,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
             }
           )
         }
-        this.signatures = resp 
       }
+      this.signatures = resp 
       if (!this.signatureList) {
         this.openSignatureList()
       }
@@ -184,7 +184,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       factoryReturn: [false],
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
-      signFileId: [1],
       gestionState: 0,
       contact: this.fb.group({
         name: '',
@@ -321,6 +320,16 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       console.log("email false");
     }
 
+    if(!this.requireOk && !this.signatures) {
+      msg = "La firma es requerida";
+      validation = false;
+    }
+
+    if (!this.requirePhoto && this.photos.length == 0) {
+      msg = "Debe capturar por lo menos una foto";
+      validation = false;
+    }
+
     if(msg == undefined){ 
 
     }else{
@@ -344,9 +353,20 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   
   
   send(){
+    if (this.requirePhoto) {
+      let photos = []
+      this.photos.forEach(elem => {
+        photos.push({ id: elem.id });
+      });
+      this.incidenceForm.addControl('photosFileIds', new FormControl(photos))
+    }
 
+    if (this.requireOk) {
+      console.log('signFileId');
+      this.incidenceForm.addControl('signFileId', new FormControl(this.signatures.id))
+    }
     console.log("aqui "+this.requireContact);
-    console.log(this.incidenceForm);
+    console.log(this.incidenceForm.value);
     if(this.requireContact == true){
       if(this.validate()){
         this.sendToIncidents();
@@ -362,10 +382,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       this.sendToDefectsWithoutContact(object);
     }
 
-    let photos = []
-    this.photos.forEach(elem => {
-      photos.push({ id: elem.id });
-    });
+    
    /* this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
@@ -479,7 +496,6 @@ async enviaryarn() {
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
-
     })
    
 
@@ -487,7 +503,6 @@ async enviaryarn() {
 
     This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
       resp => {
-
         if(this.ticketEmit == true){
           this.print();
         }
@@ -773,6 +788,7 @@ async enviaryarn() {
     this.uploadService.deleteFile(item.id).subscribe(
       resp => {
         this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
+        this.uploadService.setSignature(null)
       },
       err => {
         this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
