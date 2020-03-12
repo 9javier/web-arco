@@ -99,3 +99,31 @@ mat-expansion-panel {
     width: 100%;
   }
 }
+
+ion-slides, ion-slide,scanner-manual, form {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.contact{
+  margin-top: 3%;
+}
+
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.example-full-width {
+  width: 100%;
+}
+
+.input-barcode{
+    text-align: center;
+    margin-left: 5%;
+}
+
+.label-text{
+  font-weight: bold;
+}

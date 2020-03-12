@@ -16,7 +16,9 @@ import { ReviewImagesComponent } from './components/review-images/review-images.
 import { ProductModel, ProductsService } from '@suite/services';
 import { AlertController } from "@ionic/angular";
 import { PositionsToast } from '../../../services/src/models/positionsToast.type';
+import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
 
+//import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
 @Component({
   selector: 'suite-incidents',
@@ -27,14 +29,15 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   principal: boolean = true;
   dataUrl: string;
-
-
+  select1: boolean = false;
+  select2: boolean = false;
+  allDefectType=[];
   ticketEmit: boolean;
   passHistory:boolean;
   requirePhoto:boolean;
-  requireContact: boolean;
+  requireContact: boolean = false;
   requireOk: boolean;
-  checkHistory: true;
+  checkHistory: boolean;
   txtName =""
   txtEmail="";
   txtTel="";
@@ -84,6 +87,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     private productsService: ProductsService,
     private intermediaryService: IntermediaryService,
     private alertController: AlertController,
+    private toolbarProvider: ToolbarProvider
+
   ) { 
 
 
@@ -92,12 +97,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   ngOnInit() {
 
     this.signatures = null;
+    
+    this.toolbarProvider.currentPage.next("Registro defectuoso")
     this.photos = [];
     console.log(this.photos);
     console.log(this.signatures);
 
-    
-    this.defectType();
+  
     this.uploadService.signatureEventAsign().subscribe(resp => {
       this.intermediary.presentLoading()
       console.log(this.signatures);
@@ -125,12 +131,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       console.log(resp);
     })
 
-    this.initForm();
+   
     this.date = moment().format('DD-MM-YYYY');
     this.initForm();
     this.readed = false;
     const navigation = this.router.getCurrentNavigation();    
     if(navigation.extras.state!=undefined){
+      this.readed = true;
       this.barcodeRoute = navigation.extras.state['reference'];
     }
     this.initDinamicFields();
@@ -152,12 +159,22 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.photos = []
   }
 
-  defectType(){
-    //let res = this.statusManagament['classifications'].find( x => x.defectType == id);
+  defectType(defecType_){
+
+      let defecType =[];
+      defecType_['classifications'].forEach(element => {
+        let res = defecType_['statuses'].find( x => x.id == element.defectType);
+        if(res != undefined){
+          defecType.push(res);
+        }
+      });
+      this.allDefectType = defecType;
 
   }
 
   initForm() {
+
+    let phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     this.incidenceForm = this.fb.group({
       productId: 1,
       productReference: '',
@@ -165,30 +182,28 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       observations: '',
       numberObservations: 1,
       factoryReturn: [false],
-      isHistory: [false],
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
-      defectType: [0],  
-      gestionState: [0],
-      photosFileIds: [ [{ "id": 1 }]],
       signFileId: [1],
+      gestionState: 0,
       contact: this.fb.group({
         name: '',
         email: '',
-        phone: ''
-      })
+        phone: ['']
+      }) 
+      
     })
   }
 
   async initDinamicFields() {
     this.incidentsService.getDefectTypesChild().subscribe(resp => {
-      //console.log('getDefectTypesChild', resp);
       this.defects = resp;
       
     })
     this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
-      //console.log('getDtatusManagamentDefect', resp);
       this.statusManagament = resp
+      this.types = resp.statuses;
+      this.defectType(resp);
     })
     this.loadFromDBValues();
   }
@@ -201,26 +216,19 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         "productId":this.barcodeRoute,
         "productReference":""
       }
-
-      console.log("body", body);
-
-      await this.incidentsService.getDtatusManagamentDefect().subscribe(resp=>{
-        // console.log("resp no se que", resp);
-        this.types = resp.statuses;
-      });
-
       await this.incidentsService.getOneIncidentProductById(body).subscribe(resp=>{
-
-        
+                
           // this.types = resp.data;
-          // resp = resp.data;
+          resp = resp.data;
+          // let contact = resp.contact;
           console.log('result', resp);
+          // console.log('contact', contact);
 
           this.statusManagament = {
             'classifications' : resp.statusManagementDefect
           }
           
-          // console.log("resp status ", resp.statusManagementDefect);
+          console.log("resp status ", resp.statusManagementDefect);
 
           this.statusManagament["classifications"] = resp.statusManagementDefect;
 
@@ -231,17 +239,22 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           this.incidenceForm.patchValue({
             barcode: resp.product.reference,
             registerDate: Date.now(),
-            defectType: resp.defectTypeChild.id,
             observations: resp.observations,
             gestionState: resp.statusManagementDefect.id,
             // gestionState: resp.defectTypeChildId.id,
             photo: resp.photo,
             validation: resp.validation,
-            
-          });
-
-
-          this.readed = true;
+            isHistory: resp.isHistory,
+            statusManagementDefectId: resp.statusManagementDefect.id,
+            defectTypeChildId: resp.defectTypeChild.id,
+            // photosFileIds: [ [{ "id": 1 }]],
+            // signFileId: [1],
+            // contact: this.fb.group({
+            //   name: contact.name,
+            //   email: contact.email,
+            //   phone: contact.phone
+            // })            
+          });          
           this.typeIdBC = resp.statusManagementDefect.id;
 
           let sendtoGestionChange = {
@@ -260,7 +273,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   newValue(e){
     console.log(e);
-    this.barcode = e
+    this.barcode = e;
     if (this.barcode && this.barcode.length > 0) {
 
       this.incidenceForm.patchValue({
@@ -276,7 +289,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     console.log("on new Value");
     console.log(this.statusManagament);
   }
-  async print(){
+   print(){
     console.log("imprimir...")
   }
 
@@ -327,12 +340,33 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   onKeyTel(event){
     this.txtTel = event.target.value;
   }
+  
+  
+  
   send(){
+
+    console.log("aqui "+this.requireContact);
+    console.log(this.incidenceForm);
+    if(this.requireContact == true){
+      if(this.validate()){
+        this.sendToIncidents();
+      }
+    }
+    else{
+      this.incidenceForm.patchValue({
+        statusManagementDefectId: this.managementId,
+        defectTypeChildId: this.defectChildId,
+      });
+      let object = this.incidenceForm.value;
+      delete object.contact;
+      this.sendToDefectsWithoutContact(object);
+    }
+
     let photos = []
     this.photos.forEach(elem => {
       photos.push({ id: elem.id });
     });
-    this.incidenceForm.patchValue({
+   /* this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
       signFileId: this.signatures.id,
@@ -342,14 +376,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         email: this.txtEmail,
         phone: this.txtTel
       }
-
-    })
-    console.log("validacion "+this.validate());  
-    if(this.validate()){
-      this.sendToIncidents();
-    }
-    // this.sendToIncidents();
+    })*/
+  
   }
+
 
 async enviaryarn() {
     let photos = []
@@ -368,35 +398,44 @@ async enviaryarn() {
       //   phone: this.txtTel,
       // },
     })
+    console.log("hello world",this.incidenceForm);
     let This = this;
     await This.intermediary.presentLoading('Enviando...')
     if(this.ticketEmit == true){
       this.print();
     }
+
+    if(this.incidenceForm.value.observations==null){
+      this.incidenceForm.patchValue({
+        observations:"None",
+      })
+    }
+
+    let object = this.incidenceForm.value;
+    if(!this.requireContact){      
+      delete object.contact;
+    }
     // setTimeout(async () => {
     //   await this.intermediary.dismissLoading()
     // }, 3000)
-    This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
+    This.incidentsService.addRegistry(object).subscribe(
       resp => {
         this.readed = false
         this.incidenceForm.patchValue({
-          productId: 1,
+          // productId: 1,
           productReference: '',
           dateDetection: this.dateNow,
-          numberObservations: 0,
           observations: '',
           factoryReturn: false,
-          isHistory: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
-          defectType: 0,
           gestionState: 0,
           photosFileIds: 0,
           signFileId: 0,
           contact: {
-            name: '',
-            email: '',
-            phone: ''
+            name: this.txtName,
+            email: this.txtEmail,
+            phone: this.txtTel
           }
         })
         This.intermediary.dismissLoading()
@@ -436,27 +475,32 @@ async enviaryarn() {
   
 
   async sendToIncidents() {
+    this.incidenceForm.value.contact.phone = this.txtTel+"";
+    this.incidenceForm.patchValue({
+      statusManagementDefectId: this.managementId,
+      defectTypeChildId: this.defectChildId,
+
+    })
+   
 
     let This = this;
-    // setTimeout(async () => {
-    //   await this.intermediary.dismissLoading()
-    // }, 3000)
+
     This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
       resp => {
+
+        if(this.ticketEmit == true){
+          this.print();
+        }
+
         this.readed = false
         this.incidenceForm.patchValue({
           productId: 1,
           productReference: '',
           dateDetection: this.dateNow,
-          numberObservations: 0,
           observations: '',
           factoryReturn: false,
-          isHistory: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
-          defectTypeParentId: 1,
-          defectType: 0,  
-          gestionState: 0,
           photosFileIds: [],
           signFileId: 0,
           contact: {
@@ -479,27 +523,48 @@ async enviaryarn() {
       }
     );
 
-    console.log("aqui mero", this.incidenceForm)
-     
-      await This.intermediary.presentLoading('Enviando...')
-  
-      if(this.ticketEmit == true){
-        this.print();
-      }
-      This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
-        resp => {
-          This.intermediary.dismissLoading()
-          This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
-          this.router.navigateByUrl('/defect-handler');
-        },
-        e => {
-          This.intermediary.dismissLoading()
-          This.intermediary.presentToastError(e.error)
-        }
-      );
-     
+   
   }
 
+
+
+  async sendToDefectsWithoutContact(object) {
+
+
+    let This = this;
+    This.incidentsService.addRegistry(object).subscribe(
+      resp => {
+
+        if(this.ticketEmit == true){
+          this.print();
+        }
+
+        this.readed = false
+        this.incidenceForm.patchValue({
+          productId: 1,
+          productReference: '',
+          dateDetection: this.dateNow,
+          observations: '',
+          factoryReturn: false,
+          statusManagementDefectId: 0,
+          defectTypeChildId: 0,
+          signFileId: 0
+        })
+        This.intermediary.dismissLoading()
+        This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
+        this.router.navigateByUrl('/defect-handler');
+      },
+      e => {
+        console.log(e);
+        
+        This.intermediary.dismissLoading()
+        This.intermediary.presentToastError(e.error.errors)
+      }
+    );
+
+   
+     
+  }
   // async presentModal() {
   //   const modal = await this.modalController.create({
   //   component: PhotoModalComponent,
@@ -518,7 +583,6 @@ async enviaryarn() {
   //   }
   // }
   gestionChange(e) {
-    
     let id = e.detail.value;
     console.log("this.statusManagament",this.statusManagament);
     let res;
@@ -542,7 +606,7 @@ async enviaryarn() {
       this.requireContact = res.requireContact;
       this.requireOk = res.requireOk;
       this.managementId = res.id;
-      this.defectChildId = id;
+      
     }else{
       this.ticketEmit = false;
       this.passHistory = false;
@@ -551,18 +615,14 @@ async enviaryarn() {
       this.requireOk = false;
     }
 
-
-    this.incidenceForm.patchValue({
-      gestionState: parseInt(e.detail.value)
-    });
-
+    this.select1 = true;
+  
     
   }
   defectChange(e) {
+    this.select2 = true;
     console.log(e);
-    this.incidenceForm.patchValue({
-      defectType: parseInt(e.detail.value)
-    })
+    this.defectChildId = e.detail.value;
   }
 
   ngAfterViewInit() {
@@ -574,7 +634,6 @@ async enviaryarn() {
   }
 
   ngOnChanges(){
-      
   }
   
 
@@ -747,34 +806,45 @@ async enviaryarn() {
 
 
   private getSizeListByReference(dataWrote: string) {
-    this.productsService.getInfo(dataWrote).then(async (res: ProductModel.ResponseInfo) => {
-        if (res.code === 200) {
-          this.readed = true
-        } else if (res.code === 0) {
-          this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
-            this.readed = false
-          });
-
-        } else {
+    const body = {
+      reference: dataWrote
+    };
+    this.productsService.verifyProdcut(body).subscribe((res)=>{
+      if(res !== undefined){
+        this.intermediaryService.presentToastError('El producto solicitado ya se encuentra registrado', PositionsToast.BOTTOM).then(() => {
+          this.readed = false
+        });
+      }else{
+        this.productsService.getInfo(dataWrote).then(async (res: ProductModel.ResponseInfo) => {
+          if (res.code === 200) {
+            this.readed = true
+          } else if (res.code === 0) {
+            this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
+              this.readed = false
+            });
+  
+          } else {
+            this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+              this.readed = false
+            });
+  
+          }
+        }, (error) => {
+          console.error('Error::Subscribe::GetInfo -> ', error);
           this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
             this.readed = false
           });
-
-        }
-      }, (error) => {
-        console.error('Error::Subscribe::GetInfo -> ', error);
-        this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
-          this.readed = false
+  
+        })
+        .catch((error) => {
+          console.error('Error::Subscribe::GetInfo -> ', error);
+          this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+            this.readed = false
+          });
         });
-
-      })
-      .catch((error) => {
-        console.error('Error::Subscribe::GetInfo -> ', error);
-        this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
-          this.readed = false
-        });
-
-      });
+      }
+    });
+    
   }
 
 

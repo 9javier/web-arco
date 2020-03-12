@@ -8,7 +8,7 @@ import { ProductModel } from '../../../models/endpoints/Product';
 
 import { environment } from '../../../environments/environment';
 import {map, switchMap} from 'rxjs/operators';
-import {from} from "rxjs";
+import { from, observable } from 'rxjs';
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 import { UserModel } from '../../..';
@@ -28,7 +28,7 @@ export class ProductsService {
   private relabelPrint: string = environment.apiBase + '/products/relabel/print';
   private getAllFiltersUrl: string = environment.apiBase + '/filter/prices/tariff/entities';
   private postDamagedListUrl: string = environment.apiBase + '/classification';
-  private postDamagedFiltersUrl: string = environment.apiBase + '/products/damaged/filters';
+  private verifyProductDefectUrl: string = environment.apiBase + '/defects/registry/veifyProduct';
 
   constructor(
     private http: HttpClient,
@@ -94,5 +94,11 @@ export class ProductsService {
 
   postDamagedNew(parameters?: any): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.put(this.postDamagedListUrl, parameters); // ToDo: Change URL Endpoint
+  }
+
+  verifyProdcut(body):Observable<any>{
+    return this.http.post(this.verifyProductDefectUrl, body).pipe(map((response:any)=>{
+      return response.data;
+    }));
   }
 }

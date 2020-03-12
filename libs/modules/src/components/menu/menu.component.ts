@@ -386,6 +386,12 @@ export class MenuComponent implements OnInit {
           id: 'state-expedition-avelon',
           url: '/state-expedition-avelon/menu',
           icon: 'cog'
+        },
+        {
+          title: 'Temporadas habilitadas',
+          id: 'seasons-enabled',
+          url: '/seasons-enabled',
+          icon: 'cog'
         }
       ]
     },
@@ -520,6 +526,13 @@ export class MenuComponent implements OnInit {
           icon: 'qr-scanner',
           url: '/picking-tasks',
           tooltip: 'Traspasos pendientes de realizar'
+        },
+        {
+          title: 'Asociar pares a embalajes',
+          id: 'picking-scan-packing',
+          icon: 'qr-scanner',
+          url: '/picking-scan-packing',
+          tooltip: 'Asociar pares procesados para traspasos a embalajes y precintarlos'
         },
         {
           title: 'Tareas de picking con cámara',
@@ -724,7 +737,7 @@ export class MenuComponent implements OnInit {
         }
       ]
     },
-    {
+   /* {
       title: 'Manejo de defectos',
       open: false,
       type: 'wrapper',
@@ -732,7 +745,7 @@ export class MenuComponent implements OnInit {
       children: [
         {
           id:'incidents',
-          title: 'Lista de defectos',
+          title: 'Registro defectuso',
           icon:'warning',
           url: '/defect-handler'
         },
@@ -743,7 +756,15 @@ export class MenuComponent implements OnInit {
         //   url: '/signature'
         // }
       ]
-    },
+    },*/
+
+    {
+      id:'incidents',
+      title: 'Defectuosos',
+      icon:'warning',
+      url: '/defect-handler'
+    }
+
   ];
   private menuPages = {
     sga: this.sgaPages,
@@ -782,6 +803,10 @@ export class MenuComponent implements OnInit {
     this.toolbarProvider.currentPage.next(item.title);
     this.toolbarProvider.optionsActions.next([]);
     this.menuTitle.emit(item.title);
+  }
+
+  setTitle(title){
+    this.toolbarProvider.currentPage.next(title);
   }
 
   loadUpdate() {

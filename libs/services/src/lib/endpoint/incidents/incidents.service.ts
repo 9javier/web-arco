@@ -41,6 +41,8 @@ export class IncidentsService {
     return this.http.post<HttpRequestModel.Response>(this.getByIdIncidentProductUrl, data).pipe(map(resp => resp.data));
   }
 
+  
+
 
 
 }
