@@ -69,13 +69,13 @@ export class RulesComponent implements OnInit {
         for (let ruleConfiguration of data.data) {
           let type = "";
           let categories = [];
-          switch (ruleConfiguration.ruleType) {
+          switch (ruleConfiguration.type) {
             case 0:
               break;
-            case 1:
+            case "disabling":
               type = "enabling";
               break;
-            case 2:
+            case "categories":
               type = "categories";
               categories = ruleConfiguration.productCategories;
               break;
@@ -166,7 +166,7 @@ export class RulesComponent implements OnInit {
         let ruleConfiguration = {
           name: data.data.name,
           description: data.data.description,
-          ruleType: 0,
+          type: "disabling",
           status: "active",
           rulesFilters: [],
           marketsIDs: [
@@ -180,11 +180,11 @@ export class RulesComponent implements OnInit {
 
         switch (data.data.filterType) {
           case "enabling":
-            ruleConfiguration.ruleType = 1;
+            ruleConfiguration.type = "disabling";
             break;
 
           case "categories":
-            ruleConfiguration.ruleType = 2;
+            ruleConfiguration.type = "categories";
             break;
         }
 
@@ -293,7 +293,7 @@ export class RulesComponent implements OnInit {
           id: ruleToEdit.id,
           name: data.data.name,
           description: data.data.description,
-          ruleType: 0,
+          type: "disabling",
           status: 1,
           rulesFilterIds: [],
           marketsIds: [
@@ -307,11 +307,11 @@ export class RulesComponent implements OnInit {
 
         switch (data.data.filterType) {
           case "enabling":
-            ruleConfiguration.ruleType = 1;
+            ruleConfiguration.type = "disabling";
             break;
 
           case "categories":
-            ruleConfiguration.ruleType = 2;
+            ruleConfiguration.type = "categories";
             break;
         }
 
