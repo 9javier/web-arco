@@ -60,12 +60,12 @@
           <ion-icon name="images"></ion-icon>
         </ion-button>
       </ion-item>
-      <ion-item *ngIf="requirePhoto == true" (click)="openPhotoList()" lines="none">
+      <ion-item *ngIf="photos.length > 0 &&  requirePhoto == true" (click)="openPhotoList()" lines="none">
         <ion-label class="label-text">Fotos</ion-label>
         <ion-icon slot="end" *ngIf="photoList" name="arrow-down"></ion-icon>
         <ion-icon slot="end" *ngIf="!photoList" name="arrow-up"></ion-icon>
       </ion-item>
-      <ion-list *ngIf="photoList && requirePhoto">
+      <ion-list *ngIf=" photos.length > 0 && photoList && requirePhoto">
         <ion-item  lines="none" *ngFor="let item of photos; let i = index">
           <ion-img (click)="onOpenReviewModal(item)" slot="end" [src]="item.locationIcon"></ion-img>
             <ion-button (click)="deleteImage(item, i, photos)">
@@ -81,20 +81,20 @@
           <ion-icon name="finger-print"></ion-icon>
         </ion-button>
       </ion-item>
-      <ion-item *ngIf="requireOk == true" (click)="openSignatureList()" lines="none">
+      <ion-item *ngIf="signatures && requireOk == true" (click)="openSignatureList()" lines="none">
         <ion-label class="label-text">Firma</ion-label>
         <ion-icon slot="end" *ngIf="signatureList" name="arrow-down"></ion-icon>
         <ion-icon slot="end" *ngIf="!signatureList" name="arrow-up"></ion-icon>
       </ion-item>
-      <ion-list  *ngIf="signatureList && requireOk">
-        <ion-item lines="none" *ngFor="let item of signatures; let i = index">
-          <ion-img (click)="onOpenReviewModal(item)" slot="start" [src]="item.pathIcon"></ion-img>
-          <ion-button slot="end" (click)="deleteImage(item, i, signatures)">
+      <ion-list  *ngIf="signatures && signatureList && requireOk">
+        <ion-item lines="none">
+          <ion-img (click)="onOpenReviewModal(signatures)" slot="start" [src]="signatures.pathIcon"></ion-img>
+          <ion-button slot="end" (click)="deleteSignature(signatures)">
             <ion-icon slot="icon-only" name="trash"></ion-icon>
           </ion-button>
         </ion-item>
       </ion-list>
-      <ion-label>{{imgUrl}}</ion-label>
+      <!-- <ion-label>{{imgUrl}}</ion-label> -->
       <ion-item lines="none">
         <ion-label class="ion-text-capitalize label-text">devolución a fabrica</ion-label>
         <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
