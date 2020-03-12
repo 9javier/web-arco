@@ -356,3 +356,8 @@ export * from './signature/signature.module'
 //seasons enabled reception
 export  * from './seasons-enabled/seasons-enabled.component'
 export  * from './seasons-enabled/seasons-enabled.module';
+
+
+//Drop Files
+export * from './drop-files/drop-files.component'
+export * from './drop-files/drop-files.module'
