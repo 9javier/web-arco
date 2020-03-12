@@ -112,6 +112,9 @@ export namespace ReceptionAvelonModel {
     delivery_date: string,
     shipper: string,
     states_list: number[],
-    reception_enabled: boolean
+    reception_enabled: boolean,
+    expeditionPallets: number,
+    expeditionPackings: number,
+    expeditionStates: number[]
   }
 }
