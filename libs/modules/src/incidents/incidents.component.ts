@@ -158,7 +158,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       factoryReturn: [false],
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
-      signFileId: [1], 
+      signFileId: [1],
+      gestionState: 0,
       contact: this.fb.group({
         name: '',
         email: '',

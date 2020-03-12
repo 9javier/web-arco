@@ -9,41 +9,104 @@
     </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list>
-    <ion-item>
-      <ion-label>
-        Fecha de Detección: {{registry?.dateDetection | date:"dd/MM/yyyy HH:mm:ss" }}
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Número de Observaciones: {{registry?.numberObservations}}
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Retorno a Fábrica: {{registry?.factoryReturn ? 'Si' : 'No'}}
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Código de Producto: {{registry?.product.reference}}
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Almacén: {{registry?.warehouse ? (registry?.warehouse.reference + " - " + registry?.warehouse.name) : ""}}
-      </ion-label>
-    </ion-item>
-    <mat-expansion-panel *ngIf="registry?.photos?.length > 0">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Foto
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <ion-item *ngFor="let photo of registry.photos">
-        <img src="{{photo}}" alt="" />
+  <form [formGroup]="incidenceForm">
+  <ion-item>
+    <ion-label class="label-text">Producto:</ion-label>
+    <ion-input class="input-barcode" type="text" readonly>{{registry.product.reference}}</ion-input><br>
+  </ion-item>
+  <ion-item>
+    <ion-label class="label-text">Fecha</ion-label>
+    <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format disabled></ion-datetime>
+  </ion-item>
+  <ion-item>
+    <ion-label class="label-text">Estado de gestion</ion-label>
+    <ion-select  (ionChange)="gestionChange($event)" placeholder="Selecciona">
+      <ion-select-option  ></ion-select-option>
+    </ion-select>
+  </ion-item> 
+
+  <ion-item>
+    <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
+    <ion-input style="margin-left: 10%;" disabled>{{ ParentAndChild }}</ion-input>
+    <!--<ion-select (ionChange)="defectChange($event)" placeholder="Selecciona" disabled>
+      <ion-select-option >{{ ParentAndChild }}</ion-select-option>
+    </ion-select> -->
+  </ion-item>
+
+
+  <ion-item>
+    <ion-label position="floating" class="label-text">Observaciones</ion-label>
+    <ion-textarea  formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-textarea>
+  </ion-item>
+
+  <div *ngIf="requireContact == true" class="contact">
+    <div formGroupName = "contact">
+      <ion-item lines="none">
+        <ion-label class="ion-text-capitalize label-text">Contacto</ion-label><br>
       </ion-item>
-    </mat-expansion-panel>
+     <ion-item lines="none">
+       <ion-input type="text" formControlName="name"  (keyup)="onKeyName($event)" placeholder="Nombre" maxlength="50"></ion-input><br>
+     </ion-item>
+     <ion-item lines="none">
+       <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo" maxlength="50"></ion-input><br>
+     </ion-item>
+     <ion-item lines="none">
+       <ion-input type="number" formControlName="phone"  (keyup)="onKeyTel($event)" placeholder="Teléfono" maxlength="25"></ion-input>
+     </ion-item>
+    </div>
+  </div>
+
+  <ion-item lines="none" *ngIf="requirePhoto == true" lines="none">
+    <ion-label class="ion-text-capitalize label-text">capturar / buscar fotos</ion-label>
+    <ion-button (click)="takePhoto()">
+      <ion-icon name="camera"></ion-icon>
+    </ion-button>
+    <ion-button (click)="searchPhoto()">
+      <ion-icon name="images"></ion-icon>
+    </ion-button>
+  </ion-item>
+  <ion-item *ngIf="requirePhoto == true" (click)="openPhotoList()" lines="none">
+    <ion-label class="label-text">Fotos</ion-label>
+    <ion-icon slot="end" *ngIf="photoList" name="arrow-down"></ion-icon>
+    <ion-icon slot="end" *ngIf="!photoList" name="arrow-up"></ion-icon>
+  </ion-item>
+  <ion-list *ngIf="photoList && requirePhoto">
+    <ion-item  lines="none" *ngFor="let item of photos; let i = index">
+      <ion-img (click)="onOpenReviewModal(item)" slot="end" [src]="item.pathIcon"></ion-img>
+        <ion-button (click)="deleteImage(item, i, photos)">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-button>
+    </ion-item>
   </ion-list>
+ 
+
+  <ion-item lines="none" *ngIf="requireOk == true">
+    <ion-label lines="none" class="ion-text-capitalize label-text">generar firma</ion-label>
+    <ion-button (click)="signModal()">
+      <ion-icon name="finger-print"></ion-icon>
+    </ion-button>
+  </ion-item>
+  <ion-item *ngIf="requireOk == true" (click)="openSignatureList()" lines="none">
+    <ion-label class="label-text">Firma</ion-label>
+    <ion-icon slot="end" *ngIf="signatureList" name="arrow-down"></ion-icon>
+    <ion-icon slot="end" *ngIf="!signatureList" name="arrow-up"></ion-icon>
+  </ion-item>
+  <ion-list  *ngIf="signatureList && requireOk">
+    <ion-item lines="none" *ngFor="let item of signatures; let i = index">
+      <ion-img (click)="onOpenReviewModal(item)" slot="start" [src]="item.pathIcon"></ion-img>
+      <ion-button slot="end" (click)="deleteImage(item, i, signatures)">
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+  <ion-label>{{imgUrl}}</ion-label>
+  <ion-item lines="none">
+    <ion-label class="ion-text-capitalize label-text">devolución a fabrica</ion-label>
+    <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
+  </ion-item>
+
+  <ion-button   (click)="send()" expand="block" shape="round">
+    actualizar
+  </ion-button>
+  </form>
 </ion-content>
