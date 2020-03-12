@@ -12,6 +12,7 @@ import { HideKeyboardModule } from 'hide-keyboard';
 import { CdkTableModule } from '@angular/cdk/table';
 import { SignatureComponent } from '../signature/signature.component';
 import { SignatureModule } from '../signature/signature.module';
+import { DropFilesModule } from '../drop-files/drop-files.module';
 import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
 @NgModule({
@@ -26,7 +27,8 @@ import { ReviewImagesComponent } from './components/review-images/review-images.
     ScannerManualModule,
     HideKeyboardModule,
     CdkTableModule,
-    SignatureModule
+    SignatureModule,
+    DropFilesModule
   ],
   exports: [
     

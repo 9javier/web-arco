@@ -7,8 +7,9 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx'
 ;
 import {formatDate} from '@angular/common';
 import { IntermediaryService, IncidentsService, environment, UploadFilesService } from '../../../services/src';
-import { PhotoModalComponent } from './components/photo-modal/photo-modal.component';
+import { DropFilesService } from '../../../services/src/lib/endpoint/drop-files/drop-files.service';
 import {SignatureComponent} from '../signature/signature.component';
+import {DropFilesComponent} from '../drop-files/drop-files.component';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 import { Platform } from '@ionic/angular';
 import { FileTransfer, FileUploadOptions, FileTransferObject, FileUploadResult } from '@ionic-native/file-transfer/ngx';
@@ -87,8 +88,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     private productsService: ProductsService,
     private intermediaryService: IntermediaryService,
     private alertController: AlertController,
-    private toolbarProvider: ToolbarProvider
-
+    private toolbarProvider: ToolbarProvider,
+    private dropService: DropFilesService
   ) { 
 
 
@@ -113,6 +114,16 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       console.log(resp);
     })
 
+    this.dropService.getImage().subscribe(resp => {
+      if (resp) {
+        this.photos.push(resp)
+        console.log(this.photos);
+      }
+      if (!this.photos) {
+        this.openPhotoList();
+      }
+      console.log(resp);
+    });
    
     this.date = moment().format('DD-MM-YYYY');
     this.initForm();
@@ -130,21 +141,19 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     console.log('OnDestroy');
     console.log(this.photos);
     console.log(this.signatures);
-    this.uploadService.setSignature(null)
+    this.uploadService.setSignature(null);
     
   }
 
   defectType(defecType_){
-
-      let defecType =[];
-      defecType_['classifications'].forEach(element => {
-        let res = defecType_['statuses'].find( x => x.id == element.defectType);
-        if(res != undefined){
-          defecType.push(res);
-        }
-      });
-      this.allDefectType = defecType;
-
+    let defecType =[];
+    defecType_['classifications'].forEach(element => {
+      let res = defecType_['statuses'].find( x => x.id == element.defectType);
+      if(res != undefined){
+        defecType.push(res);
+      }
+    });
+    this.allDefectType = defecType;
   }
 
   initForm() {
@@ -633,23 +642,11 @@ async enviaryarn() {
       // Handle error
     });
   }
-  searchPhoto() {
-    const options: CameraOptions = {
-      quality: 50,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.PNG,
-      mediaType: this.camera.MediaType.PICTURE,
-      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-      correctOrientation: true
-    }
-    this.camera.getPicture(options).then((imageData) => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64 (DATA_URL):
-      this.imgData = imageData
-      this.uploadImage()
-    }, (err) => {
-      // Handle error
-    })
+  async searchPhoto() {
+    const modal = await this.modalController.create({
+      component: DropFilesComponent,
+    });
+    await modal.present();
   }
   async uploadImage() {
     if (!this.imgData || this.imgData.length == 0) {
@@ -659,7 +656,6 @@ async enviaryarn() {
     this.intermediaryService.presentLoading()
     // Destination URL
     let url = this.apiURL;
-
     // File for Upload
     var targetPath = this.imgData;
     const imgDataSplit = this.imgData.split('/')
@@ -667,8 +663,6 @@ async enviaryarn() {
     if (name.split('?').length > 1) {
       name = name.split('?')[0]
     }
-
-
     var options: FileUploadOptions = {
       fileKey: 'file',
       chunkedMode: false,
@@ -676,9 +670,7 @@ async enviaryarn() {
       fileName: name
       // params: { 'desc': desc }
     };
-
     const fileTransfer: FileTransferObject = this.transfer.create();
-
     // Use the FileTransfer to upload the image
     fileTransfer.upload(targetPath, url, options)
       .then((result: FileUploadResult) => {
@@ -690,10 +682,9 @@ async enviaryarn() {
         this.photos.push(this.img);
         console.log('subido');
         if (!this.photoList) {
-          this.openPhotoList()
+          this.openPhotoList();
         }
         this.intermediaryService.presentToastSuccess('la imagen cargada correctamente')
-
       })
       .catch(
         e => {
@@ -709,11 +700,10 @@ async enviaryarn() {
   }
 
   openPhotoList(){
-    this.photoList = !this.photoList
+    this.photoList = !this.photoList;
   }
   openSignatureList() {
-    this.signatureList = !this.signatureList
-
+    this.signatureList = !this.signatureList;
   }
 
   deleteImage(item, index, arr) {

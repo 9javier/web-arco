@@ -7,6 +7,7 @@ import { ExcellModell } from 'libs/services/src/models/endpoints/Excell';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { from, Observable } from "rxjs";
 import {switchMap} from "rxjs/operators";
+import { BehaviorSubject } from 'rxjs';
 
 import {
   HttpClient,
@@ -20,7 +21,8 @@ import {
 })
 export class DropFilesService {
   private uploadFileUrl:string = environment.uploadFiles;
-
+  private image = new BehaviorSubject(null)
+  private $image = this.image.asObservable()
   constructor(
     private http: HttpClient,
     private requestsProvider: RequestsProvider,
@@ -31,13 +33,19 @@ export class DropFilesService {
   uploadFile(data):Observable<any>{
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       const currentToken = token;
-      console.log(currentToken);
       const headers = new HttpHeaders({ Authorization: currentToken });
-      return this.http.post(this.uploadFileUrl,data, { headers: headers}).pipe(map(response=>{
+      return this.http.post(this.uploadFileUrl+'?type=defects',data, { headers: headers}).pipe(map(response=>{
         // console.log(response);
         return response;
       }));
     }));
-    
+  }
+
+  setImage(file){
+    this.image.next(file);
+  }
+
+  getImage(){
+    return this.$image;
   }
 }
