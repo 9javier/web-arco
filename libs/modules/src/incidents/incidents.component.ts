@@ -754,34 +754,45 @@ async enviaryarn() {
 
 
   private getSizeListByReference(dataWrote: string) {
-    this.productsService.getInfo(dataWrote).then(async (res: ProductModel.ResponseInfo) => {
-        if (res.code === 200) {
-          this.readed = true
-        } else if (res.code === 0) {
-          this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
-            this.readed = false
-          });
-
-        } else {
+    const body = {
+      reference: dataWrote
+    };
+    this.productsService.verifyProdcut(body).subscribe((res)=>{
+      if(res !== undefined){
+        this.intermediaryService.presentToastError('El producto solicitado ya se encuentra registrado', PositionsToast.BOTTOM).then(() => {
+          this.readed = false
+        });
+      }else{
+        this.productsService.getInfo(dataWrote).then(async (res: ProductModel.ResponseInfo) => {
+          if (res.code === 200) {
+            this.readed = true
+          } else if (res.code === 0) {
+            this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
+              this.readed = false
+            });
+  
+          } else {
+            this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+              this.readed = false
+            });
+  
+          }
+        }, (error) => {
+          console.error('Error::Subscribe::GetInfo -> ', error);
           this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
             this.readed = false
           });
-
-        }
-      }, (error) => {
-        console.error('Error::Subscribe::GetInfo -> ', error);
-        this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
-          this.readed = false
+  
+        })
+        .catch((error) => {
+          console.error('Error::Subscribe::GetInfo -> ', error);
+          this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+            this.readed = false
+          });
         });
-
-      })
-      .catch((error) => {
-        console.error('Error::Subscribe::GetInfo -> ', error);
-        this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
-          this.readed = false
-        });
-
-      });
+      }
+    });
+    
   }
 
 
