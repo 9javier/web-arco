@@ -24,7 +24,7 @@
         <ion-select-option  *ngFor="let item of statusManagament.statuses" [value]="item.id" >{{item.name}}</ion-select-option>
       </ion-select>
       <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" formControlName="gestionState" #typeID (ionChange)="onChange(typeID.value); gestionChange($event)">
-        <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name || Hola}}</ion-select-option>
+        <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name}}</ion-select-option>
       </ion-select>
     </ion-item>
   
@@ -99,9 +99,9 @@
         <ion-icon slot="end" *ngIf="!signatureList" name="arrow-up"></ion-icon>
       </ion-item>
       <ion-list  *ngIf="signatureList && requireOk">
-        <ion-item lines="none" *ngFor="let item of signatures; let i = index">
-          <ion-img (click)="onOpenReviewModal(item)" slot="start" [src]="item.pathIcon"></ion-img>
-          <ion-button slot="end" (click)="deleteImage(item, i, signatures)">
+        <ion-item lines="none">
+          <ion-img (click)="onOpenReviewModal(signatures)" slot="start" [src]="signatures.pathIcon"></ion-img>
+          <ion-button slot="end" (click)="deleteSignature(signatures)">
             <ion-icon slot="icon-only" name="trash"></ion-icon>
           </ion-button>
         </ion-item>

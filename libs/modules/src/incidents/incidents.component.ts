@@ -66,7 +66,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   imgData: string;
   img: any;
   photos: Array<any> = []
-  signatures: Array<any> = []
+  signatures:any = null
   photoList: boolean = false;
   signatureList: boolean = false;
 
@@ -91,7 +91,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   ngOnInit() {
 
-    this.signatures = [];
+    this.signatures = null;
     this.photos = [];
     console.log(this.photos);
     console.log(this.signatures);
@@ -99,8 +99,25 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     
     this.defectType();
     this.uploadService.signatureEventAsign().subscribe(resp => {
+      this.intermediary.presentLoading()
+      console.log(this.signatures);
+      
       if (resp) {
-        this.signatures.push(resp)
+        if(this.signatures) {
+
+          this.uploadService.deleteFile(this.signatures.id).subscribe(
+            resp => {
+              this.intermediary.presentToastSuccess('Imagen anterior eliminada exitosamente')
+            }, 
+            err => {
+              this.intermediary.dismissLoading()
+            },
+            () => {
+              this.intermediary.dismissLoading()
+            }
+          )
+        }
+        this.signatures = resp 
       }
       if (!this.signatureList) {
         this.openSignatureList()
@@ -119,13 +136,20 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.initDinamicFields();
   }
   ngOnDestroy() {
-    this.photos = []
-    this.signatures = []
+    
+    
     console.log('OnDestroy');
     console.log(this.photos);
     console.log(this.signatures);
-    this.uploadService.setSignature(null)
     
+    this.uploadService.deleteFile(this.signatures.id).subscribe(resp => { 
+      this.signatures = null
+      this.uploadService.setSignature(null)
+    })
+    this.photos.forEach(elem =>{
+      this.uploadService.deleteFile(elem.id).subscribe(resp => {})
+    })
+    this.photos = []
   }
 
   defectType(){
@@ -138,7 +162,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       productId: 1,
       productReference: '',
       dateDetection:[this.date],
-      observations: '.',
+      observations: '',
       numberObservations: 1,
       factoryReturn: [false],
       isHistory: [false],
@@ -311,7 +335,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
-      signFileId: this.signatures[0].id,
+      signFileId: this.signatures.id,
       photosFileIds: photos,
       contact:{
         name: this.txtName,
@@ -337,7 +361,7 @@ async enviaryarn() {
       defectTypeChildId: this.defectChildId,
       defectTypeParentId: 1,
       photosFileIds: photos,
-      signFileId: this.signatures[0].id,
+      signFileId: this.signatures.id,
       // contact:{
       //   name: this.txtName,
       //   email: this.txtEmail,
@@ -398,7 +422,7 @@ async enviaryarn() {
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
       photosFileIds: photos,
-      signFileId: this.signatures[0].id,
+      signFileId: this.signatures.id,
       // contact:{
       //   name: this.txtName,
       //   email: this.txtEmail,
@@ -442,7 +466,7 @@ async enviaryarn() {
           }
         })
         this.photos = [];
-        this.signatures = [];
+        this.signatures = null;
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
         this.router.navigateByUrl('/defect-handler');
@@ -512,9 +536,6 @@ async enviaryarn() {
       if(res instanceof Array){
         res = res.find( x  => x.id == id);
       }
-
-
-      
       this.ticketEmit = res.ticketEmit;
       this.passHistory = res.passHistory;
       this.requirePhoto = res.requirePhoto
@@ -687,6 +708,23 @@ async enviaryarn() {
       }
     )
   }
+
+  deleteSignature(item) {
+    this.intermediary.presentLoading()
+    this.uploadService.deleteFile(item.id).subscribe(
+      resp => {
+        this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
+      },
+      err => {
+        this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
+        this.intermediary.dismissLoading()
+      },
+      () => {
+        this.intermediary.dismissLoading()
+      }
+    )
+  }
+
   async onOpenReviewModal(item) {
     const modal = await this.modalController.create({
     component: ReviewImagesComponent,
