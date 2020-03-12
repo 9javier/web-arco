@@ -19,7 +19,16 @@
 
     <mat-card-content>
       <p>
-        Nº bultos: <span>{{expedition.total_packing}}</span>
+        Nº palets total: <span>{{expedition.expeditionPallets}}</span>
+      </p>
+      <p>
+        Nº bultos total: <span>{{expedition.expeditionPackings}}</span>
+      </p>
+      <p>
+        Estados: <span>{{stringStates(expedition.expeditionStates)}}</span>
+      </p>
+      <p>
+        Nº bultos de la expedición: <span>{{expedition.total_packing}}</span>
       </p>
       <p>
         Fecha de envío: <span>{{dateTimeParserService.date(expedition.delivery_date)}}</span>
@@ -28,7 +37,7 @@
         Transportista: <span>{{expedition.shipper}}</span>
       </p>
       <p>
-        Estados: <span>{{stringStates(expedition)}}</span>
+        Estados de la expedición: <span>{{stringStates(expedition.states_list)}}</span>
       </p>
       <p class="blocked" *ngIf="!expedition.reception_enabled">
         <span> Esta expedición se encuentra bloqueada </span>
@@ -52,7 +61,16 @@
 
     <mat-card-content>
       <p>
-        Nº bultos: <span>{{anotherExpedition.total_packing}}</span>
+        Nº palets total: <span>{{anotherExpedition.expeditionPallets}}</span>
+      </p>
+      <p>
+        Nº bultos total: <span>{{anotherExpedition.expeditionPackings}}</span>
+      </p>
+      <p>
+        Estados: <span>{{stringStates(anotherExpedition.expeditionStates)}}</span>
+      </p>
+      <p>
+        Nº bultos de la expedición: <span>{{anotherExpedition.total_packing}}</span>
       </p>
       <p>
         Fecha de envío: <span>{{dateTimeParserService.date(anotherExpedition.delivery_date)}}</span>
@@ -61,7 +79,7 @@
         Transportista: <span>{{anotherExpedition.shipper}}</span>
       </p>
       <p>
-        Estados: <span>{{stringStates(anotherExpedition)}}</span>
+        Estados de la expedición: <span>{{stringStates(anotherExpedition.states_list)}}</span>
       </p>
       <p class="blocked" *ngIf="!anotherExpedition.reception_enabled">
         <span> Esta expedición se encuentra bloqueada </span>

@@ -19,9 +19,9 @@ export class ExpeditionInfoComponent implements OnInit {
 
   ngOnInit() {}
 
-  stringStates(expedition: Expedition){
+  stringStates(states: number[]){
     const stringStates: string[] = [];
-    for(let state of expedition.states_list){
+    for(let state of states){
       if(state == 1){
         stringStates.push('Bloqueado');
       }else{
