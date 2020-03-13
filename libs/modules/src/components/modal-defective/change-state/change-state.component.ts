@@ -8,6 +8,10 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { DropFilesService } from '../../../../../services/src/lib/endpoint/drop-files/drop-files.service';
 import { ModalReviewComponent } from '../ModalReview/modal-review.component';
+import {SignatureComponent} from '../../../signature/signature.component';
+import { ReviewImagesComponent } from '../../../incidents/components/review-images/review-images.component';
+
+
 @Component({
   selector: 'suite-change-state',
   templateUrl: './change-state.component.html',
@@ -16,10 +20,10 @@ import { ModalReviewComponent } from '../ModalReview/modal-review.component';
 export class ChangeStateComponent implements OnInit {
   allDefectType=[];
   ticketEmit: boolean;
-  passHistory:boolean = true;
-  requirePhoto:boolean = true;
-  requireContact: boolean = true;
-  requireOk: boolean = true;
+  passHistory:boolean;
+  requirePhoto:boolean;
+  requireContact: boolean;
+  requireOk: boolean;
   checkHistory: boolean;
   registry;
   barcode ="64565465645655";
@@ -45,7 +49,12 @@ export class ChangeStateComponent implements OnInit {
   defectParentId;
   ParentAndChild;
   showChangeState;
-
+  status;
+  managementId;
+  statusManagement;
+  selectGestionState = false;
+  signatureId;
+  signature = false;
   constructor(
     private incidentsService: IncidentsService,
     private intermediary: IntermediaryService,
@@ -58,6 +67,7 @@ export class ChangeStateComponent implements OnInit {
 
   ) {
     this.registry = this.navParams.get("registry");
+   
     
   }
 
@@ -77,8 +87,23 @@ export class ChangeStateComponent implements OnInit {
     this.date =  formatDate(this.registry.dateDetection, 'dd/MM/yyyy', 'es');
     console.log("registro:")
     console.log(this.registry);
+    this.getStatusManagement();
     this.initForm();
-    
+    this.initGestionState();
+
+    this.uploadService.signatureEventAsign().subscribe(resp => {
+      if (resp) {
+        this.signatures.push(resp)
+      }
+      if (!this.signatureList) {
+        this.openSignatureList()
+      }
+      if(resp != null || resp != undefined){
+        this.signatureId = resp.id;
+        this.signature = true;
+      }
+      
+    })
   }
 
   openPhotoList(){
@@ -88,28 +113,27 @@ export class ChangeStateComponent implements OnInit {
   initForm() {
    this.incidenceForm = this.fb.group({
       productId: 1,
-      productReference: '',
+      productReference: [this.registry.data.product.reference],
       dateDetection:[this.date],
-      observations: [this.registry.observations],
+      observations: [this.registry.data.observations],
       factoryReturn: [false],
-      statusManagementDefectId: [this.registry.statusManagementDefect.id],
-      defectTypeChildId: [this.registry.defectTypeChild.id],
-      signFileId: [1],
-      gestionState: 0, 
+      statusManagementDefectId: [this.registry.data.statusManagementDefect.id],
+      defectTypeChildId: [this.registry.data.defectTypeChild.id],
+      signFileId:[0],
       contact: this.fb.group({
-        name: [this.registry.contact.name],
-        email: [this.registry.contact.email],
-        phone: [this.registry.contact.phone]
+        name: [this.registry.data.contact.name],
+        email: [this.registry.data.contact.email],
+        phone: [this.registry.data.contact.phone]
       }) 
       
     })
 
-    this.txtName = this.registry.contact.name;
-    this.txtEmail = this.registry.contact.email;
-    this.txtTel = this.registry.contact.phone;
+    this.txtName = this.registry.data.contact.name;
+    this.txtEmail = this.registry.data.contact.email;
+    this.txtTel = this.registry.data.contact.phone;
 
-    this.ParentAndChild = this.registry.defectTypeChild.name +" - "
-    +this.registry.defectTypeParent.name;
+    this.ParentAndChild = this.registry.data.defectTypeChild.name +" - "
+    +this.registry.data.defectTypeParent.name;
 
   }
 
@@ -157,6 +181,13 @@ export class ChangeStateComponent implements OnInit {
 
   send(){
 
+    console.log(this.signatureId+"vgdfgfgdf");
+    if(this.signatureId){
+      this.incidenceForm.patchValue({
+        signFileId: this.signatureId,
+      })
+      
+    }
     console.log("aqui "+this.requireContact);
     console.log(this.incidenceForm);
     if(this.requireContact == true){
@@ -165,10 +196,9 @@ export class ChangeStateComponent implements OnInit {
       }
     }
     else{
-      /*this.incidenceForm.patchValue({
+      this.incidenceForm.patchValue({
         statusManagementDefectId: this.managementId,
-        defectTypeChildId: this.defectChildId,
-      });*/
+      });
       let object = this.incidenceForm.value;
       delete object.contact;
       this.sendToDefectsWithoutContact(object);
@@ -183,7 +213,7 @@ export class ChangeStateComponent implements OnInit {
       const modal = await this.modalController.create({
         component: RegistryDetailsComponent,
         componentProps: {
-          productId: this.registry.product.id,
+          productId: this.registry.data.product.id,
           showChangeState: true
         }
       });
@@ -204,12 +234,11 @@ export class ChangeStateComponent implements OnInit {
   }
 
   async sendToIncidents() {
-    this.incidenceForm.value.contact.phone = this.txtTel+"";
-   /* this.incidenceForm.patchValue({
-      statusManagementDefectId: this.managementId,
-      defectTypeChildId: this.defectChildId,
 
-    })*/
+    this.incidenceForm.value.contact.phone = this.txtTel+"";
+    this.incidenceForm.patchValue({
+      statusManagementDefectId: this.managementId, 
+    })
    
 
     let This = this;
@@ -297,27 +326,169 @@ export class ChangeStateComponent implements OnInit {
     console.log("imprimir...")
   }
 
-  gestionChange(e) {
+  initGestionState(){
+   
+    let res;
     
+      res = this.registry.data.statusManagementDefect;
+    
+
+    if(res != undefined){
+      console.log("Iniciando gestion state");
+      console.log(res);
+
+      this.ticketEmit = res.ticketEmit;
+      //this.passHistory = res.passHistory;
+      this.requirePhoto = res.requirePhoto
+      this.requireContact = res.requireContact;
+      this.requireOk = res.requireOk;
+      this.managementId = res.id;
+      
+    }else{
+      this.ticketEmit = false;
+      this.passHistory = false;
+      this.requirePhoto = false;
+      this.requireContact = false;
+      this.requireOk = false;
+    }
+  }
+
+  async searchPhoto() {
+    const modal = await this.modalController.create({
+      component: DropFilesComponent,
+    });
+    await modal.present();
+  }
+    
+  async openReviewImage(item){
+    const modal = await this.modalController.create({
+      component: ModalReviewComponent,
+      componentProps: {
+       data:item
+     }
+    });
+    await modal.present();
   }
 
 
-async searchPhoto() {
-  const modal = await this.modalController.create({
-    component: DropFilesComponent,
-  });
-  await modal.present();
-}
+
+
+
+
+  gestionChange(e) {
+    let id = e.detail.value;
+    console.log("this.statusManagament",this.statusManagement);
+    let res;
+    
+      res = this.statusManagement['classifications'].find( x => x.defectType == id);
+      
+    
+
+    if(res != undefined){
+      console.log("resultado de cambio...",res);
+
+      /*if(res instanceof Array){
+        res = res.find( x  => x.id == id);
+      }*/
+
+      this.ticketEmit = res.ticketEmit;
+      this.passHistory = res.passHistory;
+      this.requirePhoto = res.requirePhoto
+      this.requireContact = res.requireContact;
+      this.requireOk = res.requireOk;
+      this.managementId = res.id;
+      
+    }else{
+      this.ticketEmit = false;
+      this.passHistory = false;
+      this.requirePhoto = false;
+      this.requireContact = false;
+      this.requireOk = false;
+    }
+
+   this.selectGestionState = true;
   
-async onOpenReviewModal(item){
-  const modal = await this.modalController.create({
-    component: ModalReviewComponent,
-    componentProps: {
-     data:item
-   }
-  });
-  await modal.present();
+    
+  }
+  defectChange(e) {
+    //this.select2 = true;
+    console.log(e);
+    this.defectChildId = e.detail.value;
+  }
+
+  defectType_(defecType_){
+
+    let defecType =[];
+    defecType_['status'].forEach(element => {
+      let res = defecType_.data.statusManagementDefect.defectType == element.id;
+     
+      if(res == true){
+        
+      }else{
+        defecType.push(
+          {id: element.id,
+           name: element.name 
+          });
+      }
+    });
+
+    this.allDefectType = defecType;
+    console.log(this.allDefectType);
 }
+
+
+defectType(defecType_){
+  console.log(defecType_);
+  let defecType =[];
+  defecType_['classifications'].forEach(element => {
+    let res = defecType_['statuses'].find( x => x.id == element.defectType);
+    if(res != undefined){
+
+      if(res.id == this.registry.data.statusManagementDefect.defectType){
+        
+      }else{
+        defecType.push(res);
+      }
+
+    }
+  });
+  this.allDefectType = defecType;
+
+}
+
+getStatusManagement() {
+  this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
+    this.statusManagement = resp;
+    this.defectType(this.statusManagement);
+  })
+}
+
+async signModal(){
+  const modal = await this.modalController.create({
+    component: SignatureComponent,
+  });
+
+  await modal.present();
+  // this.router.navigate(['signature']);
+}
+
+openSignatureList() {
+  this.signatureList = !this.signatureList
+
+}
+
+async onOpenReviewModal(item) {
+  const modal = await this.modalController.create({
+  component: ReviewImagesComponent,
+  componentProps: { imgSrc: item.pathMedium  }
+  });
+
+  await modal.present();
+
+}
+
+
+
 
 deleteImage(item, index, arr) {
   this.intermediary.presentLoading()
@@ -328,6 +499,7 @@ deleteImage(item, index, arr) {
       if(this.photos.length === 0){
         this.openPhotoList()
       }
+      this.signature = false;
     },
     err => {
       this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')

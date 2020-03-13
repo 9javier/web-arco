@@ -5,6 +5,9 @@ import { IonicModule } from '@ionic/angular';
 import { MatExpansionModule, MatTooltipModule } from '@angular/material';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DropFilesModule } from '../../../drop-files/drop-files.module';
+import {SignatureComponent} from '../../../signature/signature.component';
+import {SignatureModule} from '../../../signature/signature.module';
+
 
 @NgModule({
   declarations: [ChangeStateComponent],

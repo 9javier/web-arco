@@ -2,14 +2,15 @@ import { Component, OnInit, ViewChild, Input, OnChanges, AfterViewInit, OnDestro
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import * as moment from 'moment'
 import { IonSlides, ModalController } from '@ionic/angular';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx'
-;
-import {formatDate} from '@angular/common';
+  ;
+import { formatDate } from '@angular/common';
 import { IntermediaryService, IncidentsService, environment, UploadFilesService } from '../../../services/src';
 import { DropFilesService } from '../../../services/src/lib/endpoint/drop-files/drop-files.service';
 import {SignatureComponent} from '../signature/signature.component';
 import {DropFilesComponent} from '../drop-files/drop-files.component';
+import { PhotoModalComponent } from './components/photo-modal/photo-modal.component';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 import { Platform } from '@ionic/angular';
 import { FileTransfer, FileUploadOptions, FileTransferObject, FileUploadResult } from '@ionic-native/file-transfer/ngx';
@@ -32,16 +33,16 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   dataUrl: string;
   select1: boolean = false;
   select2: boolean = false;
-  allDefectType=[];
+  allDefectType = [];
   ticketEmit: boolean;
-  passHistory:boolean;
-  requirePhoto:boolean;
+  passHistory: boolean;
+  requirePhoto: boolean;
   requireContact: boolean = false;
   requireOk: boolean;
   checkHistory: boolean;
-  txtName =""
-  txtEmail="";
-  txtTel="";
+  txtName = ""
+  txtEmail = "";
+  txtTel = "";
   name;
   email;
   phone;
@@ -60,9 +61,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   defects: any = [];
   statusManagament: any;
   public barcodeRoute = null;
-  public types:any;
-  public differentState:boolean = true;
-  private typeIdBC:number;
+  public types: any;
+  public differentState: boolean = true;
+  private typeIdBC: number;
 
 
   private varTrying;
@@ -70,7 +71,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   imgData: string;
   img: any;
   photos: Array<any> = []
-  signatures:any = null
+  signatures: any = null
   photoList: boolean = false;
   signatureList: boolean = false;
 
@@ -98,24 +99,24 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   ngOnInit() {
 
     this.signatures = null;
-    
+
     this.toolbarProvider.currentPage.next("Registro defectuoso")
     this.photos = [];
     console.log(this.photos);
     console.log(this.signatures);
 
-  
+
     this.uploadService.signatureEventAsign().subscribe(resp => {
       console.log(this.signatures);
-      
+
       if (resp) {
         this.intermediary.presentLoading()
-        if(this.signatures) {
+        if (this.signatures) {
 
           this.uploadService.deleteFile(this.signatures.id).subscribe(
             resp => {
               this.intermediary.presentToastSuccess('Imagen anterior eliminada exitosamente')
-            }, 
+            },
             err => {
               this.intermediary.dismissLoading()
             },
@@ -125,57 +126,52 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           )
         }
       }
-      this.signatures = resp 
+      this.signatures = resp
       if (!this.signatureList) {
         this.openSignatureList()
       }
       console.log(resp);
     })
 
-    this.dropService.getImage().subscribe(resp => {
-      if (resp) {
-        this.photos.push(resp)
-        console.log(this.photos);
-      }
-      if (!this.photos) {
-        this.openPhotoList();
-      }
-      console.log(resp);
-    });
-   
     this.date = moment().format('DD-MM-YYYY');
     this.initForm();
     this.readed = false;
-    const navigation = this.router.getCurrentNavigation();    
-    if(navigation.extras.state!=undefined){
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation.extras.state != undefined) {
       this.readed = true;
       this.barcodeRoute = navigation.extras.state['reference'];
     }
     this.initDinamicFields();
   }
   ngOnDestroy() {
-    
-    
+
+
     console.log('OnDestroy');
     console.log(this.photos);
     console.log(this.signatures);
-    this.uploadService.setSignature(null);
-    
-    this.uploadService.deleteFile(this.signatures.id).subscribe(resp => { 
-      this.signatures = null
-      this.uploadService.setSignature(null)
-    })
-    this.photos.forEach(elem =>{
-      this.uploadService.deleteFile(elem.id).subscribe(resp => {})
-    })
+
+    if (this.signatures) {
+      this.uploadService.deleteFile(this.signatures.id).subscribe(resp => {
+        this.signatures = null
+        this.uploadService.setSignature(null)
+      })
+    }
+
+    if (this.photos.length > 0) {
+      this.photos.forEach(elem => {
+        this.uploadService.deleteFile(elem.id).subscribe(resp => { })
+      })
+    }
+    this.signatures = null
     this.photos = []
   }
 
-  defectType(defecType_){
-    let defecType =[];
+  defectType(defecType_) {
+
+    let defecType = [];
     defecType_['classifications'].forEach(element => {
-      let res = defecType_['statuses'].find( x => x.id == element.defectType);
-      if(res != undefined){
+      let res = defecType_['statuses'].find(x => x.id == element.defectType);
+      if (res != undefined) {
         defecType.push(res);
       }
     });
@@ -188,26 +184,27 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.incidenceForm = this.fb.group({
       productId: 1,
       productReference: '',
-      dateDetection:[this.date],
+      dateDetection: [this.date],
       observations: '',
       numberObservations: 1,
       factoryReturn: [false],
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
+      signFileId: [0],
       gestionState: 0,
       contact: this.fb.group({
         name: '',
         email: '',
         phone: ['']
-      }) 
-      
+      })
+
     })
   }
 
   async initDinamicFields() {
     this.incidentsService.getDefectTypesChild().subscribe(resp => {
       this.defects = resp;
-      
+
     })
     this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
       this.statusManagament = resp
@@ -217,62 +214,62 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.loadFromDBValues();
   }
 
-  async loadFromDBValues(){
+  async loadFromDBValues() {
 
-    if(this.barcodeRoute){
+    if (this.barcodeRoute) {
       let body = {
         // "productId":12,
-        "productId":this.barcodeRoute,
-        "productReference":""
+        "productId": this.barcodeRoute,
+        "productReference": ""
       }
-      await this.incidentsService.getOneIncidentProductById(body).subscribe(resp=>{
-                
-          // this.types = resp.data;
-          resp = resp.data;
-          // let contact = resp.contact;
-          console.log('result', resp);
-          // console.log('contact', contact);
+      await this.incidentsService.getOneIncidentProductById(body).subscribe(resp => {
 
-          this.statusManagament = {
-            'classifications' : resp.statusManagementDefect
+        // this.types = resp.data;
+        resp = resp.data;
+        // let contact = resp.contact;
+        console.log('result', resp);
+        // console.log('contact', contact);
+
+        this.statusManagament = {
+          'classifications': resp.statusManagementDefect
+        }
+
+        console.log("resp status ", resp.statusManagementDefect);
+
+        this.statusManagament["classifications"] = resp.statusManagementDefect;
+
+        this.varTrying = resp.statusManagementDefect.id;
+
+        this.incidenceForm.patchValue({ gestionChange: resp.statusManagementDefect.id })
+        this.incidenceForm.patchValue({ productReference: resp.product.reference })
+        this.incidenceForm.patchValue({
+          barcode: resp.product.reference,
+          registerDate: Date.now(),
+          observations: resp.observations,
+          gestionState: resp.statusManagementDefect.id,
+          // gestionState: resp.defectTypeChildId.id,
+          photo: resp.photo,
+          validation: resp.validation,
+          isHistory: resp.isHistory,
+          statusManagementDefectId: resp.statusManagementDefect.id,
+          defectTypeChildId: resp.defectTypeChild.id,
+          // photosFileIds: [ [{ "id": 1 }]],
+          // signFileId: [1],
+          // contact: this.fb.group({
+          //   name: contact.name,
+          //   email: contact.email,
+          //   phone: contact.phone
+          // })            
+        });
+        this.typeIdBC = resp.statusManagementDefect.id;
+
+        let sendtoGestionChange = {
+          "detail": {
+            "value": resp.statusManagementDefect.id
           }
-          
-          console.log("resp status ", resp.statusManagementDefect);
-
-          this.statusManagament["classifications"] = resp.statusManagementDefect;
-
-          this.varTrying = resp.statusManagementDefect.id;        
-          
-          this.incidenceForm.patchValue({gestionChange:resp.statusManagementDefect.id})
-          this.incidenceForm.patchValue({productReference: resp.product.reference})
-          this.incidenceForm.patchValue({
-            barcode: resp.product.reference,
-            registerDate: Date.now(),
-            observations: resp.observations,
-            gestionState: resp.statusManagementDefect.id,
-            // gestionState: resp.defectTypeChildId.id,
-            photo: resp.photo,
-            validation: resp.validation,
-            isHistory: resp.isHistory,
-            statusManagementDefectId: resp.statusManagementDefect.id,
-            defectTypeChildId: resp.defectTypeChild.id,
-            // photosFileIds: [ [{ "id": 1 }]],
-            // signFileId: [1],
-            // contact: this.fb.group({
-            //   name: contact.name,
-            //   email: contact.email,
-            //   phone: contact.phone
-            // })            
-          });          
-          this.typeIdBC = resp.statusManagementDefect.id;
-
-          let sendtoGestionChange = {
-            "detail":{
-              "value":resp.statusManagementDefect.id
-            }
-          }
-          this.gestionChange(sendtoGestionChange);
-      }, error=>{
+        }
+        this.gestionChange(sendtoGestionChange);
+      }, error => {
         console.log("here is error ", error);
       });
 
@@ -280,7 +277,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   }
 
-  newValue(e){
+  newValue(e) {
     console.log(e);
     this.barcode = e;
     if (this.barcode && this.barcode.length > 0) {
@@ -289,48 +286,48 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         productReference: this.barcode
       })
       console.log(this.incidenceForm.value);
-      
+
 
       this.getSizeListByReference(e);
-      
-    }    
+
+    }
 
     console.log("on new Value");
     console.log(this.statusManagament);
   }
-   print(){
+  print() {
     console.log("imprimir...")
   }
 
-  validate(){
+  validate() {
 
     let regex = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
-     let validation = true;
-     let msg;
-     let This = this;
-     console.log(this.txtName.length);
+    let validation = true;
+    let msg;
+    let This = this;
+    console.log(this.txtName.length);
 
-     if( this.txtName.length < 4){
+    if (this.txtName.length < 4) {
       console.log("name false");
-      msg="Nombre debe tener minimo 4 digítos...";
-       validation = false;
-     }if(this.txtEmail.length < 1){
-         msg="Campo email vacío";
-         validation = false;
-     }
-     if(this.txtTel.length < 6){
-      console.log("telefono false");
-      msg="Teléfono debe tener minimo 6 digítos...";
+      msg = "Nombre debe tener minimo 4 digítos...";
+      validation = false;
+    } if (this.txtEmail.length < 1) {
+      msg = "Campo email vacío";
       validation = false;
     }
-    if(!regex.test(this.txtEmail)){
+    if (this.txtTel.length < 6) {
+      console.log("telefono false");
+      msg = "Teléfono debe tener minimo 6 digítos...";
+      validation = false;
+    }
+    if (!regex.test(this.txtEmail)) {
       console.log("email validation true");
-      msg="Email invalido...";
+      msg = "Email invalido...";
       validation = false;
       console.log("email false");
     }
 
-    if(!this.requireOk && !this.signatures) {
+    if (!this.requireOk && !this.signatures) {
       msg = "La firma es requerida";
       validation = false;
     }
@@ -340,49 +337,62 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       validation = false;
     }
 
-    if(msg == undefined){ 
+    if (msg == undefined) {
 
-    }else{
-      if(msg.length > 0){
-        This.intermediary.presentToastError(msg); 
+    } else {
+      if (msg.length > 0) {
+        This.intermediary.presentToastError(msg);
       }
     }
 
     return validation;
   }
-  onKeyName(event){
+  onKeyName(event) {
     this.txtName = event.target.value;
   }
-  onKeyEmail(event){
+  onKeyEmail(event) {
     this.txtEmail = event.target.value;
   }
-  onKeyTel(event){
+  onKeyTel(event) {
     this.txtTel = event.target.value;
   }
-  
-  
-  
-  send(){
+
+
+
+  send() {
     if (this.requirePhoto) {
-      let photos = []
-      this.photos.forEach(elem => {
-        photos.push({ id: elem.id });
-      });
-      this.incidenceForm.addControl('photosFileIds', new FormControl(photos))
+      if (this.photos.length > 0) {
+        let photos = []
+        this.photos.forEach(elem => {
+          photos.push({ id: elem.id });
+        });
+        this.incidenceForm.addControl('photosFileIds', new FormControl(photos))
+      } else {
+
+        this.intermediary.presentToastError("Debe Agregar Algunas Fotos");
+        return;
+      }
+
     }
 
     if (this.requireOk) {
       console.log('signFileId');
-      this.incidenceForm.addControl('signFileId', new FormControl(this.signatures.id))
+      if (this.signatures) {
+        this.incidenceForm.addControl('signFileId', new FormControl(this.signatures.id))
+      } else {
+        this.intermediary.presentToastError("Debe Agregar la Firma");
+        return;
+      }
+
     }
-    console.log("aqui "+this.requireContact);
+    console.log("aqui " + this.requireContact);
     console.log(this.incidenceForm.value);
-    if(this.requireContact == true){
-      if(this.validate()){
+    if (this.requireContact == true) {
+      if (this.validate()) {
         this.sendToIncidents();
       }
     }
-    else{
+    else {
       this.incidenceForm.patchValue({
         statusManagementDefectId: this.managementId,
         defectTypeChildId: this.defectChildId,
@@ -392,26 +402,26 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       this.sendToDefectsWithoutContact(object);
     }
 
-    
-   /* this.incidenceForm.patchValue({
-      statusManagementDefectId: this.managementId,
-      defectTypeChildId: this.defectChildId,
-      signFileId: this.signatures.id,
-      photosFileIds: photos,
-      contact:{
-        name: this.txtName,
-        email: this.txtEmail,
-        phone: this.txtTel
-      }
-    })*/
-  
+
+    /* this.incidenceForm.patchValue({
+       statusManagementDefectId: this.managementId,
+       defectTypeChildId: this.defectChildId,
+       signFileId: this.signatures.id,
+       photosFileIds: photos,
+       contact:{
+         name: this.txtName,
+         email: this.txtEmail,
+         phone: this.txtTel
+       }
+     })*/
+
   }
 
 
-async enviaryarn() {
+  async enviaryarn() {
     let photos = []
     this.photos.forEach(elem => {
-      photos.push({id: elem.id});
+      photos.push({ id: elem.id });
     });
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
@@ -425,21 +435,21 @@ async enviaryarn() {
       //   phone: this.txtTel,
       // },
     })
-    console.log("hello world",this.incidenceForm);
+    console.log("hello world", this.incidenceForm);
     let This = this;
     await This.intermediary.presentLoading('Enviando...')
-    if(this.ticketEmit == true){
+    if (this.ticketEmit == true) {
       this.print();
     }
 
-    if(this.incidenceForm.value.observations==null){
+    if (this.incidenceForm.value.observations == null) {
       this.incidenceForm.patchValue({
-        observations:"None",
+        observations: "None",
       })
     }
 
     let object = this.incidenceForm.value;
-    if(!this.requireContact){      
+    if (!this.requireContact) {
       delete object.contact;
     }
     // setTimeout(async () => {
@@ -473,16 +483,16 @@ async enviaryarn() {
         console.log(e);
         This.intermediary.dismissLoading()
         This.intermediary.presentToastError(e.error)
-        console.log("e,",e);
+        console.log("e,", e);
       }
     );
 
-    }
+  }
 
   async enviar() {
     let photos = []
     this.photos.forEach(elem => {
-      photos.push({id: elem.id});
+      photos.push({ id: elem.id });
     });
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
@@ -496,24 +506,24 @@ async enviaryarn() {
       // },
     })
 
-    }
-   
-    
-  
+  }
+
+
+
 
   async sendToIncidents() {
-    this.incidenceForm.value.contact.phone = this.txtTel+"";
+    this.incidenceForm.value.contact.phone = this.txtTel + "";
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
     })
-   
+
 
     let This = this;
 
     This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
       resp => {
-        if(this.ticketEmit == true){
+        if (this.ticketEmit == true) {
           this.print();
         }
 
@@ -542,13 +552,13 @@ async enviaryarn() {
       },
       e => {
         console.log(e);
-        
+
         This.intermediary.dismissLoading()
         This.intermediary.presentToastError(e.error.errors)
       }
     );
 
-   
+
   }
 
 
@@ -560,7 +570,7 @@ async enviaryarn() {
     This.incidentsService.addRegistry(object).subscribe(
       resp => {
 
-        if(this.ticketEmit == true){
+        if (this.ticketEmit == true) {
           this.print();
         }
 
@@ -581,23 +591,23 @@ async enviaryarn() {
       },
       e => {
         console.log(e);
-        
+
         This.intermediary.dismissLoading()
         This.intermediary.presentToastError(e.error.errors)
       }
     );
 
-   
-     
+
+
   }
   // async presentModal() {
   //   const modal = await this.modalController.create({
   //   component: PhotoModalComponent,
   //   componentProps: { value: 123 }
   //   });
-  
+
   //   await modal.present();
-  
+
   //   const data = await modal.onDidDismiss();
   //   console.log(data)
   //   if (data.data.imgUrl) {
@@ -609,21 +619,21 @@ async enviaryarn() {
   // }
   gestionChange(e) {
     let id = e.detail.value;
-    console.log("this.statusManagament",this.statusManagament);
+    console.log("this.statusManagament", this.statusManagament);
     let res;
-    if(this.barcodeRoute == null || this.barcodeRoute == undefined){
-      res = this.statusManagament['classifications'].find( x => x.defectType == id);
+    if (this.barcodeRoute == null || this.barcodeRoute == undefined) {
+      res = this.statusManagament['classifications'].find(x => x.defectType == id);
 
-    }else{
-      res = this.statusManagament.classifications!=undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find( x => x.defectType == id);
+    } else {
+      res = this.statusManagament.classifications != undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find(x => x.defectType == id);
 
     }
 
-    if(res != undefined){
-      console.log("res",res);
+    if (res != undefined) {
+      console.log("res", res);
 
-      if(res instanceof Array){
-        res = res.find( x  => x.id == id);
+      if (res instanceof Array) {
+        res = res.find(x => x.id == id);
       }
       this.ticketEmit = res.ticketEmit;
       this.passHistory = res.passHistory;
@@ -631,8 +641,8 @@ async enviaryarn() {
       this.requireContact = res.requireContact;
       this.requireOk = res.requireOk;
       this.managementId = res.id;
-      
-    }else{
+
+    } else {
       this.ticketEmit = false;
       this.passHistory = false;
       this.requirePhoto = false;
@@ -641,8 +651,8 @@ async enviaryarn() {
     }
 
     this.select1 = true;
-  
-    
+
+
   }
   defectChange(e) {
     this.select2 = true;
@@ -658,11 +668,11 @@ async enviaryarn() {
     //   this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
   }
 
-  ngOnChanges(){
+  ngOnChanges() {
   }
-  
 
-  async signModal(){
+
+  async signModal() {
     const modal = await this.modalController.create({
       component: SignatureComponent,
     });
@@ -671,7 +681,7 @@ async enviaryarn() {
     // this.router.navigate(['signature']);
   }
 
- 
+
 
   takePhoto() {
     const options: CameraOptions = {
@@ -750,8 +760,8 @@ async enviaryarn() {
 
   }
 
-  openPhotoList(){
-    this.photoList = !this.photoList;
+  openPhotoList() {
+    this.photoList = !this.photoList
   }
   openSignatureList() {
     this.signatureList = !this.signatureList;
@@ -793,19 +803,19 @@ async enviaryarn() {
 
   async onOpenReviewModal(item) {
     const modal = await this.modalController.create({
-    component: ReviewImagesComponent,
-    componentProps: { imgSrc: item.pathMedium  }
+      component: ReviewImagesComponent,
+      componentProps: { imgSrc: item.pathMedium }
     });
-  
+
     await modal.present();
-  
+
   }
 
 
-  onChange(value){
-    if(value != this.typeIdBC){
+  onChange(value) {
+    if (value != this.typeIdBC) {
       this.differentState = false;
-    }else{
+    } else {
       this.differentState = true;
     }
 
@@ -816,12 +826,12 @@ async enviaryarn() {
     const body = {
       reference: dataWrote
     };
-    this.productsService.verifyProdcut(body).subscribe((res)=>{
-      if(res !== undefined){
+    this.productsService.verifyProdcut(body).subscribe((res) => {
+      if (res !== undefined) {
         this.intermediaryService.presentToastError('El producto solicitado ya se encuentra registrado', PositionsToast.BOTTOM).then(() => {
           this.readed = false
         });
-      }else{
+      } else {
         this.productsService.getInfo(dataWrote).then(async (res: ProductModel.ResponseInfo) => {
           if (res.code === 200) {
             this.readed = true
@@ -829,29 +839,29 @@ async enviaryarn() {
             this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
               this.readed = false
             });
-  
+
           } else {
             this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
               this.readed = false
             });
-  
+
           }
         }, (error) => {
           console.error('Error::Subscribe::GetInfo -> ', error);
           this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
             this.readed = false
           });
-  
+
         })
-        .catch((error) => {
-          console.error('Error::Subscribe::GetInfo -> ', error);
-          this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
-            this.readed = false
+          .catch((error) => {
+            console.error('Error::Subscribe::GetInfo -> ', error);
+            this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+              this.readed = false
+            });
           });
-        });
       }
     });
-    
+
   }
 
 
@@ -870,7 +880,7 @@ async enviaryarn() {
           text: 'Continuar',
           handler: (data) => {
             let reference = data.reference.trim();
-            
+
           }
         }
       ]
@@ -878,6 +888,6 @@ async enviaryarn() {
 
     await alert.present();
   }
-  
+
 
 }

@@ -19,6 +19,7 @@ export class RegistryDetailsComponent implements OnInit {
   originalTableStatus: DamagedModel.Status[];
   productId: string;
   registry: any = {};
+  registry_data: any ={};
   registryHistorical;
   showChangeState = false;
   date: any;
@@ -95,6 +96,9 @@ export class RegistryDetailsComponent implements OnInit {
 
   getRegistryDetail(): void {
     this.defectiveRegistryService.getLastHistorical({ productId: this.productId }).subscribe(lastHistorical => {
+      this.registry_data = {
+        data: lastHistorical.data,
+        status: lastHistorical.statuses};
       this.registry = lastHistorical.data;
       this.originalTableStatus = lastHistorical.statuses;
     });

@@ -32,6 +32,7 @@ import { VirtualKeyboardModule } from '../../../../libs/modules/src/components/v
 import { DropFilesModule } from '../../../../libs/modules/src/drop-files/drop-files.module';
 import { ModalReviewModule } from '../../../../libs/modules/src/components/modal-defective/ModalReview/modal-review.module';
 
+import {SignatureModule} from '../../../../libs/modules/src/signature/signature.module';
 
 registerLocaleData(localeEs);
 @NgModule({
@@ -57,6 +58,7 @@ registerLocaleData(localeEs);
     VirtualKeyboardModule,
     DropFilesModule,
     ModalReviewModule
+    SignatureModule
   ],
   providers: [
     StatusBar,
