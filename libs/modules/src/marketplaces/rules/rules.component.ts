@@ -64,7 +64,7 @@ export class RulesComponent implements OnInit {
   getValues() {
     this.dataSourceEnabling = [];
     this.dataSourceCategories = [];
-    this.marketplacesService.getRulesConfigurations(/*this.market*/).subscribe((data: any) => {
+    this.marketplacesService.getRulesConfigurationsByMarket(this.market).subscribe((data: any) => {
       if (data.data && data.data.length) {
         for (let ruleConfiguration of data.data) {
           let type = "";

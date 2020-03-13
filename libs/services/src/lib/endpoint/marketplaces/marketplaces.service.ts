@@ -24,6 +24,7 @@ export class MarketplacesService {
   private getRulesFilterByTypeUrl = this.apiBase + "/api/RuleFilter/{{type}}";
   private getMarketsUrl = this.apiBase + "/api/Markets";
   private getRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration";
+  private getRulesConfigurationsByMarketUrl = this.apiMiddleware + "/api/v1/ruleConfiguration/byMarket/";
   private postRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration";
   private updateRulesConfigurationsUrl = this.apiMiddleware + "/api/ruleConfiguration/{{id}}";
   private getRulesConfigurationsByIdUrl = this.apiMiddleware + "/api/ruleConfiguration/{{id}}";
@@ -128,6 +129,12 @@ export class MarketplacesService {
 
   getRulesConfigurations(): Observable<any> {
     return this.http.get<any>(this.getRulesConfigurationsUrl, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getRulesConfigurationsByMarket(marketId): Observable<any> {
+    return this.http.get<any>(this.getRulesConfigurationsByMarketUrl + marketId, {}).pipe(map(response => {
       return response;
     }));
   }
