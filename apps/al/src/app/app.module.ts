@@ -26,6 +26,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { ReviewImagesModule } from '../../../../libs/modules/src/incidents/components/review-images/review-images.module';
 
 
 
@@ -46,7 +47,8 @@ registerLocaleData(localeEs);
     ServicesModule,
     BrowserAnimationsModule,
     ScannerConfigurationModule,
-    ToolbarAlModule
+    ToolbarAlModule,
+    ReviewImagesModule
   ],
   providers: [
     StatusBar,
