@@ -29,6 +29,9 @@ import {MondayStartingDateAdapterService} from "../../../../libs/services/src/li
 import { NgxMaskModule } from 'ngx-mask';
 import { VirtualKeyboardComponent } from '../../../../libs/modules/src/components/virtual-keyboard/virtual-keyboard.component';
 import { VirtualKeyboardModule } from '../../../../libs/modules/src/components/virtual-keyboard/virtual-keyboard.module';
+import { DropFilesModule } from '../../../../libs/modules/src/drop-files/drop-files.module';
+import { ModalReviewModule } from '../../../../libs/modules/src/components/modal-defective/ModalReview/modal-review.module';
+
 
 registerLocaleData(localeEs);
 @NgModule({
@@ -51,7 +54,9 @@ registerLocaleData(localeEs);
     BreadcrumbModule,
     MenuModule,
     NgxMaskModule.forRoot(),
-    VirtualKeyboardModule
+    VirtualKeyboardModule,
+    DropFilesModule,
+    ModalReviewModule
   ],
   providers: [
     StatusBar,

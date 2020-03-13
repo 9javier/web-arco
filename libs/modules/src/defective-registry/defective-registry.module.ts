@@ -18,6 +18,7 @@ import { PaginatorComponentModule } from '../components/paginator/paginator.comp
 import { DefectiveRegistryComponent } from './defective-registry.component';
 import { RegistryDetailsModule } from '../components/modal-defective/registry-details/registry-details.module';
 import { ShowImageModule } from '../components/modal-defective/show-image/show-image.module';
+import { DropFilesModule } from '../drop-files/drop-files.module';
 
 const routes: Routes = [
   {
@@ -45,7 +46,7 @@ const routes: Routes = [
     MatRadioModule,
     FormsModule,
     RegistryDetailsModule,
-    ShowImageModule
+    ShowImageModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

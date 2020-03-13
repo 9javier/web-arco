@@ -1,6 +1,15 @@
-<ion-content>
-  
-  <ngx-file-drop dropZoneLabel="Drop files here" [showBrowseBtn]="true"   (onFileDrop)="dropped($event)" 
+<ion-header>
+  <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+          <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+              <ion-icon name="close" class="toogleArrow"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+      <ion-title>Subir Fotos</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content style="height:100%;">
+  <ngx-file-drop  dropZoneLabel="Drop files here" [showBrowseBtn]="true"   (onFileDrop)="dropped($event)" 
   (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
       <ng-template  ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
           <ion-content style="width: 50%; height: 50%;"  (click)="openFileSelector()">

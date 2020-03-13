@@ -334,14 +334,7 @@ const routes: Routes = [
       name: 'Manejo de defectos'
     }
   },
-  {
-    path:'drop-files',
-    canActivate:[AuthGuard],
-    loadChildren: '../../../../libs/modules/src/drop-files/drop-files.module#DropFilesModule',
-    data: {
-      name: 'Drop-Files'
-    }
-  }
+ 
 ];
 
 @NgModule({

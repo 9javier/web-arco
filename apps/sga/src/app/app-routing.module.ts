@@ -429,6 +429,14 @@ const routes: Routes = [
     data: {
       name: 'SeasonsEnabled'
     }
+  },
+  {
+    path:'drop-files',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/drop-files/drop-files.module#DropFilesModule',
+    data: {
+      name: 'Drop-Files'
+    }
   }
 ];
 

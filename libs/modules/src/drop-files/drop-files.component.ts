@@ -70,5 +70,10 @@ export class DropFilesComponent {
   public fileLeave(event){
     console.log(event);
   }
+
+
+  public close(){
+    this.modalController.dismiss();
+  }
   
 }

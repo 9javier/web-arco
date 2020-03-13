@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from "@ionic/angular";
 import { RegistryDetailsComponent } from '../registry-details/registry-details.component';
 import { IntermediaryService, IncidentsService, environment, UploadFilesService } from '../../../../../services/src';
+import {DropFilesComponent} from '../../../drop-files/drop-files.component';
 import {formatDate} from '@angular/common';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
-
+import { DropFilesService } from '../../../../../services/src/lib/endpoint/drop-files/drop-files.service';
+import { ModalReviewComponent } from '../ModalReview/modal-review.component';
 @Component({
   selector: 'suite-change-state',
   templateUrl: './change-state.component.html',
@@ -31,6 +33,7 @@ export class ChangeStateComponent implements OnInit {
   signatures: Array<any> = []
   photoList: boolean = false;
   signatureList: boolean = false;
+  displayPhotoList: boolean = false;
 
   date: string;
   dateNow = formatDate(new Date(), 'dd/MM/yyyy', 'es');
@@ -50,13 +53,27 @@ export class ChangeStateComponent implements OnInit {
     private navParams: NavParams,
     private fb: FormBuilder,
     private intermediaryService: IntermediaryService,
+    private dropFilesService: DropFilesService,
+    private uploadService: UploadFilesService,
+
   ) {
     this.registry = this.navParams.get("registry");
     
   }
 
   ngOnInit() {
-    
+    this.dropFilesService.getImage().subscribe(resp=>{
+      if (resp) {
+        this.photos.push(resp)
+        console.log(this.photos);
+        this.displayPhotoList = true;
+        this.photoList = true;
+      }
+      if (!this.photos) {
+        this.openPhotoList();
+      }
+      console.log(resp);
+    });
     this.date =  formatDate(this.registry.dateDetection, 'dd/MM/yyyy', 'es');
     console.log("registro:")
     console.log(this.registry);
@@ -64,6 +81,9 @@ export class ChangeStateComponent implements OnInit {
     
   }
 
+  openPhotoList(){
+    this.photoList = !this.photoList;
+  }
 
   initForm() {
    this.incidenceForm = this.fb.group({
@@ -93,7 +113,9 @@ export class ChangeStateComponent implements OnInit {
 
   }
 
-
+  showPhotoList(){
+    this.displayPhotoList = !this.displayPhotoList;
+  }
   validate(){
 
     let regex = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
@@ -280,8 +302,41 @@ export class ChangeStateComponent implements OnInit {
   }
 
 
-
+async searchPhoto() {
+  const modal = await this.modalController.create({
+    component: DropFilesComponent,
+  });
+  await modal.present();
+}
   
+async onOpenReviewModal(item){
+  const modal = await this.modalController.create({
+    component: ModalReviewComponent,
+    componentProps: {
+     data:item
+   }
+  });
+  await modal.present();
+}
 
+deleteImage(item, index, arr) {
+  this.intermediary.presentLoading()
+  this.uploadService.deleteFile(item.id).subscribe(
+    resp => {
+      this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
+      arr.splice(index, 1);
+      if(this.photos.length === 0){
+        this.openPhotoList()
+      }
+    },
+    err => {
+      this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
+      this.intermediary.dismissLoading()
+    },
+    () => {
+      this.intermediary.dismissLoading()
+    }
+  )
+}
 
 }

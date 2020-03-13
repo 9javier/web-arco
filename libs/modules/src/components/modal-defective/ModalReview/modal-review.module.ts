@@ -1,15 +1,14 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChangeStateComponent } from './change-state.component';
+import { ModalReviewComponent } from './modal-review.component';
 import { IonicModule } from '@ionic/angular';
 import { MatExpansionModule, MatTooltipModule } from '@angular/material';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { DropFilesModule } from '../../../drop-files/drop-files.module';
 
 @NgModule({
-  declarations: [ChangeStateComponent],
-  entryComponents: [ChangeStateComponent],
-  exports: [ChangeStateComponent],
+  declarations: [ModalReviewComponent],
+  entryComponents: [ModalReviewComponent],
+  exports: [ModalReviewComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -20,4 +19,4 @@ import { DropFilesModule } from '../../../drop-files/drop-files.module';
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ChangeStateModule { }
+export class ModalReviewModule { }

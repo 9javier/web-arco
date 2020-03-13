@@ -401,6 +401,12 @@ export class MenuComponent implements OnInit {
       url: '/regions',
       icon: 'map'
     },
+    {
+      title: 'Drop Files',
+      id: 'drop-file',
+      url: '/drop-files',
+      icon: 'folder'
+    },
   ];
 
   alPages: MenuItemList = [
@@ -764,12 +770,7 @@ export class MenuComponent implements OnInit {
       icon:'warning',
       url: '/defect-handler'
     },
-    {
-      title: 'Drop Files',
-      id: 'drop-file',
-      url: '/drop-files',
-      icon: 'folder'
-    },
+   
 
   ];
   private menuPages = {
