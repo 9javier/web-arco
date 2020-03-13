@@ -48,7 +48,10 @@ export class InfoHeaderReceptionComponent implements OnInit {
     this.expeditionReference = expeditionReference;
     this.provider = provider;
     this.packingsPallets = packingsPallets;
-    this.date = new DateTimeParserService().date(date);
+    const formattedDate = new DateTimeParserService().date(date);
+    if(formattedDate != 'Invalid date'){
+      this.date = formattedDate;
+    }
     this.shipper = shipper;
     this.states = this.stringStates(states);
   }

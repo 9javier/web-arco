@@ -988,10 +988,10 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.infoHeaderReceptionComponent.loadInfoExpedition(
                   expedition.reference,
                   {name: expedition.provider_name, id: expedition.provider_id.toString()},
-                  {packings: expedition.total_packing, pallets: expedition.total_packing},
+                  {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
                   expedition.delivery_date,
                   expedition.shipper,
-                  expedition.states_list);
+                  expedition.expeditionStates);
               }
             });
             modal.present();
@@ -1057,10 +1057,10 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.infoHeaderReceptionComponent.loadInfoExpedition(
                   expedition.reference,
                   {name: expedition.provider_name, id: expedition.provider_id.toString()},
-                  {packings: expedition.total_packing, pallets: expedition.expeditionPallets},
+                  {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
                   expedition.delivery_date,
                   expedition.shipper,
-                  expedition.states_list);
+                  expedition.expeditionStates);
               }
             });
             modal.present();

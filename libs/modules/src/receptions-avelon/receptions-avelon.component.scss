@@ -166,7 +166,8 @@ div.grid {
         }
       }
       div.row.ean {
-        height: 80px;
+        margin-top: auto;
+        height: fit-content;
         place-content: space-between;
         align-items: flex-end;
         div.col.ean {
@@ -195,4 +196,8 @@ div.grid {
     right: 10px;
     bottom: 10px;
   }
+}
+
+#eanCode{
+  height: 50px;
 }
