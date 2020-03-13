@@ -1,6 +1,15 @@
 <ion-content>
   <div class="fields-to-search">
     <loading-message></loading-message>
+    <div class="ean" *ngIf="eanCode">
+      <mat-card>
+        <mat-card-content>
+          <p>EAN: <span>{{eanCode}}</span></p>
+          <mat-icon matRipple class="right" (click)="removeEanCode()">close</mat-icon>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
     <mat-list>
       <mat-list-item matRipple (click)="listItems(1)">
         <mat-icon mat-list-icon>list</mat-icon>
@@ -31,7 +40,6 @@
           'red': colorSelected && colorSelected.color == 'red'}"> {{colorSelected ? colorSelected.name : 'seleccionar color'}} </p>
         <mat-icon mat-list-icon class="right">keyboard_arrow_right</mat-icon>
       </mat-list-item>
-
     </mat-list>
 
     <div class="sizes">
@@ -56,4 +64,4 @@
 <button *ngIf="getPhotoUrl(modelIdSelected)" mat-fab aria-label="Ver foto del modelo" class="fab simple" (click)="showImages($event)">
   <mat-icon>image</mat-icon>
 </button>
-<fab-extended *ngIf="brandSelected && modelSelected && colorSelected" tooltip="Imprimir los códigos de productos correspondientes" icon="print" label="IMPRIMIR" (clickButton)="printCodes()"></fab-extended>
+<fab-extended *ngIf="brandSelected && modelSelected && colorSelected && listSizes && listSizes.length > 0" tooltip="Imprimir los códigos de productos correspondientes" icon="print" label="IMPRIMIR" (clickButton)="printCodes()"></fab-extended>
