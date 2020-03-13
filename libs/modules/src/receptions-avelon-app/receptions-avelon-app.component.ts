@@ -2,6 +2,9 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 import {ReceptionAvelonProvider} from "../../../services/src/providers/reception-avelon/reception-avelon.provider";
+import {ReceptionAvelonModel} from "@suite/services";
+import Expedition = ReceptionAvelonModel.Expedition;
+import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 @Component({
   selector: 'suite-receptions-avelon-app',
@@ -10,14 +13,18 @@ import {ReceptionAvelonProvider} from "../../../services/src/providers/reception
 })
 export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
 
+  expedition: Expedition;
+
   constructor(
     private router: Router,
     private toolbarProvider: ToolbarProvider,
-    private receptionAvelonProvider: ReceptionAvelonProvider
+    private receptionAvelonProvider: ReceptionAvelonProvider,
+    private dateTimeParserService: DateTimeParserService
   ) {}
 
   ngOnInit() {
-    this.toolbarProvider.currentPage.next('Recepción de mercancía');
+    this.expedition = this.receptionAvelonProvider.expedition;
+    this.toolbarProvider.currentPage.next('#'+this.expedition.reference);
   }
 
   ngOnDestroy() {
@@ -27,4 +34,17 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
   receptionBySearch() {
     this.router.navigate(['receptions-avelon', 'app', 'manual']);
   }
+
+  stringStates(states: number[]){
+    const stringStates: string[] = [];
+    for(let state of states){
+      if(state == 1){
+        stringStates.push('Bloqueado');
+      }else{
+        stringStates.push('Desconocido');
+      }
+    }
+    return stringStates.join(', ');
+  }
+
 }
