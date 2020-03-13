@@ -57,7 +57,7 @@ registerLocaleData(localeEs);
     NgxMaskModule.forRoot(),
     VirtualKeyboardModule,
     DropFilesModule,
-    ModalReviewModule
+    ModalReviewModule,
     SignatureModule
   ],
   providers: [

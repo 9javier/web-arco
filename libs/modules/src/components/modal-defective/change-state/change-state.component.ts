@@ -67,11 +67,10 @@ export class ChangeStateComponent implements OnInit {
 
   ) {
     this.registry = this.navParams.get("registry");
-   
-    
   }
 
   ngOnInit() {
+    console.log(this.registry);
     this.dropFilesService.getImage().subscribe(resp=>{
       if (resp) {
         this.photos.push(resp)
@@ -84,7 +83,7 @@ export class ChangeStateComponent implements OnInit {
       }
       console.log(resp);
     });
-    this.date =  formatDate(this.registry.dateDetection, 'dd/MM/yyyy', 'es');
+    this.date =  formatDate(this.registry.data.dateDetection, 'dd/MM/yyyy', 'es');
     console.log("registro:")
     console.log(this.registry);
     this.getStatusManagement();
