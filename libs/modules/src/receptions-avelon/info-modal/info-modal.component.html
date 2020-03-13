@@ -33,13 +33,17 @@
       <p>
         Transportista: <span>{{expedition.shipper}}</span>
       </p>
-      <p class="blocked" *ngIf="!expedition.reception_enabled">
-        <span> Esta expedición se encuentra bloqueada </span>
+      <p class="blocked" *ngIf="expeditionBlocked">
+        <span>La expedición escaneada está bloqueada. Escanee otra expedición.</span>
+      </p>
+      <p class="blocked" *ngIf="!expeditionBlocked && noPendingReceptions">
+        <span *ngIf="noPendingConfirms">La expedición no tiene pedido. Escanee otra expedición.</span>
+        <span *ngIf="!noPendingConfirms">La expedición tiene líneas de pedido pendiente de confirmar. Escanee otra expedición.</span>
       </p>
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button [disabled]="!expedition.reception_enabled || expedition.expeditionStates.length == 0" (click)="reception(expedition)">
+      <button mat-button [disabled]="receptionDisabled" (click)="reception(expedition)">
         RECEPCIONAR
         <mat-icon>keyboard_arrow_right</mat-icon>
       </button>
@@ -69,13 +73,17 @@
       <p>
         Transportista: <span>{{anotherExpedition.shipper}}</span>
       </p>
-      <p class="blocked" *ngIf="!anotherExpedition.reception_enabled">
-        <span> Esta expedición se encuentra bloqueada </span>
+      <p class="blocked" *ngIf="expeditionBlocked">
+        <span>La expedición escaneada está bloqueada. Escanee otra expedición.</span>
+      </p>
+      <p class="blocked" *ngIf="!expeditionBlocked && noPendingReceptions">
+        <span *ngIf="noPendingConfirms">La expedición no tiene pedido. Escanee otra expedición.</span>
+        <span *ngIf="!noPendingConfirms">La expedición tiene líneas de pedido pendiente de confirmar. Escanee otra expedición.</span>
       </p>
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button [disabled]="!anotherExpedition.reception_enabled || anotherExpedition.expeditionStates.length == 0" (click)="reception(anotherExpedition)">
+      <button mat-button [disabled]="receptionDisabled" (click)="reception(anotherExpedition)">
         RECEPCIONAR
         <mat-icon>keyboard_arrow_right</mat-icon>
       </button>
