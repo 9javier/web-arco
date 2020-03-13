@@ -122,17 +122,12 @@ export class ProductsAvelonComponent implements OnInit {
   ) {}
 
   getSecondsAvelon(){
-    this.intermediaryService.presentLoading('Actualizando Avelon').then(() => {
-      this.productAvelonService.GetSecondAvelon().subscribe(result => {
-        let seconds = result && result.GlobalVariable_value ? parseInt(result.GlobalVariable_value)/60 : 0;
-        seconds.toString();
-        this.seconds.GlobalVariable_value = seconds ;
-        this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastSuccess("Actualizacion exitosa.")
-      },()=>{
-        this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastError("Actualizacion Fallida.");
-      });
+    this.productAvelonService.GetSecondAvelon().subscribe(result => {
+      let seconds = result && result.GlobalVariable_value ? parseInt(result.GlobalVariable_value)/60 : 0;
+      seconds.toString();
+      this.seconds.GlobalVariable_value = seconds ;
+    },()=>{
+      this.seconds.GlobalVariable_value = "0";
     });
   }
 
