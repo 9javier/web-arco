@@ -19,6 +19,7 @@ import { ProductModel, ProductsService } from '@suite/services';
 import { AlertController } from "@ionic/angular";
 import { PositionsToast } from '../../../services/src/models/positionsToast.type';
 import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
+import { Subscription } from 'rxjs';
 
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
@@ -72,6 +73,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   img: any;
   photos: Array<any> = []
   signatures: any = null
+  signaturesSubscription: Subscription;
   photoList: boolean = false;
   signatureList: boolean = false;
 
@@ -106,7 +108,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     console.log(this.signatures);
 
 
-    this.uploadService.signatureEventAsign().subscribe(resp => {
+    this.signaturesSubscription = this.uploadService.signatureEventAsign().subscribe(resp => {
       console.log(this.signatures);
 
       if (resp) {
@@ -150,20 +152,22 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     console.log(this.photos);
     console.log(this.signatures);
 
-    if (this.signatures) {
-      this.uploadService.deleteFile(this.signatures.id).subscribe(resp => {
-        this.signatures = null
-        this.uploadService.setSignature(null)
-      })
-    }
+    // if (this.signatures) {
+    //   this.uploadService.deleteFile(this.signatures.id).subscribe(resp => {
+    //     this.signatures = null
+    //     this.uploadService.setSignature(null)
+    //   })
+    // }
 
-    if (this.photos.length > 0) {
-      this.photos.forEach(elem => {
-        this.uploadService.deleteFile(elem.id).subscribe(resp => { })
-      })
-    }
+    // if (this.photos.length > 0) {
+    //   this.photos.forEach(elem => {
+    //     this.uploadService.deleteFile(elem.id).subscribe(resp => { })
+    //   })
+    // }
     this.signatures = null
+    this.uploadService.setSignature(null)
     this.photos = []
+    this.signaturesSubscription.unsubscribe()
   }
 
   defectType(defecType_) {

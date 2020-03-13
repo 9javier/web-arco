@@ -1,25 +1,26 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DefectHandlerRoutingModule } from './defect-handler-routing.module';
-import { DefectHandlerComponent } from './defect-handler.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatTooltipModule } from '@angular/material';
+import { MatListModule, MatTableModule, MatPaginatorModule, MatSortModule } from '@angular/material';
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
+import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
-import {BreadcrumbModule} from "../components/breadcrumb/breadcrumb.module";
-import {TagsInputModule} from "../components/tags-inputag/tags-input.module";
-import { RegistryDetailsModule } from '../components/modal-defective/registry-details-al/registry-details-al.module';
+import { MatTooltipModule } from "@angular/material";
+import { DefectHandlerComponent } from './defect-handler.component';
+import { RegistryDetailsModule } from '../components/modal-defective/registry-details/registry-details.module';
+import { DefectHandlerRoutingModule } from './defect-handler-routing.module';
 
 @NgModule({
   declarations: [DefectHandlerComponent],
   imports: [
     CommonModule,
-    DefectHandlerRoutingModule,
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
     MatListModule,
     MatTableModule,
+    DefectHandlerRoutingModule,
     MatPaginatorModule,
     BreadcrumbModule,
     TagsInputModule,
@@ -28,6 +29,5 @@ import { RegistryDetailsModule } from '../components/modal-defective/registry-de
     MatTooltipModule,
     RegistryDetailsModule
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DefectHandlerModule { }
