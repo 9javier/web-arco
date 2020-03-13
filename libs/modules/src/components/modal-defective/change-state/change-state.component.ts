@@ -4,12 +4,13 @@ import { RegistryDetailsComponent } from '../registry-details/registry-details.c
 import { IntermediaryService, IncidentsService, environment, UploadFilesService } from '../../../../../services/src';
 import {DropFilesComponent} from '../../../drop-files/drop-files.component';
 import {formatDate} from '@angular/common';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators,FormControl } from '@angular/forms';
 import * as moment from 'moment';
 import { DropFilesService } from '../../../../../services/src/lib/endpoint/drop-files/drop-files.service';
 import { ModalReviewComponent } from '../ModalReview/modal-review.component';
 import {SignatureComponent} from '../../../signature/signature.component';
 import { ReviewImagesComponent } from '../../../incidents/components/review-images/review-images.component';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -34,11 +35,11 @@ export class ChangeStateComponent implements OnInit {
   imgData: string;
   img: any;
   photos: Array<any> = []
-  signatures: Array<any> = []
+  
   photoList: boolean = false;
   signatureList: boolean = false;
   displayPhotoList: boolean = false;
-
+  signatures: any = null
   date: string;
   dateNow = formatDate(new Date(), 'dd/MM/yyyy', 'es');
   dateDetection;
@@ -54,7 +55,9 @@ export class ChangeStateComponent implements OnInit {
   statusManagement;
   selectGestionState = false;
   signatureId;
-  signature = false;
+  
+  signaturesSubscription: Subscription;
+
   constructor(
     private incidentsService: IncidentsService,
     private intermediary: IntermediaryService,
@@ -90,7 +93,46 @@ export class ChangeStateComponent implements OnInit {
     this.initForm();
     this.initGestionState();
 
-    this.uploadService.signatureEventAsign().subscribe(resp => {
+    this.signatures = null;
+
+   
+    this.photos = [];
+    console.log(this.photos);
+    console.log(this.signatures);
+
+
+    this.signaturesSubscription = this.uploadService.signatureEventAsign().subscribe(resp => {
+      console.log(this.signatures);
+
+      if (resp) {
+        this.intermediary.presentLoading()
+        if (this.signatures) {
+
+          this.uploadService.deleteFile(this.signatures.id).subscribe(
+            resp => {
+              this.intermediary.presentToastSuccess('Imagen anterior eliminada exitosamente')
+            },
+            err => {
+              this.intermediary.dismissLoading()
+            },
+            () => {
+              this.intermediary.dismissLoading()
+            }
+          )
+        }
+      }
+      this.signatures = resp
+      if (!this.signatureList) {
+        this.openSignatureList()
+      }
+      console.log(resp);
+    })
+
+
+
+
+
+    /*this.uploadService.signatureEventAsign().subscribe(resp => {
       if (resp) {
         this.signatures.push(resp)
       }
@@ -102,7 +144,7 @@ export class ChangeStateComponent implements OnInit {
         this.signature = true;
       }
       
-    })
+    })*/
   }
 
   openPhotoList(){
@@ -145,7 +187,6 @@ export class ChangeStateComponent implements OnInit {
      let validation = true;
      let msg;
      let This = this;
-     console.log(this.txtName.length);
 
      if( this.txtName.length < 4){
       console.log("name false");
@@ -180,15 +221,34 @@ export class ChangeStateComponent implements OnInit {
 
   send(){
 
-    console.log(this.signatureId+"vgdfgfgdf");
-    if(this.signatureId){
-      this.incidenceForm.patchValue({
-        signFileId: this.signatureId,
-      })
-      
+
+    if (this.requirePhoto) {
+      if (this.photos.length > 0) {
+        let photos = []
+        this.photos.forEach(elem => {
+          photos.push({ id: elem.id });
+        });
+        this.incidenceForm.addControl('photosFileIds', new FormControl(photos))
+      } else {
+
+        this.intermediary.presentToastError("Debe Agregar Algunas Fotos");
+        return;
+      }
+
     }
-    console.log("aqui "+this.requireContact);
-    console.log(this.incidenceForm);
+
+    if (this.requireOk) {
+      if (this.signatures) {    
+        this.incidenceForm.patchValue({
+          signFileId: this.signatures.id,
+        });
+      } else {
+        this.intermediary.presentToastError("Debe Agregar la Firma");
+        return;
+      }
+
+    }
+
     if(this.requireContact == true){
       if(this.validate()){
         this.sendToIncidents();
@@ -313,7 +373,7 @@ export class ChangeStateComponent implements OnInit {
         console.log(e);
         
         This.intermediary.dismissLoading()
-        This.intermediary.presentToastError(e.error.errors)
+        This.intermediary.presentToastError(e.error)
       }
     );
 
@@ -478,8 +538,8 @@ openSignatureList() {
 
 async onOpenReviewModal(item) {
   const modal = await this.modalController.create({
-  component: ReviewImagesComponent,
-  componentProps: { imgSrc: item.pathMedium  }
+    component: ReviewImagesComponent,
+    componentProps: { imgSrc: item.pathMedium }
   });
 
   await modal.present();
@@ -498,7 +558,7 @@ deleteImage(item, index, arr) {
       if(this.photos.length === 0){
         this.openPhotoList()
       }
-      this.signature = false;
+      //this.signature = false;
     },
     err => {
       this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
@@ -508,6 +568,37 @@ deleteImage(item, index, arr) {
       this.intermediary.dismissLoading()
     }
   )
+}
+
+deleteSignature(item) {
+  this.intermediary.presentLoading()
+  this.uploadService.deleteFile(item.id).subscribe(
+    resp => {
+      this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
+      this.uploadService.setSignature(null)
+    },
+    err => {
+      this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
+      this.intermediary.dismissLoading()
+    },
+    () => {
+      this.intermediary.dismissLoading()
+    }
+  )
+}
+
+
+ngOnDestroy() {
+
+
+  console.log('OnDestroy');
+  console.log(this.photos);
+  console.log(this.signatures);
+
+  this.signatures = null
+  this.uploadService.setSignature(null)
+  this.photos = []
+  this.signaturesSubscription.unsubscribe()
 }
 
 }
