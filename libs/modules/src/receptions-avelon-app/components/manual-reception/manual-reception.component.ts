@@ -15,6 +15,8 @@ import { ModalModelImagesComponent } from "../modal-model-images/modal-model-ima
 import { PositionsToast } from "../../../../../services/src/models/positionsToast.type";
 import {ActivatedRoute, Router} from "@angular/router";
 import { LocalStorageProvider } from "../../../../../services/src/providers/local-storage/local-storage.provider";
+import {ScreenResult} from "../../../receptions-avelon/enums/screen_result.enum";
+import {ModalDestinyReceptionComponent} from "../../modals/modal-model-images/destiny-reception.component";
 
 @Component({
   selector: 'suite-manual-reception',
@@ -490,7 +492,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
       this.receptionsAvelonService
         .printReceptionLabel({ to_print: params })
-        .subscribe((res) => {
+        .subscribe(async (res) => {
           this.loadingMessageComponent.show(false);
           const referencesToPrint = res.resultToPrint.map(r => r.reference);
           if (referencesToPrint && referencesToPrint.length > 0) {
@@ -511,10 +513,18 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
                   sizes: this.listSizes
                 };
                 await this.localStorageProvider.set('lastPrint', JSON.stringify(lastPrint));
-                await this.router.navigate(['receptions-avelon', 'app']);
               }, (error) => {
                 console.error('Some error success to print reference of reception', error);
               });
+
+            const someProductToSorter = !!res.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
+            let typeDestinyReception = someProductToSorter ? ScreenResult.SORTER_VENTILATION : ScreenResult.WAREHOUSE_LOCATION;
+            const modalDestiny = await this.modalController.create({
+              component: ModalDestinyReceptionComponent,
+              componentProps: { typeDestinyReception: typeDestinyReception }
+            });
+            modalDestiny.onDidDismiss().then(_ => this.router.navigate(['receptions-avelon', 'app']));
+            modalDestiny.present();
           }
           if (res.productsWithError && res.productsWithError.length > 0) {
             this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.', PositionsToast.BOTTOM);
