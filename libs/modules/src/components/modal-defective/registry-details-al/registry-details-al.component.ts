@@ -121,15 +121,12 @@ export class RegistryDetailsComponent implements OnInit {
 
   changeState(id:number){
 
-    console.log(id);
-
     const navigationExtras: NavigationExtras = {
       state : {
         "reference" : id,
       }      
     };    
     this.router.navigate(['/incidents'], navigationExtras);
-    // this.alertController.dismiss();
     this.modalController.dismiss();
   }
 
