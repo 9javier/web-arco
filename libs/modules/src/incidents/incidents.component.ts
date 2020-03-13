@@ -705,10 +705,24 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     });
   }
   async searchPhoto() {
-    const modal = await this.modalController.create({
-      component: DropFilesComponent,
+    const options: CameraOptions = {
+      quality: 50,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      encodingType: this.camera.EncodingType.PNG,
+      mediaType: this.camera.MediaType.PICTURE,
+      sourceType: this.camera.PictureSourceType.CAMERA,
+      correctOrientation: true
+    }
+    this.camera.getPicture(options).then((imageData) => {
+      // imageData is either a base64 encoded string or a file URI
+      // If it's base64 (DATA_URL):
+      console.log(imageData);
+      this.imgData = imageData
+      this.uploadImage()
+
+    }, (err) => {
+      // Handle error
     });
-    await modal.present();
   }
   async uploadImage() {
     if (!this.imgData || this.imgData.length == 0) {
