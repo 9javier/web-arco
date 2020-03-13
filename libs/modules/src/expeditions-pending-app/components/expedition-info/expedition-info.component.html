@@ -7,7 +7,16 @@
 
   <mat-card-content>
     <p>
-      Nº bultos: <span>{{expedition.total_packing}}</span>
+      Nº palets total: <span>{{expedition.expeditionPallets}}</span>
+    </p>
+    <p>
+      Nº bultos total: <span>{{expedition.expeditionPackings}}</span>
+    </p>
+    <p>
+      Estados: <span>{{stringStates(expedition.expeditionStates)}}</span>
+    </p>
+    <p>
+      Nº bultos de la expedición: <span>{{expedition.total_packing}}</span>
     </p>
     <p>
       Fecha de envío: <span>{{dateTimeParserService.date(expedition.delivery_date)}}</span>
@@ -16,7 +25,7 @@
       Transportista: <span>{{expedition.shipper}}</span>
     </p>
     <p>
-      Estados: <span>{{stringStates(expedition)}}</span>
+      Estados de la expedición: <span>{{stringStates(expedition.states_list)}}</span>
     </p>
     <p class="blocked" *ngIf="!expedition.reception_enabled">
       <span> Esta expedición se encuentra bloqueada </span>
