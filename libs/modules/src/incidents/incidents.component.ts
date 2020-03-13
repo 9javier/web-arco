@@ -140,6 +140,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       this.barcodeRoute = navigation.extras.state['reference'];
     }
     this.initDinamicFields();
+
   }
   ngOnDestroy() {
 
@@ -184,7 +185,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.incidenceForm = this.fb.group({
       productId: 1,
       productReference: '',
-      dateDetection: this.date,
+      dateDetection: [this.date],
       observations: '',
       numberObservations: 1,
       factoryReturn: [false],
