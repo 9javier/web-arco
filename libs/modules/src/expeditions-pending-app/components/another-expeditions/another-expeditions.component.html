@@ -7,22 +7,19 @@
 
   <mat-card-content>
     <p>
-      Nº palets total: <span>{{expedition.expeditionPallets}}</span>
+      Nº pallets: <span>{{expedition.expeditionPallets}}</span>
     </p>
     <p>
-      Nº bultos total: <span>{{expedition.expeditionPackings}}</span>
+      Nº bultos: <span>{{expedition.expeditionPackings}}</span>
     </p>
     <p>
-      Nº bultos d ela expedición: <span>{{expedition.total_packing}}</span>
+      Estados: <span>{{stringStates(expedition.expeditionStates)}}</span>
     </p>
-    <p>
+    <p *ngIf="dateTimeParserService.date(expedition.delivery_date) != 'Invalid date'">
       Fecha de envío: <span>{{dateTimeParserService.date(expedition.delivery_date)}}</span>
     </p>
     <p>
       Transportista: <span>{{expedition.shipper}}</span>
-    </p>
-    <p>
-      Estados de la expedición: <span>{{stringStates(expedition.states_list)}}</span>
     </p>
     <p class="blocked" *ngIf="!expedition.reception_enabled">
       <span> Esta expedición se encuentra bloqueada </span>
@@ -30,7 +27,7 @@
   </mat-card-content>
 
   <mat-card-actions align="end">
-    <button mat-button [disabled]="!expedition.reception_enabled" (click)="reception(expedition)">
+    <button mat-button [disabled]="!expedition.reception_enabled || expedition.expeditionStates.length == 0" (click)="reception(expedition)">
       RECEPCIONAR
       <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
