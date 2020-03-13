@@ -29,6 +29,7 @@ import {MondayStartingDateAdapterService} from "../../../../libs/services/src/li
 import { NgxMaskModule } from 'ngx-mask';
 import { VirtualKeyboardComponent } from '../../../../libs/modules/src/components/virtual-keyboard/virtual-keyboard.component';
 import { VirtualKeyboardModule } from '../../../../libs/modules/src/components/virtual-keyboard/virtual-keyboard.module';
+import {SignatureModule} from '../../../../libs/modules/src/signature/signature.module';
 
 registerLocaleData(localeEs);
 @NgModule({
@@ -51,7 +52,8 @@ registerLocaleData(localeEs);
     BreadcrumbModule,
     MenuModule,
     NgxMaskModule.forRoot(),
-    VirtualKeyboardModule
+    VirtualKeyboardModule,
+    SignatureModule
   ],
   providers: [
     StatusBar,

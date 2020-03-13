@@ -5,14 +5,14 @@
                 <ion-icon name="close" class="toogleArrow"></ion-icon>
             </ion-button>
         </ion-buttons>
-        <ion-title>{{ registry.id }}</ion-title>
+        <ion-title>{{ registry.data.id }}</ion-title>
     </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content >
   <form [formGroup]="incidenceForm">
   <ion-item>
     <ion-label class="label-text">Producto:</ion-label>
-    <ion-input class="input-barcode" type="text" readonly>{{registry.product.reference}}</ion-input><br>
+    <ion-input class="input-barcode" type="text" readonly>{{registry.data.product.reference}}</ion-input><br>
   </ion-item>
   <ion-item>
     <ion-label class="label-text">Fecha</ion-label>
@@ -20,8 +20,8 @@
   </ion-item>
   <ion-item>
     <ion-label class="label-text">Estado de gestion</ion-label>
-    <ion-select  (ionChange)="gestionChange($event)" placeholder="Selecciona">
-      <ion-select-option  ></ion-select-option>
+    <ion-select  (ionChange)="gestionChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
+      <ion-select-option  *ngFor="let item of allDefectType" [value]="item.id" >{{item.name}}</ion-select-option>
     </ion-select>
   </ion-item> 
 
@@ -86,7 +86,7 @@
       <ion-icon name="finger-print"></ion-icon>
     </ion-button>
   </ion-item>
-  <ion-item *ngIf="requireOk == true" (click)="openSignatureList()" lines="none">
+  <ion-item *ngIf="signature == true && requireOk == true" (click)="openSignatureList()" lines="none">
     <ion-label class="label-text">Firma</ion-label>
     <ion-icon slot="end" *ngIf="signatureList" name="arrow-down"></ion-icon>
     <ion-icon slot="end" *ngIf="!signatureList" name="arrow-up"></ion-icon>
@@ -105,7 +105,7 @@
     <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
   </ion-item>
 
-  <ion-button   (click)="send()" expand="block" shape="round">
+  <ion-button  [disabled]="selectGestionState == false" (click)="send()" expand="block" shape="round">
     actualizar
   </ion-button>
   </form>

@@ -54,7 +54,7 @@ export class SignatureComponent implements OnInit,OnChanges {
     
   }
   dismiss() {
-    this.modalController.dismiss()
+    this.modalController.dismiss(null, undefined, null)
   }
   drawStart() {
     // will be notified of szimek/signature_pad's onBegin event
@@ -84,6 +84,11 @@ export class SignatureComponent implements OnInit,OnChanges {
       }
     )
 
+  }
+
+  async closeScreen(){
+    const modal = await this.modalController.getTop();
+    modal.dismiss();
   }
 
 }

@@ -96,10 +96,10 @@ export class DefectiveRegistryService {
     }));
   }
 
-  getListDefect(body){
-    return this.http.post(this.getDefectList, body).pipe(map((response:any)=>{
-      return response.data;
-    }));
+  getListDefect(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
+    return this.http.post<HttpRequestModel.Response>(this.getDefectList,body).pipe(
+      map(resp => resp.data)
+    )
   }
 
   getLastHistorical(body):Observable<any>{

@@ -5,6 +5,9 @@ import { IntermediaryService, IncidentsService, environment, UploadFilesService 
 import {formatDate} from '@angular/common';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
+import {SignatureComponent} from '../../../signature/signature.component';
+import { ReviewImagesComponent } from '../../../incidents/components/review-images/review-images.component';
+
 
 @Component({
   selector: 'suite-change-state',
@@ -14,10 +17,10 @@ import * as moment from 'moment';
 export class ChangeStateComponent implements OnInit {
   allDefectType=[];
   ticketEmit: boolean;
-  passHistory:boolean = true;
-  requirePhoto:boolean = true;
-  requireContact: boolean = true;
-  requireOk: boolean = true;
+  passHistory:boolean;
+  requirePhoto:boolean;
+  requireContact: boolean;
+  requireOk: boolean;
   checkHistory: boolean;
   registry;
   barcode ="64565465645655";
@@ -42,7 +45,12 @@ export class ChangeStateComponent implements OnInit {
   defectParentId;
   ParentAndChild;
   showChangeState;
-
+  status;
+  managementId;
+  statusManagement;
+  selectGestionState = false;
+  signatureId;
+  signature = false;
   constructor(
     private incidentsService: IncidentsService,
     private intermediary: IntermediaryService,
@@ -50,46 +58,62 @@ export class ChangeStateComponent implements OnInit {
     private navParams: NavParams,
     private fb: FormBuilder,
     private intermediaryService: IntermediaryService,
+    private uploadService: UploadFilesService,
+
   ) {
     this.registry = this.navParams.get("registry");
+   
     
   }
 
   ngOnInit() {
-    
-    this.date =  formatDate(this.registry.dateDetection, 'dd/MM/yyyy', 'es');
+    this.date =  formatDate(this.registry.data.dateDetection, 'dd/MM/yyyy', 'es');
     console.log("registro:")
     console.log(this.registry);
+    this.getStatusManagement();
     this.initForm();
-    
+    this.initGestionState();
+
+    this.uploadService.signatureEventAsign().subscribe(resp => {
+      if (resp) {
+        this.signatures.push(resp)
+      }
+      if (!this.signatureList) {
+        this.openSignatureList()
+      }
+      if(resp != null || resp != undefined){
+        this.signatureId = resp.id;
+        this.signature = true;
+      }
+      
+    })
   }
 
 
   initForm() {
    this.incidenceForm = this.fb.group({
       productId: 1,
-      productReference: '',
+      productReference: [this.registry.data.product.reference],
       dateDetection:[this.date],
-      observations: [this.registry.observations],
+      observations: [this.registry.data.observations],
       factoryReturn: [false],
-      statusManagementDefectId: [this.registry.statusManagementDefect.id],
-      defectTypeChildId: [this.registry.defectTypeChild.id],
-      signFileId: [1],
-      gestionState: 0, 
+      statusManagementDefectId: [this.registry.data.statusManagementDefect.id],
+      defectTypeChildId: [this.registry.data.defectTypeChild.id],
+      signFileId:[0],
       contact: this.fb.group({
-        name: [this.registry.contact.name],
-        email: [this.registry.contact.email],
-        phone: [this.registry.contact.phone]
+        name: [this.registry.data.contact.name],
+        email: [this.registry.data.contact.email],
+        phone: [this.registry.data.contact.phone]
       }) 
       
     })
 
-    this.txtName = this.registry.contact.name;
-    this.txtEmail = this.registry.contact.email;
-    this.txtTel = this.registry.contact.phone;
+    this.txtName = this.registry.data.contact.name;
+    this.txtEmail = this.registry.data.contact.email;
+    this.txtTel = this.registry.data.contact.phone;
 
-    this.ParentAndChild = this.registry.defectTypeChild.name +" - "
-    +this.registry.defectTypeParent.name;
+    this.ParentAndChild = this.registry.data.defectTypeChild.name +" - "
+    +this.registry.data.defectTypeParent.name;
 
   }
 
@@ -135,6 +159,13 @@ export class ChangeStateComponent implements OnInit {
 
   send(){
 
+    console.log(this.signatureId+"vgdfgfgdf");
+    if(this.signatureId){
+      this.incidenceForm.patchValue({
+        signFileId: this.signatureId,
+      })
+      
+    }
     console.log("aqui "+this.requireContact);
     console.log(this.incidenceForm);
     if(this.requireContact == true){
@@ -143,10 +174,9 @@ export class ChangeStateComponent implements OnInit {
       }
     }
     else{
-      /*this.incidenceForm.patchValue({
+      this.incidenceForm.patchValue({
         statusManagementDefectId: this.managementId,
-        defectTypeChildId: this.defectChildId,
-      });*/
+      });
       let object = this.incidenceForm.value;
       delete object.contact;
       this.sendToDefectsWithoutContact(object);
@@ -161,7 +191,7 @@ export class ChangeStateComponent implements OnInit {
       const modal = await this.modalController.create({
         component: RegistryDetailsComponent,
         componentProps: {
-          productId: this.registry.product.id,
+          productId: this.registry.data.product.id,
           showChangeState: true
         }
       });
@@ -182,12 +212,11 @@ export class ChangeStateComponent implements OnInit {
   }
 
   async sendToIncidents() {
-    this.incidenceForm.value.contact.phone = this.txtTel+"";
-   /* this.incidenceForm.patchValue({
-      statusManagementDefectId: this.managementId,
-      defectTypeChildId: this.defectChildId,
 
-    })*/
+    this.incidenceForm.value.contact.phone = this.txtTel+"";
+    this.incidenceForm.patchValue({
+      statusManagementDefectId: this.managementId, 
+    })
    
 
     let This = this;
@@ -275,13 +304,169 @@ export class ChangeStateComponent implements OnInit {
     console.log("imprimir...")
   }
 
-  gestionChange(e) {
+  initGestionState(){
+   
+    let res;
     
+      res = this.registry.data.statusManagementDefect;
+    
+
+    if(res != undefined){
+      console.log("Iniciando gestion state");
+      console.log(res);
+
+      this.ticketEmit = res.ticketEmit;
+      //this.passHistory = res.passHistory;
+      this.requirePhoto = res.requirePhoto
+      this.requireContact = res.requireContact;
+      this.requireOk = res.requireOk;
+      this.managementId = res.id;
+      
+    }else{
+      this.ticketEmit = false;
+      this.passHistory = false;
+      this.requirePhoto = false;
+      this.requireContact = false;
+      this.requireOk = false;
+    }
   }
 
+  gestionChange(e) {
+    let id = e.detail.value;
+    console.log("this.statusManagament",this.statusManagement);
+    let res;
+    
+      res = this.statusManagement['classifications'].find( x => x.defectType == id);
+      
+    
 
+    if(res != undefined){
+      console.log("resultado de cambio...",res);
 
+      /*if(res instanceof Array){
+        res = res.find( x  => x.id == id);
+      }*/
+
+      this.ticketEmit = res.ticketEmit;
+      this.passHistory = res.passHistory;
+      this.requirePhoto = res.requirePhoto
+      this.requireContact = res.requireContact;
+      this.requireOk = res.requireOk;
+      this.managementId = res.id;
+      
+    }else{
+      this.ticketEmit = false;
+      this.passHistory = false;
+      this.requirePhoto = false;
+      this.requireContact = false;
+      this.requireOk = false;
+    }
+
+   this.selectGestionState = true;
   
+    
+  }
+  defectChange(e) {
+    //this.select2 = true;
+    console.log(e);
+    this.defectChildId = e.detail.value;
+  }
+
+  defectType_(defecType_){
+
+    let defecType =[];
+    defecType_['status'].forEach(element => {
+      let res = defecType_.data.statusManagementDefect.defectType == element.id;
+     
+      if(res == true){
+        
+      }else{
+        defecType.push(
+          {id: element.id,
+           name: element.name 
+          });
+      }
+    });
+
+    this.allDefectType = defecType;
+    console.log(this.allDefectType);
+}
+
+
+defectType(defecType_){
+  console.log(defecType_);
+  let defecType =[];
+  defecType_['classifications'].forEach(element => {
+    let res = defecType_['statuses'].find( x => x.id == element.defectType);
+    if(res != undefined){
+
+      if(res.id == this.registry.data.statusManagementDefect.defectType){
+        
+      }else{
+        defecType.push(res);
+      }
+
+    }
+  });
+  this.allDefectType = defecType;
+
+}
+
+getStatusManagement() {
+  this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
+    this.statusManagement = resp;
+    this.defectType(this.statusManagement);
+  })
+}
+
+async signModal(){
+  const modal = await this.modalController.create({
+    component: SignatureComponent,
+  });
+
+  await modal.present();
+  // this.router.navigate(['signature']);
+}
+
+
+
+openPhotoList(){
+  this.photoList = !this.photoList
+}
+openSignatureList() {
+  this.signatureList = !this.signatureList
+
+}
+
+deleteImage(item, index, arr) {
+  this.intermediary.presentLoading()
+  this.uploadService.deleteFile(item.id).subscribe(
+    resp => {
+      this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
+      arr.splice(index, 1);
+      this.signature = false;
+    },
+    err => {
+      this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
+      this.intermediary.dismissLoading()
+    },
+    () => {
+      this.intermediary.dismissLoading()
+    }
+  )
+}
+async onOpenReviewModal(item) {
+  const modal = await this.modalController.create({
+  component: ReviewImagesComponent,
+  componentProps: { imgSrc: item.pathMedium  }
+  });
+
+  await modal.present();
+
+}
+
+
+
 
 
 }
