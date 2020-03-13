@@ -31,6 +31,8 @@ export class ScannerManualComponent implements OnInit {
     this.currentValue.next(data);
     if (event.keyCode == 13 && data && !this.isScanBlocked) {
       this.newValue.next(data);
+      this.setValue(null);
+      this.focusToInput();
     } else if (event.keyCode == 13 && this.isScanBlocked) {
       this.setValue(null);
       this.focusToInput();
