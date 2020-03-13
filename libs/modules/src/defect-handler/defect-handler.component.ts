@@ -282,4 +282,8 @@ export class DefectHandlerComponent implements OnInit {
     this.initForm();
     this.getFilters();
   }
+
+  refresh() {
+    this.clearFilters();
+  }
 }

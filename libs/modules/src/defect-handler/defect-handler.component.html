@@ -112,9 +112,13 @@
     </table>
   </div>
   <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+</ion-content>
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="refresh()"><i
+      class="material-icons">refresh</i></ion-fab-button>
     <ion-fab-button [routerLink]="['/incidents']">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-</ion-content>
+</ion-footer>
