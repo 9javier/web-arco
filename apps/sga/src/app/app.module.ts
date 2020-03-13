@@ -33,6 +33,7 @@ import { DropFilesModule } from '../../../../libs/modules/src/drop-files/drop-fi
 import { ModalReviewModule } from '../../../../libs/modules/src/components/modal-defective/ModalReview/modal-review.module';
 
 import {SignatureModule} from '../../../../libs/modules/src/signature/signature.module';
+import { ReviewImagesModule } from '../../../../libs/modules/src/incidents/components/review-images/review-images.module';
 
 registerLocaleData(localeEs);
 @NgModule({
@@ -58,7 +59,8 @@ registerLocaleData(localeEs);
     VirtualKeyboardModule,
     DropFilesModule,
     ModalReviewModule,
-    SignatureModule
+    SignatureModule,
+    ReviewImagesModule, 
   ],
   providers: [
     StatusBar,

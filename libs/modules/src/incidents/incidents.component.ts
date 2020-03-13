@@ -76,6 +76,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   signaturesSubscription: Subscription;
   photoList: boolean = false;
   signatureList: boolean = false;
+  dateOnFront = new Date();
 
   constructor(
     private fb: FormBuilder,
@@ -104,13 +105,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
     this.toolbarProvider.currentPage.next("Registro defectuoso")
     this.photos = [];
-    console.log(this.photos);
-    console.log(this.signatures);
 
 
     this.signaturesSubscription = this.uploadService.signatureEventAsign().subscribe(resp => {
-      console.log(this.signatures);
-
       if (resp) {
         this.intermediary.presentLoading()
         if (this.signatures) {
@@ -132,7 +129,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       if (!this.signatureList) {
         this.openSignatureList()
       }
-      console.log(resp);
     })
 
     this.date = moment().format('DD-MM-YYYY');
@@ -183,12 +179,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   initForm() {
-
+    
     let phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     this.incidenceForm = this.fb.group({
       productId: 1,
       productReference: '',
-      dateDetection: [this.date],
+      dateDetection: this.dateNow,
       observations: '',
       numberObservations: 1,
       factoryReturn: [false],
@@ -219,30 +215,29 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   async loadFromDBValues() {
-
+    console.log("Date now", this.dateNow)    
     if (this.barcodeRoute) {
       let body = {
-        // "productId":12,
         "productId": this.barcodeRoute,
         "productReference": ""
       }
       await this.incidentsService.getOneIncidentProductById(body).subscribe(resp => {
 
-        // this.types = resp.data;
-        resp = resp.data;
-        // let contact = resp.contact;
-        console.log('result', resp);
+        resp = resp.data;        
+        // console.log('result', resp);
         // console.log('contact', contact);
 
         this.statusManagament = {
           'classifications': resp.statusManagementDefect
         }
 
-        console.log("resp status ", resp.statusManagementDefect);
+        // console.log("resp status ", resp.statusManagementDefect);
 
         this.statusManagament["classifications"] = resp.statusManagementDefect;
 
         this.varTrying = resp.statusManagementDefect.id;
+
+        
 
         // this.incidenceForm.patchValue({ gestionChange: resp.statusManagementDefect.id })
         this.incidenceForm.patchValue({
@@ -251,12 +246,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           registerDate: Date.now(),
           observations: resp.observations,
           gestionState: resp.statusManagementDefect.id,
-          gestionChange: resp.statusManagementDefect.id,
           photo: resp.photo,
           validation: resp.validation,
           isHistory: resp.isHistory,
           statusManagementDefectId: resp.statusManagementDefect.id,
           defectTypeChildId: resp.defectTypeChild.id,
+          dateDetection : moment().format(), 
           // photosFileIds: [ [{ "id": 1 }]],
           // signFileId: [1],
           // contact: this.fb.group({
@@ -440,7 +435,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       //   phone: this.txtTel,
       // },
     })
-    console.log("hello world", this.incidenceForm);
+    // console.log("hello world", this.incidenceForm);
     let This = this;
     await This.intermediary.presentLoading('Enviando...')
     if (this.ticketEmit == true) {
@@ -453,7 +448,16 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       })
     }
 
+    if(this.incidenceForm.value.observations!=null){
+      this.incidenceForm.patchValue({
+        contact: {
+          phone:this.incidenceForm.value.contact.phone+""
+        },
+      })
+    }
+
     let object = this.incidenceForm.value;
+    console.log("object",object);
     if (!this.requireContact) {
       delete object.contact;
     }
@@ -485,10 +489,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         this.router.navigateByUrl('/defect-handler');
       },
       e => {
-        console.log(e);
+        // console.log(e);
         This.intermediary.dismissLoading()
         This.intermediary.presentToastError(e.error)
-        console.log("e,", e);
+        // console.log("e,", e);
       }
     );
 
@@ -624,7 +628,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   // }
   gestionChange(e) {
     let id = e.detail.value;
-    console.log("this.statusManagament", this.statusManagament);
     let res;
     if (this.barcodeRoute == null || this.barcodeRoute == undefined) {
       res = this.statusManagament['classifications'].find(x => x.defectType == id);
@@ -635,7 +638,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }
 
     if (res != undefined) {
-      console.log("res", res);
+      // console.log("res", res);
 
       if (res instanceof Array) {
         res = res.find(x => x.id == id);

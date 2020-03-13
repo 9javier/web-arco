@@ -7,6 +7,8 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DropFilesModule } from '../../../drop-files/drop-files.module';
 import {SignatureComponent} from '../../../signature/signature.component';
 import {SignatureModule} from '../../../signature/signature.module';
+import { ReviewImagesComponent } from '../../../incidents/components/review-images/review-images.component';
+
 
 
 @NgModule({

@@ -16,8 +16,8 @@ import { DropFilesModule } from '../drop-files/drop-files.module';
 import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
 @NgModule({
-  declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent, ReviewImagesComponent,],
-  entryComponents: [IncidentsComponent, PhotoModalComponent, ReviewImagesComponent],
+  declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent,],
+  entryComponents: [IncidentsComponent, PhotoModalComponent],
   imports: [
     CommonModule,
     IncidentsRoutingModule,
