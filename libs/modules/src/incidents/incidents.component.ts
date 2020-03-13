@@ -37,7 +37,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   allDefectType = [];
   ticketEmit: boolean;
   passHistory: boolean;
-  requirePhoto: boolean;
+  requirePhoto: boolean = false;
   requireContact: boolean = false;
   requireOk: boolean;
   checkHistory: boolean;
@@ -332,7 +332,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       validation = false;
     }
 
-    if (!this.requirePhoto && this.photos.length == 0) {
+    if (this.requirePhoto && this.photos.length == 0) {
       msg = "Debe capturar por lo menos una foto";
       validation = false;
     }
@@ -643,6 +643,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       if (res instanceof Array) {
         res = res.find(x => x.id == id);
       }
+      console.log(res.requirePhoto);
       this.ticketEmit = res.ticketEmit;
       this.passHistory = res.passHistory;
       this.requirePhoto = res.requirePhoto
