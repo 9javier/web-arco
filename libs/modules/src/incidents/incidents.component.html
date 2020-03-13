@@ -6,12 +6,13 @@
   <ng-template #read>
     <ion-item>
       <ion-label class="label-text">Producto:</ion-label>
-      <ion-input class="input-barcode" formControlName="productReference" type="text" readonly style="text-align: right;">{{barcode}}</ion-input><br>
+      <ion-input *ngIf="barcodeRoute==null" class="input-barcode" formControlName="productReference" type="text" readonly style="text-align: right;"></ion-input><br>
+      <ion-input *ngIf="barcodeRoute!=null" class="input-barcode" formControlName="productReference" type="text" readonly style="text-align: right;">{{barcode}}</ion-input><br>
     </ion-item>
     <ion-item>
       <ion-label class="label-text">Fecha</ion-label>
-      <!-- <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format [disabled]="barcodeRoute!=null" [(ngModel)]="this.dateOnFront" ></ion-datetime> -->
-      <ion-input class="input-barcode" type="text" readonly style="text-align: right;" [value]="this.dateNow"></ion-input><br>
+      <ion-datetime *ngIf="barcodeRoute==null" formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format ></ion-datetime>
+      <ion-input *ngIf="barcodeRoute!=null" class="input-barcode" type="text" readonly style="text-align: right;" [value]="this.dateNow"></ion-input><br>
     </ion-item>
     <ion-item>
       <ion-label class="label-text">Estado de gestion</ion-label>
@@ -54,7 +55,7 @@
   
       <ion-item lines="none" *ngIf="requirePhoto == true" lines="none">
         <ion-label class="ion-text-capitalize label-text">capturar / buscar fotos</ion-label>
-        <ion-button (click)="takePhoto()">
+        <ion-button (click)="takePhoto()" class="icon-camare">
           <ion-icon name="camera"></ion-icon>
         </ion-button>
         <ion-button (click)="searchPhoto()">

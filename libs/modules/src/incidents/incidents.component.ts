@@ -131,7 +131,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       }
     })
 
-    this.date = moment().format('DD-MM-YYYY');
+
     this.initForm();
     this.readed = false;
     const navigation = this.router.getCurrentNavigation();
@@ -180,12 +180,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   initForm() {
-
+    this.date = moment().format('DD-MM-YYYY');
     let phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     this.incidenceForm = this.fb.group({
       productId: 1,
       productReference: '',
-      dateDetection: this.dateNow,
+      dateDetection: this.date,
       observations: '',
       numberObservations: 1,
       factoryReturn: [false],
