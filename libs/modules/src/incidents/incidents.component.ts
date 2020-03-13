@@ -240,14 +240,14 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
         this.varTrying = resp.statusManagementDefect.id;
 
-        this.incidenceForm.patchValue({ gestionChange: resp.statusManagementDefect.id })
-        this.incidenceForm.patchValue({ productReference: resp.product.reference })
+        // this.incidenceForm.patchValue({ gestionChange: resp.statusManagementDefect.id })
         this.incidenceForm.patchValue({
+          productReference: resp.product.reference,
           barcode: resp.product.reference,
           registerDate: Date.now(),
           observations: resp.observations,
           gestionState: resp.statusManagementDefect.id,
-          // gestionState: resp.defectTypeChildId.id,
+          gestionChange: resp.statusManagementDefect.id,
           photo: resp.photo,
           validation: resp.validation,
           isHistory: resp.isHistory,
@@ -262,6 +262,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           // })            
         });
         this.typeIdBC = resp.statusManagementDefect.id;
+        this.onChange(resp.defectTypeChild.id);
 
         let sendtoGestionChange = {
           "detail": {
