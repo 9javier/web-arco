@@ -392,6 +392,12 @@ export class MenuComponent implements OnInit {
           id: 'seasons-enabled',
           url: '/seasons-enabled',
           icon: 'cog'
+        },
+        {
+          title: 'Habilitar campos comerciales',
+          id: 'internal-groups-enabled',
+          url: '/internal-groups-enabled',
+          icon: 'cog'
         }
       ]
     },

@@ -111,6 +111,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'internal-groups-enabled',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/internal-groups-enabled/internal-groups-enabled.module#InternalGroupsEnabledModule',
+    data: {
+      name: 'Campos Comerciales'
+    }
+  },
+  {
     path: 'pallets',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
