@@ -12,8 +12,8 @@ import { ReviewImagesComponent } from '../../../incidents/components/review-imag
 
 
 @NgModule({
-  declarations: [ChangeStateComponent,ReviewImagesComponent],
-  entryComponents: [ChangeStateComponent,ReviewImagesComponent],
+  declarations: [ChangeStateComponent],
+  entryComponents: [ChangeStateComponent],
   exports: [ChangeStateComponent],
   imports: [
     CommonModule,
