@@ -707,19 +707,25 @@ export class ProductsAvelonComponent implements OnInit {
   }
 
   async presentAlertDeleteConfirm() {
+    const itemsSelected = this.selection.selected.length;
+    let message = 'Está a punto de borrar una recepción que aún no ha sido notificada a Avelon. <br/>¿Está seguro de que desea continuar y deshacer la recepción?';
+    if (itemsSelected > 1) {
+      message = 'Está a punto de borrar recepciones que aún no han sido notificadas a Avelon. <br/>¿Está seguro de que desea continuar y deshacer las recepciones seleccionadas?';
+    }
+
     const alert = await this.alertController.create({
-      header: '¡Confirmar eliminación!',
-      message: '¿Deseas eliminar los productos seleccionados?',
+      header: '¡Acción peligrosa!',
+      message: message,
       buttons: [
         {
-          text: 'No',
+          text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
             this.selection.clear();
           }
         }, {
-          text: 'Si',
+          text: 'Eliminar',
           handler: async () => {
             await this.deleteProductReceptions();
           }
