@@ -82,7 +82,7 @@ export class DefectHandlerComponent implements OnInit {
   ) { }
 
   ionViewWillEnter() {
-    this.getList();
+    this.getList(this.form);
   }
   ngOnInit() {
     this.initEntity();
