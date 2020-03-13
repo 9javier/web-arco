@@ -124,7 +124,7 @@ export class ProductsAvelonComponent implements OnInit {
   getSecondsAvelon(){
     this.intermediaryService.presentLoading('Actualizando Avelon').then(() => {
       this.productAvelonService.GetSecondAvelon().subscribe(result => {
-        let seconds = parseInt(result.GlobalVariable_value)/60
+        let seconds = result && result.GlobalVariable_value ? parseInt(result.GlobalVariable_value)/60 : 0;
         seconds.toString();
         this.seconds.GlobalVariable_value = seconds ;
         this.intermediaryService.dismissLoading();
