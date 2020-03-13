@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { DefectHandlerComponent } from '@suite/common-modules';
+import { DefectHandlerComponent } from '../defect-handler/defect-handler.component';
 
 const routes: Routes = [
   {

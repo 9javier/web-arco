@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import { DefectiveRegistryModel } from '../../../services/src/models/endpoints/DefectiveRegistry';
 import { ModalController } from '@ionic/angular';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { validators } from '..';
+import { validators } from '../utils/validators';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { RegistryDetailsComponent } from '../components/modal-defective/registry-details/registry-details.component';
 import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
