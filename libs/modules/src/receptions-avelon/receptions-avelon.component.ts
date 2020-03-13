@@ -117,7 +117,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.stateAnimationInfo = 'out';
     this.isReceptionStarted = false;
     this.formHeaderReceptionComponent.resetProcess();
-    this.infoHeaderReceptionComponent.loadInfoExpedition(null, null);
+    this.infoHeaderReceptionComponent.loadInfoExpedition(null, null, null, null, null, null);
 
     this.ngOnInit();
   }
@@ -985,7 +985,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.stateAnimationForm = 'out';
                 this.stateAnimationInfo = 'in';
                 this.isReceptionStarted = true;
-                this.infoHeaderReceptionComponent.loadInfoExpedition(expedition.reference, {name: expedition.provider_name, id: expedition.provider_id.toString()});
+                this.infoHeaderReceptionComponent.loadInfoExpedition(
+                  expedition.reference,
+                  {name: expedition.provider_name, id: expedition.provider_id.toString()},
+                  {packings: expedition.total_packing, pallets: expedition.total_packing},
+                  expedition.delivery_date,
+                  expedition.shipper,
+                  expedition.states_list);
               }
             });
             modal.present();
@@ -1048,7 +1054,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.stateAnimationForm = 'out';
                 this.stateAnimationInfo = 'in';
                 this.isReceptionStarted = true;
-                this.infoHeaderReceptionComponent.loadInfoExpedition(expedition.reference, {name: expedition.provider_name, id: expedition.provider_id.toString()});
+                this.infoHeaderReceptionComponent.loadInfoExpedition(
+                  expedition.reference,
+                  {name: expedition.provider_name, id: expedition.provider_id.toString()},
+                  {packings: expedition.total_packing, pallets: expedition.expeditionPallets},
+                  expedition.delivery_date,
+                  expedition.shipper,
+                  expedition.states_list);
               }
             });
             modal.present();
