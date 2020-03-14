@@ -8,11 +8,14 @@ import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 import { MatTooltipModule } from "@angular/material";
 import { DefectHandlerComponent } from './defect-handler.component';
-import { RegistryDetailsModule } from '../components/modal-defective/registry-details-al/registry-details-al.module';
+// import { RegistryDetailsModule } from '../components/modal-defective/registry-details-al/registry-details-al.module';
 import { DefectHandlerRoutingModule } from './defect-handler-routing.module';
+import { RegistryDetailsComponent } from '../components/modal-defective/registry-details/registry-details.component';
+import { DetailsRegisterModule } from './details-register/details-register.module';
 
 @NgModule({
   declarations: [DefectHandlerComponent],
+  entryComponents:[DefectHandlerComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -27,7 +30,7 @@ import { DefectHandlerRoutingModule } from './defect-handler-routing.module';
     MatSortModule,
     PaginatorComponentModule,
     MatTooltipModule,
-    RegistryDetailsModule
+    DetailsRegisterModule
   ],
 })
 export class DefectHandlerModule { }

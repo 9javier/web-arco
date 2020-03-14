@@ -54,7 +54,10 @@ export class SignatureComponent implements OnInit,OnChanges {
     
   }
   dismiss() {
-    this.modalController.dismiss(null, undefined, null)
+    // this.modalController.dismiss()
+    this.modalController.dismiss({
+      'dismissed': true
+    });
   }
   drawStart() {
     // will be notified of szimek/signature_pad's onBegin event

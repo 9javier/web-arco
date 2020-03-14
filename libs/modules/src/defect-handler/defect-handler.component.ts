@@ -10,8 +10,9 @@ import { ModalController } from '@ionic/angular';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { validators } from '../utils/validators';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
-import { RegistryDetailsComponent } from '../components/modal-defective/registry-details/registry-details.component';
+import { RegistryDetailsComponent } from '../components/modal-defective/registry-details-al/registry-details-al.component';
 import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
+import { DetailsRegisterComponent } from './details-register/details-register.component';
 
 @Component({
   selector: 'suite-defect-handler',
@@ -170,7 +171,7 @@ export class DefectHandlerComponent implements OnInit {
 
   async goDetails(registry: DefectiveRegistryModel.DefectiveRegistry) {
     return (await this.modalController.create({
-      component: RegistryDetailsComponent,
+      component: DetailsRegisterComponent,
       componentProps: {
         productId: registry.product.id,
         showChangeState: true
