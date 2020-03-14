@@ -101,6 +101,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   ngOnInit() {
 
+
     this.signatures = null;
 
     this.toolbarProvider.currentPage.next("Registro defectuoso")
@@ -130,8 +131,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         this.openSignatureList()
       }
     })
-
-
     this.initForm();
     this.readed = false;
     const navigation = this.router.getCurrentNavigation();
@@ -200,6 +199,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       })
 
     })
+    this.clearVariables();
   }
 
   async initDinamicFields() {
@@ -653,9 +653,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     const modal = await this.modalController.create({
       component: SignatureComponent,
     });
-
     await modal.present();
-    // this.router.navigate(['signature']);
+
   }
 
 
@@ -780,6 +779,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.uploadService.deleteFile(item.id).subscribe(
       resp => {
         this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
+        this.clearVariables(1);
         this.uploadService.setSignature(null)
       },
       err => {
@@ -915,9 +915,11 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         this.uploadService.setSignature(null);
         this.signatures = null;
         this.signatureList = false;
+      } else if (type == 2) {
+        this.photos = [];
+        this.photoList = false
+        this.requirePhoto = false;
       }
-
-
   }
 
 
