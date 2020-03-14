@@ -8,8 +8,8 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx'
 import { formatDate } from '@angular/common';
 import { IntermediaryService, IncidentsService, environment, UploadFilesService } from '../../../services/src';
 import { DropFilesService } from '../../../services/src/lib/endpoint/drop-files/drop-files.service';
-import {SignatureComponent} from '../signature/signature.component';
-import {DropFilesComponent} from '../drop-files/drop-files.component';
+import { SignatureComponent } from '../signature/signature.component';
+import { DropFilesComponent } from '../drop-files/drop-files.component';
 import { PhotoModalComponent } from './components/photo-modal/photo-modal.component';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 import { Platform } from '@ionic/angular';
@@ -94,12 +94,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     private alertController: AlertController,
     private toolbarProvider: ToolbarProvider,
     private dropService: DropFilesService
-  ) { 
+  ) {
 
 
   }
 
   ngOnInit() {
+
 
     this.signatures = null;
 
@@ -130,8 +131,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         this.openSignatureList()
       }
     })
-
-    this.date = moment().format('DD-MM-YYYY');
     this.initForm();
     this.readed = false;
     const navigation = this.router.getCurrentNavigation();
@@ -140,6 +139,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       this.barcodeRoute = navigation.extras.state['reference'];
     }
     this.initDinamicFields();
+
   }
   ngOnDestroy() {
 
@@ -160,10 +160,11 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     //     this.uploadService.deleteFile(elem.id).subscribe(resp => { })
     //   })
     // }
-    this.signatures = null
-    this.uploadService.setSignature(null)
-    this.photos = []
-    this.signaturesSubscription.unsubscribe()
+    //this.signatures = null
+    //this.uploadService.setSignature(null)
+    //this.photos = []
+    this.clearVariables();
+    this.signaturesSubscription.unsubscribe();
   }
 
   defectType(defecType_) {
@@ -179,12 +180,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   initForm() {
-    
+    this.date = moment().format('DD-MM-YYYY');
     let phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     this.incidenceForm = this.fb.group({
       productId: 1,
       productReference: '',
-      dateDetection: this.dateNow,
+      dateDetection: [this.date],
       observations: '',
       numberObservations: 1,
       factoryReturn: [false],
@@ -199,6 +200,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       })
 
     })
+    this.clearVariables();
   }
 
   async initDinamicFields() {
@@ -215,7 +217,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   async loadFromDBValues() {
-    console.log("Date now", this.dateNow)    
+    console.log("Date now", this.dateNow)
     if (this.barcodeRoute) {
       let body = {
         "productId": this.barcodeRoute,
@@ -223,7 +225,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       }
       await this.incidentsService.getOneIncidentProductById(body).subscribe(resp => {
 
-        resp = resp.data;        
+        resp = resp.data;
         // console.log('result', resp);
         // console.log('contact', contact);
 
@@ -237,7 +239,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
         this.varTrying = resp.statusManagementDefect.id;
 
-        
+
 
         // this.incidenceForm.patchValue({ gestionChange: resp.statusManagementDefect.id })
         this.incidenceForm.patchValue({
@@ -251,7 +253,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           isHistory: resp.isHistory,
           statusManagementDefectId: resp.statusManagementDefect.id,
           defectTypeChildId: resp.defectTypeChild.id,
-          dateDetection : moment().format(), 
+          dateDetection: moment().format(),
           // photosFileIds: [ [{ "id": 1 }]],
           // signFileId: [1],
           // contact: this.fb.group({
@@ -448,16 +450,16 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       })
     }
 
-    if(this.incidenceForm.value.observations!=null){
+    if (this.incidenceForm.value.observations != null) {
       this.incidenceForm.patchValue({
         contact: {
-          phone:this.incidenceForm.value.contact.phone+""
+          phone: this.incidenceForm.value.contact.phone + ""
         },
       })
     }
 
     let object = this.incidenceForm.value;
-    console.log("object",object);
+    console.log("object", object);
     if (!this.requireContact) {
       delete object.contact;
     }
@@ -508,11 +510,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       defectTypeChildId: this.defectChildId,
       photosFileIds: photos,
       signFileId: this.signatures.id,
-      // contact:{
-      //   name: this.txtName,
-      //   email: this.txtEmail,
-      //   phone: this.txtTel,
-      // },
     })
 
   }
@@ -535,29 +532,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         if (this.ticketEmit == true) {
           this.print();
         }
-
         this.readed = false
-        this.incidenceForm.patchValue({
-          productId: 1,
-          productReference: '',
-          dateDetection: this.dateNow,
-          observations: '',
-          factoryReturn: false,
-          statusManagementDefectId: 0,
-          defectTypeChildId: 0,
-          photosFileIds: [],
-          signFileId: 0,
-          contact: {
-            name: '',
-            email: '',
-            phone: ''
-          }
-        })
-        this.photos = [];
-        this.signatures = null;
+        this.clearVariables();
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
         this.router.navigateByUrl('/defect-handler');
+
       },
       e => {
         console.log(e);
@@ -582,25 +562,14 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         if (this.ticketEmit == true) {
           this.print();
         }
-
         this.readed = false
-        this.incidenceForm.patchValue({
-          productId: 1,
-          productReference: '',
-          dateDetection: this.dateNow,
-          observations: '',
-          factoryReturn: false,
-          statusManagementDefectId: 0,
-          defectTypeChildId: 0,
-          signFileId: 0
-        })
+        this.clearVariables();
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
         this.router.navigateByUrl('/defect-handler');
       },
       e => {
         console.log(e);
-
         This.intermediary.dismissLoading()
         This.intermediary.presentToastError(e.error.errors)
       }
@@ -685,9 +654,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     const modal = await this.modalController.create({
       component: SignatureComponent,
     });
-
     await modal.present();
-    // this.router.navigate(['signature']);
+
   }
 
 
@@ -812,6 +780,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.uploadService.deleteFile(item.id).subscribe(
       resp => {
         this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
+        this.clearVariables(1);
         this.uploadService.setSignature(null)
       },
       err => {
@@ -911,6 +880,49 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
     await alert.present();
   }
+
+
+  clearVariables(type?: number) {
+    if (!type) {
+      this.incidenceForm.patchValue({
+        productId: 1,
+        productReference: '',
+        dateDetection: this.dateNow,
+        observations: '',
+        factoryReturn: false,
+        statusManagementDefectId: 0,
+        defectTypeChildId: 0,
+        photosFileIds: [],
+        signFileId: 0,
+        contact: {
+          name: '',
+          email: '',
+          phone: ''
+        }
+      });
+      this.signatures = null;
+      this.uploadService.setSignature(null);
+      this.photos = [];
+      this.photoList = false
+      this.signatureList = false;
+      this.ticketEmit = false;
+      this.passHistory = false;
+      this.requirePhoto = false;
+      this.requireContact = false;
+      this.requireOk = false;
+      this.signatures = null;
+    } else
+      if (type == 1) {
+        this.uploadService.setSignature(null);
+        this.signatures = null;
+        this.signatureList = false;
+      } else if (type == 2) {
+        this.photos = [];
+        this.photoList = false
+        this.requirePhoto = false;
+      }
+  }
+
 
 
 }
