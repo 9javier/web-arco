@@ -14,6 +14,7 @@ import { SignatureComponent } from '../signature/signature.component';
 import { SignatureModule } from '../signature/signature.module';
 import { DropFilesModule } from '../drop-files/drop-files.module';
 import { ReviewImagesComponent } from './components/review-images/review-images.component';
+import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-keyboard.module';
 
 @NgModule({
   declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent,],
@@ -28,7 +29,8 @@ import { ReviewImagesComponent } from './components/review-images/review-images.
     HideKeyboardModule,
     CdkTableModule,
     SignatureModule,
-    DropFilesModule
+    DropFilesModule,
+    
   ],
   exports: [
     

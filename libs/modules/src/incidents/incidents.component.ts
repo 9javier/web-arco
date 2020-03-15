@@ -20,6 +20,7 @@ import { AlertController } from "@ionic/angular";
 import { PositionsToast } from '../../../services/src/models/positionsToast.type';
 import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
 import { Subscription } from 'rxjs';
+import { KeyboardService } from '../../../services/src/lib/keyboard/keyboard.service';
 
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
@@ -65,7 +66,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   public types: any;
   public differentState: boolean = true;
   private typeIdBC: number;
-
+  showKeyboard: boolean
 
   private varTrying;
   apiURL: string = environment.uploadFiles + '?type=defects'
@@ -77,6 +78,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   photoList: boolean = false;
   signatureList: boolean = false;
   dateOnFront = new Date();
+  state: boolean;
+  color: string;
 
   constructor(
     private fb: FormBuilder,
@@ -93,7 +96,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     private intermediaryService: IntermediaryService,
     private alertController: AlertController,
     private toolbarProvider: ToolbarProvider,
-    private dropService: DropFilesService
+    private dropService: DropFilesService,
+
   ) {
 
 
@@ -103,9 +107,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
 
     this.signatures = null;
-
     this.toolbarProvider.currentPage.next("Registro defectuoso")
     this.photos = [];
+    this.showKeyboard = true
 
 
     this.signaturesSubscription = this.uploadService.signatureEventAsign().subscribe(resp => {
@@ -923,6 +927,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       }
   }
 
-
+  onActiveKeyboard() {
+   
+  }
 
 }
