@@ -364,6 +364,12 @@ export class MenuComponent implements OnInit {
           icon: 'pricetags'
         },
         {
+          title: 'Recepción sin pedido',
+          id: 'receptions-avelon-free',
+          url: '/receptions-avelon/free',
+          icon: 'pricetags'
+        },
+        {
           title: 'Predistribuciones',
           id: 'predistributions',
           url: '/predistributions',

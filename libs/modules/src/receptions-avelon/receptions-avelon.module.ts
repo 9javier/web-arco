@@ -26,6 +26,10 @@ const routes: Routes = [
   {
     path: '',
     component: ReceptionsAvelonComponent
+  },
+  {
+    path: 'free',
+    component: ReceptionsAvelonComponent
   }
 ];
 @NgModule({
