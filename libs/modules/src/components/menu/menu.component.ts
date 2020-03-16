@@ -392,6 +392,12 @@ export class MenuComponent implements OnInit {
           id: 'seasons-enabled',
           url: '/seasons-enabled',
           icon: 'cog'
+        },
+        {
+          title: 'Incidencias',
+          id: 'incidences-reception',
+          url: '/incidences-reception',
+          icon: 'notifications'
         }
       ]
     },
