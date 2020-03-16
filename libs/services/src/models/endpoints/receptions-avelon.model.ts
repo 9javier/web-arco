@@ -54,7 +54,8 @@ export namespace ReceptionAvelonModel {
   }
 
   export interface ParamsToPrint {
-    to_print: Print[]
+    to_print: Print[],
+    delivery_note?: string
   }
 
   //region CheckExpeditionsByNumberAndProvider

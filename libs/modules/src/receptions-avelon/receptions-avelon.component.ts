@@ -64,6 +64,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   isReceptionStarted: boolean;
   expedition: string;
   providerId: number;
+  deliveryNote: string;
   interval: any;
   option: any;
   typeScreen: number;
@@ -94,6 +95,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   modelSelected: any = null;
 
   public listSizes: ReceptionAvelonModel.LoadSizesList[] = [];
+  private expeditionStarted = null;
 
   constructor(
     private reception: ReceptionsAvelonService,
@@ -121,9 +123,15 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.stateAnimationInfo = 'out';
     this.isReceptionStarted = false;
     this.formHeaderReceptionComponent.resetProcess();
-    this.infoHeaderReceptionComponent.loadInfoExpedition(null, null, null, null, null, null);
+    this.infoHeaderReceptionComponent.loadInfoExpedition({packingsPallets: null, provider: null, expeditionReference: null, date: null, shipper: null, states: null});
+    this.deliveryNote = null;
+    this.expeditionStarted = null;
 
     this.ngOnInit();
+  }
+
+  public changeDeliveryNote(deliveryNote) {
+    this.deliveryNote = deliveryNote;
   }
 
   changeShowCheck(){
@@ -146,6 +154,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.typeScreen = undefined;
     this.referencesToPrint = [];
     this.isReceptionStarted = false;
+    this.deliveryNote = null;
+    this.expeditionStarted = null;
     this.subscriptions = this.reception.getAllProviders().subscribe(
       (data: Array<ReceptionAvelonModel.Providers>) => {
         this.providers = data;
@@ -738,10 +748,20 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   async screenExit(e) {
-  this.typeScreen = undefined;
-  this.referencesToPrint = [];
-  this.resetAll();
-
+    this.typeScreen = undefined;
+    this.referencesToPrint = [];
+    this.resetAll();
+    setTimeout(() => this.infoHeaderReceptionComponent.loadInfoExpedition(
+      {
+        expeditionReference: this.expeditionStarted.reference,
+        provider: {name: this.expeditionStarted.provider_name, id: this.expeditionStarted.provider_id},
+        states: this.expeditionStarted.expeditionStates,
+        shipper: this.expeditionStarted.shipper,
+        date: this.expeditionStarted.delivery_date,
+        packingsPallets: {packings: this.expeditionStarted.expeditionPackings, pallets: this.expeditionStarted.expeditionPallets}
+      },
+      this.deliveryNote
+    ), 1000);
   }
 
   async load(e, item) {
@@ -917,8 +937,15 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       }
     }
 
+    let params: ReceptionAvelonModel.ParamsToPrint = {
+      to_print: paramsRequest
+    };
+    if (this.deliveryNote) {
+      params.delivery_note = this.deliveryNote;
+    }
+
     this.reception
-      .printReceptionLabel({to_print: paramsRequest})
+      .printReceptionLabel(params)
       .subscribe((res) => {
         // refresh the data
         this.reception
@@ -968,7 +995,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   // check if the expedition selected by reference is available and get her data
   public checkExpedition(data) {
-    console.log(data);
     this.formHeaderReceptionComponent.checkingExpedition(true);
     this.reception
       .checkExpeditionByReference(data)
@@ -994,13 +1020,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.stateAnimationForm = 'out';
                 this.stateAnimationInfo = 'in';
                 this.isReceptionStarted = true;
+
+                this.expeditionStarted = expedition;
                 this.infoHeaderReceptionComponent.loadInfoExpedition(
-                  expedition.reference,
-                  {name: expedition.provider_name, id: expedition.provider_id.toString()},
-                  {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
-                  expedition.delivery_date,
-                  expedition.shipper,
-                  expedition.expeditionStates);
+                  {
+                    expeditionReference: expedition.reference,
+                    provider: {name: expedition.provider_name, id: expedition.provider_id.toString()},
+                    packingsPallets: {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
+                    date: expedition.delivery_date,
+                    shipper: expedition.shipper,
+                    states: expedition.expeditionStates
+                  });
               }
             });
             modal.present();
@@ -1063,13 +1093,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.stateAnimationForm = 'out';
                 this.stateAnimationInfo = 'in';
                 this.isReceptionStarted = true;
+
+                this.expeditionStarted = expedition;
                 this.infoHeaderReceptionComponent.loadInfoExpedition(
-                  expedition.reference,
-                  {name: expedition.provider_name, id: expedition.provider_id.toString()},
-                  {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
-                  expedition.delivery_date,
-                  expedition.shipper,
-                  expedition.expeditionStates);
+                  {
+                    expeditionReference: expedition.reference,
+                    provider: {name: expedition.provider_name, id: expedition.provider_id.toString()},
+                    packingsPallets: {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
+                    date: expedition.delivery_date,
+                    shipper: expedition.shipper,
+                    states: expedition.expeditionStates
+                  });
               }
             });
             modal.present();
@@ -1108,7 +1142,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   getEmitEan(){
     this.websocketService.getEmitData().subscribe((x:any)=>{
-      console.log(x);
       if(x.type !== undefined){
         if(x.type === type.OBJECT){
           this.result.ean = x.data.ean;

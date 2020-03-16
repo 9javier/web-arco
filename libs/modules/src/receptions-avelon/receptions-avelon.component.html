@@ -4,7 +4,7 @@
     <div class="grid">
       <div class="row headers">
         <suite-form-header-reception [@fadein]="stateAnimationForm" class="row form" (checkExpedition)="checkExpedition($event)" (listByProvider)="listByProvider($event)"></suite-form-header-reception>
-        <suite-info-header-reception [@fadein]="stateAnimationInfo" (resetReception)="resetReceptionProcess()"></suite-info-header-reception>
+        <suite-info-header-reception [@fadein]="stateAnimationInfo" (resetReception)="resetReceptionProcess()" (changeDeliveryNote)="changeDeliveryNote($event)"></suite-info-header-reception>
       </div>
 
       <div class="row selectors" *ngIf="isReceptionStarted">

@@ -6,5 +6,6 @@ export enum Type {
   PROVIDER = 5,
   EXPEDITION_NUMBER = 6,
   EAN_CODE = 7,
-  SIZE_INPUT = 8
+  SIZE_INPUT = 8,
+  DELIVERY_NOTE = 9
 }
