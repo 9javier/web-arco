@@ -1,6 +1,7 @@
 import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {Subscription} from "rxjs";
+import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'form-expedition-info',
@@ -16,7 +17,9 @@ export class FormExpeditionInfoComponent implements OnInit, OnDestroy {
   private subscriptionToFormChanges: Subscription = null;
   public checkingExpeditionInProcess: boolean = false;
 
-  constructor() {
+  constructor(
+    private keyboardService: KeyboardService,
+  ) {
     this.initForm();
   }
 
@@ -42,5 +45,11 @@ export class FormExpeditionInfoComponent implements OnInit, OnDestroy {
 
   public check() {
     this.checkExpedition.next(this.expeditionForm.value);
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 }
