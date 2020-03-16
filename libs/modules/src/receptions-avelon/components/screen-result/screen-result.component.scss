@@ -8,11 +8,11 @@
 }
 
 .greenScreen {
-    background: green;
+    background: var(--reception-destiny-sorter);
 }
 
 .redScreen {
-    background: red;
+  background: var(--reception-destiny-warehouse);
 }
 
 p {

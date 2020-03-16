@@ -20,6 +20,7 @@ import {AnotherExpeditionsModule} from "./components/another-expeditions/another
 import {InfoExpeditionsModule} from "./modals/info-expeditions/info-expeditions.module";
 import {FormExpeditionProviderComponent} from "./components/form-expedition-provider/form-expedition-provider.component";
 import {FormExpeditionProviderModule} from "./components/form-expedition-provider/form-expedition-provider.module";
+import { HideKeyboardModule } from 'hide-keyboard';
 
 const routes: Routes = [
   {
@@ -47,6 +48,7 @@ const routes: Routes = [
     FormExpeditionProviderModule,
     ExpeditionInfoModule,
     AnotherExpeditionsModule,
+    HideKeyboardModule,
     InfoExpeditionsModule
   ]
 })

@@ -4,6 +4,8 @@ import {Subscription} from "rxjs";
 import {ReceptionsAvelonService} from "../../../../../services/src/lib/endpoint/receptions-avelon/receptions-avelon.service";
 import {IntermediaryService} from "../../../../../services/src/lib/endpoint/intermediary/intermediary.service";
 import {ReceptionAvelonModel} from "../../../../../services/src/models/endpoints/receptions-avelon.model";
+import {StateExpeditionAvelonService} from "../../../../../services/src/lib/endpoint/state-expedition-avelon/state-expedition-avelon.service";
+import {StatesExpeditionAvelonProvider} from "../../../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
 
 @Component({
   selector: 'form-expedition-provider',
@@ -23,12 +25,17 @@ export class FormExpeditionProviderComponent implements OnInit, OnDestroy {
 
   constructor(
     private receptionsAvelonService: ReceptionsAvelonService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private stateExpeditionAvelonService: StateExpeditionAvelonService,
+    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider
   ) {
     this.initForm();
   }
 
   ngOnInit() {
+    this.stateExpeditionAvelonService.getIndex().subscribe(response=>{
+      this.stateExpeditionAvelonProvider.states = response;
+    });
     this.loadProviders();
     this.listenFormChanges();
   }

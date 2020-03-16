@@ -3,10 +3,23 @@
   <div class="row data">
     <div class="col">
       <div class="row expedition" *ngIf="expeditionReference">
-        Expedición <span>#{{expeditionReference}}</span>
+        Expedición: <span>#{{expeditionReference}}</span>
       </div>
-      <div class="row provider" *ngIf="provider">
-        Proveedor: {{provider.name}}
+      <div class="row expedition" *ngIf="provider">
+        Proveedor: <span>{{provider.name}}</span>
+      </div>
+      <div class="row expedition" *ngIf="packingsPallets">
+        Nº bultos: <span class="double">{{packingsPallets.packings}}</span>
+        Nº palets: <span>{{packingsPallets.pallets}}</span>
+      </div>
+      <div class="row expedition" *ngIf="date">
+        Fecha de envío: <span>{{date}}</span>
+      </div>
+      <div class="row expedition" *ngIf="shipper">
+        Transportista: <span>{{shipper}}</span>
+      </div>
+      <div class="row expedition" *ngIf="states">
+        Estado: <span>{{states}}</span>
       </div>
     </div>
     <div class="col reset">

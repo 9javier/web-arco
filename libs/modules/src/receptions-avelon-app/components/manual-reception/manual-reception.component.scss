@@ -1,25 +1,42 @@
 div.fields-to-search {
   padding-bottom: 88px;
-  mat-list-item {
-    height: 56px;
+  div.ean {
+    padding: 16px 16px 0;
+    mat-card {
+      mat-card-content {
+        position: relative;
+        p {
+          height: 24px;
+          text-align: center;
+          margin: 0;
+          font-size: 20px;
+          span {
+            font-weight: bold;
+          }
+        }
+        mat-icon {
+          position: absolute;
+          top: 0;
+          right: 0;
+        }
+      }
+    }
   }
-  mat-icon.right {
-    right: 16px;
-    width: 24px;
-    padding: 4px;
-    position: absolute;
-  }
-  div.search-more-btn {
-    text-align: end;
-    padding: 8px 16px 16px;
-    button {
-      color: white;
-      background: black;
+  mat-list {
+    mat-list-item {
+      height: 56px;
+    }
+    mat-icon.right {
+      right: 16px;
+      width: 24px;
+      padding: 4px;
+      position: absolute;
     }
   }
   div.sizes {
     padding: 8px;
     position: relative;
+    margin-top: 16px;
     span {
       position: absolute;
       top: -5px;

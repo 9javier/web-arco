@@ -63,6 +63,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
                 };
 
                 this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
+                this.receptionAvelonProvider.expedition = expedition;
                 this.router.navigate(['receptions-avelon', 'app']);
               }
             });
@@ -116,6 +117,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
                 };
 
                 this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
+                this.receptionAvelonProvider.expedition = expedition;
                 this.router.navigate(['receptions-avelon', 'app']);
               }
             });

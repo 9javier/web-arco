@@ -19,16 +19,19 @@
 
     <mat-card-content>
       <p>
-        Nº bultos: <span>{{expedition.total_packing}}</span>
+        Nº pallets: <span>{{expedition.expeditionPallets}}</span>
       </p>
       <p>
+        Nº bultos: <span>{{expedition.expeditionPackings}}</span>
+      </p>
+      <p>
+        Estados: <span>{{stringStates(expedition.expeditionStates)}}</span>
+      </p>
+      <p *ngIf="dateTimeParserService.date(expedition.delivery_date) != 'Invalid date'">
         Fecha de envío: <span>{{dateTimeParserService.date(expedition.delivery_date)}}</span>
       </p>
       <p>
         Transportista: <span>{{expedition.shipper}}</span>
-      </p>
-      <p>
-        Estados: <span>{{stringStates(expedition)}}</span>
       </p>
       <p class="blocked" *ngIf="!expedition.reception_enabled">
         <span> Esta expedición se encuentra bloqueada </span>
@@ -36,7 +39,7 @@
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button [disabled]="!expedition.reception_enabled" (click)="reception(expedition)">
+      <button mat-button [disabled]="!expedition.reception_enabled || expedition.expeditionStates.length == 0" (click)="reception(expedition)">
         RECEPCIONAR
         <mat-icon>keyboard_arrow_right</mat-icon>
       </button>
@@ -52,16 +55,19 @@
 
     <mat-card-content>
       <p>
-        Nº bultos: <span>{{anotherExpedition.total_packing}}</span>
+        Nº pallets: <span>{{anotherExpedition.expeditionPallets}}</span>
       </p>
       <p>
+        Nº bultos: <span>{{anotherExpedition.expeditionPackings}}</span>
+      </p>
+      <p>
+        Estados: <span>{{stringStates(anotherExpedition.expeditionStates)}}</span>
+      </p>
+      <p *ngIf="dateTimeParserService.date(anotherExpedition.delivery_date) != 'Invalid date'">
         Fecha de envío: <span>{{dateTimeParserService.date(anotherExpedition.delivery_date)}}</span>
       </p>
       <p>
         Transportista: <span>{{anotherExpedition.shipper}}</span>
-      </p>
-      <p>
-        Estados: <span>{{stringStates(anotherExpedition)}}</span>
       </p>
       <p class="blocked" *ngIf="!anotherExpedition.reception_enabled">
         <span> Esta expedición se encuentra bloqueada </span>
@@ -69,7 +75,7 @@
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <button mat-button [disabled]="!anotherExpedition.reception_enabled" (click)="reception(anotherExpedition)">
+      <button mat-button [disabled]="!anotherExpedition.reception_enabled || anotherExpedition.expeditionStates.length == 0" (click)="reception(anotherExpedition)">
         RECEPCIONAR
         <mat-icon>keyboard_arrow_right</mat-icon>
       </button>

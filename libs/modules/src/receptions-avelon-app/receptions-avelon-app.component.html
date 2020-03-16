@@ -1,5 +1,17 @@
 <ion-content>
   <div class="container">
+
+    <div id="info">
+      <div id="provider"><b>{{expedition.provider_name}}</b></div>
+      <div>Nº bultos: <b>{{expedition.expeditionPackings}}</b></div>
+      <div>Nº palets: <b>{{expedition.expeditionPallets}}</b></div>
+      <div *ngIf="dateTimeParserService.date(expedition.delivery_date) != 'Invalid date'">Fecha de envío: <b>{{dateTimeParserService.date(expedition.delivery_date)}}</b></div>
+      <div>Transportista: <b>{{expedition.shipper}}</b></div>
+      <div>Estado: <b>{{stringStates(expedition.expeditionStates)}}</b></div>
+    </div>
+
+    <mat-divider></mat-divider>
+
     <div class="scanner">
       <suite-ean-scanner></suite-ean-scanner>
     </div>
@@ -14,5 +26,6 @@
         </button>
       </div>
     </div>
+
   </div>
 </ion-content>

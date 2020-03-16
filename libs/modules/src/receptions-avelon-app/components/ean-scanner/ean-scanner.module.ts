@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { EanScannerComponent } from './ean-scanner.component';
 import {ScannerManualModule} from "../../../components/scanner-manual/scanner-manual.module";
 import {LoadingMessageModule} from "../../../components/loading-message/loading-message.module";
+import {ModalDestinyReceptionModule} from "../../modals/modal-model-images/destiny-reception.module";
 
 @NgModule({
   declarations: [EanScannerComponent],
@@ -12,7 +13,8 @@ import {LoadingMessageModule} from "../../../components/loading-message/loading-
     CommonModule,
     IonicModule,
     ScannerManualModule,
-    LoadingMessageModule
+    LoadingMessageModule,
+    ModalDestinyReceptionModule
   ],
   exports: [EanScannerComponent]
 })

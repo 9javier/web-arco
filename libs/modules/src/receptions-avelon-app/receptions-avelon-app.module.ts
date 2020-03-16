@@ -17,6 +17,10 @@ const routes: Routes = [
   {
     path: 'manual',
     component: ManualReceptionComponent
+  },
+  {
+    path: 'manual/:ean',
+    component: ManualReceptionComponent
   }
 ];
 

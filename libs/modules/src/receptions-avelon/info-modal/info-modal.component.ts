@@ -3,6 +3,7 @@ import {ModalController} from "@ionic/angular";
 import {ReceptionAvelonModel} from "@suite/services";
 import Expedition = ReceptionAvelonModel.Expedition;
 import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {StatesExpeditionAvelonProvider} from "../../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
 
 @Component({
   selector: 'suite-info-modal',
@@ -18,21 +19,14 @@ export class InfoModalComponent implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private dateTimeParserService: DateTimeParserService
+    private dateTimeParserService: DateTimeParserService,
+    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider
   ){}
 
   ngOnInit() {}
 
-  stringStates(expedition: Expedition){
-    const stringStates: string[] = [];
-    for(let state of expedition.states_list){
-      if(state == 1){
-        stringStates.push('Bloqueado');
-      }else{
-        stringStates.push('Desconocido');
-      }
-    }
-    return stringStates.join(', ');
+  stringStates(states: number[]){
+    return this.stateExpeditionAvelonProvider.getStringStates(states);
   }
 
   async close() {

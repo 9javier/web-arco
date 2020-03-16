@@ -16,6 +16,8 @@ import {InfoHeaderReceptionComponent} from "./components/info-header-reception/i
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {WebsocketService} from '../../../services/src/lib/endpoint/web-socket/websocket.service';
 import {type} from '../../../services/src/lib/endpoint/web-socket/enums/typeData';
+import {StateExpeditionAvelonService} from "../../../services/src/lib/endpoint/state-expedition-avelon/state-expedition-avelon.service";
+import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -101,7 +103,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     private productsService: ProductsService,
     private modalController: ModalController,
     private cd: ChangeDetectorRef,
-    private websocketService : WebsocketService
+    private websocketService : WebsocketService,
+    private stateExpeditionAvelonService: StateExpeditionAvelonService,
+    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider
   ) {}
 
   async loadProvider(){
@@ -117,7 +121,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.stateAnimationInfo = 'out';
     this.isReceptionStarted = false;
     this.formHeaderReceptionComponent.resetProcess();
-    this.infoHeaderReceptionComponent.loadInfoExpedition(null, null);
+    this.infoHeaderReceptionComponent.loadInfoExpedition(null, null, null, null, null, null);
 
     this.ngOnInit();
   }
@@ -160,6 +164,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         this.intermediaryService.dismissLoading();
       }
     );
+    this.stateExpeditionAvelonService.getIndex().subscribe(response=>{
+      this.stateExpeditionAvelonProvider.states = response;
+    });
   }
 
   ngOnDestroy() {
@@ -985,7 +992,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.stateAnimationForm = 'out';
                 this.stateAnimationInfo = 'in';
                 this.isReceptionStarted = true;
-                this.infoHeaderReceptionComponent.loadInfoExpedition(expedition.reference, {name: expedition.provider_name, id: expedition.provider_id.toString()});
+                this.infoHeaderReceptionComponent.loadInfoExpedition(
+                  expedition.reference,
+                  {name: expedition.provider_name, id: expedition.provider_id.toString()},
+                  {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
+                  expedition.delivery_date,
+                  expedition.shipper,
+                  expedition.expeditionStates);
               }
             });
             modal.present();
@@ -1048,7 +1061,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.stateAnimationForm = 'out';
                 this.stateAnimationInfo = 'in';
                 this.isReceptionStarted = true;
-                this.infoHeaderReceptionComponent.loadInfoExpedition(expedition.reference, {name: expedition.provider_name, id: expedition.provider_id.toString()});
+                this.infoHeaderReceptionComponent.loadInfoExpedition(
+                  expedition.reference,
+                  {name: expedition.provider_name, id: expedition.provider_id.toString()},
+                  {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
+                  expedition.delivery_date,
+                  expedition.shipper,
+                  expedition.expeditionStates);
               }
             });
             modal.present();
