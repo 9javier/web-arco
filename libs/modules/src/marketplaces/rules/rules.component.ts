@@ -64,8 +64,9 @@ export class RulesComponent implements OnInit {
   getValues() {
     this.dataSourceEnabling = [];
     this.dataSourceCategories = [];
-    this.marketplacesService.getRulesConfigurations(/*this.market*/).subscribe((data: any) => {
+    this.marketplacesService.getRulesConfigurationsByMarket(this.market).subscribe((data: any) => {
       if (data.data && data.data.length) {
+        console.log(data.data)
         for (let ruleConfiguration of data.data) {
           let type = "";
           let categories = [];
@@ -168,8 +169,8 @@ export class RulesComponent implements OnInit {
           description: data.data.description,
           type: "disabling",
           status: "active",
-          rulesFilters: [],
-          marketsIDs: [
+          ruleFilters: [],
+          marketIDs: [
             this.market
           ],
           /*referenceExceptions: {},
@@ -191,11 +192,11 @@ export class RulesComponent implements OnInit {
         for (let category of data.data.categoriesFilter) {
           switch (category.type) {
             case 2:
-              ruleConfiguration.rulesFilters.push(
+              ruleConfiguration.ruleFilters.push(
                 {
                   id: category.id,
                   name: category.name,
-                  ruleFilterType: category.type,
+                  type: category.type,
                   externalId: category.externalId,
                   dataGroup: category.group,
                   status: 'active'
@@ -203,34 +204,37 @@ export class RulesComponent implements OnInit {
               );
               break;
             case 3:
-              ruleConfiguration.rulesFilters.push(
+              ruleConfiguration.ruleFilters.push(
                 {
                   id: category.id,
                   name: category.name,
-                  ruleFilterType: category.type,
+                  type: category.type,
                   externalId: category.externalId,
+                  dataGroup: category.group,
                   status: 'active'
                 }
               );
               break;
             case 4:
-              ruleConfiguration.rulesFilters.push(
+              ruleConfiguration.ruleFilters.push(
                 {
                   id: category.id,
                   name: category.name,
-                  ruleFilterType: category.type,
+                  type: category.type,
                   externalId: category.externalId,
+                  dataGroup: category.group,
                   status: 'active'
                 }
               );
               break;
             case 5:
-              ruleConfiguration.rulesFilters.push(
+              ruleConfiguration.ruleFilters.push(
                 {
                   id: category.id,
                   name: category.name,
-                  ruleFilterType: category.type,
+                  type: category.type,
                   externalId: category.externalId,
+                  dataGroup: category.group,
                   status: 'active'
                 }
               );
@@ -238,7 +242,7 @@ export class RulesComponent implements OnInit {
           }
         }
 
-        /*let exceptions = {};
+      /*let exceptions = {};
         data.data.referencesExceptions.forEach(item => {
           if (item.type == 'include') {
             exceptions[item.reference] = 1;
@@ -259,6 +263,7 @@ export class RulesComponent implements OnInit {
 
         ruleConfiguration.categories = categoriesToSend;
 
+        console.log(ruleConfiguration)
         this.marketplacesService.postRulesConfigurations(ruleConfiguration).subscribe(data => {
           this.getValues();
         });
@@ -289,20 +294,21 @@ export class RulesComponent implements OnInit {
     modal.onDidDismiss().then((data) => {
       if (data && data.data) {
 
+        console.log(data.data)
+
         let ruleConfiguration = {
-          id: ruleToEdit.id,
           name: data.data.name,
           description: data.data.description,
           type: "disabling",
-          status: 1,
-          rulesFilterIds: [],
-          marketsIds: [
+          status: 'active',
+          ruleFilters: [],
+          marketIDs: [
             this.market
           ],
-          referenceExceptions: {},
+          /*referenceExceptions: {},
           ruleDataValidactionAttributes: [
-          ],
-          categories: data.data.destinationCategories
+          ],*/
+          categories: []
         };
 
         switch (data.data.filterType) {
@@ -318,54 +324,53 @@ export class RulesComponent implements OnInit {
         for (let category of data.data.categoriesFilter) {
           switch (category.type) {
             case 2:
-              ruleConfiguration.rulesFilterIds.push(
+              ruleConfiguration.ruleFilters.push(
                 {
-                  id: category.id,
                   name: category.name,
-                  ruleFilterType: category.type,
+                  type: category.type,
                   externalId: category.externalId,
                   dataGroup: category.group,
-                  status: 1
+                  status: 'active'
                 }
               );
               break;
             case 3:
-              ruleConfiguration.rulesFilterIds.push(
+              ruleConfiguration.ruleFilters.push(
                 {
-                  id: category.id,
                   name: category.name,
-                  ruleFilterType: category.type,
+                  type: category.type,
                   externalId: category.externalId,
-                  status: 1
+                  dataGroup: category.group,
+                  status: 'active'
                 }
               );
               break;
             case 4:
-              ruleConfiguration.rulesFilterIds.push(
+              ruleConfiguration.ruleFilters.push(
                 {
-                  id: category.id,
                   name: category.name,
-                  ruleFilterType: category.type,
+                  type: category.type,
                   externalId: category.externalId,
-                  status: 1
+                  dataGroup: category.group,
+                  status: 'active'
                 }
               );
               break;
             case 5:
-              ruleConfiguration.rulesFilterIds.push(
+              ruleConfiguration.ruleFilters.push(
                 {
-                  id: category.id,
                   name: category.name,
-                  ruleFilterType: category.type,
+                  type: category.type,
                   externalId: category.externalId,
-                  status: 1
+                  dataGroup: category.group,
+                  status: 'active'
                 }
               );
               break;
           }
         }
 
-        let exceptions = {};
+       /* let exceptions = {};
         data.data.referencesExceptions.forEach(item => {
           if (item.type == 'include') {
             exceptions[item.reference] = 1;
@@ -374,7 +379,9 @@ export class RulesComponent implements OnInit {
           }
         });
 
-        ruleConfiguration.referenceExceptions = exceptions;
+        ruleConfiguration.referenceExceptions = exceptions;*/
+
+        console.log(ruleConfiguration)
 
         this.marketplacesService.updateRulesConfigurations(ruleToEdit.id, ruleConfiguration).subscribe(data => {
           this.getValues();

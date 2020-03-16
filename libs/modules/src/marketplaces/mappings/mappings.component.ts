@@ -224,9 +224,10 @@ export class MappingsComponent implements OnInit {
         this.dataDBsave = [];
       }
 
+
       this.dataDBsave.forEach(item => {
         switch (item.type) {
-          case 'feature':
+          case 8:
             let dataFeature = this.dataSourceFeatures;
 
             let featureMarket = {id: -1, name: null};
@@ -252,7 +253,7 @@ export class MappingsComponent implements OnInit {
               this.searchOnMappingList('feature');
             }
             break;
-          case 'color':
+          case 3:
             let dataColor = this.dataSourceColors;
 
             let colorMarket = {id: -1, name: null};
@@ -279,7 +280,7 @@ export class MappingsComponent implements OnInit {
               this.searchOnMappingList('color');
             }
             break;
-          case 'size':
+          case 4:
             let dataSize = this.dataSourceSizes;
 
             let sizeMarket = {id: -1, name: null};
@@ -305,7 +306,7 @@ export class MappingsComponent implements OnInit {
               this.searchOnMappingList('size');
             }
             break;
-          case 'brand':
+          case 5:
             let dataBrand = this.dataSourceBrands;
 
             let brandMarket = {id: -1, name: null};
@@ -462,16 +463,16 @@ export class MappingsComponent implements OnInit {
     let dataSend = {
       originDataId: element.avelonData.id,
       marketDataId,
-      type: "brand",
+      type: 5,
       marketId: 1,
-      additionalMapInfo: ""
+      additionalMapInfo: "info"
     };
 
     let update: boolean = false;
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id && item.type == 'brand') {
+      if (item.originDataId == element.avelonData.id && item.type == 5) {
         update = true;
         idToUpdate = item.id;
       }
@@ -512,16 +513,16 @@ export class MappingsComponent implements OnInit {
     let dataSend = {
       originDataId: element.avelonData.id,
       marketDataId,
-      type: 'color',
+      type: 3,
       marketId: 1,
-      additionalMapInfo: ""
+      additionalMapInfo: "info"
     };
 
     let update: boolean = false;
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id && item.type == 'color') {
+      if (item.originDataId == element.avelonData.id && item.type == 3) {
         update = true;
         idToUpdate = item.id;
       }
@@ -562,16 +563,16 @@ export class MappingsComponent implements OnInit {
     let dataSend = {
       originDataId: element.avelonData.id,
       marketDataId,
-      type: 'size',
+      type: 4,
       marketId: 1,
-      additionalMapInfo: ""
+      additionalMapInfo: "info"
     };
 
     let update: boolean = false;
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id && item.type == 'size') {
+      if (item.originDataId == element.avelonData.id && item.type == 4) {
         update = true;
         idToUpdate = item.id;
       }
@@ -612,7 +613,7 @@ export class MappingsComponent implements OnInit {
     let dataSend = {
       originDataId: element.avelonData.id,
       marketDataId,
-      type: 'feature',
+      type: 8,
       marketId: 1,
       additionalMapInfo: element.avelonData.group
     };
@@ -621,7 +622,7 @@ export class MappingsComponent implements OnInit {
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id && item.type == 'feature' && item.additionalMapInfo == element.avelonData.group) {
+      if (item.originDataId == element.avelonData.id && item.type == 8 && item.additionalMapInfo == element.avelonData.group) {
         update = true;
         idToUpdate = item.id;
       }
