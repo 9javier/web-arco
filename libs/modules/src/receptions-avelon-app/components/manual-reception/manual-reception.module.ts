@@ -15,6 +15,7 @@ import {LoadingMessageModule} from "../../../components/loading-message/loading-
 import {FabExtendedModule} from "../../../components/button/fab/fab-extended/fab-extended.module";
 import {SizeInputModule} from "../../../components/size-input/size-input.module";
 import {ModalModelImagesModule} from "../modal-model-images/modal-model-images.module";
+import {ModalDestinyReceptionModule} from "../../modals/modal-model-images/destiny-reception.module";
 
 @NgModule({
   declarations: [ManualReceptionComponent],
@@ -32,7 +33,8 @@ import {ModalModelImagesModule} from "../modal-model-images/modal-model-images.m
     SizeInputModule,
     ModalModelImagesModule,
     MatTooltipModule,
-    MatCardModule
+    MatCardModule,
+    ModalDestinyReceptionModule
   ],
   exports: [ManualReceptionComponent]
 })

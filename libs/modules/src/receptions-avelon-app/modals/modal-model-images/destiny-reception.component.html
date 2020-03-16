@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div [ngClass]="{'greenScreen': typeDestinyReception == screenResultType.WAREHOUSE_LOCATION, 'redScreen': typeDestinyReception == screenResultType.SORTER_VENTILATION}">
+    <p>
+      {{ getDestinyType() }}
+    </p>
+    <div>
+      <button mat-button aria-label="Volver" (click)="close()">
+        VOLVER
+      </button>
+    </div>
+  </div>
+</ion-content>

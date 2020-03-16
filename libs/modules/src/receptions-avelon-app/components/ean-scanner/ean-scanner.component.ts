@@ -9,6 +9,9 @@ import {TimesToastType} from "../../../../../services/src/models/timesToastType"
 import {PositionsToast} from "../../../../../services/src/models/positionsToast.type";
 import {PrinterService} from "../../../../../services/src/lib/printer/printer.service";
 import {Router} from "@angular/router";
+import {ScreenResult} from "../../../receptions-avelon/enums/screen_result.enum";
+import {ModalDestinyReceptionComponent} from "../../modals/modal-model-images/destiny-reception.component";
+import {ModalController} from "@ionic/angular";
 
 @Component({
   selector: 'suite-ean-scanner',
@@ -24,6 +27,7 @@ export class EanScannerComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private modalController: ModalController,
     private intermediaryService: IntermediaryService,
     private receptionsAvelonService: ReceptionsAvelonService,
     private printerService: PrinterService,
@@ -44,7 +48,7 @@ export class EanScannerComponent implements OnInit {
     if (this.expeditionDataToQuery != null) {
       this.receptionsAvelonService
         .eanProductPrint(eanScanned, this.expeditionDataToQuery.reference, this.expeditionDataToQuery.providerId)
-        .subscribe((resultCheck) => {
+        .subscribe(async (resultCheck) => {
           if (resultCheck && resultCheck.resultToPrint && resultCheck.resultToPrint.length > 0 && resultCheck.resultToPrint[0].reference) {
             this.processFinishOk({
               hideLoading: true,
@@ -77,6 +81,14 @@ export class EanScannerComponent implements OnInit {
                 this.loadingMessageComponent.show(false);
                 console.error('Some error success to print reference of reception', error);
               });
+
+            const someProductToSorter = !!resultCheck.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
+            let typeDestinyReception = someProductToSorter ? ScreenResult.SORTER_VENTILATION : ScreenResult.WAREHOUSE_LOCATION;
+            const modalDestiny = await this.modalController.create({
+              component: ModalDestinyReceptionComponent,
+              componentProps: { typeDestinyReception: typeDestinyReception }
+            });
+            modalDestiny.present();
           } else {
             this.scannerManual.blockScan(false);
             this.processFinishError({
