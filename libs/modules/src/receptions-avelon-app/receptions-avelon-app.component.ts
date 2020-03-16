@@ -19,7 +19,7 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
     private router: Router,
     private toolbarProvider: ToolbarProvider,
     private receptionAvelonProvider: ReceptionAvelonProvider,
-    private dateTimeParserService: DateTimeParserService
+    public dateTimeParserService: DateTimeParserService
   ) {}
 
   ngOnInit() {
