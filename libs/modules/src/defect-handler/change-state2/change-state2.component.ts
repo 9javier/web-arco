@@ -41,7 +41,7 @@ export class ChangeState2Component implements OnInit {
   displayPhotoList: boolean = false;
   signatures: any = null
   date: string;
-  dateNow = formatDate(new Date(), 'dd/MM/yyyy', 'es');
+  dateNow = moment().format("YYYY-MM-DD");
   dateDetection;
   incidenceForm: FormGroup;
   defectContacto: FormGroup;
@@ -91,13 +91,9 @@ export class ChangeState2Component implements OnInit {
     this.getStatusManagement();
     this.initForm();
     this.initGestionState();
-
     this.signatures = null;
-
-
     this.photos = [];
-    console.log(this.photos);
-    console.log(this.signatures);
+
 
 
     this.signaturesSubscription = this.uploadService.signatureEventAsign().subscribe(resp => {
@@ -126,24 +122,6 @@ export class ChangeState2Component implements OnInit {
       }
       console.log(resp);
     })
-
-
-
-
-
-    /*this.uploadService.signatureEventAsign().subscribe(resp => {
-      if (resp) {
-        this.signatures.push(resp)
-      }
-      if (!this.signatureList) {
-        this.openSignatureList()
-      }
-      if(resp != null || resp != undefined){
-        this.signatureId = resp.id;
-        this.signature = true;
-      }
-      
-    })*/
   }
 
   openPhotoList() {
@@ -151,8 +129,9 @@ export class ChangeState2Component implements OnInit {
   }
 
   initForm() {
+
+
     this.incidenceForm = this.fb.group({
-      productId: 1,
       productReference: [this.registry.data.product.reference],
       dateDetection: [this.date],
       observations: [this.registry.data.observations],
@@ -167,6 +146,7 @@ export class ChangeState2Component implements OnInit {
       })
 
     })
+    console.log("mostrando datos", this.incidenceForm.value);
 
     this.txtName = this.registry.data.contact.name;
     this.txtEmail = this.registry.data.contact.email;
@@ -248,18 +228,20 @@ export class ChangeState2Component implements OnInit {
 
     }
 
+    this.incidenceForm.patchValue({
+      statusManagementDefectId: this.managementId,
+    })
     if (this.requireContact == true) {
       if (this.validate()) {
-        this.sendToIncidents();
+        this.incidenceForm.value.contact.phone = this.txtTel + "";
+        let object = this.incidenceForm.value;
+        this.sendToIncidents(object);
       }
     }
     else {
-      this.incidenceForm.patchValue({
-        statusManagementDefectId: this.managementId,
-      });
       let object = this.incidenceForm.value;
       delete object.contact;
-      this.sendToDefectsWithoutContact(object);
+      this.sendToIncidents(object);
     }
   }
 
@@ -291,17 +273,11 @@ export class ChangeState2Component implements OnInit {
     this.txtTel = event.target.value;
   }
 
-  async sendToIncidents() {
-
-    this.incidenceForm.value.contact.phone = this.txtTel + "";
-    this.incidenceForm.patchValue({
-      statusManagementDefectId: this.managementId,
-    })
-
+  async sendToIncidents(object) {
 
     let This = this;
 
-    This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
+    This.incidentsService.addRegistry(object).subscribe(
       resp => {
 
         if (this.ticketEmit == true) {
@@ -309,24 +285,7 @@ export class ChangeState2Component implements OnInit {
         }
 
         this.readed = false
-        this.incidenceForm.patchValue({
-          productId: 1,
-          productReference: '',
-          dateDetection: this.dateNow,
-          observations: '',
-          factoryReturn: false,
-          statusManagementDefectId: 0,
-          defectTypeChildId: 0,
-          photosFileIds: [],
-          signFileId: 0,
-          contact: {
-            name: '',
-            email: '',
-            phone: ''
-          }
-        })
-        this.photos = [];
-        this.signatures = [];
+        this.clearVariables();
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente');
         this.close();
@@ -342,43 +301,7 @@ export class ChangeState2Component implements OnInit {
 
   }
 
-  async sendToDefectsWithoutContact(object) {
 
-
-    let This = this;
-    This.incidentsService.addRegistry(object).subscribe(
-      resp => {
-
-        if (this.ticketEmit == true) {
-          this.print();
-        }
-
-        this.readed = false
-        this.incidenceForm.patchValue({
-          productId: 1,
-          productReference: '',
-          dateDetection: this.dateNow,
-          observations: '',
-          factoryReturn: false,
-          statusManagementDefectId: 0,
-          defectTypeChildId: 0,
-          signFileId: 0
-        })
-        This.intermediary.dismissLoading()
-        This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
-        this.close();
-      },
-      e => {
-        console.log(e);
-
-        This.intermediary.dismissLoading()
-        This.intermediary.presentToastError(e.error)
-      }
-    );
-
-
-
-  }
 
   print() {
     console.log("imprimir...")
@@ -546,9 +469,6 @@ export class ChangeState2Component implements OnInit {
 
   }
 
-
-
-
   deleteImage(item, index, arr) {
     this.intermediary.presentLoading()
     this.uploadService.deleteFile(item.id).subscribe(
@@ -558,7 +478,6 @@ export class ChangeState2Component implements OnInit {
         if (this.photos.length === 0) {
           this.openPhotoList()
         }
-        //this.signature = false;
       },
       err => {
         this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
@@ -575,7 +494,8 @@ export class ChangeState2Component implements OnInit {
     this.uploadService.deleteFile(item.id).subscribe(
       resp => {
         this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
-        this.uploadService.setSignature(null)
+        this.uploadService.setSignature(null);
+        this.clearVariables(1);
       },
       err => {
         this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
@@ -590,15 +510,49 @@ export class ChangeState2Component implements OnInit {
 
   ngOnDestroy() {
 
-
-    console.log('OnDestroy');
-    console.log(this.photos);
-    console.log(this.signatures);
-
-    this.signatures = null
-    this.uploadService.setSignature(null)
-    this.photos = []
     this.signaturesSubscription.unsubscribe()
+    this.clearVariables();
+  }
+
+
+
+  clearVariables(type?: number) {
+    if (!type) {
+      this.incidenceForm.patchValue({
+        productReference: '',
+        dateDetection: moment().format("YYYY-MM-DD"),
+        observations: '',
+        factoryReturn: false,
+        statusManagementDefectId: 0,
+        defectTypeChildId: 0,
+        photosFileIds: [],
+        signFileId: 0,
+        contact: {
+          name: '',
+          email: '',
+          phone: ''
+        }
+      });
+      this.signatures = null;
+      this.uploadService.setSignature(null);
+      this.photos = [];
+      this.photoList = false
+      this.signatureList = false;
+      this.ticketEmit = false;
+      this.passHistory = false;
+      this.requirePhoto = false;
+      this.requireContact = false;
+      this.requireOk = false;
+    } else
+      if (type == 1) {
+        this.uploadService.setSignature(null);
+        this.signatures = null;
+        this.signatureList = false;
+      } else if (type == 2) {
+        this.photos = [];
+        this.photoList = false
+        this.requirePhoto = false;
+      }
   }
 
 }
