@@ -137,6 +137,7 @@ export class ProductsAvelonComponent implements OnInit {
         "force": true
       };
       this.productAvelonService.notifyAvelonPredistribution(body).subscribe(result => {
+        this.refreshTable();
         this.intermediaryService.dismissLoading();
         this.intermediaryService.presentToastSuccess("Notificacion enviada con exito.")
       },()=>{
