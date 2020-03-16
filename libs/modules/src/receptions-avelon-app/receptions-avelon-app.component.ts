@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Router} from "@angular/router";
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 import {ReceptionAvelonProvider} from "../../../services/src/providers/reception-avelon/reception-avelon.provider";
@@ -6,6 +6,7 @@ import {ReceptionAvelonModel} from "@suite/services";
 import Expedition = ReceptionAvelonModel.Expedition;
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
+import {ScannerManualComponent} from "@suite/common-modules";
 
 @Component({
   selector: 'suite-receptions-avelon-app',
@@ -14,7 +15,10 @@ import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/st
 })
 export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
 
+  @ViewChild(ScannerManualComponent) scannerManual: ScannerManualComponent;
+
   expedition: Expedition;
+  deliveryNote: string = null;
 
   constructor(
     private router: Router,
@@ -39,6 +43,16 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
 
   stringStates(states: number[]){
     return this.stateExpeditionAvelonProvider.getStringStates(states);
+  }
+
+  public newDeliveryNote(deliveryNote) {
+    this.deliveryNote = deliveryNote;
+    this.receptionAvelonProvider.deliveryNote = deliveryNote;
+  }
+
+  public removeDeliveryNote() {
+    this.newDeliveryNote(null);
+    this.scannerManual.setValue(null);
   }
 
 }

@@ -3,11 +3,12 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule, Routes } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { ReceptionsAvelonAppComponent } from './receptions-avelon-app.component';
-import {MatButtonModule, MatDividerModule, MatIconModule} from "@angular/material";
+import {MatButtonModule, MatDividerModule, MatIconModule, MatRippleModule} from "@angular/material";
 import {EanScannerModule} from "./components/ean-scanner/ean-scanner.module";
 import {ManualReceptionComponent} from "./components/manual-reception/manual-reception.component";
 import {ManualReceptionModule} from "./components/manual-reception/manual-reception.module";
 import {HideKeyboardModule} from "hide-keyboard";
+import {ScannerManualModule} from "@suite/common-modules";
 
 const routes: Routes = [
   {
@@ -37,7 +38,9 @@ const routes: Routes = [
     MatDividerModule,
     EanScannerModule,
     ManualReceptionModule,
-    HideKeyboardModule
+    HideKeyboardModule,
+    ScannerManualModule,
+    MatRippleModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

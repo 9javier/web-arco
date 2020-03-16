@@ -5,6 +5,18 @@ ion-content {
     height: 100%;
     place-content: space-evenly;
 
+    div.scanner-delivery-note {
+      height: 72px;
+      position: relative;
+      i {
+        position: absolute;
+        top: 20px;
+        right: 16px;
+        cursor: pointer;
+        font-size: 32px;
+      }
+    }
+
     div.scanner {
       display: flex;
       flex-direction: row;

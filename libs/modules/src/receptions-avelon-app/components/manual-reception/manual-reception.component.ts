@@ -467,6 +467,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     if (sizesToPrint.length > 0) {
       this.loadingMessageComponent.show(true, 'Imprimiendo códigos');
 
+      const deliveryNote = this.receptionAvelonProvider.deliveryNote;
       const sizesMapped = sizesToPrint.map(s => {
         const sizeMapped: any = {
           providerId: this.receptionAvelonProvider.expeditionData.providerId,
@@ -483,15 +484,22 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         return sizeMapped;
       });
 
-      const params = [];
+      const paramsRequest = [];
       for (let size of sizesMapped) {
         for (let q = 0; q < size.quantity; q++) {
-          params.push(size);
+          paramsRequest.push(size);
         }
       }
 
+      let params: ReceptionAvelonModel.ParamsToPrint = {
+        to_print: paramsRequest
+      };
+      if (deliveryNote) {
+        params.delivery_note = deliveryNote;
+      }
+
       this.receptionsAvelonService
-        .printReceptionLabel({ to_print: params })
+        .printReceptionLabel(params)
         .subscribe(async (res) => {
           this.loadingMessageComponent.show(false);
           const referencesToPrint = res.resultToPrint.map(r => r.reference);

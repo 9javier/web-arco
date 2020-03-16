@@ -12,6 +12,13 @@
 
     <mat-divider></mat-divider>
 
+    <div class="scanner-delivery-note">
+      <scanner-manual placeholder="Nº ALBARÁN" (currentValue)="newDeliveryNote($event)" height="72px"></scanner-manual>
+      <i class="material-icons" matRipple (click)="removeDeliveryNote()">close</i>
+    </div>
+
+    <mat-divider></mat-divider>
+
     <div class="scanner">
       <suite-ean-scanner></suite-ean-scanner>
     </div>
