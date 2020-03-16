@@ -935,6 +935,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
           if (someProductToSorter) {
             this.typeScreen = ScreenResult.SORTER_VENTILATION;
+          } else {
+            this.typeScreen = ScreenResult.WAREHOUSE_LOCATION;
           }
 
           this.referencesToPrint = res.resultToPrint.map(r => r.reference);
