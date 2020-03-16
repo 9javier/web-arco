@@ -5,6 +5,7 @@ import {ReceptionAvelonProvider} from "../../../services/src/providers/reception
 import {ReceptionAvelonModel} from "@suite/services";
 import Expedition = ReceptionAvelonModel.Expedition;
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
 
 @Component({
   selector: 'suite-receptions-avelon-app',
@@ -19,7 +20,8 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
     private router: Router,
     private toolbarProvider: ToolbarProvider,
     private receptionAvelonProvider: ReceptionAvelonProvider,
-    public dateTimeParserService: DateTimeParserService
+    public dateTimeParserService: DateTimeParserService,
+    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider
   ) {}
 
   ngOnInit() {
@@ -36,15 +38,7 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
   }
 
   stringStates(states: number[]){
-    const stringStates: string[] = [];
-    for(let state of states){
-      if(state == 1){
-        stringStates.push('Bloqueado');
-      }else{
-        stringStates.push('Desconocido');
-      }
-    }
-    return stringStates.join(', ');
+    return this.stateExpeditionAvelonProvider.getStringStates(states);
   }
 
 }

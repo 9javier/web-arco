@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {ReceptionAvelonModel} from "@suite/services";
 import {parseDate} from "@ionic/core/dist/types/components/datetime/datetime-util";
 import {DateTimeParserService} from "../../../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {StatesExpeditionAvelonProvider} from "../../../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
 
 @Component({
   selector: 'suite-info-header-reception',
@@ -33,7 +34,9 @@ export class InfoHeaderReceptionComponent implements OnInit {
     this._provider = value;
   }
 
-  constructor() { }
+  constructor(
+    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider
+  ) { }
 
   ngOnInit() {}
 
@@ -58,14 +61,6 @@ export class InfoHeaderReceptionComponent implements OnInit {
   //endregion
 
   stringStates(states: number[]){
-    const stringStates: string[] = [];
-    for(let state of states){
-      if(state == 1){
-        stringStates.push('Bloqueado');
-      }else{
-        stringStates.push('Desconocido');
-      }
-    }
-    return stringStates.join(', ');
+    return this.stateExpeditionAvelonProvider.getStringStates(states);
   }
 }
