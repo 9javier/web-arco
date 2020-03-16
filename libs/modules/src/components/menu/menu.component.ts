@@ -395,8 +395,8 @@ export class MenuComponent implements OnInit {
         },
         {
           title: 'Habilitar campos comerciales',
-          id: 'internal-groups-enabled',
-          url: '/internal-groups-enabled',
+          id: 'commercial-fields',
+          url: '/commercial-fields',
           icon: 'cog'
         }
       ]

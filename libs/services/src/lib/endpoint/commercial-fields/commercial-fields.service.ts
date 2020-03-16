@@ -11,11 +11,11 @@ import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
   providedIn: 'root'
 })
 
-export class InternalGroupsEnabledService {
+export class CommercialFieldsService {
   /**routes for services */
-  private indexUrl = environment.apiBase+'/reception/internal-groups/search';
-  private entitiesUrl = environment.apiBase+'/reception/internal-groups/search-filters';
-  private updateUrl = environment.apiBase+'/reception/internal-groups/update';
+  private indexUrl = environment.apiBase+'/reception/commercial-fields/search';
+  private entitiesUrl = environment.apiBase+'/reception/commercial-fields/search-filters';
+  private updateUrl = environment.apiBase+'/reception/commercial-fields/update';
 
   constructor(
     private http: HttpClient
@@ -31,7 +31,7 @@ export class InternalGroupsEnabledService {
     }));
   }
 
-  updateInternalGroups(body): Observable<any>{
+  updateCommercialFields(body): Observable<any>{
     return this.http.post<HttpRequestModel.Response>(this.updateUrl,body).pipe(map(resp => resp.data))
   }
 }

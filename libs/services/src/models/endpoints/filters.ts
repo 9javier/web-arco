@@ -18,7 +18,7 @@ export namespace FiltersModel{
       hide:boolean;
     }
 
-    export interface InternalGroup extends Enum {
+    export interface CommercialField extends Enum {
       id:number;
       reference:string;
       value:string;

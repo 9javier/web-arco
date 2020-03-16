@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatListModule } from '@angular/material';
-import { InternalGroupsEnabledComponent } from './internal-groups-enabled.component';
+import { CommercialFieldsComponent } from './commercial-fields.component';
 import { RouterModule, Routes } from "@angular/router";
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
@@ -21,7 +21,7 @@ import {
 const routes: Routes = [
   {
     path: '',
-    component: InternalGroupsEnabledComponent
+    component: CommercialFieldsComponent
   }
 ];
 
@@ -44,6 +44,6 @@ const routes: Routes = [
     MatRippleModule,
     MatSortModule
   ],
-  declarations: [InternalGroupsEnabledComponent]
+  declarations: [CommercialFieldsComponent]
 })
-export class InternalGroupsEnabledModule { }
+export class CommercialFieldsModule { }

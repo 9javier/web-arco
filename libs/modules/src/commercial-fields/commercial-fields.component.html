@@ -4,9 +4,9 @@
 
       <ng-container matColumnDef="Campo Comercial">
         <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Campo Comercial
-          <suite-filter-button class="ion-margin-vertical" #filterButtonInternalGroups [title]="'Campo Comercial'" [listItems]="internalGroups"
-                              [isFiltering]="isFilteringInternalGroups != internalGroups.length"
-                              (applyFilters)="applyFilters($event, 'internalGroups')">
+          <suite-filter-button class="ion-margin-vertical" #filterButtonCommercialFields [title]="'Campo Comercial'" [listItems]="commercialFields"
+                              [isFiltering]="isFilteringCommercialFields != commercialFields.length"
+                              (applyFilters)="applyFilters($event, 'commercialFields')">
           </suite-filter-button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.name}} </mat-cell>
@@ -20,7 +20,7 @@
           </suite-filter-button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element; let i = dataIndex" class="my-sticky-col info">
-          <ion-checkbox [formControl]="toUpdate['controls']?.internalGroups['controls'][i]['controls']?.selected">
+          <ion-checkbox [formControl]="toUpdate['controls']?.commercialFields['controls'][i]['controls']?.selected">
           </ion-checkbox>
         </mat-cell>
       </ng-container>

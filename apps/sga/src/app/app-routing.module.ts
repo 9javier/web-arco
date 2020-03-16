@@ -111,9 +111,9 @@ const routes: Routes = [
     }
   },
   {
-    path: 'internal-groups-enabled',
+    path: 'commercial-fields',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/internal-groups-enabled/internal-groups-enabled.module#InternalGroupsEnabledModule',
+    loadChildren: '../../../../libs/modules/src/commercial-fields/commercial-fields.module#CommercialFieldsModule',
     data: {
       name: 'Campos Comerciales'
     }

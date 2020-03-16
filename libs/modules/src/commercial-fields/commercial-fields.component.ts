@@ -15,25 +15,21 @@ import {
 } from '@suite/services';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { ModalController, AlertController } from '@ionic/angular';
-
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { FilterButtonComponent } from "../components/filter-button/filter-button.component";
-
 import { PermissionsService } from '../../../services/src/lib/endpoint/permissions/permissions.service';
-import { InternalGroupsEnabledService } from '../../../services/src/lib/endpoint/internal-groups-enabled/internal-groups-enabled.service';
-
-
+import { CommercialFieldsService } from '../../../services/src/lib/endpoint/commercial-fields/commercial-fields.service';
 import { parse } from 'querystring';
 
 @Component({
-  selector: 'suite-internal-groups-enabled',
-  templateUrl: './internal-groups-enabled.component.html',
-  styleUrls: ['./internal-groups-enabled.component.scss']
+  selector: 'suite-commercial-fields',
+  templateUrl: './commercial-fields.component.html',
+  styleUrls: ['./commercial-fields.component.scss']
 })
 
-export class InternalGroupsEnabledComponent implements OnInit {
+export class CommercialFieldsComponent implements OnInit {
 
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
@@ -42,21 +38,21 @@ export class InternalGroupsEnabledComponent implements OnInit {
   columns = {};
   dataSource;
   toUpdate: FormGroup = this.formBuilder.group({
-    internalGroups: this.formBuilder.array([])
+    commercialFields: this.formBuilder.array([])
   });
 
-  @ViewChild('filterButtonInternalGroups') filterButtonInternalGroups: FilterButtonComponent;
+  @ViewChild('filterButtonCommercialFields') filterButtonCommercialFields: FilterButtonComponent;
   @ViewChild('filterButtonEnableds') filterButtonEnableds: FilterButtonComponent;
 
-  isFilteringInternalGroups: number = 0;
+  isFilteringCommercialFields: number = 0;
   isFilteringEnableds: number = 0;
 
   /**Filters */
-  internalGroups: Array<TagsInputOption> = [];
+  commercialFields: Array<TagsInputOption> = [];
   enableds: Array<TagsInputOption> = [];
 
   /** Filters save **/
-  internalGroupsSelected: Array<any> = [];
+  commercialFieldsSelected: Array<any> = [];
   enabledsSelected: Array<any> = [];
 
   groups: Array<TagsInputOption> = [];
@@ -71,7 +67,7 @@ export class InternalGroupsEnabledComponent implements OnInit {
     }
   };
   form: FormGroup = this.formBuilder.group({
-    internalGroups: [],
+    commercialFields: [],
     enableds: [],
     pagination: this.formBuilder.group({
       page: 1,
@@ -97,7 +93,7 @@ export class InternalGroupsEnabledComponent implements OnInit {
     private printerService: PrinterService,
     private usersService: UsersService,
     private permisionService: PermissionsService,
-    private internalGroupsEnabledService: InternalGroupsEnabledService
+    private commercialFieldsService: CommercialFieldsService
   ) {
   }
 
@@ -127,17 +123,19 @@ export class InternalGroupsEnabledComponent implements OnInit {
     });
     this.sort.sortChange.subscribe((sort: Sort) => {
       this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+        this.saveFilters();
         if (sort.direction == '') {
-        this.form.get("orderby").patchValue({
-          type: '2',
-          order: "DESC"
-        });
-      } else {
-        this.form.get("orderby").patchValue({
-          type: this.columns[sort.active],
-          order: sort.direction.toUpperCase()
-        });
-      }
+          this.form.get("orderby").patchValue({
+            type: '2',
+            order: "DESC"
+          });
+        } else {
+          this.form.get("orderby").patchValue({
+            type: this.columns[sort.active],
+            order: sort.direction.toUpperCase()
+          });
+        }
+        this.recoverFilters();
         this.getList(this.form);
       });
     });
@@ -145,7 +143,7 @@ export class InternalGroupsEnabledComponent implements OnInit {
 
   initEntity() {
     this.entities = {
-      internalGroups: [],
+      commercialFields: [],
       enableds: [],
       ordertypes: [],
     }
@@ -153,28 +151,28 @@ export class InternalGroupsEnabledComponent implements OnInit {
 
   initForm() {
     this.form.patchValue({
-      internalGroups: [],
+      commercialFields: [],
       enableds: [],
       ordertypes: []
     })
   }
 
   private saveFilters(){
-    this.internalGroupsSelected = this.form.value.internalGroups;
+    this.commercialFieldsSelected = this.form.value.commercialFields;
     this.enabledsSelected = this.form.value.enableds;
   }
 
   private recoverFilters(){
-    this.form.get("internalGroups").patchValue(this.internalGroupsSelected, { emitEvent: false });
+    this.form.get("commercialFields").patchValue(this.commercialFieldsSelected, { emitEvent: false });
     this.form.get("enableds").patchValue(this.enabledsSelected, { emitEvent: false });
   }
 
   getFilters() {
-    this.internalGroupsEnabledService.entities().subscribe(entities => {
+    this.commercialFieldsService.entities().subscribe(entities => {
       entities.ordertypes.forEach(element => {
           this.columns[element.name] = element.id;
       });
-      this.updateFilterSourceInternalGroups(entities.internalGroups);
+      this.updateFilterSourceCommercialFields(entities.commercialFields);
       this.updateFilterSourceEnableds(entities.enableds);
       this.updateFilterSourceOrdertypes(entities.ordertypes);
       this.reduceFilters(entities);
@@ -187,15 +185,15 @@ export class InternalGroupsEnabledComponent implements OnInit {
 
   async getList(form?: FormGroup){
     await this.intermediaryService.presentLoading();
-    this.internalGroupsEnabledService.index(form.value).subscribe(
+    this.commercialFieldsService.index(form.value).subscribe(
       async (resp:any) => {
-        this.toUpdate.removeControl("internalGroups");
-        this.toUpdate.addControl("internalGroups", this.formBuilder.array(resp.results.map(internalGroup => {
+        this.toUpdate.removeControl("commercialFields");
+        this.toUpdate.addControl("commercialFields", this.formBuilder.array(resp.results.map(commercialField => {
           return this.formBuilder.group({
-            id: internalGroup.id,
-            name: internalGroup.name,
-            selected: internalGroup.enabled && internalGroup.enabled.enabled ? internalGroup.enabled.enabled : false,
-            internalGroupEnabled: internalGroup.enabled
+            id: commercialField.id,
+            name: commercialField.name,
+            selected: commercialField.commercialField && commercialField.commercialField.enabled ? commercialField.commercialField.enabled : false,
+            commercialFields: commercialField.commercialField
           });
         })));
         this.dataSource = new MatTableDataSource<any>(resp.results);
@@ -218,21 +216,21 @@ export class InternalGroupsEnabledComponent implements OnInit {
   applyFilters(filtersResult, filterType) {
     const filters = filtersResult.filters;
     switch (filterType) {
-      case 'internalGroups':
-        let internalGroupsFiltered: string[] = [];
-        for (let internalGroup of filters) {
-          if (internalGroup.checked) internalGroupsFiltered.push(internalGroup.id);
+      case 'commercialFields':
+        let commercialFieldsFiltered: string[] = [];
+        for (let commercialField of filters) {
+          if (commercialField.checked) commercialFieldsFiltered.push(commercialField.id);
         }
-        if (internalGroupsFiltered.length >= this.internalGroups.length) {
-          this.form.value.internalGroups = [];
-          this.isFilteringInternalGroups = this.internalGroups.length;
+        if (commercialFieldsFiltered.length >= this.commercialFields.length) {
+          this.form.value.commercialFields = [];
+          this.isFilteringCommercialFields = this.commercialFields.length;
         } else {
-          if (internalGroupsFiltered.length > 0) {
-            this.form.value.internalGroups = internalGroupsFiltered;
-            this.isFilteringInternalGroups = internalGroupsFiltered.length;
+          if (commercialFieldsFiltered.length > 0) {
+            this.form.value.commercialFields = commercialFieldsFiltered;
+            this.isFilteringCommercialFields = commercialFieldsFiltered.length;
           } else {
-            this.form.value.internalGroups = [];
-            this.isFilteringInternalGroups = this.internalGroups.length;
+            this.form.value.commercialFields = [];
+            this.isFilteringCommercialFields = this.commercialFields.length;
           }
         }
         break;
@@ -261,12 +259,12 @@ export class InternalGroupsEnabledComponent implements OnInit {
   }
 
   private reduceFilters(entities){
-    if (this.lastUsedFilter !== 'internalGroups') {
-      let filteredInternalGroups = entities['internalGroups'] as unknown as string[];
-      for (let index in this.internalGroups) {
-        this.internalGroups[index].hide = filteredInternalGroups.includes(this.internalGroups[index].value);
+    if (this.lastUsedFilter !== 'commercialFields') {
+      let filteredCommercialFields = entities['commercialFields'] as unknown as string[];
+      for (let index in this.commercialFields) {
+        this.commercialFields[index].hide = filteredCommercialFields.includes(this.commercialFields[index].value);
       }
-      this.filterButtonInternalGroups.listItems = this.internalGroups;
+      this.filterButtonCommercialFields.listItems = this.commercialFields;
     }
     if (this.lastUsedFilter !== 'enableds') {
       let filteredEnableds = entities['enableds'] as unknown as string[];
@@ -277,18 +275,18 @@ export class InternalGroupsEnabledComponent implements OnInit {
     }
   }
 
-  private updateFilterSourceInternalGroups(internalGroups: FiltersModel.InternalGroup[]) {
+  private updateFilterSourceCommercialFields(commercialFields: FiltersModel.CommercialField[]) {
     this.pauseListenFormChange = true;
-    let value = this.form.get("internalGroups").value;
-    this.internalGroups = internalGroups.map(internalGroup => {
-      internalGroup.value = internalGroup.name;
-      internalGroup.checked = true;
-      internalGroup.hide = false;
-      return internalGroup;
+    let value = this.form.get("commercialFields").value;
+    this.commercialFields = commercialFields.map(commercialField => {
+      commercialField.value = commercialField.name;
+      commercialField.checked = true;
+      commercialField.hide = false;
+      return commercialField;
     });
 
     if (value && value.length) {
-      this.form.get("internalGroups").patchValue(value, { emitEvent: false });
+      this.form.get("commercialFields").patchValue(value, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
@@ -326,7 +324,8 @@ export class InternalGroupsEnabledComponent implements OnInit {
 
   async update() {
     await this.intermediaryService.presentLoading();
-    this.internalGroupsEnabledService.updateInternalGroups(this.toUpdate.value).subscribe(async result => {
+    this.commercialFieldsService.updateCommercialFields(this.toUpdate.value).subscribe(async result => {
+        this.getList(this.form);
         this.intermediaryService.dismissLoading();
         this.intermediaryService.presentToastSuccess(
           'Campos comerciales actualizadas con éxito'
@@ -345,5 +344,4 @@ export class InternalGroupsEnabledComponent implements OnInit {
     this.getList(this.form);
     this.listenChanges();
   }
-
 }
