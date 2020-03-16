@@ -89,8 +89,8 @@ export class MappingsComponent implements OnInit {
 
     this.marketplacesService.getMarkets().subscribe((data: any) => {
       this.market = null;
-      if (data && data.length) {
-        for (let market of data) {
+      if (data.data && data.data.length) {
+        for (let market of data.data) {
           switch (this.route.snapshot.data['name']) {
             case "Miniprecios":
               this.market = market.id;
