@@ -978,7 +978,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
                 const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
                   expedition: expedition.reference,
-                  providerId: expedition.provider_id
+                  providerId: expedition.providerId
                 };
                 this.checkProvider(fieldsToLoadData);
 
@@ -987,11 +987,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.isReceptionStarted = true;
                 this.infoHeaderReceptionComponent.loadInfoExpedition(
                   expedition.reference,
-                  {name: expedition.provider_name, id: expedition.provider_id.toString()},
-                  {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
-                  expedition.delivery_date,
+                  {name: expedition.providerName, id: expedition.providerId.toString()},
+                  {packings: expedition.receptionPackings, pallets: expedition.receptionPallets},
+                  expedition.deliveryDate,
                   expedition.shipper,
-                  expedition.expeditionStates);
+                  expedition.receptionStates);
               }
             });
             modal.present();
@@ -1047,7 +1047,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
                 const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
                   expedition: expedition.reference,
-                  providerId: expedition.provider_id
+                  providerId: expedition.providerId
                 };
                 this.checkProvider(fieldsToLoadData);
 
@@ -1056,11 +1056,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.isReceptionStarted = true;
                 this.infoHeaderReceptionComponent.loadInfoExpedition(
                   expedition.reference,
-                  {name: expedition.provider_name, id: expedition.provider_id.toString()},
-                  {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
-                  expedition.delivery_date,
+                  {name: expedition.providerName, id: expedition.providerId.toString()},
+                  {packings: expedition.receptionPackings, pallets: expedition.receptionPallets},
+                  expedition.deliveryDate,
                   expedition.shipper,
-                  expedition.expeditionStates);
+                  expedition.receptionStates);
               }
             });
             modal.present();
