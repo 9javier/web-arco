@@ -180,12 +180,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   initForm() {
-    this.date = moment().format('DD-MM-YYYY');
+    this.date = moment().format("YYYY-MM-DD");
     let phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     this.incidenceForm = this.fb.group({
       productId: 1,
       productReference: '',
-      dateDetection: [this.date],
+      dateDetection: [moment().format("YYYY-MM-DD")],
       observations: '',
       numberObservations: 1,
       factoryReturn: [false],
@@ -887,7 +887,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       this.incidenceForm.patchValue({
         productId: 1,
         productReference: '',
-        dateDetection: this.dateNow,
+        dateDetection: moment().format("YYYY-MM-DD"),
         observations: '',
         factoryReturn: false,
         statusManagementDefectId: 0,
@@ -922,7 +922,4 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         this.requirePhoto = false;
       }
   }
-
-
-
 }

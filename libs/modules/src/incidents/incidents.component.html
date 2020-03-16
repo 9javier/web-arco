@@ -1,58 +1,68 @@
 <ion-content>
-<form [formGroup]="incidenceForm">
-  <ng-container *ngIf="!readed;else read">
-    <scanner-manual  (newValue)=newValue($event)  placeholder="PRODUCTO"></scanner-manual>
-  </ng-container>
-  <ng-template #read>
-    <ion-item>
-      <ion-label class="label-text">Producto:</ion-label>
-      <ion-input class="input-barcode" formControlName="productReference" type="text" readonly style="text-align: right;"></ion-input><br>
-      <ion-input *ngIf="barcodeRoute!=null" class="input-barcode" formControlName="productReference" type="text" readonly style="text-align: right;">{{barcode}}</ion-input><br>
-    </ion-item>
-    <ion-item>
-      <ion-label class="label-text">Fecha</ion-label>
-      <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format></ion-datetime>
-      <!--<ion-input *ngIf="barcodeRoute!=null" class="input-barcode" type="text" readonly style="text-align: right;" [value]="this.dateNow"></ion-input><br>-->
-    </ion-item>
-    <ion-item>
-      <ion-label class="label-text">Estado de gestion</ion-label>
-      <ion-select *ngIf="barcodeRoute==null"  (ionChange)="gestionChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
-        <ion-select-option  *ngFor="let item of allDefectType" [value]="item.id" >{{item.name}}</ion-select-option>
-      </ion-select>
-      <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" formControlName="gestionState" #typeID (ionChange)="onChange(typeID.value); gestionChange($event)">
-        <ion-select-option  *ngFor="let item of types" [value]="item.id || 01" >{{item.name}}</ion-select-option>
-      </ion-select>
-    </ion-item> 
+  <form [formGroup]="incidenceForm">
+    <ng-container *ngIf="!readed;else read">
+      <scanner-manual (newValue)=newValue($event) placeholder="PRODUCTO"></scanner-manual>
+    </ng-container>
+    <ng-template #read>
+      <ion-item>
+        <ion-label class="label-text">Producto:</ion-label>
+        <ion-input class="input-barcode" formControlName="productReference" type="text" readonly
+          style="text-align: right;"></ion-input><br>
+        <ion-input *ngIf="barcodeRoute!=null" class="input-barcode" formControlName="productReference" type="text"
+          readonly style="text-align: right;">{{barcode}}</ion-input><br>
+      </ion-item>
+      <ion-item>
+        <ion-label class="label-text">Fecha</ion-label>
+        <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format>
+        </ion-datetime>
+        <!--<ion-input *ngIf="barcodeRoute!=null" class="input-barcode" type="text" readonly style="text-align: right;" [value]="this.dateNow"></ion-input><br>-->
+      </ion-item>
+      <ion-item>
+        <ion-label class="label-text">Estado de gestion</ion-label>
+        <ion-select *ngIf="barcodeRoute==null" (ionChange)="gestionChange($event)" placeholder="Selecciona"
+          [disabled]="barcodeRoute!=null">
+          <ion-select-option *ngFor="let item of allDefectType" [value]="item.id">{{item.name}}</ion-select-option>
+        </ion-select>
+        <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" formControlName="gestionState" #typeID
+          (ionChange)="onChange(typeID.value); gestionChange($event)">
+          <ion-select-option *ngFor="let item of types" [value]="item.id || 01">{{item.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
 
-    <ion-item>
-      <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
-      <ion-select (ionChange)="defectChange($event)" placeholder="Selecciona" formControlName="defectTypeChildId" [disabled]="barcodeRoute!=null">
-        <ion-select-option *ngFor="let defect of defects" [value]="defect.id">{{defect.name +" - "+ defect.defectTypeParent.name}}</ion-select-option>
-      </ion-select>
-    </ion-item>
- 
-    <ion-item>
-      <ion-label position="floating" class="label-text">Observaciones</ion-label>
-      <ion-textarea  formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-textarea>
-    </ion-item>
+      <ion-item>
+        <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
+        <ion-select (ionChange)="defectChange($event)" placeholder="Selecciona" formControlName="defectTypeChildId"
+          [disabled]="barcodeRoute!=null">
+          <ion-select-option *ngFor="let defect of defects" [value]="defect.id">
+            {{defect.name +" - "+ defect.defectTypeParent.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
 
-    <div *ngIf="requireContact == true" class="contact">
-      <div formGroupName = "contact">
-        <ion-item lines="none">
-          <ion-label class="ion-text-capitalize label-text">Contacto</ion-label><br>
-        </ion-item>
-       <ion-item lines="none">
-         <ion-input type="text" formControlName="name"  (keyup)="onKeyName($event)" placeholder="Nombre" maxlength="50"></ion-input><br>
-       </ion-item>
-       <ion-item lines="none">
-         <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo" maxlength="50"></ion-input><br>
-       </ion-item>
-       <ion-item lines="none">
-         <ion-input type="number" formControlName="phone"  (keyup)="onKeyTel($event)" placeholder="Teléfono" maxlength="25"></ion-input>
-       </ion-item>
+      <ion-item>
+        <ion-label position="floating" class="label-text">Observaciones</ion-label>
+        <ion-textarea formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-textarea>
+      </ion-item>
+
+      <div *ngIf="requireContact == true" class="contact">
+        <div formGroupName="contact">
+          <ion-item lines="none">
+            <ion-label class="ion-text-capitalize label-text">Contacto</ion-label><br>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-input type="text" formControlName="name" (keyup)="onKeyName($event)" placeholder="Nombre"
+              maxlength="50"></ion-input><br>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo"
+              maxlength="50"></ion-input><br>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-input type="number" formControlName="phone" (keyup)="onKeyTel($event)" placeholder="Teléfono"
+              maxlength="25"></ion-input>
+          </ion-item>
+        </div>
       </div>
-    </div>
-  
+
       <ion-item lines="none" *ngIf="requirePhoto == true" lines="none">
         <ion-label class="ion-text-capitalize label-text">capturar / buscar fotos</ion-label>
         <ion-button (click)="takePhoto()" class="icon-camare">
@@ -68,15 +78,15 @@
         <ion-icon slot="end" *ngIf="!photoList" name="arrow-up"></ion-icon>
       </ion-item>
       <ion-list *ngIf=" photos.length > 0 && photoList && requirePhoto">
-        <ion-item  lines="none" *ngFor="let item of photos; let i = index">
+        <ion-item lines="none" *ngFor="let item of photos; let i = index">
           <ion-img (click)="onOpenReviewModal(item)" slot="end" [src]="item.locationIcon"></ion-img>
-            <ion-button (click)="deleteImage(item, i, photos)">
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
-            </ion-button>
+          <ion-button (click)="deleteImage(item, i, photos)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
         </ion-item>
       </ion-list>
-     
-  
+
+
       <ion-item lines="none" *ngIf="requireOk == true">
         <ion-label lines="none" class="ion-text-capitalize label-text">generar firma</ion-label>
         <ion-button (click)="signModal()">
@@ -88,7 +98,7 @@
         <ion-icon slot="end" *ngIf="signatureList" name="arrow-down"></ion-icon>
         <ion-icon slot="end" *ngIf="!signatureList" name="arrow-up"></ion-icon>
       </ion-item>
-      <ion-list  *ngIf="signatures && signatureList && requireOk">
+      <ion-list *ngIf="signatures && signatureList && requireOk">
         <ion-item lines="none">
           <ion-img (click)="onOpenReviewModal(signatures)" slot="start" [src]="signatures.pathIcon"></ion-img>
           <ion-button slot="end" (click)="deleteSignature(signatures)">
@@ -101,15 +111,17 @@
         <ion-label class="ion-text-capitalize label-text">devolución a fabrica</ion-label>
         <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
       </ion-item>
-    
-    <ion-button *ngIf="barcodeRoute==null"  [attr.disabled]="!select1 || !select2" (click)="send()" expand="block" shape="round">
-      enviar
-    </ion-button>
-    
-    <ion-button *ngIf="barcodeRoute!=null" [disabled]="differentState" (click)="enviaryarn()" expand="block" shape="round" >
-      actualizar
-    </ion-button>
- 
-  </ng-template>
-</form>
+
+      <ion-button *ngIf="barcodeRoute==null" [attr.disabled]="!select1 || !select2" (click)="send()" expand="block"
+        shape="round">
+        enviar
+      </ion-button>
+
+      <ion-button *ngIf="barcodeRoute!=null" [disabled]="differentState" (click)="enviaryarn()" expand="block"
+        shape="round">
+        actualizar
+      </ion-button>
+
+    </ng-template>
+  </form>
 </ion-content>
