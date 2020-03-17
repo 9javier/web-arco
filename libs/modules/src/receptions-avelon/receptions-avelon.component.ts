@@ -672,11 +672,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     setTimeout(() => this.infoHeaderReceptionComponent.loadInfoExpedition(
       {
         expeditionReference: this.expeditionStarted.reference,
-        provider: {name: this.expeditionStarted.provider_name, id: this.expeditionStarted.provider_id},
-        states: this.expeditionStarted.expeditionStates,
+        provider: {name: this.expeditionStarted.providerName, id: this.expeditionStarted.providerId},
+        states: this.expeditionStarted.receptionStates,
         shipper: this.expeditionStarted.shipper,
-        date: this.expeditionStarted.delivery_date,
-        packingsPallets: {packings: this.expeditionStarted.expeditionPackings, pallets: this.expeditionStarted.expeditionPallets}
+        date: this.expeditionStarted.deliveryDate,
+        packingsPallets: {packings: this.expeditionStarted.receptionPackings, pallets: this.expeditionStarted.receptionPallets}
       },
       this.deliveryNote
     ), 1000);
