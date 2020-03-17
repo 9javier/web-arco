@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ReceptionAvelonModel} from "@suite/services";
 import {parseDate} from "@ionic/core/dist/types/components/datetime/datetime-util";
 import {DateTimeParserService} from "../../../../../services/src/lib/date-time-parser/date-time-parser.service";
@@ -15,6 +15,7 @@ export class InfoHeaderReceptionComponent implements OnInit {
 
   @ViewChild('deliveryNote') deliveryNoteInput: ElementRef;
 
+  @Input() isReceptionWithoutOrder: boolean = false;
   @Output() resetReception = new EventEmitter();
   @Output() changeDeliveryNote = new EventEmitter();
 

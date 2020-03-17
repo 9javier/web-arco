@@ -1,3 +1,8 @@
+.without-order, .without-order *, .without-order > * {
+  background-color: var(--bg-reception-without-order) !important;
+  --ion-background-color: var(--bg-reception-without-order) !important;
+}
+
 mat-card {
   margin-top: 16px;
   form {

@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ngClass]="{'without-order': isReceptionWithoutOrder}">
   <form [formGroup]="expeditionForm" (ngSubmit)="check()">
     <mat-card-header>
       <mat-card-title>Consultar expediciones</mat-card-title>

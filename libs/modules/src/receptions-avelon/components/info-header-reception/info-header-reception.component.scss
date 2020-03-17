@@ -1,3 +1,7 @@
+.without-order, .without-order *, .without-order > * {
+  background-color: var(--bg-reception-without-order) !important;
+}
+
 div.container {
   width: 100%;
   height: fit-content;
@@ -14,6 +18,7 @@ div.container {
     top: -10px;
     padding: 0 4px;
     background: var(--ion-color-primary-contrast);
+    z-index: 2;
   }
   div.row {
     display: flex;

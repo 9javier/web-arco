@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {Subscription} from "rxjs";
 import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
@@ -10,8 +10,10 @@ import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard
 })
 export class FormExpeditionInfoComponent implements OnInit, OnDestroy {
 
-  @Output() checkExpedition: EventEmitter<any> = new EventEmitter();
   @ViewChild('inputExpeditionNumber') inputExpeditionNumber: ElementRef;
+
+  @Input() isReceptionWithoutOrder: boolean = false;
+  @Output() checkExpedition: EventEmitter<any> = new EventEmitter();
 
   public expeditionForm: FormGroup = null;
   private subscriptionToFormChanges: Subscription = null;

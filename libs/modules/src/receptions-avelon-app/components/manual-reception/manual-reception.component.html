@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content [ngClass]="{'without-order': isReceptionWithoutOrder}">
   <div class="fields-to-search">
     <loading-message></loading-message>
     <div class="ean" *ngIf="eanCode">

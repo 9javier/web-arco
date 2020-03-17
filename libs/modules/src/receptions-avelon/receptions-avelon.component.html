@@ -1,10 +1,10 @@
-<ion-content [ngClass]="{'ion-padding': typeScreen == undefined}" >
+<ion-content [ngClass]="{'ion-padding': typeScreen == undefined, 'without-order': isReceptionWithoutOrder}" >
 
   <ng-container *ngIf="typeScreen == undefined; else screen">
     <div class="grid">
       <div class="row headers">
-        <suite-form-header-reception [@fadein]="stateAnimationForm" class="row form" (checkExpedition)="checkExpedition($event)" (listByProvider)="listByProvider($event)"></suite-form-header-reception>
-        <suite-info-header-reception [@fadein]="stateAnimationInfo" (resetReception)="resetReceptionProcess()" (changeDeliveryNote)="changeDeliveryNote($event)"></suite-info-header-reception>
+        <suite-form-header-reception [@fadein]="stateAnimationForm" class="row form" (checkExpedition)="checkExpedition($event)" (listByProvider)="listByProvider($event)" [isReceptionWithoutOrder]="isReceptionWithoutOrder"></suite-form-header-reception>
+        <suite-info-header-reception [@fadein]="stateAnimationInfo" (resetReception)="resetReceptionProcess()" (changeDeliveryNote)="changeDeliveryNote($event)" [isReceptionWithoutOrder]="isReceptionWithoutOrder"></suite-info-header-reception>
       </div>
 
       <div class="row selectors" *ngIf="isReceptionStarted">
