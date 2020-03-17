@@ -19,6 +19,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./change-state.component.scss']
 })
 export class ChangeStateComponent implements OnInit {
+  private baseUrlPhoto = environment.apiBasePhoto;
   allDefectType = [];
   ticketEmit: boolean;
   passHistory: boolean;
@@ -143,7 +144,7 @@ export class ChangeStateComponent implements OnInit {
         this.signatureId = resp.id;
         this.signature = true;
       }
-      
+
     })*/
   }
 

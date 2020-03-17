@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IncidentsService, TypesService } from '@suite/services';
+import { environment, IncidentsService, TypesService } from '@suite/services';
 import { PrinterService } from "../../../../../services/src/lib/printer/printer.service";
 import { AlertController, LoadingController, ModalController, NavParams } from "@ionic/angular";
 import { InventoryService, WarehouseService } from '@suite/services';
@@ -14,6 +14,7 @@ import { ChangeStateComponent } from '../change-state/change-state.component';
   styleUrls: ['./registry-details.component.scss']
 })
 export class RegistryDetailsComponent implements OnInit {
+  private baseUrlPhoto = environment.apiBasePhoto;
   section = 'information';
   title = 'Ubicación ';
   originalTableStatus: DamagedModel.Status[];
