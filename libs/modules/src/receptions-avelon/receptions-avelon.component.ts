@@ -936,7 +936,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
                 const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
                   expedition: expedition.reference,
-                  providerId: expedition.provider_id
+                  providerId: expedition.providerId
                 };
                 this.checkProvider(fieldsToLoadData);
 
@@ -948,11 +948,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.infoHeaderReceptionComponent.loadInfoExpedition(
                   {
                     expeditionReference: expedition.reference,
-                    provider: {name: expedition.provider_name, id: expedition.provider_id.toString()},
-                    packingsPallets: {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
-                    date: expedition.delivery_date,
+                    provider: {name: expedition.providerName, id: expedition.providerId.toString()},
+                    packingsPallets: {packings: expedition.receptionPackings, pallets: expedition.receptionPallets},
+                    date: expedition.deliveryDate,
                     shipper: expedition.shipper,
-                    states: expedition.expeditionStates
+                    states: expedition.receptionStates
                   });
               }
             });
@@ -1009,7 +1009,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
                 const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
                   expedition: expedition.reference,
-                  providerId: expedition.provider_id
+                  providerId: expedition.providerId
                 };
                 this.checkProvider(fieldsToLoadData);
 
@@ -1021,11 +1021,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 this.infoHeaderReceptionComponent.loadInfoExpedition(
                   {
                     expeditionReference: expedition.reference,
-                    provider: {name: expedition.provider_name, id: expedition.provider_id.toString()},
-                    packingsPallets: {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
-                    date: expedition.delivery_date,
+                    provider: {name: expedition.providerName, id: expedition.providerId.toString()},
+                    packingsPallets: {packings: expedition.receptionPackings, pallets: expedition.receptionPallets},
+                    date: expedition.deliveryDate,
                     shipper: expedition.shipper,
-                    states: expedition.expeditionStates
+                    states: expedition.receptionStates
                   });
               }
             });

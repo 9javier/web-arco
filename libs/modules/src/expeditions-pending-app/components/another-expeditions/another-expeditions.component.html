@@ -2,32 +2,36 @@
 <mat-card *ngFor="let expedition of anotherExpeditions">
   <mat-card-header>
     <mat-card-title># {{expedition.reference}}</mat-card-title>
-    <mat-card-subtitle>{{expedition.provider_name}}</mat-card-subtitle>
+    <mat-card-subtitle>{{expedition.providerName}}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
     <p>
-      Nº pallets: <span>{{expedition.expeditionPallets}}</span>
+      Nº pallets: <span>{{expedition.receptionPallets}}</span>
     </p>
     <p>
-      Nº bultos: <span>{{expedition.expeditionPackings}}</span>
+      Nº bultos: <span>{{expedition.receptionPackings}}</span>
     </p>
     <p>
-      Estados: <span>{{stringStates(expedition.expeditionStates)}}</span>
+      Estados: <span>{{stringStates(expedition.receptionStates)}}</span>
     </p>
-    <p *ngIf="dateTimeParserService.date(expedition.delivery_date) != 'Invalid date'">
-      Fecha de envío: <span>{{dateTimeParserService.date(expedition.delivery_date)}}</span>
+    <p *ngIf="dateTimeParserService.date(expedition.deliveryDate) != 'Invalid date'">
+      Fecha de envío: <span>{{dateTimeParserService.date(expedition.deliveryDate)}}</span>
     </p>
     <p>
       Transportista: <span>{{expedition.shipper}}</span>
     </p>
-    <p class="blocked" *ngIf="!expedition.reception_enabled">
-      <span> Esta expedición se encuentra bloqueada </span>
+    <p class="blocked" *ngIf="expedition.receptionBlocked">
+      <span>La expedición escaneada está bloqueada. Escanee otra expedición.</span>
+    </p>
+    <p class="blocked" *ngIf="!expedition.receptionBlocked && expedition.noPendingReceptions">
+      <span *ngIf="expedition.noPendingConfirms">La expedición no tiene pedido. Escanee otra expedición.</span>
+      <span *ngIf="!expedition.noPendingConfirms">La expedición tiene líneas de pedido pendiente de confirmar. Escanee otra expedición.</span>
     </p>
   </mat-card-content>
 
   <mat-card-actions align="end">
-    <button mat-button [disabled]="!expedition.reception_enabled || expedition.expeditionStates.length == 0" (click)="reception(expedition)">
+    <button mat-button [disabled]="expedition.receptionDisabled" (click)="reception(expedition)">
       RECEPCIONAR
       <mat-icon>keyboard_arrow_right</mat-icon>
     </button>

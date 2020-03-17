@@ -107,15 +107,18 @@ export namespace ReceptionAvelonModel {
 
   export interface Expedition {
     reference: string,
-    provider_name: string,
-    provider_id: number,
-    total_packing: number,
-    delivery_date: string,
+    providerName: string,
+    providerId: number,
+    packingAmount: number,
+    deliveryDate: string,
     shipper: string,
-    states_list: number[],
-    reception_enabled: boolean,
-    expeditionPallets: number,
-    expeditionPackings: number,
-    expeditionStates: number[]
+    states: number[],
+    receptionPallets: number,
+    receptionPackings: number,
+    receptionStates: number[],
+    receptionBlocked: boolean,
+    noPendingReceptions: boolean,
+    noPendingConfirms: boolean,
+    receptionDisabled: boolean
   }
 }

@@ -63,7 +63,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
                 this.lastExepeditionQueried = {
                   reference: expedition.reference,
-                  providerId: expedition.provider_id
+                  providerId: expedition.providerId
                 };
 
                 this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
@@ -121,7 +121,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
                 this.lastExepeditionQueried = {
                   reference: expedition.reference,
-                  providerId: expedition.provider_id
+                  providerId: expedition.providerId
                 };
 
                 this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
