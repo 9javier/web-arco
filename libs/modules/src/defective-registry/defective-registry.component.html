@@ -29,14 +29,14 @@
       </ng-container>
 
       <ng-container matColumnDef="id">
-        <mat-header-cell class="my-sticky-col info reference" *matHeaderCellDef mat-sort-header>ID
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>ID
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonId [title]="'IDS'"
                                [listItems]="entities.id"
                                [isFiltering]="isFilteringId != entities.id.length"
                                (applyFilters)="applyFilters($event, 'id')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info reference"> {{element.id}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.id}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="statusManagementDefect">
