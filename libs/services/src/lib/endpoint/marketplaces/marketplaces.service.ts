@@ -29,7 +29,7 @@ export class MarketplacesService {
   private getSizesRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/4";
   
   private postProductCategoryUrl = this.apiMiddleware + "/api/v1/productCategory";
-  private getCategoriesUrl = this.apiMiddleware + "/api/v1/productCategory";
+  private getCategoriesUrl = this.apiMiddleware + "/api/v1/productCategory/byMarket/{{id}}";
 
   private getRulesFilterTypesUrl = this.apiBase + "/api/EnumMetadata/get/rulefiltertype";
   private getRulesFilterUrl = this.apiBase + "/api/RuleFilter";
@@ -159,8 +159,8 @@ export class MarketplacesService {
     }));
   }
 
-  getMarketCategories(): Observable<any> {
-    return this.http.get<any>(this.getCategoriesUrl, {}).pipe(map(response => {
+  getMarketCategories(marketId: number): Observable<any> {
+    return this.http.get<any>(this.getCategoriesUrl.replace('{{id}}', marketId.toString()), {}).pipe(map(response => {
       return response;
     }));
   }

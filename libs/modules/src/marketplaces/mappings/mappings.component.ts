@@ -118,8 +118,8 @@ export class MappingsComponent implements OnInit {
       this.marketplacesService.getFeatures()
     ]).subscribe(results => {
 
-      if (results[0] && results[0].length) {
-        results[0].forEach(brand => {
+      if (results[0].data && results[0].data.length) {
+        results[0].data.forEach(brand => {
           this.dataSourceBrands.push({
             avelonData: {id: brand.externalId, name: brand.name.trim()},
             marketData: {id: -1, name: null}
@@ -131,8 +131,8 @@ export class MappingsComponent implements OnInit {
         this.showingBrands = this.dataSourceMappingBrands.data.slice(0, 10);
       }
 
-      if (results[1] && results[1].length) {
-        results[1].forEach(color => {
+      if (results[1].data && results[1].data.length) {
+        results[1].data.forEach(color => {
           this.dataSourceColors.push({
             avelonData: {id: color.externalId, name: color.name.trim()},
             marketData: {id: -1, name: null}
@@ -144,8 +144,8 @@ export class MappingsComponent implements OnInit {
         this.showingColors = this.dataSourceMappingColors.data.slice(0, 10);
       }
 
-      if (results[2] && results[2].length) {
-        results[2].forEach(size => {
+      if (results[2].data && results[2].data.length) {
+        results[2].data.forEach(size => {
           if (this.dataSourceSizes.length) {
             if (!this.dataSourceSizes.find(searchSize => {
               return searchSize.avelonData.name.trim() === size.name.trim();
@@ -197,8 +197,8 @@ export class MappingsComponent implements OnInit {
         this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
       }
 
-      if (results[3] && results[3].length) {
-        results[3].forEach(feature => {
+      if (results[3].data && results[3].data.length) {
+        results[3].data.forEach(feature => {
           if (feature.dataGroup == "2" || feature.dataGroup == "5" || feature.dataGroup == "7" || feature.dataGroup == "9" || feature.dataGroup == "10") {
             this.dataSourceFeatures.push({
               avelonData: {id: feature.externalId, name: feature.name.trim(), group: feature.dataGroup},

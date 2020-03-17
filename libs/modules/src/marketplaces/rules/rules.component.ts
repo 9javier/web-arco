@@ -41,8 +41,8 @@ export class RulesComponent implements OnInit {
 
     this.marketplacesService.getMarkets().subscribe((data: any) => {
       this.market = null;
-      if (data && data.length) {
-        for (let market of data) {
+      if (data.data && data.data.length) {
+        for (let market of data.data) {
           switch (this.route.snapshot.data['name']) {
             case "Miniprecios":
               this.market = market.id;
@@ -66,7 +66,6 @@ export class RulesComponent implements OnInit {
     this.dataSourceCategories = [];
     this.marketplacesService.getRulesConfigurationsByMarket(this.market).subscribe((data: any) => {
       if (data.data && data.data.length) {
-        console.log(data.data)
         for (let ruleConfiguration of data.data) {
           let type = "";
           let categories = [];
@@ -163,7 +162,6 @@ export class RulesComponent implements OnInit {
 
     modal.onDidDismiss().then((data) => {
       if (data && data.data) {
-
         let ruleConfiguration = {
           name: data.data.name,
           description: data.data.description,
@@ -176,7 +174,7 @@ export class RulesComponent implements OnInit {
           /*referenceExceptions: {},
           ruleDataValidactionAttributes: [
           ],*/
-          categories: []
+          categories: data.data.destinationCategories
         };
 
         switch (data.data.filterType) {
@@ -251,7 +249,7 @@ export class RulesComponent implements OnInit {
           }
         });
         
-        ruleConfiguration.referenceExceptions = exceptions;*/
+        ruleConfiguration.referenceExceptions = exceptions;
 
         let categoriesToSend = [];
         data.data.destinationCategories.forEach(category => {
@@ -261,7 +259,7 @@ export class RulesComponent implements OnInit {
           });
         });
 
-        ruleConfiguration.categories = categoriesToSend;
+        ruleConfiguration.categories = categoriesToSend;*/
 
         console.log(ruleConfiguration)
         this.marketplacesService.postRulesConfigurations(ruleConfiguration).subscribe(data => {
