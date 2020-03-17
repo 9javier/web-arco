@@ -74,33 +74,21 @@ export class ChangeStateComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.registry);
+    this.photoList = false;
+
     this.dropFilesService.getImage().subscribe(resp => {
       if (resp) {
-        this.photos.push(resp)
-        console.log(this.photos);
+        this.photos.push(resp);
         this.displayPhotoList = true;
         this.photoList = true;
       }
-      if (!this.photos) {
-        this.openPhotoList();
-      }
-      console.log(resp);
     });
     this.date = formatDate(this.registry.data.dateDetection, 'dd/MM/yyyy', 'es');
-    console.log("registro:")
-    console.log(this.registry);
     this.getStatusManagement();
     this.initForm();
     this.initGestionState();
-
     this.signatures = null;
-
-
     this.photos = [];
-    console.log(this.photos);
-    console.log(this.signatures);
-
 
     this.signaturesSubscription = this.uploadService.signatureEventAsign().subscribe(resp => {
       console.log(this.signatures);
@@ -126,7 +114,6 @@ export class ChangeStateComponent implements OnInit {
       if (!this.signatureList) {
         this.openSignatureList()
       }
-      console.log(resp);
     })
 
 

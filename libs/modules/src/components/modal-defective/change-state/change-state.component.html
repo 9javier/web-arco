@@ -67,7 +67,7 @@
     </ion-button>
   </ion-item>
 
-  <ion-item *ngIf="requirePhoto && photoList" (click)="showPhotoList()" lines="none">
+  <ion-item *ngIf="requirePhoto && this.photos?.length > 0" (click)="showPhotoList()" lines="none">
     <ion-label class="label-text">Fotos</ion-label>
     <ion-icon slot="end" *ngIf="displayPhotoList" name="arrow-down"></ion-icon>
     <ion-icon slot="end" *ngIf="!displayPhotoList" name="arrow-up"></ion-icon>
