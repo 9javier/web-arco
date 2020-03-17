@@ -10,7 +10,6 @@ import { ModalController } from '@ionic/angular';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { validators } from '../utils/validators';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
-import { RegistryDetailsComponent } from '../components/modal-defective/registry-details-al/registry-details-al.component';
 import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
 import { DetailsRegisterComponent } from './details-register/details-register.component';
 
@@ -22,7 +21,7 @@ import { DetailsRegisterComponent } from './details-register/details-register.co
 export class DefectHandlerComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['barcode', 'registerDate', 'state'];
+  displayedColumns: string[] = ['id', 'barcode', 'registerDate', 'state'];
   OrderSelect;
   dataSource;
   originalTableStatus: DamagedModel.Status[];
@@ -33,6 +32,7 @@ export class DefectHandlerComponent implements OnInit {
   mobileVersionTypeList: 'list' | 'table' = 'list';
   showFiltersMobileVersion: boolean = false;
   pauseListenFormChange = false;
+  isRefresh = false;
   prices: Array<PriceModel.Price> = [];
   requestTimeout;
 
@@ -186,9 +186,9 @@ export class DefectHandlerComponent implements OnInit {
   applyFilters() {
     if (this.pauseListenFormChange) return;
       clearTimeout(this.requestTimeout);
-      this.requestTimeout = setTimeout(() => {
+      this.requestTimeout = setTimeout(async () => {
 
-      this.searchInContainer();
+      await this.searchInContainer();
     }, 100);
   }
 
@@ -202,26 +202,34 @@ export class DefectHandlerComponent implements OnInit {
       this.statusManagementDefect = filters.statusManagementDefect;
 
       this.applyFilters();
+    }, (err) => {
+      console.log(err);
+      this.isRefresh = false;
     });
   }
 
-  searchInContainer(): void {
-    this.intermediaryService.presentLoading().then(() => {
-      const status = this.form.get('statusManagementDefect').value;
+  async searchInContainer(): Promise<void> {
+    await this.intermediaryService.presentLoading();
 
-      if (Array.isArray(status)) {
-        this.form.patchValue({ statusManagementDefect: status });
-      } else {
-        this.form.patchValue({ statusManagementDefect: [status] });
-      }
+    const status = this.form.get('statusManagementDefect').value;
 
-      this.getList(this.form).then(() => {
-        this.showFiltersMobileVersion = false;
-        this.intermediaryService.dismissLoading().then();
-      }, () => {
-        this.intermediaryService.dismissLoading().then();
-      });
-    })
+    if (Array.isArray(status)) {
+      this.form.patchValue({ statusManagementDefect: status });
+    } else {
+      this.form.patchValue({ statusManagementDefect: [status] });
+    }
+
+    this.getList(this.form).then(async () => {
+      this.showFiltersMobileVersion = false;
+      await this.intermediaryService.dismissLoading();
+      await this.intermediaryService.dismissLoading();
+      this.isRefresh = false;
+    }, async (err) => {
+      console.log(err);
+      await this.intermediaryService.dismissLoading();
+      await this.intermediaryService.dismissLoading();
+      this.isRefresh = false;
+    });
   }
 
   sanitize(object) {
@@ -284,7 +292,11 @@ export class DefectHandlerComponent implements OnInit {
     this.getFilters();
   }
 
-  refresh() {
-    this.clearFilters();
+  async refresh() {
+    if (!this.isRefresh) {
+      await this.intermediaryService.presentLoading();
+      this.isRefresh = true;
+      this.clearFilters();
+    }
   }
 }
