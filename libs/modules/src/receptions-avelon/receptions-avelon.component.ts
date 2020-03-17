@@ -94,7 +94,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   public listSizes: ReceptionAvelonModel.LoadSizesList[] = [];
   private expeditionStarted = null;
 
-  private isReceptionWithoutOrder: boolean = false;
+  isReceptionWithoutOrder: boolean = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
