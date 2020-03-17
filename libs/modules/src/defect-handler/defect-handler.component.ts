@@ -90,6 +90,7 @@ export class DefectHandlerComponent implements OnInit {
     this.initEntity();
     this.initForm();
     this.getFilters();
+    this.listenChanges();
   }
 
   initEntity() {
