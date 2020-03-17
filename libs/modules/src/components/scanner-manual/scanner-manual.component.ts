@@ -23,9 +23,11 @@ export class ScannerManualComponent implements OnInit {
   }
 
   ngOnInit() {
+    
+  }
+  ngAfterViewInit(){
 
   }
-
   keyUpInput(event) {
     let data = (this.value || "").trim();
     this.currentValue.next(data);
@@ -41,7 +43,10 @@ export class ScannerManualComponent implements OnInit {
 
   public focusToInput() {
     setTimeout(() => {
-      document.getElementById('input-ta').focus();
+      const input = document.getElementById('input-ta')
+      if(input) {
+        input.focus()
+      } 
     }, 500);
   }
 

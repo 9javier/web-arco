@@ -603,7 +603,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.PNG,
       mediaType: this.camera.MediaType.PICTURE,
-      sourceType: this.camera.PictureSourceType.CAMERA,
+      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
       correctOrientation: true
     }
     this.camera.getPicture(options).then((imageData) => {
