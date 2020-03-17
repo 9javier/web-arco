@@ -27,7 +27,7 @@
   <!-- Children List for clicked Item -->
   <ion-list *ngIf="p.open" lines="none">
     <ng-container *ngFor="let sub of p.children">
-      <ion-item *ngIf="!sub.header"   class="sub-item" [routerLink]="sub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubitem(sub)" matTooltip="{{sub.tooltip}}" matTooltipClass="tooltip" matTooltipPosition="right" matTooltipShowDelay="1000" matTooltipHideDelay="4000">
+      <ion-item *ngIf="!sub.header" class="sub-item" [routerLink]="sub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubitem(sub)" matTooltip="{{sub.tooltip}}" matTooltipClass="tooltip" matTooltipPosition="right" matTooltipShowDelay="1000" matTooltipHideDelay="4000">
         <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
         <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
           {{ sub.title }}

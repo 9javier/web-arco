@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ReceptionAvelonModel} from "../../../../../services/src/models/endpoints/receptions-avelon.model";
 import {DateTimeParserService} from "../../../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {StatesExpeditionAvelonProvider} from "../../../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
 
 @Component({
   selector: 'another-expeditions',
@@ -15,23 +16,16 @@ export class AnotherExpeditionsComponent implements OnInit {
   @Output() receptionExpedition = new EventEmitter();
 
   constructor(
-    public dateTimeParserService: DateTimeParserService
+    public dateTimeParserService: DateTimeParserService,
+    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider
   ) {}
 
   ngOnInit() {
 
   }
 
-  stringStates(expedition: ReceptionAvelonModel.Expedition){
-    const stringStates: string[] = [];
-    for(let state of expedition.states_list){
-      if(state == 1){
-        stringStates.push('Bloqueado');
-      }else{
-        stringStates.push('Desconocido');
-      }
-    }
-    return stringStates.join(', ');
+  stringStates(states: number[]){
+    return this.stateExpeditionAvelonProvider.getStringStates(states);
   }
 
   reception(expedition) {

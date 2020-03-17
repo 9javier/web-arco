@@ -22,7 +22,7 @@ import { RegistryDetailsComponent } from '../components/modal-defective/registry
 export class DefectiveRegistryComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select','id','statusManagementDefect','warehouse','product','model','size','brand','color','dateDetection','defectTypeParent','defectTypeChild'];
+  displayedColumns: string[] = ['select', 'id', 'statusManagementDefect', 'warehouse', 'product', 'model', 'size', 'brand', 'color', 'dateDetection', 'defectTypeParent', 'defectTypeChild'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
   originalTableStatus: DamagedModel.Status[];
@@ -96,7 +96,7 @@ export class DefectiveRegistryComponent implements OnInit {
   constructor(
     private defectiveRegistryService: DefectiveRegistryService,
     private formBuilder: FormBuilder,
-    private intermediaryService:IntermediaryService,
+    private intermediaryService: IntermediaryService,
     private modalController: ModalController,
   ) { }
 
@@ -190,9 +190,9 @@ export class DefectiveRegistryComponent implements OnInit {
     })
   }
 
-  async getColumns(form?: FormGroup){
+  async getColumns(form?: FormGroup) {
     this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe(
-      (resp:any) => {
+      (resp: any) => {
         resp.filters.forEach(element => {
           this.columns[element.name] = element.id;
         });
@@ -230,18 +230,18 @@ export class DefectiveRegistryComponent implements OnInit {
     return resultEntity;
   }
 
-  private reduceFilters(entities){
-    this.filterButtonId.listItems = this.reduceFilterEntities(this.id, entities,'id');
-    this.filterButtonProduct.listItems = this.reduceFilterEntities(this.product, entities,'product');
-    this.filterButtonModel.listItems = this.reduceFilterEntities(this.model, entities,'model');
-    this.filterButtonSize.listItems = this.reduceFilterEntities(this.size, entities,'size');
-    this.filterButtonBrand.listItems = this.reduceFilterEntities(this.brand, entities,'brand');
-    this.filterButtonColor.listItems = this.reduceFilterEntities(this.color, entities,'color');
-    this.filterButtonDateDetection.listItems = this.reduceFilterEntities(this.dateDetection, entities,'dateDetection');
-    this.filterButtonStatusManagementDefect.listItems = this.reduceFilterEntities(this.statusManagementDefect, entities,'statusManagementDefect');
-    this.filterButtonDefectTypeParent.listItems = this.reduceFilterEntities(this.defectTypeParent, entities,'defectTypeParent');
-    this.filterButtonDefectTypeChild.listItems = this.reduceFilterEntities(this.defectTypeChild, entities,'defectTypeChild');
-    this.filterButtonWarehouse.listItems = this.reduceFilterEntities(this.warehouse, entities,'warehouse');
+  private reduceFilters(entities) {
+    this.filterButtonId.listItems = this.reduceFilterEntities(this.id, entities, 'id');
+    this.filterButtonProduct.listItems = this.reduceFilterEntities(this.product, entities, 'product');
+    this.filterButtonModel.listItems = this.reduceFilterEntities(this.model, entities, 'model');
+    this.filterButtonSize.listItems = this.reduceFilterEntities(this.size, entities, 'size');
+    this.filterButtonBrand.listItems = this.reduceFilterEntities(this.brand, entities, 'brand');
+    this.filterButtonColor.listItems = this.reduceFilterEntities(this.color, entities, 'color');
+    this.filterButtonDateDetection.listItems = this.reduceFilterEntities(this.dateDetection, entities, 'dateDetection');
+    this.filterButtonStatusManagementDefect.listItems = this.reduceFilterEntities(this.statusManagementDefect, entities, 'statusManagementDefect');
+    this.filterButtonDefectTypeParent.listItems = this.reduceFilterEntities(this.defectTypeParent, entities, 'defectTypeParent');
+    this.filterButtonDefectTypeChild.listItems = this.reduceFilterEntities(this.defectTypeChild, entities, 'defectTypeChild');
+    this.filterButtonWarehouse.listItems = this.reduceFilterEntities(this.warehouse, entities, 'warehouse');
   }
 
   private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
@@ -265,18 +265,18 @@ export class DefectiveRegistryComponent implements OnInit {
     });
   }
 
-  async getList(form?: FormGroup){
-    this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe((resp:any) => {
-        if (resp.results) {
-          this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
-          this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
-          const paginator = resp.pagination;
+  async getList(form?: FormGroup) {
+    this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe((resp: any) => {
+      if (resp.results) {
+        this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
+        this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
+        const paginator = resp.pagination;
 
-          this.paginator.length = paginator.totalResults;
-          this.paginator.pageIndex = paginator.selectPage;
-          this.paginator.lastPage = paginator.lastPage;
-        }
-      },
+        this.paginator.length = paginator.totalResults;
+        this.paginator.pageIndex = paginator.selectPage;
+        this.paginator.lastPage = paginator.lastPage;
+      }
+    },
       async err => {
         await this.intermediaryService.dismissLoading()
       },
@@ -549,14 +549,14 @@ export class DefectiveRegistryComponent implements OnInit {
     return status.name;
   }
 
-  async showImageModal(reference: string, photos: any[]) {
-    console.log(photos)
-    // return (await this.modalController.create({
-    //   component: ShowImageComponent,
-    //   componentProps: {
-    //     reference: reference,
-    //     urlImage: photo
-    //   }
-    // })).present();
-  }
+  // async showImageModal(reference: string, photos: any[]) {
+  //   console.log(photos)
+  //   // return (await this.modalController.create({
+  //   //   component: ShowImageComponent,
+  //   //   componentProps: {
+  //   //     reference: reference,
+  //   //     urlImage: photo
+  //   //   }
+  //   // })).present();
+  // }
 }

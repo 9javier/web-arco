@@ -13,8 +13,10 @@ import { ToolbarProvider } from "../../../../../services/src/providers/toolbar/t
 import { PrinterService } from "../../../../../services/src/lib/printer/printer.service";
 import { ModalModelImagesComponent } from "../modal-model-images/modal-model-images.component";
 import { PositionsToast } from "../../../../../services/src/models/positionsToast.type";
-import { Router } from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import { LocalStorageProvider } from "../../../../../services/src/providers/local-storage/local-storage.provider";
+import {ScreenResult} from "../../../receptions-avelon/enums/screen_result.enum";
+import {ModalDestinyReceptionComponent} from "../../modals/modal-model-images/destiny-reception.component";
 
 @Component({
   selector: 'suite-manual-reception',
@@ -29,6 +31,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   public modelSelected: ReceptionAvelonModel.Data = null;
   public modelIdSelected: number = null;
   public colorSelected: ReceptionAvelonModel.Data = null;
+  public eanCode: string = null;
 
   expeditionLines: {
     id: number,
@@ -47,6 +50,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   lastPrint;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private modalController: ModalController,
     private popoverController: PopoverController,
     private receptionsAvelonService: ReceptionsAvelonService,
@@ -60,6 +64,8 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.loadReceptions();
+    this.eanCode = this.activatedRoute.snapshot.paramMap.get("ean");
+    this.toolbarProvider.showBackArrow.next(true);
     this.toolbarProvider.currentPage.next('Recepción manual');
     this.toolbarProvider.optionsActions.next([
       {
@@ -68,16 +74,25 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         action: () => this.resetData()
       }
     ]);
-    try {
-      this.lastPrint = JSON.parse(String(await this.localStorageProvider.get('lastPrint')));
-      this.brandSelected = this.lastPrint.brand;
-      this.modelSelected = this.lastPrint.model;
-      this.colorSelected = this.lastPrint.color;
-      this.listSizes = this.lastPrint.sizes;
-    } catch (error) { console.log(error) }
+    if (!this.eanCode) {
+      try {
+        const lastPrint = await this.localStorageProvider.get('lastPrint');
+        if(lastPrint){
+          this.lastPrint = JSON.parse(String(lastPrint));
+          this.brandSelected = this.lastPrint.brand;
+          this.modelSelected = this.lastPrint.model;
+          this.modelIdSelected = this.modelSelected.id;
+          this.colorSelected = this.lastPrint.color;
+          this.listSizes = this.lastPrint.sizes;
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 
   ngOnDestroy() {
+    this.toolbarProvider.showBackArrow.next(false);
     this.toolbarProvider.optionsActions.next([]);
   }
 
@@ -405,69 +420,10 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   }
 
   public printCodes() {
-    const sizesToPrint = this.listSizes.filter(s => {
-      return s.quantity > 0;
-    });
-
-    if (sizesToPrint.length > 0) {
-      this.loadingMessageComponent.show(true, 'Imprimiendo códigos');
-
-      const sizesMapped = sizesToPrint.map(s => {
-        return {
-          providerId: this.receptionAvelonProvider.expeditionData.providerId,
-          expedition: this.receptionAvelonProvider.expeditionData.reference,
-          brandId: this.brandSelected.id,
-          colorId: this.colorSelected.id,
-          sizeId: s.id,
-          modelId: this.modelIdSelected,
-          quantity: s.quantity
-        };
-      });
-
-      const params = [];
-      for (let size of sizesMapped) {
-        for (let q = 0; q < size.quantity; q++) {
-          params.push(size);
-        }
-      }
-
-      this.receptionsAvelonService
-        .printReceptionLabel({ to_print: params })
-        .subscribe((res) => {
-          this.loadingMessageComponent.show(false);
-          const referencesToPrint = res.resultToPrint.map(r => r.reference);
-          if (referencesToPrint && referencesToPrint.length > 0) {
-            this.printerService.printTagBarcode(referencesToPrint)
-              .subscribe(async (resPrint) => {
-                console.log('Print reference of reception successful');
-                if (typeof resPrint == 'boolean') {
-                  console.log(resPrint);
-                } else {
-                  resPrint.subscribe((resPrintTwo) => {
-                    console.log('Print reference of reception successful two', resPrintTwo);
-                  })
-                }
-                let lastPrint = {
-                  brand: this.brandSelected,
-                  model: this.modelSelected,
-                  color: this.colorSelected,
-                  sizes: this.listSizes
-                };
-                await this.localStorageProvider.set('lastPrint', JSON.stringify(lastPrint));
-                await this.router.navigate(['receptions-avelon', 'app']);
-              }, (error) => {
-                console.error('Some error success to print reference of reception', error);
-              });
-          }
-          if (res.productsWithError && res.productsWithError.length > 0) {
-            this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.', PositionsToast.BOTTOM);
-          }
-        }, (error) => {
-          this.loadingMessageComponent.show(false);
-          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.', PositionsToast.BOTTOM);
-        });
+    if (this.eanCode) {
+      this.checksEanAndPrint(this.eanCode);
     } else {
-      this.intermediaryService.presentWarning('Indique qué talla(s) desea imprimir y qué cantidad de etiquetas quiere imprimir por cada talla.', null);
+      this.checksNotifyReceptionAndPrint();
     }
   }
 
@@ -491,5 +447,113 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       }, (error) => {
         this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
       });
+  }
+
+  public removeEanCode() {
+    this.eanCode = null;
+  }
+
+  private checksEanAndPrint(eanCode: string) {
+    if (this.checkOnlyOneSizeAndOneQuantity()) {
+      this.checksNotifyReceptionAndPrint(eanCode);
+    }
+  }
+
+  private checksNotifyReceptionAndPrint(eanToAssociate: string = null) {
+    const sizesToPrint = this.listSizes.filter(s => {
+      return s.quantity > 0;
+    });
+
+    if (sizesToPrint.length > 0) {
+      this.loadingMessageComponent.show(true, 'Imprimiendo códigos');
+
+      const sizesMapped = sizesToPrint.map(s => {
+        const sizeMapped: any = {
+          providerId: this.receptionAvelonProvider.expeditionData.providerId,
+          expedition: this.receptionAvelonProvider.expeditionData.reference,
+          brandId: this.brandSelected.id,
+          colorId: this.colorSelected.id,
+          sizeId: s.id,
+          modelId: this.modelIdSelected,
+          quantity: s.quantity
+        };
+        if (eanToAssociate) {
+          sizeMapped.ean = eanToAssociate;
+        }
+        return sizeMapped;
+      });
+
+      const params = [];
+      for (let size of sizesMapped) {
+        for (let q = 0; q < size.quantity; q++) {
+          params.push(size);
+        }
+      }
+
+      this.receptionsAvelonService
+        .printReceptionLabel({ to_print: params })
+        .subscribe(async (res) => {
+          this.loadingMessageComponent.show(false);
+          const referencesToPrint = res.resultToPrint.map(r => r.reference);
+          if (referencesToPrint && referencesToPrint.length > 0) {
+            this.printerService.printTagBarcode(referencesToPrint)
+              .subscribe(async (resPrint) => {
+                console.log('Print reference of reception successful');
+                if (typeof resPrint == 'boolean') {
+                  console.log(resPrint);
+                } else {
+                  resPrint.subscribe((resPrintTwo) => {
+                    console.log('Print reference of reception successful two', resPrintTwo);
+                  })
+                }
+                let lastPrint = {
+                  brand: this.brandSelected,
+                  model: this.modelSelected,
+                  color: this.colorSelected,
+                  sizes: this.listSizes
+                };
+                await this.localStorageProvider.set('lastPrint', JSON.stringify(lastPrint));
+              }, (error) => {
+                console.error('Some error success to print reference of reception', error);
+              });
+
+            const someProductToSorter = !!res.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
+            let typeDestinyReception = someProductToSorter ? ScreenResult.SORTER_VENTILATION : ScreenResult.WAREHOUSE_LOCATION;
+            const modalDestiny = await this.modalController.create({
+              component: ModalDestinyReceptionComponent,
+              componentProps: { typeDestinyReception: typeDestinyReception }
+            });
+            modalDestiny.onDidDismiss().then(_ => this.router.navigate(['receptions-avelon', 'app']));
+            modalDestiny.present();
+          }
+          if (res.productsWithError && res.productsWithError.length > 0) {
+            this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.', PositionsToast.BOTTOM);
+          }
+        }, (error) => {
+          this.loadingMessageComponent.show(false);
+          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.', PositionsToast.BOTTOM);
+        });
+    } else {
+      this.intermediaryService.presentWarning('Indique qué talla(s) desea imprimir y qué cantidad de etiquetas quiere imprimir por cada talla.', null);
+    }
+  }
+
+  // check that user only has selected one size and one unity for that size to associate to EAN code
+  private checkOnlyOneSizeAndOneQuantity(): boolean {
+    const sizesToPrint = this.listSizes.filter(s => {
+      return s.quantity > 0;
+    });
+    if (!sizesToPrint || sizesToPrint.length < 1) {
+      this.intermediaryService.presentWarning('Seleccione 1 Ud. de una talla para asociar al EAN escaneado.', null);
+      return false;
+    } else if (sizesToPrint.length > 1) {
+      this.intermediaryService.presentWarning('Seleccione solo una talla para asociar al EAN escaneado. Asegúrese de que solo ha indicado 1 Ud. de la talla que desea asociar al código.', null);
+      return false;
+    } else if (sizesToPrint[0].quantity > 1) {
+      this.intermediaryService.presentWarning('Solo puede asociar a este EAN 1 Ud. de la talla indicada.', null);
+      return false;
+    }
+
+    return true;
   }
 }

@@ -122,17 +122,12 @@ export class ProductsAvelonComponent implements OnInit {
   ) {}
 
   getSecondsAvelon(){
-    this.intermediaryService.presentLoading('Actualizando Avelon').then(() => {
-      this.productAvelonService.GetSecondAvelon().subscribe(result => {
-        let seconds = parseInt(result.GlobalVariable_value)/60
-        seconds.toString();
-        this.seconds.GlobalVariable_value = seconds ;
-        this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastSuccess("Actualizacion exitosa.")
-      },()=>{
-        this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastError("Actualizacion Fallida.");
-      });
+    this.productAvelonService.GetSecondAvelon().subscribe(result => {
+      let seconds = result && result.GlobalVariable_value ? parseInt(result.GlobalVariable_value)/60 : 0;
+      seconds.toString();
+      this.seconds.GlobalVariable_value = seconds ;
+    },()=>{
+      this.seconds.GlobalVariable_value = "0";
     });
   }
 
@@ -142,6 +137,7 @@ export class ProductsAvelonComponent implements OnInit {
         "force": true
       };
       this.productAvelonService.notifyAvelonPredistribution(body).subscribe(result => {
+        this.refreshTable();
         this.intermediaryService.dismissLoading();
         this.intermediaryService.presentToastSuccess("Notificacion enviada con exito.")
       },()=>{
@@ -712,19 +708,25 @@ export class ProductsAvelonComponent implements OnInit {
   }
 
   async presentAlertDeleteConfirm() {
+    const itemsSelected = this.selection.selected.length;
+    let message = 'Está a punto de borrar una recepción que aún no ha sido notificada a Avelon. <br/>¿Está seguro de que desea continuar y deshacer la recepción?';
+    if (itemsSelected > 1) {
+      message = 'Está a punto de borrar recepciones que aún no han sido notificadas a Avelon. <br/>¿Está seguro de que desea continuar y deshacer las recepciones seleccionadas?';
+    }
+
     const alert = await this.alertController.create({
-      header: '¡Confirmar eliminación!',
-      message: '¿Deseas eliminar los productos seleccionados?',
+      header: '¡Acción peligrosa!',
+      message: message,
       buttons: [
         {
-          text: 'No',
+          text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
             this.selection.clear();
           }
         }, {
-          text: 'Si',
+          text: 'Eliminar',
           handler: async () => {
             await this.deleteProductReceptions();
           }

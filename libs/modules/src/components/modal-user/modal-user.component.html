@@ -14,10 +14,10 @@
     <mat-grid-list
       *ngFor="let user of users"
       class="team-assignations-line"
-      [cols]="getCols()*10"
+      [cols]="getCols() > 0 ? getCols()*10 : 10"
       rowHeight="48px">
 
-      <mat-grid-tile class="employee" [colspan]="getCols()*3">
+      <mat-grid-tile class="employee" [colspan]="getCols() > 0 ? getCols()*3 : 3">
         <ion-radio slot="start" (click)="selectedUserId = user.id"></ion-radio>
         <div class="tile-value">{{user.name}}</div>
       </mat-grid-tile>
@@ -26,7 +26,7 @@
         class="assignation"
         *ngFor="let picking of user.pickings"
         [ngClass]="picking.temporary ? 'temporal' : 'fixed'"
-        [colspan]="picking.quantityShoes*7">
+        [colspan]="picking.quantityShoes > 0 ? picking.quantityShoes*7 : 7">
 
         <div class="tile-value">{{picking.quantityShoes}}</div>
 
