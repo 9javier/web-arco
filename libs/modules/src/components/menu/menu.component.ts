@@ -720,11 +720,18 @@ export class MenuComponent implements OnInit {
       icon: 'archive',
       children: [
         {
-          title: 'Expediciones pendientes',
+          title: 'Recepción de mercancía',
           id: 'expeditions-pending',
           url: '/expeditions/pending/app',
-          icon: 'timer',
-          tooltip: 'Consulta de información sobre una expedición pendiente de recibir de un proveedor.'
+          icon: 'pricetags',
+          tooltip: 'Realiza la recepción de mercancía recibida de fábrica mediante una expedición o proveedor.'
+        },
+        {
+          title: 'Recepción sin pedido',
+          id: 'receptions-avelon-free',
+          url: '/expeditions/pending/app/free',
+          icon: 'pricetags',
+          tooltip: 'Realiza la recepción de mercancía recibida de fábrica mediante una expedición o proveedor sin necesidad de que esta mercancía esté asignada a un pedido.'
         }
       ]
     },
@@ -732,7 +739,7 @@ export class MenuComponent implements OnInit {
       title: 'Configuración',
       open: false,
       type: 'wrapper',
-    icon: 'build',
+      icon: 'build',
       children: [
         {
           title: 'Ajustes',

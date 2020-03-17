@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ScannerManualComponent} from "../../../components/scanner-manual/scanner-manual.component";
 import {LoadingMessageComponent} from "../../../components/loading-message/loading-message.component";
 import {IntermediaryService} from "../../../../../services/src/lib/endpoint/intermediary/intermediary.service";
@@ -22,6 +22,8 @@ export class EanScannerComponent implements OnInit {
 
   @ViewChild(ScannerManualComponent) scannerManual: ScannerManualComponent;
   @ViewChild(LoadingMessageComponent) loadingMessageComponent: LoadingMessageComponent;
+
+  @Input() isReceptionWithoutOrder: boolean = false;
 
   private expeditionDataToQuery = null;
 
@@ -107,7 +109,14 @@ export class EanScannerComponent implements OnInit {
           this.scannerManual.blockScan(false);
           if (error.error.code == 400 && error.error.message == 'InvalidEanException') {
             this.loadingMessageComponent.show(false);
-            this.router.navigate(['receptions-avelon', 'app', 'manual', eanScanned]);
+
+            const routeSections = ['receptions-avelon', 'app'];
+            if (this.isReceptionWithoutOrder) {
+              routeSections.push('free');
+            }
+            routeSections.push('manual', eanScanned);
+
+            this.router.navigate(routeSections);
           } else {
             this.processFinishError({
               hideLoading: true,

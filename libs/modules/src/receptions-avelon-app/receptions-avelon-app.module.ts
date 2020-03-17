@@ -16,11 +16,23 @@ const routes: Routes = [
     component: ReceptionsAvelonAppComponent
   },
   {
+    path: 'free',
+    component: ReceptionsAvelonAppComponent
+  },
+  {
     path: 'manual',
     component: ManualReceptionComponent
   },
   {
     path: 'manual/:ean',
+    component: ManualReceptionComponent
+  },
+  {
+    path: 'free/manual',
+    component: ManualReceptionComponent
+  },
+  {
+    path: 'free/manual/:ean',
     component: ManualReceptionComponent
   }
 ];

@@ -48,6 +48,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   public resultsList: any[] = [];
 
   lastPrint;
+  private isReceptionWithoutOrder: boolean = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -63,6 +64,9 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   ) { }
 
   async ngOnInit() {
+    if (this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path) {
+      this.isReceptionWithoutOrder = /^free\//.test(this.activatedRoute.snapshot.routeConfig.path);
+    }
     this.loadReceptions();
     this.eanCode = this.activatedRoute.snapshot.paramMap.get("ean");
     this.toolbarProvider.showBackArrow.next(true);
@@ -384,24 +388,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     }
   }
 
-  public searchMore() {
-    this.receptionsAvelonService
-      .getReceptionsNotifiedProviders(this.receptionAvelonProvider.expeditionData.providerId)
-      .subscribe((data: ReceptionAvelonModel.Reception) => {
-        if (data.models.length <= 0 && data.colors.length <= 0 && data.brands.length <= 0) {
-          this.intermediaryService.presentToastError('No se han encontrado más datos para realizar la recepción.', PositionsToast.BOTTOM);
-        } else {
-          this.resetData({
-            brands: data.brands,
-            models: data.models,
-            colors: data.colors
-          });
-        }
-      }, (error) => {
-        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar más datos para buscar.', PositionsToast.BOTTOM);
-      });
-  }
-
   public async showImages(ev) {
     const photoForModel = this.getPhotoUrl(this.modelIdSelected);
     if (photoForModel) {
@@ -498,49 +484,67 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         params.delivery_note = deliveryNote;
       }
 
-      this.receptionsAvelonService
-        .printReceptionLabel(params)
-        .subscribe(async (res) => {
-          this.loadingMessageComponent.show(false);
-          const referencesToPrint = res.resultToPrint.map(r => r.reference);
-          if (referencesToPrint && referencesToPrint.length > 0) {
-            this.printerService.printTagBarcode(referencesToPrint)
-              .subscribe(async (resPrint) => {
-                console.log('Print reference of reception successful');
-                if (typeof resPrint == 'boolean') {
-                  console.log(resPrint);
-                } else {
-                  resPrint.subscribe((resPrintTwo) => {
-                    console.log('Print reference of reception successful two', resPrintTwo);
-                  })
-                }
-                let lastPrint = {
-                  brand: this.brandSelected,
-                  model: this.modelSelected,
-                  color: this.colorSelected,
-                  sizes: this.listSizes
-                };
-                await this.localStorageProvider.set('lastPrint', JSON.stringify(lastPrint));
-              }, (error) => {
-                console.error('Some error success to print reference of reception', error);
-              });
-
-            const someProductToSorter = !!res.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
-            let typeDestinyReception = someProductToSorter ? ScreenResult.SORTER_VENTILATION : ScreenResult.WAREHOUSE_LOCATION;
-            const modalDestiny = await this.modalController.create({
-              component: ModalDestinyReceptionComponent,
-              componentProps: { typeDestinyReception: typeDestinyReception }
+      const subscribeResponseOk = async (res) => {
+        this.loadingMessageComponent.show(false);
+        const referencesToPrint = res.resultToPrint.map(r => r.reference);
+        if (referencesToPrint && referencesToPrint.length > 0) {
+          this.printerService.printTagBarcode(referencesToPrint)
+            .subscribe(async (resPrint) => {
+              console.log('Print reference of reception successful');
+              if (typeof resPrint == 'boolean') {
+                console.log(resPrint);
+              } else {
+                resPrint.subscribe((resPrintTwo) => {
+                  console.log('Print reference of reception successful two', resPrintTwo);
+                })
+              }
+              let lastPrint = {
+                brand: this.brandSelected,
+                model: this.modelSelected,
+                color: this.colorSelected,
+                sizes: this.listSizes
+              };
+              await this.localStorageProvider.set('lastPrint', JSON.stringify(lastPrint));
+            }, (error) => {
+              console.error('Some error success to print reference of reception', error);
             });
-            modalDestiny.onDidDismiss().then(_ => this.router.navigate(['receptions-avelon', 'app']));
-            modalDestiny.present();
+
+          const someProductToSorter = !!res.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
+          let typeDestinyReception = someProductToSorter ? ScreenResult.SORTER_VENTILATION : ScreenResult.WAREHOUSE_LOCATION;
+          const modalDestiny = await this.modalController.create({
+            component: ModalDestinyReceptionComponent,
+            componentProps: { typeDestinyReception: typeDestinyReception }
+          });
+          modalDestiny.onDidDismiss().then(_ => {
+            const routeSections = ['receptions-avelon', 'app'];
+            if (this.isReceptionWithoutOrder) {
+              routeSections.push('free');
+            }
+
+            this.router.navigate(routeSections)
+          });
+          modalDestiny.present();
+        }
+        if (res.productsWithError && res.productsWithError.length > 0) {
+          let errorMessage = `No se han podido generar e imprimir alguna de las etiquetas necesarias (${res.productsWithError.length}). <br/>Se detalla la incidencia a continuación: <ul>`;
+          for (let error of res.productsWithError) {
+            errorMessage += `<li>${error.reason}</li>`
           }
-          if (res.productsWithError && res.productsWithError.length > 0) {
-            this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.', PositionsToast.BOTTOM);
-          }
-        }, (error) => {
-          this.loadingMessageComponent.show(false);
-          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.', PositionsToast.BOTTOM);
-        });
+          errorMessage += '</ul>';
+          this.intermediaryService.presentWarning(errorMessage, null);
+          this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.', PositionsToast.BOTTOM);
+        }
+      };
+      const subscribeResponseError = (error) => {
+        this.loadingMessageComponent.show(false);
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.', PositionsToast.BOTTOM);
+      };
+
+      if (this.isReceptionWithoutOrder) {
+        this.receptionsAvelonService.makeReceptionFree(params).subscribe(subscribeResponseOk, subscribeResponseError);
+      } else {
+        this.receptionsAvelonService.printReceptionLabel(params).subscribe(subscribeResponseOk, subscribeResponseError);
+      }
     } else {
       this.intermediaryService.presentWarning('Indique qué talla(s) desea imprimir y qué cantidad de etiquetas quiere imprimir por cada talla.', null);
     }

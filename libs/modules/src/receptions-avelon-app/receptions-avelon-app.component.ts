@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 import {ReceptionAvelonProvider} from "../../../services/src/providers/reception-avelon/reception-avelon.provider";
 import {ReceptionAvelonModel} from "@suite/services";
@@ -19,9 +19,11 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
 
   expedition: Expedition;
   deliveryNote: string = null;
+  public isReceptionWithoutOrder: boolean = false;
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private toolbarProvider: ToolbarProvider,
     private receptionAvelonProvider: ReceptionAvelonProvider,
     public dateTimeParserService: DateTimeParserService,
@@ -30,6 +32,7 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.expedition = this.receptionAvelonProvider.expedition;
+    this.isReceptionWithoutOrder = !!(this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path && this.activatedRoute.snapshot.routeConfig.path == 'free');
     this.toolbarProvider.currentPage.next('#'+this.expedition.reference);
   }
 
@@ -38,7 +41,13 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
   }
 
   receptionBySearch() {
-    this.router.navigate(['receptions-avelon', 'app', 'manual']);
+    const routeSections = ['receptions-avelon', 'app'];
+    if (this.isReceptionWithoutOrder) {
+      routeSections.push('free');
+    }
+    routeSections.push('manual');
+
+    this.router.navigate(routeSections);
   }
 
   stringStates(states: number[]){

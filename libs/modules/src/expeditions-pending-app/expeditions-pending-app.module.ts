@@ -26,6 +26,10 @@ const routes: Routes = [
   {
     path: '',
     component: ExpeditionsPendingAppComponent
+  },
+  {
+    path: 'free',
+    component: ExpeditionsPendingAppComponent
   }
 ];
 
