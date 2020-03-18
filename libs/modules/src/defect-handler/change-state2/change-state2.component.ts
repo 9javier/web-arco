@@ -121,6 +121,10 @@ export class ChangeState2Component implements OnInit {
         }
       }
       this.signatures = resp
+      if (this.signatures) {
+        this.signatures.pathMedium = `${environment.urlFiles}${this.signatures.pathMedium}`
+        this.signatures.pathIcon = `${environment.urlFiles}${this.signatures.pathIco}`
+      }
       if (!this.signatureList) {
         this.openSignatureList()
       }
@@ -420,7 +424,8 @@ export class ChangeState2Component implements OnInit {
         this.intermediaryService.dismissLoading()
         const response: any = JSON.parse(result.response)
         console.log('response: ', response);
-
+        response.data.pathMedium = `${environment.urlFiles}${response.data.pathMedium}`
+        response.data.pathIcon = `${environment.urlFiles}${response.data.pathIco}`
         this.img = response.data
         this.photos.push(this.img);
         console.log('subido');
