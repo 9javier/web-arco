@@ -1,8 +1,46 @@
 import { Request } from './request';
 import { WarehouseModel } from './Warehouse';
 import {HttpRequestModel} from "./HttpRequest";
+import {FiltersModel} from "@suite/services";
 
 export namespace CarrierModel{
+
+    export interface SearchInContainer{
+      createdAt: string;
+      updatedAt: string;
+      id: number;
+      status: number;
+      reference: number;
+      type: number,
+      warehouse: any,
+      products: number
+    }
+
+    export interface ResponseFilters extends Request.Success{
+      data:{
+        filters: {
+          references: FiltersModel.Reference[],
+          types: FiltersModel.Type[],
+          origins: FiltersModel.Origin[],
+          destinies: FiltersModel.Destiny[],
+          products: FiltersModel.Product[],
+        }
+      }
+    }
+
+    export interface ResponseSearchInContainer extends Request.Success{
+      data:{
+        results:Array<SearchInContainer>;
+        pagination:Request.Paginator;
+        filters: {
+          references: FiltersModel.Reference[],
+          types: FiltersModel.Type[],
+          origins: FiltersModel.Origin[],
+          destinies: FiltersModel.Destiny[],
+          products: FiltersModel.Product[],
+        }
+      }
+    }
 
     export interface CarrierWarehouseDestiny{
         id:number;
