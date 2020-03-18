@@ -131,6 +131,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         }
       }
       this.signatures = resp
+      
+      if(this.signatures) {
+        this.signatures.pathMedium = `${environment.urlFiles}${this.signatures.pathMedium}`
+        this.signatures.pathIcon = `${environment.urlFiles}${this.signatures.pathIco}`
+      }
+      console.log(this.signatures);
+      
       if (!this.signatureList) {
         this.openSignatureList()
       }
@@ -603,7 +610,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.PNG,
       mediaType: this.camera.MediaType.PICTURE,
-      sourceType: this.camera.PictureSourceType.CAMERA,
+      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
       correctOrientation: true
     }
     this.camera.getPicture(options).then((imageData) => {
@@ -647,7 +654,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         const response: any = JSON.parse(result.response)
         console.log('response: ', response);
 
-        this.img = response.data
+        response.data.pathMedium = `${environment.urlFiles}${response.data.pathMedium}`
+        response.data.pathIcon = `${environment.urlFiles}${response.data.pathIco}`
+        this.img = response.data; 
         this.photos.push(this.img);
         console.log('subido');
         if (!this.photoList) {
