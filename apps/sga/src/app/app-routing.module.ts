@@ -119,6 +119,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'brands-enabled-reception',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/brands-enabled-reception/brands-enabled-reception.module#BrandsEnabledReceptionModule',
+    data: {
+      name: 'Marcas habilitadas recepción sin pedido'
+    }
+  },
+  {
     path: 'pallets',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
