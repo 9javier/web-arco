@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {IncidencesReceptionService} from "../../../services/src/lib/endpoint/incidences-reception/incidences-reception.service";
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
-import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
+import {IncidenceReceptionModel} from "../../../services/src/models/endpoints/IncidenceReception";
 import {MatSort, PageEvent, Sort} from "@angular/material";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {IntermediaryService, InventoryService} from '@suite/services';
@@ -27,12 +27,12 @@ import { BehaviorSubject, of, Observable } from 'rxjs';
 export class IncidencesReceptionListComponent implements OnInit {
 
   public displayedColumns = ['id', 'type', 'process', 'date', 'time', 'user', 'code', 'model', 'size', 'brand', 'model-name', 'color', 'lifestyle', 'season', 'warehouse', 'location', 'destiny', 'sorter-way', /*'history',*/ 'status', 'user-status', 'date-status', 'time-status'];
-  public incidences: IncidenceModel.Incidence[] = [];
-  public typeFilters = IncidenceModel.TypeFilters;
+  public incidences: IncidenceReceptionModel.IncidenceReception[] = [];
+  public typeFilters = IncidenceReceptionModel.TypeFilters;
   public listAvailableStatus: any[] = [];
 
   public paginatorPagerValues = [20, 50, 100];
-  private currentPageFilter: IncidenceModel.SearchParameters;
+  private currentPageFilter: IncidenceReceptionModel.SearchParameters;
   form: FormGroup = this.formBuilder.group({
     filters: {},
     pagination: this.formBuilder.group({
@@ -87,7 +87,7 @@ export class IncidencesReceptionListComponent implements OnInit {
         direction: 'DESC'
       },
       filters: {},
-      page: 0,
+      page: 1,
       size: this.paginatorPagerValues[0]
     };
     this.form = this.formBuilder.group({
@@ -206,10 +206,10 @@ export class IncidencesReceptionListComponent implements OnInit {
     return object;
   }
 
-  private searchIncidences(parameters: IncidenceModel.SearchParameters) {
+  private searchIncidences(parameters: IncidenceReceptionModel.SearchParameters) {
     this.incidencesReceptionService
       .postSearch(parameters)
-      .then((res: IncidenceModel.ResponseSearch) => {
+      .then((res: IncidenceReceptionModel.ResponseSearch) => {
         this.intermediaryService.dismissLoading();
         if (res.code === 200) {
           this.listAvailableStatus = res.data.listAvailableStatus;
@@ -328,7 +328,7 @@ export class IncidencesReceptionListComponent implements OnInit {
     if (btnFiltersToUse) {
       this.incidencesReceptionService
         .postGetFilters({ type, currentFilter})
-        .then((res: IncidenceModel.ResponseGetFilters) => {
+        .then((res: IncidenceReceptionModel.ResponseGetFilters) => {
           if (res.code == 200) {
             btnFiltersToUse.listItems = res.data;
             btnFiltersToUse.openFilterPopover(event, typedTextForType);
@@ -340,13 +340,13 @@ export class IncidencesReceptionListComponent implements OnInit {
     }
   }
 
-  changeIncidenceStatus(incidence: IncidenceModel.Incidence) {
+  changeIncidenceStatus(incidence: IncidenceReceptionModel.IncidenceReception) {
     const originalStatus = JSON.parse(JSON.stringify(incidence.status));
     setTimeout(() => {
       incidence.status.status = incidence.status.available_status.find(s => s.id == incidence.status.status.id);
       this.incidencesReceptionService
         .postChangeStatus(incidence.info.id, { newStatus: incidence.status.status.id })
-        .then(async (res: IncidenceModel.ResponseChangeStatus) => {
+        .then(async (res: IncidenceReceptionModel.ResponseChangeStatus) => {
           if (res.code == 201 && res.data.status) {
             incidence.status = res.data.status;
             await this.intermediaryService.presentToastSuccess(`Estado de la incidencia #${res.data.info.id} actualizado.`);
