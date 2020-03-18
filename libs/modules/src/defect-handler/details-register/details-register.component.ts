@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IncidentsService, TypesService } from '@suite/services';
+import { IncidentsService, TypesService, environment } from '@suite/services';
 import { AlertController, LoadingController, ModalController, NavParams } from "@ionic/angular";
 import { InventoryService, WarehouseService } from '@suite/services';
 import { DefectiveRegistryModel } from '../../../../services/src/models/endpoints/DefectiveRegistry';
@@ -59,7 +59,9 @@ export class DetailsRegisterComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.container = this.navParams.data.container;
+    console.log(this.navParams.data);
+    
+    this.container = this.navParams.data.container;    
     this.warehouseId = this.navParams.data.warehouseId;
     this.listWarehouses = this.warehouseService.listWarehouses;
     this.listHallsOriginal = this.warehouseService.listHalls;
@@ -91,6 +93,11 @@ export class DetailsRegisterComponent implements OnInit {
   getRegistryHistorical(): void {
     this.defectiveRegistryService.getHistorical({ productId: this.productId, productReference: '' }).subscribe(historical => {
       this.registryHistorical = historical;
+      console.log(this.registryHistorical);
+      this.registryHistorical.map(history => {
+        history.signature.pathMedium = `${environment.apiBasePhoto}${history.signature.pathMedium}`
+      })
+      console.log(this.registryHistorical);
     });
   }
 
@@ -100,6 +107,14 @@ export class DetailsRegisterComponent implements OnInit {
         data: lastHistorical.data,
         status: lastHistorical.statuses};
       this.registry = lastHistorical.data;
+      console.log(this.registry);
+      this.registry.photos.map(photo => {
+        console.log(photo);
+        
+        photo.pathMedium = `${environment.apiBasePhoto}${photo.pathMedium}`
+        photo.pathIcon = `${environment.apiBasePhoto}${photo.pathIcon}`
+      })
+      
       this.originalTableStatus = lastHistorical.statuses;
     });
   }

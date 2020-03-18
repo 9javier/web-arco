@@ -133,8 +133,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       this.signatures = resp
 
       if (this.signatures) {
-        this.signatures.pathMedium = `${environment.urlFiles}${this.signatures.pathMedium}`
-        this.signatures.pathIcon = `${environment.urlFiles}${this.signatures.pathIco}`
+        this.signatures.pathMedium = `${environment.apiBasePhoto}${this.signatures.pathMedium}`
+        this.signatures.pathIcon = `${environment.apiBasePhoto}${this.signatures.pathIcon}`
       }
       console.log(this.signatures);
 
@@ -653,9 +653,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         this.intermediaryService.dismissLoading()
         const response: any = JSON.parse(result.response)
         console.log('response: ', response);
-
-        response.data.pathMedium = `${environment.urlFiles}${response.data.pathMedium}`
-        response.data.pathIcon = `${environment.urlFiles}${response.data.pathIcon}`
+        console.log(response.data);
+        
+        response.data.pathMedium = `${environment.apiBasePhoto}${response.data.pathMedium}`
+        response.data.pathIcon = `${environment.apiBasePhoto}${response.data.pathIcon}`
         this.img = response.data;
         this.photos.push(this.img);
         console.log('subido');

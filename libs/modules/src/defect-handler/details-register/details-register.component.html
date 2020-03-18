@@ -141,18 +141,19 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <ion-item lines="none" *ngFor="let photo of historical.photos">
-                  <img src="{{photo.pathMedium}}" alt="" />
+                  <img [src]="photo.pathMedium" alt="" />
                   <ion-item-divider></ion-item-divider>
                 </ion-item>
               </mat-expansion-panel>
-              <mat-expansion-panel class="signature" *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'signature') && historical?.signature?.pathMedium">
+              {{historical?.signature?.pathMedium}}
+              <mat-expansion-panel class="signature" *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'signature') && historical.signature.pathMedium">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     Firma
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <ion-item lines="none">
-                  <img src="{{historical?.signature?.pathMedium}}" alt="" />
+                  <ion-img [src]="historical.signature.pathMedium"></ion-img>
                 </ion-item>
               </mat-expansion-panel>
             </mat-expansion-panel>
