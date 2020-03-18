@@ -60,7 +60,7 @@
               Devolución a Fábrica: {{registry?.factoryReturn ? 'Si' : 'No'}}
             </ion-label>
           </ion-item>
-          <ion-item>
+          <ion-item *ngIf="registry.observations.length > 0">
             <ion-label>Observaciones:</ion-label>
             <ion-textarea class="text-observations" type="text" rows="4" value="{{registry?.observations}}" readonly="true"></ion-textarea>
           </ion-item>
