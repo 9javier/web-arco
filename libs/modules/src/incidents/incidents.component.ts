@@ -655,7 +655,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         console.log('response: ', response);
 
         response.data.pathMedium = `${environment.urlFiles}${response.data.pathMedium}`
-        response.data.pathIco = `${environment.urlFiles}${response.data.pathIco}`
+        response.data.pathIcon = `${environment.urlFiles}${response.data.pathIco}`
         this.img = response.data; 
         this.photos.push(this.img);
         console.log('subido');
