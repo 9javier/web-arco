@@ -23,7 +23,7 @@
     <ion-select  (ionChange)="gestionChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
       <ion-select-option  *ngFor="let item of allDefectType" [value]="item.id" >{{item.name}}</ion-select-option>
     </ion-select>
-  </ion-item> 
+  </ion-item>
 
   <ion-item>
     <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
@@ -33,7 +33,7 @@
     </ion-select> -->
   </ion-item>
 
- 
+
 
 
   <ion-item *ngIf="selectGestionState == true">
@@ -66,22 +66,22 @@
       <ion-icon name="images"></ion-icon>
     </ion-button>
   </ion-item>
-  
-  <ion-item *ngIf="requirePhoto && photoList" (click)="showPhotoList()" lines="none">
+
+  <ion-item *ngIf="requirePhoto && this.photos?.length > 0" (click)="showPhotoList()" lines="none">
     <ion-label class="label-text">Fotos</ion-label>
     <ion-icon slot="end" *ngIf="displayPhotoList" name="arrow-down"></ion-icon>
     <ion-icon slot="end" *ngIf="!displayPhotoList" name="arrow-up"></ion-icon>
   </ion-item>
   <ion-list *ngIf="photoList && requirePhoto && displayPhotoList">
     <ion-item  lines="none" *ngFor="let item of photos; let i = index">
-      <ion-img (click)="openReviewImage(item)"  slot="start" [src]="item.pathIcon"></ion-img>
+      <ion-img (click)="openReviewImage(item)"  slot="start" [src]="baseUrlPhoto + item.pathIcon"></ion-img>
       <ion-button slot="end"(click)="deleteImage(item, i, photos)">
         <ion-icon slot="icon-only" name="trash"></ion-icon>
       </ion-button>
     </ion-item>
   </ion-list>
   </div>
- 
+
 <div *ngIf="selectGestionState == true">
   <ion-item lines="none" *ngIf="requireOk == true">
     <ion-label lines="none" class="ion-text-capitalize label-text">generar firma</ion-label>
@@ -96,7 +96,7 @@
   </ion-item>
   <ion-list  *ngIf="signatures && signatureList && requireOk">
     <ion-item lines="none">
-      <ion-img (click)="onOpenReviewModal(signatures)" slot="start" [src]="signatures.pathIcon"></ion-img>
+      <ion-img (click)="onOpenReviewModal(signatures)" slot="start" [src]="baseUrlPhoto + signatures.pathIcon"></ion-img>
       <ion-button slot="end" (click)="deleteSignature(signatures)">
         <ion-icon slot="icon-only" name="trash"></ion-icon>
       </ion-button>

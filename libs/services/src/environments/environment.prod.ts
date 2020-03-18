@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  apiBasePhoto: 'http://localhost:8081',
   apiBase: 'http://mga.krack.es:8080/api',
   apiSorter: 'http://mga.krack.es:8080/api',
   urlBase: 'http://mga.krack.es:8080',
