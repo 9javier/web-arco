@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" [ngClass]="{'without-order': isReceptionWithoutOrder}">
   <span class="title">Información de la expedición que se está recepcionando</span>
   <div class="row data">
     <div class="col">
@@ -23,7 +23,13 @@
       </div>
     </div>
     <div class="col reset">
-      <ion-button (click)="resetReceptionProcess()">REINICIAR RECEPCIÓN</ion-button>
+      <div class="row delivery-note">
+        <input #deliveryNote type="text" matInput placeholder="Nº ALBARÁN" (click)="showKeyboard()">
+        <i slot="end" class="material-icons" id="expeditionKeyboard" matRipple (click)="removeDeliveryNote($event)">close</i>
+      </div>
+      <div class="row">
+        <ion-button (click)="resetReceptionProcess()">REINICIAR RECEPCIÓN</ion-button>
+      </div>
     </div>
   </div>
 </div>

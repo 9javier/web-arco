@@ -18,6 +18,7 @@ import {WebsocketService} from '../../../services/src/lib/endpoint/web-socket/we
 import {type} from '../../../services/src/lib/endpoint/web-socket/enums/typeData';
 import {StateExpeditionAvelonService} from "../../../services/src/lib/endpoint/state-expedition-avelon/state-expedition-avelon.service";
 import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -37,7 +38,7 @@ import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/st
     ])
   ]
 })
-export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterContentInit, AfterViewInit{
+export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterContentInit, AfterViewInit {
 
   @ViewChild(ListsComponent) listsComponent:ListsComponent;
   @ViewChild('provider') providerInput: ElementRef;
@@ -64,6 +65,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   isReceptionStarted: boolean;
   expedition: string;
   providerId: number;
+  deliveryNote: string;
   interval: any;
   option: any;
   typeScreen: number;
@@ -81,26 +83,25 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     expedition: '',
     ean: ''
   };
-  isErrorEan = false;
   oldEan = '';
-
   providersAux;
   value;
-  getReceptionsNotifiedProviders$: Subscription;
   myControl = new FormControl();
   filteredProviders: Observable<any[]>;
   showCheck: boolean = true;
-
   modelSelected: any = null;
 
   public listSizes: ReceptionAvelonModel.LoadSizesList[] = [];
+  private expeditionStarted = null;
+
+  isReceptionWithoutOrder: boolean = false;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private reception: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
     private alertCtrl: AlertController,
     private virtualKeyboardService: VirtualKeyboardService,
-    private productsService: ProductsService,
     private modalController: ModalController,
     private cd: ChangeDetectorRef,
     private websocketService : WebsocketService,
@@ -108,44 +109,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider
   ) {}
 
-  async loadProvider(){
-    await this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
-
-  }
-
-  resetReceptionProcess(){
-    this.eanInput.nativeElement.value = "";
-    this.listSizes = [];
-
-    this.stateAnimationForm = 'in';
-    this.stateAnimationInfo = 'out';
-    this.isReceptionStarted = false;
-    this.formHeaderReceptionComponent.resetProcess();
-    this.infoHeaderReceptionComponent.loadInfoExpedition(null, null, null, null, null, null);
-
-    this.ngOnInit();
-  }
-
-  changeShowCheck(){
-    this.showCheck = true;
-  }
-
-  displayFn(provider: any): string {
-    return provider && provider.name ? provider.name : '';
-  }
-
-  private _filter(name: string): any[] {
-    const filterValue = name.toLowerCase();
-    return this.providers.filter(provider => provider.name.toLowerCase().indexOf(filterValue) === 0);
-  }
-
   ngOnInit() {
+    this.isReceptionWithoutOrder = !!(this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path && this.activatedRoute.snapshot.routeConfig.path == 'free');
+
     this.intermediaryService.presentLoading('Cargando');
     this.response = new Reception();
     this.filterData = new Reception();
     this.typeScreen = undefined;
     this.referencesToPrint = [];
     this.isReceptionStarted = false;
+    this.deliveryNote = null;
+    this.expeditionStarted = null;
     this.subscriptions = this.reception.getAllProviders().subscribe(
       (data: Array<ReceptionAvelonModel.Providers>) => {
         this.providers = data;
@@ -182,6 +156,30 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.listSelected();
     this.clickSizeSelected();
     this.getEmitEan();
+  }
+
+  resetReceptionProcess(){
+    this.eanInput.nativeElement.value = "";
+    this.listSizes = [];
+
+    this.stateAnimationForm = 'in';
+    this.stateAnimationInfo = 'out';
+    this.isReceptionStarted = false;
+    this.formHeaderReceptionComponent.resetProcess();
+    this.infoHeaderReceptionComponent.loadInfoExpedition({packingsPallets: null, provider: null, expeditionReference: null, date: null, shipper: null, states: null});
+    this.deliveryNote = null;
+    this.expeditionStarted = null;
+
+    this.ngOnInit();
+  }
+
+  public changeDeliveryNote(deliveryNote) {
+    this.deliveryNote = deliveryNote;
+  }
+
+  private _filter(name: string): any[] {
+    const filterValue = name.toLowerCase();
+    return this.providers.filter(provider => provider.name.toLowerCase().indexOf(filterValue) === 0);
   }
 
   openVirtualKeyboard(list?: Array<ReceptionAvelonModel.Data>, type?: Type) {
@@ -667,81 +665,21 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     return array;
   }
 
-  buscarMas() {
-    this.resetAll();
-    this.getReceptionsNotifiedProviders$ = this.reception
-      .getReceptionsNotifiedProviders(this.providerId)
-      .subscribe((data: ReceptionAvelonModel.Reception) => {
-
-        this.response.brands = this.mappingReceptionsNotifiedProvidersLists(
-          data.brands,
-          this.response.brands
-        );
-        this.response.colors = this.mappingReceptionsNotifiedProvidersLists(
-          data.colors,
-          this.response.colors
-        );
-        this.response.models = this.mappingReceptionsNotifiedProvidersLists(
-          data.models,
-          this.response.models
-        );
-      });
-  }
-
-  mappingReceptionsNotifiedProvidersLists(data: Array<ReceptionAvelonModel.Data>, array: Array<ReceptionAvelonModel.Data>) {
-    data.map(element => {
-      element.state = 1;
-      const findIndexResult: number = array.findIndex(
-        item => item.id === element.id
-      );
-      if (findIndexResult >= 0) {
-        if (element.newSelected) {
-          array[findIndexResult].newSelected = element.newSelected;
-        }
-      } else {
-        element.newSelected = true;
-        array.push(element);
-      }
-    });
-    return array;
-  }
-
-  onKey(ean: string) {
-    this.intermediaryService.presentLoading('Enviando');
-    this.reception
-      .eanProductPrint(ean, this.expedition, this.providerId)
-      .subscribe((resultCheck) => {
-        this.reception
-          .printReceptionLabel({to_print: [resultCheck]})
-          .subscribe((resultPrint) => {
-
-          });
-
-        this.reception.getReceptions(this.providerId).subscribe(
-          (info: ReceptionAvelonModel.Reception) => {
-            this.response = info;
-            this.response.brands = this.clearSelected(this.response.brands);
-            this.response.models = this.clearSelected(this.response.models);
-            this.response.colors = this.clearSelected(this.response.colors);
-            this.typeScreen = resultCheck.type;
-            this.intermediaryService.dismissLoading();
-          },
-          () => {
-            this.typeScreen = resultCheck.type
-          })
-      }, e => {
-        this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastError("Debe seleccionar marca,modelo,color y talla");
-        this.isErrorEan = true;
-        this.oldEan = this.result.ean;
-      });
-  }
-
   async screenExit(e) {
-  this.typeScreen = undefined;
-  this.referencesToPrint = [];
-  this.resetAll();
-
+    this.typeScreen = undefined;
+    this.referencesToPrint = [];
+    this.resetAll();
+    setTimeout(() => this.infoHeaderReceptionComponent.loadInfoExpedition(
+      {
+        expeditionReference: this.expeditionStarted.reference,
+        provider: {name: this.expeditionStarted.providerName, id: this.expeditionStarted.providerId},
+        states: this.expeditionStarted.receptionStates,
+        shipper: this.expeditionStarted.shipper,
+        date: this.expeditionStarted.deliveryDate,
+        packingsPallets: {packings: this.expeditionStarted.receptionPackings, pallets: this.expeditionStarted.receptionPallets}
+      },
+      this.deliveryNote
+    ), 1000);
   }
 
   async load(e, item) {
@@ -917,43 +855,57 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       }
     }
 
-    this.reception
-      .printReceptionLabel({to_print: paramsRequest})
-      .subscribe((res) => {
-        // refresh the data
-        this.reception
-          .getReceptions(this.providerId)
-          .subscribe((info: ReceptionAvelonModel.Reception) => {
-            this.response = info;
-            this.response.brands = this.clearSelected(this.response.brands);
-            this.response.models = this.clearSelected(this.response.models);
-            this.response.colors = this.clearSelected(this.response.colors);
-          });
+    let params: ReceptionAvelonModel.ParamsToPrint = {
+      to_print: paramsRequest
+    };
+    if (this.deliveryNote) {
+      params.delivery_note = this.deliveryNote;
+    }
 
-        if (res.resultToPrint && res.resultToPrint.length > 0) {
-          const someProductToSorter = !!res.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
+    const subscribeResponseOk = (res) => {
+      // refresh the data
+      this.reception
+        .getReceptions(this.providerId)
+        .subscribe((info: ReceptionAvelonModel.Reception) => {
+          this.response = info;
+          this.response.brands = this.clearSelected(this.response.brands);
+          this.response.models = this.clearSelected(this.response.models);
+          this.response.colors = this.clearSelected(this.response.colors);
+        });
 
-          if (someProductToSorter) {
-            this.typeScreen = ScreenResult.SORTER_VENTILATION;
-          }
+      if (res.resultToPrint && res.resultToPrint.length > 0) {
+        const someProductToSorter = !!res.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
 
-          this.referencesToPrint = res.resultToPrint.map(r => r.reference);
+        if (someProductToSorter) {
+          this.typeScreen = ScreenResult.SORTER_VENTILATION;
+        } else {
+          this.typeScreen = ScreenResult.WAREHOUSE_LOCATION;
         }
 
-        if (res.productsWithError && res.productsWithError.length > 0) {
-          let errorMessage = `No se han podido generar e imprimir alguna de las etiquetas necesarias (${res.productsWithError.length}). <br/>Se detalla la incidencia a continuación: <ul>`;
-          for (let error of res.productsWithError) {
-            errorMessage += `<li>${error.reason}</li>`
-          }
-          errorMessage += '</ul>';
-          this.intermediaryService.presentWarning(errorMessage, null);
-          this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.');
+        this.referencesToPrint = res.resultToPrint.map(r => r.reference);
+      }
+
+      if (res.productsWithError && res.productsWithError.length > 0) {
+        let errorMessage = `No se han podido generar e imprimir alguna de las etiquetas necesarias (${res.productsWithError.length}). <br/>Se detalla la incidencia a continuación: <ul>`;
+        for (let error of res.productsWithError) {
+          errorMessage += `<li>${error.reason}</li>`
         }
-        this.intermediaryService.dismissLoading();
-      }, (error) => {
-        this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.');
-      });
+        errorMessage += '</ul>';
+        this.intermediaryService.presentWarning(errorMessage, null);
+        this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.');
+      }
+      this.intermediaryService.dismissLoading();
+    };
+    const subscribeResponseError = (error) => {
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.');
+    };
+
+    if (this.isReceptionWithoutOrder) {
+      this.reception.makeReceptionFree(params).subscribe(subscribeResponseOk, subscribeResponseError);
+    } else {
+      this.reception.printReceptionLabel(params).subscribe(subscribeResponseOk, subscribeResponseError);
+    }
   }
 
   public getPhotoUrl(modelId): string {
@@ -966,7 +918,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   // check if the expedition selected by reference is available and get her data
   public checkExpedition(data) {
-    console.log(data);
     this.formHeaderReceptionComponent.checkingExpedition(true);
     this.reception
       .checkExpeditionByReference(data)
@@ -985,20 +936,24 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
                 const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
                   expedition: expedition.reference,
-                  providerId: expedition.provider_id
+                  providerId: expedition.providerId
                 };
                 this.checkProvider(fieldsToLoadData);
 
                 this.stateAnimationForm = 'out';
                 this.stateAnimationInfo = 'in';
                 this.isReceptionStarted = true;
+
+                this.expeditionStarted = expedition;
                 this.infoHeaderReceptionComponent.loadInfoExpedition(
-                  expedition.reference,
-                  {name: expedition.provider_name, id: expedition.provider_id.toString()},
-                  {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
-                  expedition.delivery_date,
-                  expedition.shipper,
-                  expedition.expeditionStates);
+                  {
+                    expeditionReference: expedition.reference,
+                    provider: {name: expedition.providerName, id: expedition.providerId.toString()},
+                    packingsPallets: {packings: expedition.receptionPackings, pallets: expedition.receptionPallets},
+                    date: expedition.deliveryDate,
+                    shipper: expedition.shipper,
+                    states: expedition.receptionStates
+                  });
               }
             });
             modal.present();
@@ -1054,20 +1009,24 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
                 const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
                   expedition: expedition.reference,
-                  providerId: expedition.provider_id
+                  providerId: expedition.providerId
                 };
                 this.checkProvider(fieldsToLoadData);
 
                 this.stateAnimationForm = 'out';
                 this.stateAnimationInfo = 'in';
                 this.isReceptionStarted = true;
+
+                this.expeditionStarted = expedition;
                 this.infoHeaderReceptionComponent.loadInfoExpedition(
-                  expedition.reference,
-                  {name: expedition.provider_name, id: expedition.provider_id.toString()},
-                  {packings: expedition.expeditionPackings, pallets: expedition.expeditionPallets},
-                  expedition.delivery_date,
-                  expedition.shipper,
-                  expedition.expeditionStates);
+                  {
+                    expeditionReference: expedition.reference,
+                    provider: {name: expedition.providerName, id: expedition.providerId.toString()},
+                    packingsPallets: {packings: expedition.receptionPackings, pallets: expedition.receptionPallets},
+                    date: expedition.deliveryDate,
+                    shipper: expedition.shipper,
+                    states: expedition.receptionStates
+                  });
               }
             });
             modal.present();
@@ -1106,7 +1065,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   getEmitEan(){
     this.websocketService.getEmitData().subscribe((x:any)=>{
-      console.log(x);
       if(x.type !== undefined){
         if(x.type === type.OBJECT){
           this.result.ean = x.data.ean;

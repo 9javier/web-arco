@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {FormExpeditionInfoComponent} from "./components/form-expedition-info/form-expedition-info.component";
 import {ReceptionsAvelonService} from "../../../services/src/lib/endpoint/receptions-avelon/receptions-avelon.service";
 import {IntermediaryService} from "../../../services/src/lib/endpoint/intermediary/intermediary.service";
@@ -20,16 +20,20 @@ export class ExpeditionsPendingAppComponent implements OnInit {
   @ViewChild(FormExpeditionProviderComponent) formExpeditionProvider: FormExpeditionProviderComponent;
 
   private lastExepeditionQueried = {reference: null, providerId: null};
+  isReceptionWithoutOrder: boolean = false;
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private modalController: ModalController,
     private receptionsAvelonService: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
     private receptionAvelonProvider: ReceptionAvelonProvider
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.isReceptionWithoutOrder = !!(this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path && this.activatedRoute.snapshot.routeConfig.path == 'free');
+  }
 
   public searchExpeditions(data) {
     if (data.number_expedition) {
@@ -59,12 +63,16 @@ export class ExpeditionsPendingAppComponent implements OnInit {
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
                 this.lastExepeditionQueried = {
                   reference: expedition.reference,
-                  providerId: expedition.provider_id
+                  providerId: expedition.providerId
                 };
 
                 this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
                 this.receptionAvelonProvider.expedition = expedition;
-                this.router.navigate(['receptions-avelon', 'app']);
+                const routeSections = ['receptions-avelon', 'app'];
+                if (this.isReceptionWithoutOrder) {
+                  routeSections.push('free');
+                }
+                this.router.navigate(routeSections);
               }
             });
             modal.present();
@@ -113,12 +121,16 @@ export class ExpeditionsPendingAppComponent implements OnInit {
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
                 this.lastExepeditionQueried = {
                   reference: expedition.reference,
-                  providerId: expedition.provider_id
+                  providerId: expedition.providerId
                 };
 
                 this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
                 this.receptionAvelonProvider.expedition = expedition;
-                this.router.navigate(['receptions-avelon', 'app']);
+                const routeSections = ['receptions-avelon', 'app'];
+                if (this.isReceptionWithoutOrder) {
+                  routeSections.push('free');
+                }
+                this.router.navigate(routeSections);
               }
             });
             modal.present();

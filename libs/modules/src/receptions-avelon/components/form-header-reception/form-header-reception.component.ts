@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ReceptionAvelonModel, ReceptionsAvelonService} from "@suite/services";
 import {Type} from "../../enums/type.enum";
 import {VirtualKeyboardService} from "../../../components/virtual-keyboard/virtual-keyboard.service";
@@ -16,6 +16,7 @@ export class FormHeaderReceptionComponent implements OnInit {
   @ViewChild('loadingButtonExpedition') loadingButtonExpedition: LoadingButtonComponent;
   @ViewChild('loadingButtonProvider') loadingButtonProvider: LoadingButtonComponent;
 
+  @Input() isReceptionWithoutOrder: boolean = false;
   @Output() checkExpedition = new EventEmitter();
   @Output() listByProvider = new EventEmitter();
 

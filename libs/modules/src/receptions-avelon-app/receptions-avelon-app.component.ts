@@ -1,11 +1,12 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from "@angular/router";
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 import {ReceptionAvelonProvider} from "../../../services/src/providers/reception-avelon/reception-avelon.provider";
 import {ReceptionAvelonModel} from "@suite/services";
 import Expedition = ReceptionAvelonModel.Expedition;
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
+import {ScannerManualComponent} from "@suite/common-modules";
 
 @Component({
   selector: 'suite-receptions-avelon-app',
@@ -14,10 +15,15 @@ import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/st
 })
 export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
 
+  @ViewChild(ScannerManualComponent) scannerManual: ScannerManualComponent;
+
   expedition: Expedition;
+  deliveryNote: string = null;
+  public isReceptionWithoutOrder: boolean = false;
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private toolbarProvider: ToolbarProvider,
     private receptionAvelonProvider: ReceptionAvelonProvider,
     public dateTimeParserService: DateTimeParserService,
@@ -26,6 +32,7 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.expedition = this.receptionAvelonProvider.expedition;
+    this.isReceptionWithoutOrder = !!(this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path && this.activatedRoute.snapshot.routeConfig.path == 'free');
     this.toolbarProvider.currentPage.next('#'+this.expedition.reference);
   }
 
@@ -34,11 +41,27 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
   }
 
   receptionBySearch() {
-    this.router.navigate(['receptions-avelon', 'app', 'manual']);
+    const routeSections = ['receptions-avelon', 'app'];
+    if (this.isReceptionWithoutOrder) {
+      routeSections.push('free');
+    }
+    routeSections.push('manual');
+
+    this.router.navigate(routeSections);
   }
 
   stringStates(states: number[]){
     return this.stateExpeditionAvelonProvider.getStringStates(states);
+  }
+
+  public newDeliveryNote(deliveryNote) {
+    this.deliveryNote = deliveryNote;
+    this.receptionAvelonProvider.deliveryNote = deliveryNote;
+  }
+
+  public removeDeliveryNote() {
+    this.newDeliveryNote(null);
+    this.scannerManual.setValue(null);
   }
 
 }

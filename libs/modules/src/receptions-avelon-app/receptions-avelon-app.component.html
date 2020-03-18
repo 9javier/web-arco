@@ -1,19 +1,26 @@
-<ion-content>
+<ion-content [ngClass]="{'without-order': isReceptionWithoutOrder}" >
   <div class="container">
 
     <div id="info">
-      <div id="provider"><b>{{expedition.provider_name}}</b></div>
-      <div>Nº bultos: <b>{{expedition.expeditionPackings}}</b></div>
-      <div>Nº palets: <b>{{expedition.expeditionPallets}}</b></div>
-      <div *ngIf="dateTimeParserService.date(expedition.delivery_date) != 'Invalid date'">Fecha de envío: <b>{{dateTimeParserService.date(expedition.delivery_date)}}</b></div>
+      <div id="provider"><b>{{expedition.providerName}}</b></div>
+      <div>Nº bultos: <b>{{expedition.receptionPackings}}</b></div>
+      <div>Nº palets: <b>{{expedition.receptionPallets}}</b></div>
+      <div *ngIf="dateTimeParserService.date(expedition.deliveryDate) != 'Invalid date'">Fecha de envío: <b>{{dateTimeParserService.date(expedition.deliveryDate)}}</b></div>
       <div>Transportista: <b>{{expedition.shipper}}</b></div>
-      <div>Estado: <b>{{stringStates(expedition.expeditionStates)}}</b></div>
+      <div>Estado: <b>{{stringStates(expedition.receptionStates)}}</b></div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="scanner-delivery-note">
+      <scanner-manual placeholder="Nº ALBARÁN" (currentValue)="newDeliveryNote($event)" height="72px"></scanner-manual>
+      <i class="material-icons" matRipple (click)="removeDeliveryNote()">close</i>
     </div>
 
     <mat-divider></mat-divider>
 
     <div class="scanner">
-      <suite-ean-scanner></suite-ean-scanner>
+      <suite-ean-scanner [isReceptionWithoutOrder]="isReceptionWithoutOrder"></suite-ean-scanner>
     </div>
 
     <mat-divider></mat-divider>

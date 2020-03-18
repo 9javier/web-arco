@@ -23,6 +23,13 @@ export class ReceptionAvelonProvider {
     this._expedition = value;
   }
 
+  private _deliveryNote: string = null;
+  get deliveryNote(): string {
+    return this._deliveryNote;
+  }
+  set deliveryNote(value: string) {
+    this._deliveryNote = value;
+  }
 }
 
 interface ExpeditionData {

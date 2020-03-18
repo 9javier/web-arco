@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {Subscription} from "rxjs";
 import {ReceptionsAvelonService} from "../../../../../services/src/lib/endpoint/receptions-avelon/receptions-avelon.service";
@@ -14,6 +14,7 @@ import {StatesExpeditionAvelonProvider} from "../../../../../services/src/provid
 })
 export class FormExpeditionProviderComponent implements OnInit, OnDestroy {
 
+  @Input() isReceptionWithoutOrder: boolean = false;
   @Output() checkExpedition: EventEmitter<any> = new EventEmitter();
 
   public listProviders: ReceptionAvelonModel.Providers[] = [];

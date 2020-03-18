@@ -1,3 +1,24 @@
+.without-order, .without-order *, .without-order > * {
+  background-color: var(--bg-reception-without-order) !important;
+  --ion-background-color: var(--bg-reception-without-order) !important;
+}
+.without-order {
+  div.grid {
+    div.sizes.image.ean {
+      div.sizes-ean {
+        div.row.sizes {
+          span {
+            background: var(--bg-reception-without-order) !important;
+          }
+        }
+      }
+    }
+  }
+  ion-icon {
+    background-color: unset !important;
+  }
+}
+
 .item-filter:hover {
     --background: #249f29;
   color: #ffffff;

@@ -81,7 +81,7 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
     if (button === "{shift}" || button === "{lock}") {
       this.handleShift();
     }
-    if (button === "{enter}" && (!this.type || this.type == Type.EXPEDITION_NUMBER || this.type == Type.EAN_CODE)) {
+    if (button === "{enter}" && (!this.type || this.type == Type.EXPEDITION_NUMBER || this.type == Type.EAN_CODE || this.type == Type.DELIVERY_NOTE)) {
       this.selectItem(this.searchTerm);
     }
     if (button === '{down_hide}') {

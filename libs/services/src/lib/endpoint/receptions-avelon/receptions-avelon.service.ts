@@ -19,6 +19,7 @@ export class ReceptionsAvelonService {
   private checkExpeditionByReferenceUrl: string = `${environment.apiBase}/avelonProviders/check/expedition/`;
   private checkExpeditionsByProviderUrl: string = `${environment.apiBase}/avelonProviders/check/provider/`;
   postLoadSizesUrl: string = `${environment.apiBase}/reception/sizes/list`;
+  makeReceptionFreeUrl: string = `${this.receptionsUrl}/free`;
 
   private models = new BehaviorSubject([]); 
   private models$ = this.models.asObservable()
@@ -58,6 +59,10 @@ export class ReceptionsAvelonService {
 
   printReceptionLabel(body: ReceptionAvelonModel.ParamsToPrint) {
     return this.http.post<HttpRequestModel.Response>(`${this.receptionsUrl}/print-reception-label`, body).pipe(map(resp => resp.data));
+  }
+
+  makeReceptionFree(body: ReceptionAvelonModel.ParamsToPrint) {
+    return this.http.post<HttpRequestModel.Response>(this.makeReceptionFreeUrl, body).pipe(map(resp => resp.data));
   }
 
   eanProductPrint(ean: string, expedition: string, providerId: number) {
