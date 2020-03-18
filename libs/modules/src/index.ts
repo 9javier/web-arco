@@ -22,6 +22,8 @@ export * from './jail/jail.module';
 export * from './state-expedition-avelon/state-expedition-avelon.component';
 export * from './state-expedition-avelon/state-expedition-avelon.module';
 
+export * from './commercial-fields/commercial-fields.component';
+export * from './commercial-fields/commercial-fields.module';
 
 export * from './pallets/pallets.component';
 export * from './pallets/pallets.module';
