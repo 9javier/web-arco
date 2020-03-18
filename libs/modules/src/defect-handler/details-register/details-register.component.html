@@ -71,7 +71,7 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
             <ion-item *ngFor="let photo of registry.photos">
-              <img src="{{photo.pathMedium}}" alt="" />
+              <img src="{{baseUrlPhoto}}{{photo.pathMedium}}" alt="" />
             </ion-item>
           </mat-expansion-panel>
           <br/>
@@ -82,7 +82,7 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
             <ion-item>
-              <img src="{{registry?.signature?.pathMedium}}" alt="" />
+              <img src="{{baseUrlPhoto}}{{registry?.signature?.pathMedium}}" alt="" />
             </ion-item>
           </mat-expansion-panel>
         </ion-list>
@@ -141,11 +141,10 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <ion-item lines="none" *ngFor="let photo of historical.photos">
-                  <img [src]="photo.pathMedium" alt="" />
+                  <img [src]="baseUrlPhoto + photo.pathMedium" alt="" />
                   <ion-item-divider></ion-item-divider>
                 </ion-item>
               </mat-expansion-panel>
-              {{historical?.signature?.pathMedium}}
               <mat-expansion-panel class="signature" *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'signature') && historical.signature.pathMedium">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
@@ -153,7 +152,7 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <ion-item lines="none">
-                  <ion-img [src]="historical.signature.pathMedium"></ion-img>
+                  <ion-img [src]="baseUrlPhoto + historical.signature.pathMedium"></ion-img>
                 </ion-item>
               </mat-expansion-panel>
             </mat-expansion-panel>

@@ -14,6 +14,7 @@ import { PrinterService } from '../../../../services/src/lib/printer/printer.ser
   styleUrls: ['./details-register.component.scss']
 })
 export class DetailsRegisterComponent implements OnInit {
+  private baseUrlPhoto = environment.apiBasePhoto;
   section = 'information';
   title = 'Ubicación ';
   originalTableStatus: DamagedModel.Status[];
@@ -59,9 +60,7 @@ export class DetailsRegisterComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.navParams.data);
-    
-    this.container = this.navParams.data.container;    
+    this.container = this.navParams.data.container;
     this.warehouseId = this.navParams.data.warehouseId;
     this.listWarehouses = this.warehouseService.listWarehouses;
     this.listHallsOriginal = this.warehouseService.listHalls;
@@ -94,10 +93,6 @@ export class DetailsRegisterComponent implements OnInit {
     this.defectiveRegistryService.getHistorical({ productId: this.productId, productReference: '' }).subscribe(historical => {
       this.registryHistorical = historical;
       console.log(this.registryHistorical);
-      this.registryHistorical.map(history => {
-        history.signature.pathMedium = `${environment.apiBasePhoto}${history.signature.pathMedium}`
-      })
-      console.log(this.registryHistorical);
     });
   }
 
@@ -107,14 +102,6 @@ export class DetailsRegisterComponent implements OnInit {
         data: lastHistorical.data,
         status: lastHistorical.statuses};
       this.registry = lastHistorical.data;
-      console.log(this.registry);
-      this.registry.photos.map(photo => {
-        console.log(photo);
-        
-        photo.pathMedium = `${environment.apiBasePhoto}${photo.pathMedium}`
-        photo.pathIcon = `${environment.apiBasePhoto}${photo.pathIcon}`
-      })
-      
       this.originalTableStatus = lastHistorical.statuses;
     });
   }
