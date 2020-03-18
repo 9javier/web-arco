@@ -131,13 +131,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         }
       }
       this.signatures = resp
-      
-      if(this.signatures) {
+
+      if (this.signatures) {
         this.signatures.pathMedium = `${environment.urlFiles}${this.signatures.pathMedium}`
         this.signatures.pathIcon = `${environment.urlFiles}${this.signatures.pathIco}`
       }
       console.log(this.signatures);
-      
+
       if (!this.signatureList) {
         this.openSignatureList()
       }
@@ -655,8 +655,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         console.log('response: ', response);
 
         response.data.pathMedium = `${environment.urlFiles}${response.data.pathMedium}`
-        response.data.pathIcon = `${environment.urlFiles}${response.data.pathIco}`
-        this.img = response.data; 
+        response.data.pathIcon = `${environment.urlFiles}${response.data.pathIcon}`
+        this.img = response.data;
         this.photos.push(this.img);
         console.log('subido');
         if (!this.photoList) {
@@ -848,7 +848,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   onActiveKeyboard() {
-   
+
   }
 
 }
