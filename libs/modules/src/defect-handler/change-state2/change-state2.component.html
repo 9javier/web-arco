@@ -77,7 +77,7 @@
   </ion-item>
   <ion-list *ngIf="photoList && requirePhoto && displayPhotoList">
     <ion-item  lines="none" *ngFor="let item of photos; let i = index">
-      <ion-img (click)="openReviewImage(item)"  slot="start" [src]="item.pathIcon"></ion-img>
+      <ion-img (click)="onOpenReviewModal(item)"  slot="start" [src]="item.pathIcon"></ion-img>
       <ion-button slot="end"(click)="deleteImage(item, i, photos)">
         <ion-icon slot="icon-only" name="trash"></ion-icon>
       </ion-button>
