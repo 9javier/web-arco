@@ -48,7 +48,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   public resultsList: any[] = [];
 
   lastPrint;
-  private isReceptionWithoutOrder: boolean = false;
+  isReceptionWithoutOrder: boolean = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,

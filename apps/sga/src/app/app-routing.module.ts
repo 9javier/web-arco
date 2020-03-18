@@ -111,6 +111,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'commercial-fields',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/commercial-fields/commercial-fields.module#CommercialFieldsModule',
+    data: {
+      name: 'Campos Comerciales'
+    }
+  },
+  {
     path: 'pallets',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',

@@ -18,6 +18,14 @@ export namespace FiltersModel{
       hide:boolean;
     }
 
+    export interface CommercialField extends Enum {
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
     export interface Season extends Enum {
       id:number;
       reference:string;
@@ -125,6 +133,42 @@ export namespace FiltersModel{
       checked:boolean;
       hide:boolean;
     }
+
+  export interface Type extends Enum {
+    id:number;
+    reference:number;
+    name:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
+  export interface Origin extends Enum {
+    id:number;
+    reference:string;
+    name:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
+  export interface Destiny extends Enum {
+    id:number;
+    reference:number;
+    name:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
+  export interface Product extends Enum {
+    id:number;
+    reference:string;
+    name:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
 
     export interface ResponseModel extends Request.Success{
       data:Array<Model>;
