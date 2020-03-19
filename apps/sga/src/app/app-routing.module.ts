@@ -190,6 +190,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'returns-list',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/returns-list/returns-list.module#ReturnsListModule',
+    data: {
+      name: 'Lista'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',
