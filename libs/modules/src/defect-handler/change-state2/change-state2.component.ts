@@ -14,6 +14,8 @@ import { ReviewImagesComponent } from '../../incidents/components/review-images/
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { FileUploadOptions, FileTransferObject, FileUploadResult, FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { Router } from '@angular/router';
+import { DefectiveRegistryService } from '../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
 
 @Component({
   selector: 'suite-change-state2',
@@ -57,9 +59,28 @@ export class ChangeState2Component implements OnInit {
   statusManagement;
   selectGestionState = false;
   signatureId;
-
+  pagerValues = [10, 20, 80];
   signaturesSubscription: Subscription;
-
+  form: FormGroup = this.formBuilder.group({
+    product: [],
+    model: [],
+    size: [],
+    color: [],
+    brand: [],
+    dateDetection: [],
+    statusManagementDefect: [],
+    defectTypeParent: [],
+    defectTypeChild: [],
+    warehouse: [],
+    pagination: this.formBuilder.group({
+      page: 1,
+      limit: this.pagerValues[0]
+    }),
+    orderby: this.formBuilder.group({
+      type: 1,
+      order: "asc"
+    })
+  });
   constructor(
     private incidentsService: IncidentsService,
     private intermediary: IntermediaryService,
@@ -72,6 +93,10 @@ export class ChangeState2Component implements OnInit {
     private toolbarProvider: ToolbarProvider,
     private camera: Camera,
     private transfer: FileTransfer,
+    private router: Router,
+    private formBuilder: FormBuilder,
+    private defectiveRegistryService: DefectiveRegistryService,
+
   ) {
     this.registry = this.navParams.get("registry");
   }
@@ -138,6 +163,22 @@ export class ChangeState2Component implements OnInit {
 
   initForm() {
 
+    this.form.patchValue({
+      product: [],
+      model: [],
+      size: [],
+      color: [],
+      brand: [],
+      dateDetection: [],
+      statusManagementDefect: [],
+      defectTypeParent: [],
+      defectTypeChild: [],
+      warehouse: [],
+      orderby: this.formBuilder.group({
+        type: 1,
+        order: "asc"
+      })
+    });
 
     this.incidenceForm = this.fb.group({
       productReference: [this.registry.data.product.reference],
@@ -257,17 +298,12 @@ export class ChangeState2Component implements OnInit {
 
 
   async close() {
-    await this.modalController.dismiss().then(async () => {
-      const modal = await this.modalController.create({
-        component: DetailsRegisterComponent,
-        componentProps: {
-          productId: this.registry.data.product.id,
-          showChangeState: true
-        }
-      });
+ 
 
-      //return await modal.present();
-    });
+     await this.modalController.dismiss();
+
+
+    
   }
 
 
@@ -297,6 +333,8 @@ export class ChangeState2Component implements OnInit {
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente');
         this.close();
+        this.defectiveRegistryService.getListDefect(this.form.value);
+
       },
       e => {
         console.log(e);
@@ -646,5 +684,7 @@ export class ChangeState2Component implements OnInit {
         this.requirePhoto = false;
       }
   }
+
+  
 
 }

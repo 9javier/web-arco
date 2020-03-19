@@ -83,7 +83,7 @@ export class DefectHandlerComponent implements OnInit {
   ) { }
 
   ionViewWillEnter() {
-    this.getList(this.form);
+    this.getListData();
   }
 
   ngOnInit() {
@@ -91,6 +91,8 @@ export class DefectHandlerComponent implements OnInit {
     this.initForm();
     this.getFilters();
     this.listenChanges();
+    this.getListData();
+    this.getList();
   }
 
   initEntity() {
@@ -142,28 +144,32 @@ export class DefectHandlerComponent implements OnInit {
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
       };
-      this.getList(this.form)
+      this.getList()
     });
   }
 
-  async getList(form?: FormGroup){
-    this.defectiveRegistryService.getListDefect(form.value).subscribe((resp:any) => {
-        if (resp.results) {
-          this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
-          this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
-          const paginator = resp.pagination;
-          this.groups = resp.ordertypes;
-          this.paginator.length = paginator.totalResults;
-          this.paginator.pageIndex = paginator.selectPage;
-          this.paginator.lastPage = paginator.lastPage;
-        }
-      },
-      async err => {
-        await this.intermediaryService.dismissLoading()
-      },
-      async () => {
-        await this.intermediaryService.dismissLoading()
-      })
+  getListData(){
+    this.defectiveRegistryService.getListDefect(this.form.value);
+  }
+
+  async getList(){
+     this.defectiveRegistryService.getData().subscribe((resp:any) => {
+         if (resp.results) {
+           this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
+           this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
+           const paginator = resp.pagination;
+           this.groups = resp.ordertypes;
+           this.paginator.length = paginator.totalResults;
+           this.paginator.pageIndex = paginator.selectPage;
+           this.paginator.lastPage = paginator.lastPage;
+         }
+       },
+       async err => {
+         await this.intermediaryService.dismissLoading()
+       },
+       async () => {
+         await this.intermediaryService.dismissLoading()
+       })
   }
 
   goDefect(row) {
@@ -171,13 +177,16 @@ export class DefectHandlerComponent implements OnInit {
   }
 
   async goDetails(registry: DefectiveRegistryModel.DefectiveRegistry) {
-    return (await this.modalController.create({
+     let modal = (await this.modalController.create({
       component: DetailsRegisterComponent,
       componentProps: {
         productId: registry.product.id,
         showChangeState: true
       }
-    })).present();
+    }));
+
+
+    modal.present();
   }
 
   openFiltersMobile() {
@@ -220,7 +229,7 @@ export class DefectHandlerComponent implements OnInit {
       this.form.patchValue({ statusManagementDefect: [status] });
     }
 
-    this.getList(this.form).then(async () => {
+    this.getList().then(async () => {
       this.showFiltersMobileVersion = false;
       await this.intermediaryService.dismissLoading();
       await this.intermediaryService.dismissLoading();

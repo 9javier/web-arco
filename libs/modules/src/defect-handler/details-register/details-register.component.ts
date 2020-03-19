@@ -90,6 +90,7 @@ export class DetailsRegisterComponent implements OnInit {
   }
 
   getRegistryHistorical(): void {
+    console.log("Actualice la información.......");
     this.defectiveRegistryService.getHistorical({ productId: this.productId, productReference: '' }).subscribe(historical => {
       this.registryHistorical = historical;
     });

@@ -15,6 +15,7 @@ import Season = SeasonModel.Season;
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DefectiveRegistryModel } from '../../../models/endpoints/DefectiveRegistry';
+import {BehaviorSubject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,8 @@ export class DefectiveRegistryService {
   private getHistoricalUrl: string;
   private getDefectList: string;
   private getLastHistoricalUrl: string;
+  private emitData = new BehaviorSubject({});
+  private getData$ = this.emitData.asObservable();
 
   constructor(private http: HttpClient) {
     this.baseUrl = environment.apiSorter;
@@ -96,10 +99,23 @@ export class DefectiveRegistryService {
     }));
   }
 
-  getListDefect(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
-    return this.http.post<HttpRequestModel.Response>(this.getDefectList,body).pipe(
-      map(resp => resp.data)
-    )
+  getListDefect(body) {
+    this.callList(body).subscribe(data =>{
+      console.log(data);
+      this.emitData.next(data);
+    });
+  }
+
+  getData(){
+      return this.getData$;
+  }
+
+  callList(form): Observable<any>{
+    return this.http.post<any>(this.getDefectList,form).pipe(
+      (map((resp:any)=>{
+        return resp.data;
+      }))
+    ); 
   }
 
   getLastHistorical(body):Observable<any>{
