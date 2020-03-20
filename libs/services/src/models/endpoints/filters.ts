@@ -26,6 +26,14 @@ export namespace FiltersModel{
       hide:boolean;
     }
 
+    export interface Brand extends Enum {
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
     export interface Season extends Enum {
       id:number;
       reference:string;

@@ -34,25 +34,25 @@ export class BrandsEnabledReceptionComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
 
-  displayedColumns: string[] = ['Campo Comercial', 'Habilitado'];
+  displayedColumns: string[] = ['Marca', 'Habilitada'];
   columns = {};
   dataSource;
   toUpdate: FormGroup = this.formBuilder.group({
-    commercialFields: this.formBuilder.array([])
+    brands: this.formBuilder.array([])
   });
 
-  @ViewChild('filterButtonCommercialFields') filterButtonCommercialFields: FilterButtonComponent;
+  @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
   @ViewChild('filterButtonEnableds') filterButtonEnableds: FilterButtonComponent;
 
-  isFilteringCommercialFields: number = 0;
+  isFilteringBrands: number = 0;
   isFilteringEnableds: number = 0;
 
   /**Filters */
-  commercialFields: Array<TagsInputOption> = [];
+  brands: Array<TagsInputOption> = [];
   enableds: Array<TagsInputOption> = [];
 
   /** Filters save **/
-  commercialFieldsSelected: Array<any> = [];
+  brandsSelected: Array<any> = [];
   enabledsSelected: Array<any> = [];
 
   groups: Array<TagsInputOption> = [];
@@ -67,7 +67,7 @@ export class BrandsEnabledReceptionComponent implements OnInit {
     }
   };
   form: FormGroup = this.formBuilder.group({
-    commercialFields: [],
+    brands: [],
     enableds: [],
     pagination: this.formBuilder.group({
       page: 1,
@@ -143,7 +143,7 @@ export class BrandsEnabledReceptionComponent implements OnInit {
 
   initEntity() {
     this.entities = {
-      commercialFields: [],
+      brands: [],
       enableds: [],
       ordertypes: [],
     }
@@ -151,19 +151,19 @@ export class BrandsEnabledReceptionComponent implements OnInit {
 
   initForm() {
     this.form.patchValue({
-      commercialFields: [],
+      brands: [],
       enableds: [],
       ordertypes: []
     })
   }
 
   private saveFilters(){
-    this.commercialFieldsSelected = this.form.value.commercialFields;
+    this.brandsSelected = this.form.value.brands;
     this.enabledsSelected = this.form.value.enableds;
   }
 
   private recoverFilters(){
-    this.form.get("commercialFields").patchValue(this.commercialFieldsSelected, { emitEvent: false });
+    this.form.get("brands").patchValue(this.brandsSelected, { emitEvent: false });
     this.form.get("enableds").patchValue(this.enabledsSelected, { emitEvent: false });
   }
 
@@ -172,7 +172,7 @@ export class BrandsEnabledReceptionComponent implements OnInit {
       entities.ordertypes.forEach(element => {
           this.columns[element.name] = element.id;
       });
-      this.updateFilterSourceCommercialFields(entities.commercialFields);
+      this.updateFilterSourceBrands(entities.brandsEnabledReception);
       this.updateFilterSourceEnableds(entities.enableds);
       this.updateFilterSourceOrdertypes(entities.ordertypes);
       this.reduceFilters(entities);
@@ -187,13 +187,13 @@ export class BrandsEnabledReceptionComponent implements OnInit {
     await this.intermediaryService.presentLoading();
     this.brandsEnabledReceptionService.index(form.value).subscribe(
       async (resp:any) => {
-        this.toUpdate.removeControl("commercialFields");
-        this.toUpdate.addControl("commercialFields", this.formBuilder.array(resp.results.map(commercialField => {
+        this.toUpdate.removeControl("brands");
+        this.toUpdate.addControl("brands", this.formBuilder.array(resp.results.map(brand => {
           return this.formBuilder.group({
-            id: commercialField.id,
-            name: commercialField.name,
-            selected: commercialField.commercialField && commercialField.commercialField.enabled ? commercialField.commercialField.enabled : false,
-            commercialFields: commercialField.commercialField
+            id: brand.id,
+            name: brand.name,
+            selected: brand.brandsEnabledReception && brand.brandsEnabledReception.enabled ? brand.brandsEnabledReception.enabled : false,
+            brands: brand.brandsEnabledReception
           });
         })));
         this.dataSource = new MatTableDataSource<any>(resp.results);
@@ -216,21 +216,21 @@ export class BrandsEnabledReceptionComponent implements OnInit {
   applyFilters(filtersResult, filterType) {
     const filters = filtersResult.filters;
     switch (filterType) {
-      case 'commercialFields':
-        let commercialFieldsFiltered: string[] = [];
-        for (let commercialField of filters) {
-          if (commercialField.checked) commercialFieldsFiltered.push(commercialField.id);
+      case 'brands':
+        let brandsFiltered: string[] = [];
+        for (let brand of filters) {
+          if (brand.checked) brandsFiltered.push(brand.id);
         }
-        if (commercialFieldsFiltered.length >= this.commercialFields.length) {
-          this.form.value.commercialFields = [];
-          this.isFilteringCommercialFields = this.commercialFields.length;
+        if (brandsFiltered.length >= this.brands.length) {
+          this.form.value.brands = [];
+          this.isFilteringBrands = this.brands.length;
         } else {
-          if (commercialFieldsFiltered.length > 0) {
-            this.form.value.commercialFields = commercialFieldsFiltered;
-            this.isFilteringCommercialFields = commercialFieldsFiltered.length;
+          if (brandsFiltered.length > 0) {
+            this.form.value.brands = brandsFiltered;
+            this.isFilteringBrands = brandsFiltered.length;
           } else {
-            this.form.value.commercialFields = [];
-            this.isFilteringCommercialFields = this.commercialFields.length;
+            this.form.value.brands = [];
+            this.isFilteringBrands = this.brands.length;
           }
         }
         break;
@@ -259,12 +259,12 @@ export class BrandsEnabledReceptionComponent implements OnInit {
   }
 
   private reduceFilters(entities){
-    if (this.lastUsedFilter !== 'commercialFields') {
-      let filteredCommercialFields = entities['commercialFields'] as unknown as string[];
-      for (let index in this.commercialFields) {
-        this.commercialFields[index].hide = filteredCommercialFields.includes(this.commercialFields[index].value);
+    if (this.lastUsedFilter !== 'brands') {
+      let filteredBrands = entities['brands'] as unknown as string[];
+      for (let index in this.brands) {
+        this.brands[index].hide = filteredBrands.includes(this.brands[index].value);
       }
-      this.filterButtonCommercialFields.listItems = this.commercialFields;
+      this.filterButtonBrands.listItems = this.brands;
     }
     if (this.lastUsedFilter !== 'enableds') {
       let filteredEnableds = entities['enableds'] as unknown as string[];
@@ -275,18 +275,18 @@ export class BrandsEnabledReceptionComponent implements OnInit {
     }
   }
 
-  private updateFilterSourceCommercialFields(commercialFields: FiltersModel.CommercialField[]) {
+  private updateFilterSourceBrands(brands: FiltersModel.Brand[]) {
     this.pauseListenFormChange = true;
-    let value = this.form.get("commercialFields").value;
-    this.commercialFields = commercialFields.map(commercialField => {
-      commercialField.value = commercialField.name;
-      commercialField.checked = true;
-      commercialField.hide = false;
-      return commercialField;
+    let value = this.form.get("brands").value;
+    this.brands = brands.map(brand => {
+      brand.value = brand.name;
+      brand.checked = true;
+      brand.hide = false;
+      return brand;
     });
 
     if (value && value.length) {
-      this.form.get("commercialFields").patchValue(value, { emitEvent: false });
+      this.form.get("brands").patchValue(value, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
@@ -324,16 +324,16 @@ export class BrandsEnabledReceptionComponent implements OnInit {
 
   async update() {
     await this.intermediaryService.presentLoading();
-    this.brandsEnabledReceptionService.updateCommercialFields(this.toUpdate.value).subscribe(async result => {
+    this.brandsEnabledReceptionService.update(this.toUpdate.value).subscribe(async result => {
         this.getList(this.form);
         this.intermediaryService.dismissLoading();
         this.intermediaryService.presentToastSuccess(
-          'Campos comerciales actualizadas con éxito'
+          'Marcas actualizadas con éxito'
         );
       },
       () => {
         this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastSuccess('Error actualizando campos comerciales');
+        this.intermediaryService.presentToastSuccess('Error actualizando marcas');
       });
   }
 

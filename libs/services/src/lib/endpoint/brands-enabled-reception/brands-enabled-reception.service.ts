@@ -31,7 +31,7 @@ export class BrandsEnabledReceptionService {
     }));
   }
 
-  updateCommercialFields(body): Observable<any>{
+  update(body): Observable<any>{
     return this.http.post<HttpRequestModel.Response>(this.updateUrl,body).pipe(map(resp => resp.data))
   }
 }

@@ -2,25 +2,25 @@
   <div class="incidences-container" >
     <mat-table [dataSource]="dataSource" matSort multiTemplateDataRows class="table-incidences">
 
-      <ng-container matColumnDef="Campo Comercial">
-        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Campo Comercial
-          <suite-filter-button class="ion-margin-vertical" #filterButtonCommercialFields [title]="'Campo Comercial'" [listItems]="commercialFields"
-                              [isFiltering]="isFilteringCommercialFields != commercialFields.length"
-                              (applyFilters)="applyFilters($event, 'commercialFields')">
+      <ng-container matColumnDef="Marca">
+        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Marca
+          <suite-filter-button class="ion-margin-vertical" #filterButtonBrands [title]="'Brand'" [listItems]="brands"
+                              [isFiltering]="isFilteringBrands != brands.length"
+                              (applyFilters)="applyFilters($event, 'brands')">
           </suite-filter-button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.name}} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="Habilitado">
-        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Habilitado
-          <suite-filter-button #filterButtonEnableds class="filter" [title]="'Habilitado'" [listItems]="enableds"
+      <ng-container matColumnDef="Habilitada">
+        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Habilitada
+          <suite-filter-button #filterButtonEnableds class="filter" [title]="'Habilitada'" [listItems]="enableds"
                               [isFiltering]="isFilteringEnableds != enableds.length"
                               (applyFilters)="applyFilters($event, 'enableds')">
           </suite-filter-button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element; let i = dataIndex" class="my-sticky-col info">
-          <ion-checkbox [formControl]="toUpdate['controls']?.commercialFields['controls'][i]['controls']?.selected">
+          <ion-checkbox [formControl]="toUpdate['controls']?.brands['controls'][i]['controls']?.selected">
           </ion-checkbox>
         </mat-cell>
       </ng-container>
