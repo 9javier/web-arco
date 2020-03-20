@@ -3,7 +3,6 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {MarketplacesService} from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MarketplacesMgaService} from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 import {forkJoin} from "rxjs";
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'suite-new-rule',
@@ -45,7 +44,6 @@ export class NewRuleComponent implements OnInit {
   constructor(
     private modalController: ModalController,
     private navParams: NavParams,
-    private route: ActivatedRoute,
     private renderer: Renderer2,
     private marketplacesService: MarketplacesService,
     private marketplacesMgaService: MarketplacesMgaService
@@ -148,12 +146,12 @@ export class NewRuleComponent implements OnInit {
     ]).subscribe((results: any) => {
 
       if (results && results.length) {
-        if (results[0].data && results[0].data.length) {
-          results[0].data.forEach(brand => {
+        if (results[0] && results[0].length) {
+          results[0].forEach(brand => {
             let listItem = {
               id: brand.id,
               externalId: brand.externalId,
-              type: brand.type,
+              type: brand.ruleFilterType,
               group: "15",
               name: brand.name.trim()
             };
@@ -161,12 +159,12 @@ export class NewRuleComponent implements OnInit {
           });
         }
 
-        if (results[1].data && results[1].data.length) {
-          results[1].data.forEach(color => {
+        if (results[1] && results[1].length) {
+          results[1].forEach(color => {
             let listItem = {
               id: color.id,
               externalId: color.externalId,
-              type: color.type,
+              type: color.ruleFilterType,
               group: "16",
               name: color.name.trim()
             };
@@ -174,12 +172,12 @@ export class NewRuleComponent implements OnInit {
           });
         }
 
-        if (results[2].data && results[2].data.length) {
-          results[2].data.forEach(size => {
+        if (results[2] && results[2].length) {
+          results[2].forEach(size => {
             let listItem = {
               id: size.id,
               externalId: size.externalId,
-              type: size.type,
+              type: size.ruleFilterType,
               group: "17",
               name: size.name.trim()
             };
@@ -187,13 +185,13 @@ export class NewRuleComponent implements OnInit {
           });
         }
 
-        if (results[3].data && results[3].data.length) {
-          results[3].data.forEach(feature => {
+        if (results[3] && results[3].length) {
+          results[3].forEach(feature => {
             if (feature.dataGroup == "1" || feature.dataGroup == "2" || feature.dataGroup == "5" || feature.dataGroup == "7" || feature.dataGroup == "9" || feature.dataGroup == "10" || feature.dataGroup == "12") {
               let listItem = {
                 id: feature.id,
                 externalId: feature.externalId,
-                type: feature.type,
+                type: feature.ruleFilterType,
                 group: feature.dataGroup,
                 name: feature.name.trim()
               };
@@ -273,30 +271,13 @@ export class NewRuleComponent implements OnInit {
       this.selectedCategoryGroupFilterObject = {...this.categoryList[0]};
 
       if (this.ruleFilterType == "categories") {
-        this.marketplacesService.getMarkets().subscribe((data: any) => {
-          this.market = null;
-          if (data.data && data.data.length) {
-            for (let market of data.data) {
-              switch (this.route.snapshot.data['name']) {
-                case "Miniprecios":
-                  this.market = market.id;
-                  break;
-              }
-    
-              if (this.market) {
-                break;
-              }
-            }
-          }
-    
-        });
-        this.marketplacesService.getMarketCategories(this.market).subscribe(data => {
-          this.destinationCategories = data.data;
+        this.marketplacesService.getMarketCategories().subscribe(data => {
+          this.destinationCategories = data;
           this.destinationCategories.sort((a, b) => {
-            if (isNaN(a.marketCategoryID) || isNaN(b.marketCategoryID)) {
-              return ((a.marketCategoryID > b.marketCategoryID) ? 1 : ((b.marketCategoryID > a.marketCategoryID) ? -1 : 0));
+            if (isNaN(a.market_category_id) || isNaN(b.market_category_id)) {
+              return ((a.market_category_id > b.market_category_id) ? 1 : ((b.market_category_id > a.market_category_id) ? -1 : 0));
             } else {
-              return ((parseInt(a.marketCategoryID) > parseInt(b.marketCategoryID)) ? 1 : ((parseInt(b.marketCategoryID) > parseInt(a.marketCategoryID)) ? -1 : 0));
+              return ((parseInt(a.market_category_id) > parseInt(b.market_category_id)) ? 1 : ((parseInt(b.market_category_id) > parseInt(a.market_category_id)) ? -1 : 0));
             }
           });
         });

@@ -163,7 +163,7 @@ export class MarketplacesService {
   }
 
   getProductCatalog(): Observable<any> {
-    return this.http.get<any>(this.getProductCategoryUrl, {}).pipe(map(response => {
+    return this.http.get<any>(this.getProductCatalogUrl, {}).pipe(map(response => {
       return response;
     }));
   }
