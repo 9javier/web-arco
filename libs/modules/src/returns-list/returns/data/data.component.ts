@@ -16,13 +16,15 @@ export class DataComponent implements OnInit {
   brandsSelected:Array<{ id: number, name: string }> = [];
   types:Array<{ id: number, name: string }> = [];
 
-  form:FormGroup = this.formBuilder.group({
+  form: FormGroup = this.formBuilder.group({
     id:'',
     provider:['',[Validators.required]],
     type:['',[Validators.required]],
     date:['',[Validators.required]],
     brands:['',[Validators.required]]
   });
+
+  formBrands: FormGroup;
 
   constructor(
     private defectiveRegistryService: DefectiveRegistryService,
@@ -88,10 +90,16 @@ export class DataComponent implements OnInit {
   async addBrand() {
     let modal = await this.modalController.create({
       component: BrandsStoreComponent,
-      componentProps: { providerId: this.form.get('provider').value }
+      componentProps: {
+        providerId: this.form.get('provider').value,
+        formBrands: this.formBrands
+      },
+      backdropDismiss: false
     });
-    modal.onDidDismiss().then(async () => {
-      // await this.getData();
+    modal.onDidDismiss().then(async (dataReturn) => {
+      if (dataReturn.data !== undefined) {
+        this.formBrands = dataReturn.data;
+      }
     });
     await modal.present();
   }

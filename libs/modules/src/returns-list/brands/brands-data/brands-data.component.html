@@ -1,8 +1,8 @@
 <form [formGroup]="form">
-  <ion-item>
+  <ion-item formArrayName="brandArray" *ngFor="let brand of brands; let i=index">
     <ng-container>
-      <div *ngFor="let brand of brands" >
-        <mat-checkbox (change)="onChange($event)" [value]="brand">
+      <div>
+        <mat-checkbox [id]="brand.id" [formControl]="brandArray.controls[i]">
           {{brand.name}}
         </mat-checkbox>
       </div>

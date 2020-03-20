@@ -22,6 +22,7 @@ export class BrandsStoreComponent implements OnInit {
   async submit(data: any) {
     console.log('SUBMIT');
     console.log(data);
+    await this.modalController.dismiss(data)
   }
 
   async close() {
