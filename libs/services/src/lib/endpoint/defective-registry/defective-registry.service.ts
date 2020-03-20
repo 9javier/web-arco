@@ -23,6 +23,8 @@ export class DefectiveRegistryService {
   private getBrandsByProvidersUrl: string;
   private emitData = new BehaviorSubject({});
   private getData$ = this.emitData.asObservable();
+  private refreshListRegistry = new BehaviorSubject<boolean>(false);
+  refreshListRegistry$ = this.refreshListRegistry.asObservable();
 
   constructor(private http: HttpClient) {
     this.baseUrl = environment.apiSorter;
@@ -132,4 +134,8 @@ export class DefectiveRegistryService {
       return response.data;
     }));
   }
+  setRefreshList(refresh: boolean) {
+    this.refreshListRegistry.next(refresh);
+  }
+
 }
