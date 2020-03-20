@@ -1,6 +1,6 @@
 <ion-header>
   <div class="cp-modal-header-wrapper">
-    <div>
+    <div style="visibility: hidden;">
       {{numberOfProducts}}&nbsp;
       <span *ngIf="numberOfProducts.length == 1">producto seleccionado</span>
       <span *ngIf="numberOfProducts.length != 1">productos seleccionados</span>
@@ -75,7 +75,7 @@
         <div class="nr-filter-list no-filters" *ngIf="filterDescription == ''">
           Sin filtros
         </div>
-        <div>
+        <div style="visibility: hidden;">
           {{numberOfProducts}}
           <span *ngIf="numberOfProducts.length == 1">producto seleccionado</span>
           <span *ngIf="numberOfProducts.length != 1">productos seleccionados</span>

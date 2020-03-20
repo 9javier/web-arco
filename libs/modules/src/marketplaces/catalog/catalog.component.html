@@ -2,7 +2,7 @@
   <div class="mp-catalog-table-wrapper">
     <table mat-table [dataSource]="catalogTableData">
 
-      <tr mat-header-row *matHeaderRowDef="catalogTableHeader; sticky: true;" [ngClass]="catalogData.length ? '' : 'table-empty'"></tr>
+      <tr mat-header-row *matHeaderRowDef="catalogTableHeader;" [ngClass]="catalogData.length ? '' : 'table-empty'"></tr>
       <tr mat-row *matRowDef="let row; columns: catalogTableHeader;"></tr>
 
       <ng-container matColumnDef="select">

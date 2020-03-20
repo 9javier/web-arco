@@ -47,8 +47,8 @@
                 <span></span>
               </th>
               <td class="mp-rules-table-products-column" mat-cell *matCellDef="let element">
-                <span *ngIf="element.products == 1">{{element.products}} producto</span>
-                <span *ngIf="element.products != 1">{{element.products}} productos</span>
+                <span *ngIf="element.products == 1"><!--{{element.products}} producto--></span>
+                <span *ngIf="element.products != 1"><!--{{element.products}} productos--></span>
               </td>
             </ng-container>
 
@@ -116,8 +116,8 @@
                 <span></span>
               </th>
               <td class="mp-rules-table-products-column" mat-cell *matCellDef="let element">
-                <span *ngIf="element.products == 1">{{element.products}} producto</span>
-                <span *ngIf="element.products != 1">{{element.products}} productos</span>
+                <span *ngIf="element.products == 1"><!--{{element.products}} producto--></span>
+                <span *ngIf="element.products != 1"><!--{{element.products}} productos--></span>
               </td>
             </ng-container>
 
@@ -138,70 +138,6 @@
       </div>
 
     </mat-expansion-panel>
-
-    <!--<mat-expansion-panel #stocks hideToggle="true">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Stocks
-        </mat-panel-title>
-        <mat-panel-description>
-          <i class="material-icons" *ngIf="!stocks.expanded">add</i>
-          <span class="white-space" *ngIf="!stocks.expanded">&nbsp;</span>
-          <i class="material-icons" *ngIf="stocks.expanded">remove</i>
-          <i class="material-icons" *ngIf="stocks.expanded">warning</i>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div class="mp-rules-expansion-panel-content">
-        <div *ngIf="dataSourceStocks.length">
-          <table mat-table [dataSource]="dataSourceRulesStocks">
-
-            <tr mat-header-row *matHeaderRowDef="displayedStocksColumns; sticky: true;"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedStocksColumns;"></tr>
-
-            <ng-container matColumnDef="name">
-              <th class="mp-rules-table-name-column" mat-header-cell *matHeaderCellDef>
-                <span>Nombre</span>
-              </th>
-              <td class="mp-rules-table-name-column" mat-cell *matCellDef="let element">
-                <span>{{element.name}}</span>
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="stock">
-              <th class="mp-rules-table-filter-column" mat-header-cell *matHeaderCellDef>
-                <span>Stock de seguridad</span>
-              </th>
-              <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
-                <span>{{element.stockFilter}}</span>
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="products">
-              <th class="mp-rules-table-products-column" mat-header-cell *matHeaderCellDef>
-                <span></span>
-              </th>
-              <td class="mp-rules-table-products-column" mat-cell *matCellDef="let element">
-                <span *ngIf="element.products == 1">{{element.products}} producto</span>
-                <span *ngIf="element.products != 1">{{element.products}} productos</span>
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="edit">
-              <th class="mp-rules-table-edit-column" mat-header-cell *matHeaderCellDef>
-                <span>Editar</span>
-              </th>
-              <td class="mp-rules-table-edit-column" mat-cell *matCellDef="let element">
-              <span>
-                <i class="material-icons" (click)="editRule(element)">edit</i>
-              </span>
-              </td>
-            </ng-container>
-
-          </table>
-        </div>
-        <button class="mp-rules-new-rule-button" (click)="openModalNewRule('stock')">NUEVA REGLA</button>
-      </div>
-    </mat-expansion-panel>-->
 
   </mat-accordion>
 </div>
