@@ -1,21 +1,11 @@
 import { HttpRequestModel } from 'libs/services/src/models/endpoints/HttpRequest';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpHeaders, HttpResponse, HttpClient } from '@angular/common/http';
-import { PredistributionModel } from '../../../models/endpoints/Predistribution';
-import { ModelModel, ProductModel, SizeModel, WarehouseModel } from '@suite/services';
-import Warehouse = WarehouseModel.Warehouse;
-import Product = ProductModel.Product;
-import { BrandModel } from '../../../models/endpoints/Brand';
-import { SeasonModel } from '../../../models/endpoints/Season';
-import Model = ModelModel.Model;
-import Size = SizeModel.Size;
-import Brand = BrandModel.Brand;
-import Season = SeasonModel.Season;
+import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DefectiveRegistryModel } from '../../../models/endpoints/DefectiveRegistry';
-import {BehaviorSubject} from "rxjs";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +19,8 @@ export class DefectiveRegistryService {
   private getHistoricalUrl: string;
   private getDefectList: string;
   private getLastHistoricalUrl: string;
+  private getProvidersUrl: string;
+  private getBrandsByProvidersUrl: string;
   private emitData = new BehaviorSubject({});
   private getData$ = this.emitData.asObservable();
   private refreshListRegistry = new BehaviorSubject<boolean>(false);
@@ -43,6 +35,8 @@ export class DefectiveRegistryService {
     this.getHistoricalUrl = `${this.baseUrl}/defects/registry/product-historial`;
     this.getDefectList = `${this.baseUrl}/defects/registry/listDefects`;
     this.getLastHistoricalUrl = `${this.baseUrl}/defects/registry/get-last-historial-product`;
+    this.getProvidersUrl = `${this.baseUrl}/defects/registry/providers`;
+    this.getBrandsByProvidersUrl = `${this.baseUrl}/defects/registry/providers/brands`;
   }
 
   indexHistoricTrue(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
@@ -132,6 +126,20 @@ export class DefectiveRegistryService {
     }));
   }
 
+  getProviders():Observable<any>{
+    return this.http.get<HttpRequestModel.Response>(this.getProvidersUrl).pipe(
+      map(resp => resp.data)
+    )
+  }
+
+  getBrandsByProviders(providerId: number):Observable<any>{
+    const body = {
+      providerId
+    };
+    return this.http.post(this.getBrandsByProvidersUrl, body).pipe(map((response:any)=>{
+      return response.data;
+    }));
+  }
   setRefreshList(refresh: boolean) {
     this.refreshListRegistry.next(refresh);
   }

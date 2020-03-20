@@ -116,6 +116,14 @@ export * from './defective-registry/defective-registry.module';
 export * from './defective-historic/defective-historic.component';
 export * from './defective-historic/defective-historic.module';
 
+/**returns-list */
+export * from './returns-list/returns-list.component';
+export * from './returns-list/returns-list.module';
+
+/**returns-list-products */
+export * from './returns-list-products/returns-list-products.component';
+export * from './returns-list-products/returns-list-products.module';
+
 /**breadcrumb */
 export * from './components/breadcrumb/breadcrumb.component';
 export * from './components/breadcrumb/breadcrumb.module';

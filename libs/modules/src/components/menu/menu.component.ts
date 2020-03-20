@@ -224,6 +224,21 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Devoluciones',
+      open: true,
+      type: 'wrapper',
+      icon: 'return-left',
+      children: [
+        {
+          title: 'Lista',
+          id: 'returns-list',
+          url: '/returns-list',
+          icon: 'list-box',
+          tooltip: 'Listado de registro de devoluciones'
+        }
+      ]
+    },
+    {
       title: 'Picking tiendas',
       open: true,
       type: 'wrapper',
@@ -783,7 +798,7 @@ export class MenuComponent implements OnInit {
       icon:'warning',
       url: '/defect-handler'
     },
-   
+
 
   ];
   private menuPages = {
