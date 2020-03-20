@@ -1,5 +1,5 @@
 import { IonicModule } from '@ionic/angular';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule, Routes } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
@@ -16,8 +16,6 @@ import {
 import { FilterButtonModule } from '../components/filter-button/filter-button.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 import { ReturnsListComponent } from './returns-list.component';
-import { ShowImageModule } from '../components/modal-defective/show-image/show-image.module';
-import { BrandsModule } from './brand/brands.module';
 import { ReturnsModule } from './returns/returns.module';
 
 const routes: Routes = [
@@ -45,9 +43,8 @@ const routes: Routes = [
     MatTooltipModule,
     MatRadioModule,
     FormsModule,
-    ShowImageModule,
-    BrandsModule,
     ReturnsModule
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ReturnsListModule { }

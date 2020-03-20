@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
-import { BrandsUpdateComponent } from './brands-update.component';
 import { BrandsDataModule } from '../brands-data/brands-data.module';
+import { BrandsStoreComponent } from './brands-store.component';
+import { IonicModule } from '@ionic/angular';
 
 @NgModule({
-  declarations: [BrandsUpdateComponent],
-  entryComponents:[BrandsUpdateComponent],
+  declarations: [BrandsStoreComponent],
+  entryComponents:[BrandsStoreComponent],
   imports: [
     CommonModule,
     BrandsDataModule,
     IonicModule
   ]
 })
-export class BrandsUpdateModule { }
+export class BrandsStoreModule { }

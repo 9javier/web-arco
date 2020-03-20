@@ -4,12 +4,11 @@ import { DataComponent } from './data.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatDatepickerModule, MatExpansionModule, MatFormFieldModule, MatInputModule } from '@angular/material';
-import { BrandsStoreModule } from '../../brand/brands-store/brands-store.module';
-import { BrandsStoreComponent } from '../../brand/brands-store/brands-store.component';
+import { BrandsModalsModule } from '../../brands/brands-modals.module';
 
 @NgModule({
   declarations: [DataComponent],
-  entryComponents: [BrandsStoreComponent],
+  entryComponents: [],
   imports: [
     ReactiveFormsModule,
     CommonModule,
@@ -18,7 +17,7 @@ import { BrandsStoreComponent } from '../../brand/brands-store/brands-store.comp
     MatDatepickerModule,
     MatInputModule,
     MatExpansionModule,
-    BrandsStoreModule
+    BrandsModalsModule
   ],
   exports:[DataComponent]
 })

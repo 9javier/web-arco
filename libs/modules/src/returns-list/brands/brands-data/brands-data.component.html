@@ -1,0 +1,11 @@
+<form [formGroup]="form">
+  <ion-item>
+    <ng-container>
+      <div *ngFor="let brand of brands" >
+        <mat-checkbox (change)="onChange($event)" [value]="brand">
+          {{brand.name}}
+        </mat-checkbox>
+      </div>
+    </ng-container>
+  </ion-item>
+</form>

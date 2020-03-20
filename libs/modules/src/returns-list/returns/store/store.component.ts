@@ -23,7 +23,7 @@ export class StoreComponent implements OnInit {
   ngOnInit() {
   }
 
-  async submit(data: DefectiveManagementModel.RequestDefectiveManagementParent) {
+  async submit(data: any) {
     await this.intermediaryService.presentLoading();
 
     this.defectiveManagementService.store(data).subscribe(async () => {
