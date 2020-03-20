@@ -262,7 +262,8 @@ export class ChangeStateComponent implements OnInit {
         componentProps: {
           productId: this.registry.data.product.id,
           showChangeState: true
-        }
+        },
+        backdropDismiss: false
       });
 
       return await modal.present();

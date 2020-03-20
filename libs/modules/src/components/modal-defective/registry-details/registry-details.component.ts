@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { environment, IncidentsService, TypesService } from '@suite/services';
 import { PrinterService } from "../../../../../services/src/lib/printer/printer.service";
 import { AlertController, LoadingController, ModalController, NavParams } from "@ionic/angular";
@@ -7,6 +7,7 @@ import { DefectiveRegistryModel } from '../../../../../services/src/models/endpo
 import { DefectiveRegistryService } from '../../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
 import { DamagedModel } from '../../../../../services/src/models/endpoints/Damaged';
 import { ChangeStateComponent } from '../change-state/change-state.component';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'suite-registry-details',
@@ -106,6 +107,7 @@ export class RegistryDetailsComponent implements OnInit {
   }
 
   async close() {
+    this.defectiveRegistryService.setRefreshList(true);
     await this.modalController.dismiss();
   }
 

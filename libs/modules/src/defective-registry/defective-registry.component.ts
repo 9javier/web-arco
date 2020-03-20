@@ -107,6 +107,18 @@ export class DefectiveRegistryComponent implements OnInit {
     this.getColumns(this.form);
     this.getList(this.form);
     this.listenChanges();
+
+    this.defectiveRegistryService.refreshListRegistry$.subscribe(async (refresh) => {
+      if (refresh) {
+        await this.intermediaryService.presentLoading();
+
+        this.getList(this.form).then(async () => {
+          await this.intermediaryService.dismissLoading();
+        }, async () => {
+          await this.intermediaryService.dismissLoading();
+        });
+      }
+    });
   }
 
   initEntity() {
@@ -535,13 +547,16 @@ export class DefectiveRegistryComponent implements OnInit {
   }
 
   async goDetails(registry: DefectiveRegistryModel.DefectiveRegistry) {
-    return (await this.modalController.create({
+    const modal = await this.modalController.create({
       component: RegistryDetailsComponent,
       componentProps: {
         productId: registry.product.id,
-        showChangeState: true
-      }
-    })).present();
+        showChangeState: true,
+      },
+      backdropDismiss: false
+    });
+
+    return await modal.present();
   }
 
   getStatusName(defectType: number) {
