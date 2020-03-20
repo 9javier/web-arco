@@ -8,7 +8,7 @@ import {EanScannerModule} from "./components/ean-scanner/ean-scanner.module";
 import {ManualReceptionComponent} from "./components/manual-reception/manual-reception.component";
 import {ManualReceptionModule} from "./components/manual-reception/manual-reception.module";
 import {HideKeyboardModule} from "hide-keyboard";
-import {ScannerManualModule} from "@suite/common-modules";
+import {ScannerManualModule} from "../components/scanner-manual/scanner-manual.module";
 
 const routes: Routes = [
   {
