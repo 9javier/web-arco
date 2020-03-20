@@ -83,7 +83,7 @@ export class DefectHandlerComponent implements OnInit {
   ) { }
 
   ionViewWillEnter() {
-    this.getListData();
+    this.getList(this.form);
   }
 
   ngOnInit() {
@@ -93,6 +93,7 @@ export class DefectHandlerComponent implements OnInit {
     this.listenChanges();
     this.getListData();
     this.getList();
+    this.getDefectListAfterUpdate();
   }
 
   initEntity() {
@@ -149,10 +150,10 @@ export class DefectHandlerComponent implements OnInit {
   }
 
   getListData(){
-    this.defectiveRegistryService.getListDefect(this.form.value);
+    this.defectiveRegistryService.getListDefectAfterUpdate(this.form.value);
   }
 
-  async getList(){
+  async getDefectListAfterUpdate(){
      this.defectiveRegistryService.getData().subscribe((resp:any) => {
          if (resp.results) {
            this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
@@ -170,6 +171,26 @@ export class DefectHandlerComponent implements OnInit {
        async () => {
          await this.intermediaryService.dismissLoading()
        })
+  }
+
+  async getList(form?: FormGroup){
+    this.defectiveRegistryService.getListDefect(form.value).subscribe((resp:any) => {
+        if (resp.results) {
+          this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
+          this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
+          const paginator = resp.pagination;
+          this.groups = resp.ordertypes;
+          this.paginator.length = paginator.totalResults;
+          this.paginator.pageIndex = paginator.selectPage;
+          this.paginator.lastPage = paginator.lastPage;
+        }
+      },
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      })
   }
 
   goDefect(row) {
@@ -229,7 +250,7 @@ export class DefectHandlerComponent implements OnInit {
       this.form.patchValue({ statusManagementDefect: [status] });
     }
 
-    this.getList().then(async () => {
+    this.getList(this.form).then(async () => {
       this.showFiltersMobileVersion = false;
       await this.intermediaryService.dismissLoading();
       await this.intermediaryService.dismissLoading();
