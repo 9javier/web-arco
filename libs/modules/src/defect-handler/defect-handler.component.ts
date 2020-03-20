@@ -36,6 +36,8 @@ export class DefectHandlerComponent implements OnInit {
   prices: Array<PriceModel.Price> = [];
   requestTimeout;
 
+  ngInit:boolean;
+  ngInitFilter:boolean;
   /**Filters */
   product: Array<TagsInputOption> = [];
   model: Array<TagsInputOption> = [];
@@ -83,16 +85,19 @@ export class DefectHandlerComponent implements OnInit {
   ) { }
 
   ionViewWillEnter() {
-    this.getList(this.form);
+    if(this.ngInit == false){
+      this.getList(this.form);
+    }
+      this.ngInit=false;
+    
   }
 
   ngOnInit() {
+    this.ngInit =true;
     this.initEntity();
     this.initForm();
     this.getFilters();
     this.listenChanges();
-    this.getListData();
-    this.getList();
     this.getDefectListAfterUpdate();
   }
 
@@ -145,7 +150,7 @@ export class DefectHandlerComponent implements OnInit {
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
       };
-      this.getList()
+      this.getList(this.form)
     });
   }
 
@@ -224,6 +229,7 @@ export class DefectHandlerComponent implements OnInit {
   }
 
   getFilters(): void {
+    this.ngInitFilter = true;
     this.defectiveRegistryService.getFiltersEntitiesFalse().subscribe((filters) => {
       this.product = filters.product;
       this.model = filters.model;
