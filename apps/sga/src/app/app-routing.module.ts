@@ -198,6 +198,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'returns-list-products',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/returns-list-products/returns-list-products.module#ReturnsListProductsModule',
+    data: {
+      name: 'Lista de Productos Devueltos'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',

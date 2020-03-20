@@ -7,8 +7,7 @@ import { BrandsUpdateModule } from './brands-update/brands-update.module';
   declarations: [],
   imports: [
     CommonModule,
-    BrandsStoreModule,
-    BrandsUpdateModule
+    BrandsStoreModule
   ]
 })
 export class BrandsModalsModule { }

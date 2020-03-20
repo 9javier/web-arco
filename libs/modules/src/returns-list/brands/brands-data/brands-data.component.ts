@@ -20,8 +20,8 @@ export class BrandsDataComponent implements OnInit {
     id: number;
     name: string;
   }[];
-  providerId;
-
+  providerId: number;
+  dataTemp: [] = [];
   constructor(
     private _formBuilder:FormBuilder,
     private navParams: NavParams,
@@ -29,26 +29,29 @@ export class BrandsDataComponent implements OnInit {
     private defectiveRegistryService: DefectiveRegistryService,
     ) {
     this.providerId = this.navParams.get("providerId");
-    const formTemp = this.navParams.get("formBrands");
-    if (formTemp) {
-      console.log('FORM TEMP');
-      console.log(formTemp);
-      this.form = formTemp;
-    }
+    this.dataTemp = this.navParams.get("dataBrands");
   }
 
   ngOnInit() {
     this.brands = [];
-    this.getBrandsByProviders();
+    if (this.dataTemp.length > 0) {
+      this.dataTemp.forEach((item: any) => {
+        this.addItem({ id: item.id, name: item.name }, item.selected);
+      });
+    } else {
+      this.getBrandsByProviders();
+    }
   }
 
   get brandArray() {
     return this.form.get('brandArray') as FormArray;
   }
-  addItem(item) {
+
+  addItem(item, status = false) {
     this.brands.push(item);
-    this.brandArray.push(this._formBuilder.control(false));
+    this.brandArray.push(this._formBuilder.control(status));
   }
+
   removeItem() {
     this.brands.pop();
     this.brandArray.removeAt(this.brandArray.length - 1);
@@ -91,8 +94,6 @@ export class BrandsDataComponent implements OnInit {
         items.forEach((item) => {
           this.addItem(item);
         });
-        // this.brands = resp;
-        // console.log(this.brands);
         await this.intermediaryService.dismissLoading()
       },
       async (err) => {

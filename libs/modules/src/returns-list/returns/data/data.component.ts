@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { IntermediaryService } from '@suite/services';
 import { ModalController } from '@ionic/angular';
 import { DefectiveRegistryService } from '../../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
@@ -13,7 +13,7 @@ import { BrandsStoreComponent } from '../../brands/brands-store/brands-store.com
 export class DataComponent implements OnInit {
   disableAddBrands = true;
   providers:Array<{ id: number, name: string }> = [];
-  brandsSelected:Array<{ id: number, name: string }> = [];
+  brandsSelected:(any)[] = [];
   types:Array<{ id: number, name: string }> = [];
 
   form: FormGroup = this.formBuilder.group({
@@ -21,10 +21,9 @@ export class DataComponent implements OnInit {
     provider:['',[Validators.required]],
     type:['',[Validators.required]],
     date:['',[Validators.required]],
-    brands:['',[Validators.required]]
+    brands: this.formBuilder.array(
+      [],[Validators.required])
   });
-
-  formBrands: FormGroup;
 
   constructor(
     private defectiveRegistryService: DefectiveRegistryService,
@@ -92,13 +91,22 @@ export class DataComponent implements OnInit {
       component: BrandsStoreComponent,
       componentProps: {
         providerId: this.form.get('provider').value,
-        formBrands: this.formBrands
+        dataBrands: this.brandsSelected
       },
       backdropDismiss: false
     });
+
     modal.onDidDismiss().then(async (dataReturn) => {
       if (dataReturn.data !== undefined) {
-        this.formBrands = dataReturn.data;
+        this.brandsSelected = [];
+        dataReturn.data.brands.forEach((item: any, index) => {
+          item.selected = dataReturn.data.brandArray.value[index];
+          if(item.selected) {
+            this.addItem(item);
+          }
+
+          this.brandsSelected.push(item);
+        });
       }
     });
     await modal.present();
@@ -107,6 +115,19 @@ export class DataComponent implements OnInit {
   selectedProvider() {
     if (this.form.get('provider').value) {
       this.disableAddBrands = false;
+      this.brandsSelected = [];
     }
+  }
+
+  get brands() {
+    return this.form.get('brands') as FormArray;
+  }
+
+  addItem(item) {
+    this.brands.push(this.formBuilder.control(item.id));
+  }
+
+  removeItem() {
+    this.brands.removeAt(this.brands.length - 1);
   }
 }

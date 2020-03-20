@@ -33,12 +33,11 @@
       </mat-expansion-panel-header>
       <mat-panel-description>
         <ion-list>
-          <ion-item>
-            <ion-label>Marca 1</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>Marca 2</ion-label>
-          </ion-item>
+          <div *ngFor="let brand of brandsSelected" >
+            <ion-item *ngIf="brand.selected">
+              <ion-label>{{brand.name}}</ion-label>
+            </ion-item>
+          </div>
         </ion-list>
       </mat-panel-description>
     </mat-expansion-panel>

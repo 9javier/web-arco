@@ -13,23 +13,22 @@ import { SelectionModel } from '@angular/cdk/collections';
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
 import { RegistryDetailsComponent } from '../components/modal-defective/registry-details/registry-details.component';
-import { StoreComponent } from './returns/store/store.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'suite-returns-list',
-  templateUrl: './returns-list.component.html',
-  styleUrls: ['./returns-list.component.scss'],
+  selector: 'suite-returns-list-products',
+  templateUrl: './returns-list-products.component.html',
+  styleUrls: ['./returns-list-products.component.scss'],
 })
-export class ReturnsListComponent implements OnInit {
-
+export class ReturnsListProductsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select', 'statusManagementDefect', 'warehouse', 'product', 'model', 'size', 'brand', 'color', 'dateDetection', 'defectTypeParent', 'defectTypeChild'];
+  displayedColumns: string[] = ['select', 'id', 'statusManagementDefect', 'warehouse', 'product', 'model', 'size', 'brand', 'color', 'dateDetection', 'defectTypeParent', 'defectTypeChild'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
   originalTableStatus: DamagedModel.Status[];
   columns = {};
+  brandsIds: (any)[] = [];
 
   @ViewChild('filterButtonId') filterButtonId: FilterButtonComponent;
   @ViewChild('filterButtonProduct') filterButtonProduct: FilterButtonComponent;
@@ -101,16 +100,25 @@ export class ReturnsListComponent implements OnInit {
     private formBuilder: FormBuilder,
     private intermediaryService: IntermediaryService,
     private modalController: ModalController,
-    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
+    this.route
+      .queryParams
+      .subscribe(params => {
+        const dataParams = <[]>params['ids'];
+        dataParams.forEach((item: any) => {
+          this.brandsIds.push(Number(item));
+        });
+      });
+
     this.initEntity();
     this.initForm();
-    // this.getFilters();
-    // this.getColumns(this.form);
-    // this.getList(this.form);
-    // this.listenChanges();
+    this.getFilters();
+    this.getColumns(this.form);
+    this.getList(this.form);
+    this.listenChanges();
   }
 
   initEntity() {
@@ -139,7 +147,7 @@ export class ReturnsListComponent implements OnInit {
       product: [],
       model: [],
       size: [],
-      brand: [],
+      brand: this.brandsIds,
       color: [],
       dateDetection: [],
       statusManagementDefect: [],
@@ -551,20 +559,5 @@ export class ReturnsListComponent implements OnInit {
   getStatusName(defectType: number) {
     const status = this.originalTableStatus.find((x) => x.id === defectType);
     return status.name;
-  }
-
-  async newReturn() {
-    let modal = await this.modalController.create({
-      component: StoreComponent,
-    });
-
-    modal.onDidDismiss().then(async (dataReturn: any) => {
-      if (dataReturn.data !== undefined) {
-        console.log('ON DID DISMISS RETURN LIST');
-        console.log(dataReturn.data);
-        await this.router.navigate(['/returns-list-products'], { queryParams: {ids: dataReturn.data.brands} });
-      }
-    });
-    await modal.present();
   }
 }
