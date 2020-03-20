@@ -1,0 +1,56 @@
+
+div.main-element-list-pickings {
+  height: 100vh;
+}
+div.scroll-list {
+  overflow-y: scroll;
+  height: calc(100vh - 54px - 56px);
+
+  p.msg-empty-pickings {
+    height: 64px;
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+  }
+}
+mat-grid-list {
+  border-bottom: 1px solid #c3c3c3;
+  mat-grid-tile.mat-grid-tile {
+    font-size: 16px;
+    line-height: 20px;
+    height: 24px;
+    div.tile-title {
+      color: var(--ion-color-tertiary);
+      justify-content: start !important;
+      width: 100%;
+      padding: 16px;
+      font-weight: 500;
+    }
+    div.tile-title-right {
+      padding-right: 24px;
+      width: 100%;
+      text-align: right !important;
+      font-weight: 500;
+    }
+  }
+}
+.footer-products {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+.footer-products:before {
+  background: none;
+}
+.horizontal-fab {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}
+
+#btnReturnPickingTask{
+  margin-bottom: 4% ;
+  }

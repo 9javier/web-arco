@@ -534,6 +534,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Traspasos pendientes de realizar'
         },
         {
+          title: 'Peticiones tiendas',
+          id: 'picking-tasks-stores',
+          icon: 'qr-scanner',
+          url: '/picking-tasks-stores',
+          tooltip: 'Traspasos de tiendas pendientes de realizar'
+        },
+        {
           title: 'Asociar pares a embalajes',
           id: 'picking-scan-packing',
           icon: 'qr-scanner',

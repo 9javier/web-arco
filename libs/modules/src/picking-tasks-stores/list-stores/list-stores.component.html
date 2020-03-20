@@ -1,0 +1,32 @@
+<div class="main-element-list-pickings">
+  <div class="row-no-requests" *ngIf="orderRequestsByStores.length > 0">
+    <ion-row>
+      <ion-col size="1" class="centered-col">
+        <ion-checkbox [(ngModel)]="allStoresSelected" (ngModelChange)="selectAllStores($event)"></ion-checkbox>
+      </ion-col>
+      <ion-col size="11" class="centered-col">
+        <mat-panel-title>Seleccionar todo</mat-panel-title>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <ion-progress-bar type="indeterminate" *ngIf="isLoadingData"></ion-progress-bar>
+
+  <div class="scroll-list" [ngClass]="!orderRequestsByStores.length ? 'initiated-picking' : ''" *ngIf="!isLoadingData && (orderRequestsByStores.length > 0 || (stores.length > 0 && lineRequests.length > 0))">
+    <stores-picking-task-template *ngFor="let orderRequestByStore of orderRequestsByStores" [orderRequestByStore]="orderRequestByStore" (selectStore)="selectStore($event)"></stores-picking-task-template>
+  </div>
+
+  <div *ngIf="!isLoadingData && !orderRequestsByStores.length && !stores.length && !lineRequests.length" class="msg-empty-pickings">
+    <p class="msg-empty-pickings">No hay traspasos pendientes para la tienda</p>
+  </div>
+</div>
+
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="ngOnInit()"><i
+      class="material-icons">refresh</i></ion-fab-button>
+    <ion-fab-button (click)="initPicking()" *ngIf="checkLineRequestSelected()">
+      <i class="material-icons">play_arrow</i>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>

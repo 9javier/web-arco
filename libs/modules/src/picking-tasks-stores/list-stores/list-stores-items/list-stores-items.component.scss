@@ -1,0 +1,53 @@
+div.row-no-requests {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 24px;
+  border-radius: inherit;
+  ion-row {
+    width: 100%;
+    ion-col.qty-col {
+      text-align: end;
+    }
+  }
+}
+mat-expansion-panel {
+  ion-row {
+    width: 100%;
+    ion-col.qty-col {
+      text-align: end;
+    }
+  }
+  ion-list {
+    ion-item {
+      --border-width: 0;
+      ion-label {
+        padding-left: 16px;
+        h2 {
+          font-size: 16px;
+        }
+        p {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+ion-col.centered-col {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+h2 {
+  font-size: 16px;
+  ion-row.row-title-item {
+    ion-col {
+      padding: 0;
+    }
+  }
+}
+p {
+  font-size: 14px;
+}
