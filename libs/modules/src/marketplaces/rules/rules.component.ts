@@ -67,18 +67,25 @@ export class RulesComponent implements OnInit {
     this.marketplacesService.getRulesConfigurations(this.market).subscribe((data: any) => {
       if (data && data.length) {
         for (let ruleConfiguration of data) {
-          let type = "";
+          let type = "enabling";
           let categories = [];
-          switch (ruleConfiguration.ruleType) {
-            case 0:
-              break;
-            case 1:
-              type = "enabling";
-              break;
-            case 2:
+          if(ruleConfiguration.ruleType) {
+            switch (ruleConfiguration.ruleType) {
+              case 0:
+                break;
+              case 1:
+                type = "enabling";
+                break;
+              case 2:
+                type = "categories";
+                categories = ruleConfiguration.categories;
+                break;
+            }
+          } else {
+            if(ruleConfiguration.categories && ruleConfiguration.categories.length) {
               type = "categories";
               categories = ruleConfiguration.categories;
-              break;
+            }
           }
           let rule = {
             id: ruleConfiguration.id,
@@ -209,6 +216,7 @@ export class RulesComponent implements OnInit {
                   name: category.name,
                   ruleFilterType: category.type,
                   externalId: category.externalId,
+                  dataGroup: category.group,
                   status: 1
                 }
               );
@@ -220,6 +228,7 @@ export class RulesComponent implements OnInit {
                   name: category.name,
                   ruleFilterType: category.type,
                   externalId: category.externalId,
+                  dataGroup: category.group,
                   status: 1
                 }
               );
@@ -231,6 +240,7 @@ export class RulesComponent implements OnInit {
                   name: category.name,
                   ruleFilterType: category.type,
                   externalId: category.externalId,
+                  dataGroup: category.group,
                   status: 1
                 }
               );
@@ -248,6 +258,8 @@ export class RulesComponent implements OnInit {
         });
         
         ruleConfiguration.referenceExceptions = exceptions;
+
+        console.log(ruleConfiguration)
 
         this.marketplacesService.postRulesConfigurations(ruleConfiguration).subscribe(data => {
           this.getValues();
