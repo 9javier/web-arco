@@ -39,6 +39,17 @@
         <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.id}} </mat-cell>
       </ng-container>
 
+      <ng-container matColumnDef="user">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>User
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonUser [title]="'Usuarios'"
+                               [listItems]="entities.user"
+                               [isFiltering]="isFilteringUser != entities.user.length"
+                               (applyFilters)="applyFilters($event, 'user')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.user.name}} </mat-cell>
+      </ng-container>
+
       <ng-container matColumnDef="statusManagementDefect">
         <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Estado
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonStatusManagementDefect [title]="'Estados'"
