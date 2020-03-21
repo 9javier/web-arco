@@ -74,7 +74,7 @@
             <ion-label>Observaciones:</ion-label>
             <ion-textarea class="text-observations" type="text" rows="4" value="{{registry?.observations}}" readonly="true"></ion-textarea>
           </ion-item>
-          <div *ngIf="registry.contact" class="contact">
+          <div *ngIf="getRequireStatus(registry.statusManagementDefect.defectType, 'contact')" class="contact">
             <ion-list>
               <ion-list-header>
                 <h2>Contacto</h2>
