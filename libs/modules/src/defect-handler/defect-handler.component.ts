@@ -36,8 +36,8 @@ export class DefectHandlerComponent implements OnInit {
   prices: Array<PriceModel.Price> = [];
   requestTimeout;
 
-  ngInit:boolean;
-  ngInitFilter:boolean;
+  ngInit: boolean;
+  ngInitFilter: boolean;
   /**Filters */
   product: Array<TagsInputOption> = [];
   model: Array<TagsInputOption> = [];
@@ -85,14 +85,14 @@ export class DefectHandlerComponent implements OnInit {
   ) { }
 
   ionViewWillEnter() {
-    if(this.ngInit == false){
+    if (this.ngInit == false) {
       this.getList(this.form);
     }
-      this.ngInit=false;
+    this.ngInit = false;
   }
 
   ngOnInit() {
-    this.ngInit =true;
+    this.ngInit = true;
     this.initEntity();
     this.initForm();
     this.getFilters();
@@ -153,42 +153,46 @@ export class DefectHandlerComponent implements OnInit {
     });
   }
 
-  getListData(){
-    this.defectiveRegistryService.getListDefectAfterUpdate(this.form.value);
+  getListData() {
+    this.defectiveRegistryService.getHistoricalAl(this.form.value);
+
   }
 
-  async getDefectListAfterUpdate(){
-     this.defectiveRegistryService.getData().subscribe((resp:any) => {
-         if (resp.results) {
-           this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
-           this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
-           const paginator = resp.pagination;
-           this.groups = resp.ordertypes;
-           this.paginator.length = paginator.totalResults;
-           this.paginator.pageIndex = paginator.selectPage;
-           this.paginator.lastPage = paginator.lastPage;
-         }
-       },
-       async err => {
-         await this.intermediaryService.dismissLoading()
-       },
-       async () => {
-         await this.intermediaryService.dismissLoading()
-       })
-  }
-
-  async getList(form?: FormGroup){
-    this.defectiveRegistryService.getListDefect(form.value).subscribe((resp:any) => {
-        if (resp.results) {
-          this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
-          this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
-          const paginator = resp.pagination;
-          this.groups = resp.ordertypes;
-          this.paginator.length = paginator.totalResults;
-          this.paginator.pageIndex = paginator.selectPage;
-          this.paginator.lastPage = paginator.lastPage;
-        }
+  async getDefectListAfterUpdate() {
+    console.log("llega aqui despues de actualizar");
+    this.defectiveRegistryService.getData().subscribe((resp: any) => {
+      if (resp.results) {
+        this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
+        this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
+        const paginator = resp.pagination;
+        this.groups = resp.ordertypes;
+        this.paginator.length = paginator.totalResults;
+        this.paginator.pageIndex = paginator.selectPage;
+        this.paginator.lastPage = paginator.lastPage;
+      }
+    },
+      async err => {
+        await this.intermediaryService.dismissLoading()
       },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      })
+    this.clearFilters();
+    //this.getFilters();
+  }
+
+  async getList(form?: FormGroup) {
+    this.defectiveRegistryService.getListDefect(form.value).subscribe((resp: any) => {
+      if (resp.results) {
+        this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
+        this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
+        const paginator = resp.pagination;
+        this.groups = resp.ordertypes;
+        this.paginator.length = paginator.totalResults;
+        this.paginator.pageIndex = paginator.selectPage;
+        this.paginator.lastPage = paginator.lastPage;
+      }
+    },
       async err => {
         await this.intermediaryService.dismissLoading()
       },
@@ -202,7 +206,7 @@ export class DefectHandlerComponent implements OnInit {
   }
 
   async goDetails(registry: DefectiveRegistryModel.DefectiveRegistry) {
-     let modal = (await this.modalController.create({
+    let modal = (await this.modalController.create({
       component: DetailsRegisterComponent,
       componentProps: {
         productId: registry.product.id,
@@ -220,8 +224,8 @@ export class DefectHandlerComponent implements OnInit {
 
   applyFilters() {
     if (this.pauseListenFormChange) return;
-      clearTimeout(this.requestTimeout);
-      this.requestTimeout = setTimeout(async () => {
+    clearTimeout(this.requestTimeout);
+    this.requestTimeout = setTimeout(async () => {
 
       await this.searchInContainer();
     }, 100);
@@ -229,14 +233,13 @@ export class DefectHandlerComponent implements OnInit {
 
   getFilters(): void {
     this.ngInitFilter = true;
-    this.defectiveRegistryService.getFiltersEntitiesFalse().subscribe((filters) => {
+    this.defectiveRegistryService.getFiltersEntitiesFalseAl().subscribe((filters) => {
       this.product = filters.product;
       this.model = filters.model;
       this.size = filters.size;
       this.color = filters.color;
       this.brand = filters.brand;
       this.statusManagementDefect = filters.statusManagementDefect;
-
       this.applyFilters();
     }, (err) => {
       console.log(err);
