@@ -18,6 +18,7 @@ export class DefectiveRegistryService {
   private entitiesFiltersFalseUrlAl: string;
   private entitiesFiltersTrueUrl: string;
   private getHistoricalUrl: string;
+  private getHistoricalAlUrl: string;
   private getDefectList: string;
   private getLastHistoricalUrl: string;
   private getProvidersUrl: string;
@@ -35,6 +36,7 @@ export class DefectiveRegistryService {
     this.entitiesFiltersFalseUrl = `${this.baseUrl}/defects/registry/filters/false`;
     this.entitiesFiltersFalseUrlAl = `${this.baseUrl}/defects/registry/filters/false/al`;
     this.getHistoricalUrl = `${this.baseUrl}/defects/registry/product-historial`;
+    this.getHistoricalAlUrl = `${this.baseUrl}/defects/registry/product-historial/al`;
     this.getDefectList = `${this.baseUrl}/defects/registry/listDefects/la`;
     this.getLastHistoricalUrl = `${this.baseUrl}/defects/registry/get-last-historial-product`;
     this.getProvidersUrl = `${this.baseUrl}/defects/registry/providers`;
@@ -117,6 +119,12 @@ export class DefectiveRegistryService {
 
   getHistorical(body):Observable<any>{
     return this.http.post(this.getHistoricalUrl, body).pipe(map((response:any)=>{
+      return response.data;
+    }));
+  }
+
+  getHistoricalAl(body):Observable<any>{
+    return this.http.post(this.getHistoricalAlUrl, body).pipe(map((response:any)=>{
       return response.data;
     }));
   }
