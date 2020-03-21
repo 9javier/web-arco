@@ -81,8 +81,8 @@ export class RegistryDetailsComponent implements OnInit {
   }
 
   getRegistryHistorical(): void {
-    this.defectiveRegistryService.getHistorical({ productId: this.productId, productReference: '' }).subscribe(historical => {
-      this.registryHistorical = historical;      
+    this.defectiveRegistryService.getHistoricalAl({ productId: this.productId, productReference: '' }).subscribe(historical => {
+      this.registryHistorical = historical;
     });
   }
 
@@ -124,8 +124,8 @@ export class RegistryDetailsComponent implements OnInit {
     const navigationExtras: NavigationExtras = {
       state : {
         "reference" : id,
-      }      
-    };    
+      }
+    };
     this.router.navigate(['/incidents'], navigationExtras);
     this.modalController.dismiss();
   }

@@ -22,13 +22,14 @@ import { RegistryDetailsComponent } from '../components/modal-defective/registry
 export class DefectiveRegistryComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select', 'id', 'statusManagementDefect', 'warehouse', 'product', 'model', 'size', 'brand', 'color', 'dateDetection', 'defectTypeParent', 'defectTypeChild'];
+  displayedColumns: string[] = ['select', 'id', 'user', 'statusManagementDefect', 'warehouse', 'product', 'model', 'size', 'brand', 'color', 'dateDetection', 'defectTypeParent', 'defectTypeChild'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
   originalTableStatus: DamagedModel.Status[];
   columns = {};
 
   @ViewChild('filterButtonId') filterButtonId: FilterButtonComponent;
+  @ViewChild('filterButtonUser') filterButtonUser: FilterButtonComponent;
   @ViewChild('filterButtonProduct') filterButtonProduct: FilterButtonComponent;
   @ViewChild('filterButtonModel') filterButtonModel: FilterButtonComponent;
   @ViewChild('filterButtonSize') filterButtonSize: FilterButtonComponent;
@@ -41,6 +42,7 @@ export class DefectiveRegistryComponent implements OnInit {
   @ViewChild('filterButtonWarehouse') filterButtonWarehouse: FilterButtonComponent;
 
   isFilteringId: number = 0;
+  isFilteringUser: number = 0;
   isFilteringProduct: number = 0;
   isFilteringModel: number = 0;
   isFilteringSize: number = 0;
@@ -54,6 +56,7 @@ export class DefectiveRegistryComponent implements OnInit {
 
   /**Filters */
   id: Array<TagsInputOption> = [];
+  user: Array<TagsInputOption> = [];
   product: Array<TagsInputOption> = [];
   model: Array<TagsInputOption> = [];
   size: Array<TagsInputOption> = [];
@@ -72,6 +75,7 @@ export class DefectiveRegistryComponent implements OnInit {
 
   form: FormGroup = this.formBuilder.group({
     id: [],
+    user: [],
     product: [],
     model: [],
     size: [],
@@ -124,6 +128,7 @@ export class DefectiveRegistryComponent implements OnInit {
   initEntity() {
     this.entities = {
       id: [],
+      user: [],
       product: [],
       model: [],
       size: [],
@@ -144,6 +149,7 @@ export class DefectiveRegistryComponent implements OnInit {
   initForm() {
     this.form.patchValue({
       id: [],
+      user: [],
       product: [],
       model: [],
       size: [],
@@ -183,6 +189,7 @@ export class DefectiveRegistryComponent implements OnInit {
   getFilters() {
     this.defectiveRegistryService.getFiltersEntitiesFalse().subscribe((entities) => {
       this.id = this.updateFilterSource(entities.id, 'id');
+      this.user = this.updateFilterSource(entities.user, 'user');
       this.product = this.updateFilterSource(entities.product, 'product');
       this.model = this.updateFilterSource(entities.model, 'model');
       this.size = this.updateFilterSource(entities.size, 'size');
@@ -244,6 +251,7 @@ export class DefectiveRegistryComponent implements OnInit {
 
   private reduceFilters(entities) {
     this.filterButtonId.listItems = this.reduceFilterEntities(this.id, entities, 'id');
+    this.filterButtonUser.listItems = this.reduceFilterEntities(this.user, entities, 'user');
     this.filterButtonProduct.listItems = this.reduceFilterEntities(this.product, entities, 'product');
     this.filterButtonModel.listItems = this.reduceFilterEntities(this.model, entities, 'model');
     this.filterButtonSize.listItems = this.reduceFilterEntities(this.size, entities, 'size');
@@ -326,7 +334,6 @@ export class DefectiveRegistryComponent implements OnInit {
           if (id.checked) idFiltered.push(id.id);
         }
 
-        console.log(idFiltered);
         if (idFiltered.length >= this.id.length) {
           this.form.value.id = [];
           this.isFilteringId = this.id.length;
@@ -337,6 +344,26 @@ export class DefectiveRegistryComponent implements OnInit {
           } else {
             this.form.value.id = ['99999'];
             this.isFilteringId = this.id.length;
+          }
+        }
+        break;
+      case 'user':
+        let userFiltered: string[] = [];
+        for (let user of filters) {
+
+          if (user.checked) userFiltered.push(user.id);
+        }
+
+        if (userFiltered.length >= this.user.length) {
+          this.form.value.user = [];
+          this.isFilteringUser = this.user.length;
+        } else {
+          if (userFiltered.length > 0) {
+            this.form.value.user = userFiltered;
+            this.isFilteringUser = userFiltered.length;
+          } else {
+            this.form.value.user = ['99999'];
+            this.isFilteringUser = this.user.length;
           }
         }
         break;
