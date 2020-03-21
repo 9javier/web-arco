@@ -298,12 +298,12 @@ export class ChangeState2Component implements OnInit {
 
 
   async close() {
- 
-
-     await this.modalController.dismiss();
 
 
-    
+    await this.modalController.dismiss();
+
+
+
   }
 
 
@@ -333,7 +333,7 @@ export class ChangeState2Component implements OnInit {
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente');
         this.close();
-        this.defectiveRegistryService.getListDefectAfterUpdate(this.form.value);
+        this.defectiveRegistryService.getHistoricalAl(this.form.value);
 
       },
       e => {
@@ -685,6 +685,6 @@ export class ChangeState2Component implements OnInit {
       }
   }
 
-  
+
 
 }
