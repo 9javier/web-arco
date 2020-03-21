@@ -203,7 +203,7 @@ export class DefectHandlerComponent implements OnInit {
   }
 
   getFilters(): void {
-    this.defectiveRegistryService.getFiltersEntitiesFalse().subscribe((filters) => {
+    this.defectiveRegistryService.getFiltersEntitiesFalseAl().subscribe((filters) => {
       this.product = filters.product;
       this.model = filters.model;
       this.size = filters.size;

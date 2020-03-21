@@ -15,6 +15,7 @@ export class DefectiveRegistryService {
   private indexRegistryHistoricFalseUrl: string;
   private indexHistoricTrueUrl: string;
   private entitiesFiltersFalseUrl: string;
+  private entitiesFiltersFalseUrlAl: string;
   private entitiesFiltersTrueUrl: string;
   private getHistoricalUrl: string;
   private getDefectList: string;
@@ -32,8 +33,9 @@ export class DefectiveRegistryService {
     this.indexHistoricTrueUrl = `${this.baseUrl}/defects/registry/all`;
     this.entitiesFiltersTrueUrl = `${this.baseUrl}/defects/registry/filters`;
     this.entitiesFiltersFalseUrl = `${this.baseUrl}/defects/registry/filters/false`;
+    this.entitiesFiltersFalseUrlAl = `${this.baseUrl}/defects/registry/filters/false/al`;
     this.getHistoricalUrl = `${this.baseUrl}/defects/registry/product-historial`;
-    this.getDefectList = `${this.baseUrl}/defects/registry/listDefects`;
+    this.getDefectList = `${this.baseUrl}/defects/registry/listDefects/la`;
     this.getLastHistoricalUrl = `${this.baseUrl}/defects/registry/get-last-historial-product`;
     this.getProvidersUrl = `${this.baseUrl}/defects/registry/providers`;
     this.getBrandsByProvidersUrl = `${this.baseUrl}/defects/registry/providers/brands`;
@@ -85,6 +87,30 @@ export class DefectiveRegistryService {
     };
 
     return this.http.post<HttpRequestModel.Response>(this.entitiesFiltersFalseUrl,body).pipe(
+      map(resp => resp.data)
+    )
+  }
+
+  getFiltersEntitiesFalseAl() {
+    const body = {
+      id: [],
+      user: [],
+      product: [],
+      model: [],
+      size: [],
+      brand: [],
+      color: [],
+      storeDetection: [],
+      dateDetection: [],
+      statusManagementDefect: [],
+      defectTypeParent: [],
+      defectTypeChild: [],
+      barCode: [],
+      warehouse: [],
+      factoryReturn: []
+    };
+
+    return this.http.post<HttpRequestModel.Response>(this.entitiesFiltersFalseUrlAl,body).pipe(
       map(resp => resp.data)
     )
   }
