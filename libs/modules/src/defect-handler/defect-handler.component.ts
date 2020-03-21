@@ -89,7 +89,6 @@ export class DefectHandlerComponent implements OnInit {
       this.getList(this.form);
     }
       this.ngInit=false;
-    
   }
 
   ngOnInit() {
