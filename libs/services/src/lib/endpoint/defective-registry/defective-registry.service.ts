@@ -130,12 +130,12 @@ export class DefectiveRegistryService {
     }));
   }
 
-  // getListDefect(body) {
-  //   this.callList(body).subscribe(data =>{
-  //     console.log(data);
-  //     this.emitData.next(data);
-  //   });
-  // }
+   getListDefectAfterUpdate(body) {
+     this.callList(body).subscribe(data =>{
+       console.log(data);
+       this.emitData.next(data);
+     });
+   }
 
   getListDefect(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
     return this.http.post<HttpRequestModel.Response>(this.getDefectList, body).pipe(

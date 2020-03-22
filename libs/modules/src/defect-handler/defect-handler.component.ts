@@ -154,12 +154,11 @@ export class DefectHandlerComponent implements OnInit {
   }
 
   getListData() {
-    this.defectiveRegistryService.getHistoricalAl(this.form.value);
+    this.defectiveRegistryService.getListDefectAfterUpdate(this.form.value);
 
   }
 
   async getDefectListAfterUpdate() {
-    console.log("llega aqui despues de actualizar");
     this.defectiveRegistryService.getData().subscribe((resp: any) => {
       if (resp.results) {
         this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
@@ -177,7 +176,7 @@ export class DefectHandlerComponent implements OnInit {
       async () => {
         await this.intermediaryService.dismissLoading()
       })
-    this.clearFilters();
+    //this.clearFilters();
     //this.getFilters();
   }
 

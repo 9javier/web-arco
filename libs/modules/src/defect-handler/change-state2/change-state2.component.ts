@@ -333,7 +333,7 @@ export class ChangeState2Component implements OnInit {
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente');
         this.close();
-        this.defectiveRegistryService.getHistoricalAl(this.form.value);
+        this.defectiveRegistryService.getListDefectAfterUpdate(this.form.value);
 
       },
       e => {
