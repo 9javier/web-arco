@@ -70,12 +70,12 @@
           Defecto: {{registry.defectTypeParent.name}} - {{registry.defectTypeChild.name}}
         </ion-label>
       </ion-item>
-      <ion-item>
+      <ion-item class="observations">
         <ion-label>Observaciones:</ion-label>
         <ion-textarea class="text-observations" type="text" rows="4" value="{{registry?.observations}}" readonly="true">
         </ion-textarea>
       </ion-item>
-      <div *ngIf="registry.contact" class="contact">
+      <ion-item *ngIf="getRequireStatus(registry.statusManagementDefect.defectType, 'contact')" class="contact">
         <ion-list>
           <ion-list-header>
             <h2>Contacto</h2>
@@ -96,7 +96,7 @@
             </ion-label>
           </ion-item>
         </ion-list>
-      </div>
+      </ion-item>
       <mat-expansion-panel *ngIf="registry?.statusManagementDefect?.requirePhoto && registry?.photos?.length > 0">
         <mat-expansion-panel-header>
           <mat-panel-title>
