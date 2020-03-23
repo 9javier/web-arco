@@ -745,7 +745,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     const body = {
       reference: dataWrote
     };
-    this.productsService.verifyProdcut(body).subscribe((res) => {
+    this.productsService.verifyProduct(body).subscribe((res) => {
+      console.log("TEST::res", res);
       if (res !== undefined) {
         this.intermediaryService.presentToastError('El producto solicitado ya se encuentra registrado', PositionsToast.BOTTOM).then(() => {
           this.readed = false

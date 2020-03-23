@@ -28,7 +28,7 @@ export class ProductsService {
   private relabelPrint: string = environment.apiBase + '/products/relabel/print';
   private getAllFiltersUrl: string = environment.apiBase + '/filter/prices/tariff/entities';
   private postDamagedListUrl: string = environment.apiBase + '/classification';
-  private verifyProductDefectUrl: string = environment.apiBase + '/defects/registry/veifyProduct';
+  private verifyProductDefectUrl: string = environment.apiBase + '/defects/registry/verifyProduct';
 
   constructor(
     private http: HttpClient,
@@ -96,7 +96,7 @@ export class ProductsService {
     return this.requestsProvider.put(this.postDamagedListUrl, parameters); // ToDo: Change URL Endpoint
   }
 
-  verifyProdcut(body):Observable<any>{
+  verifyProduct(body):Observable<any>{
     return this.http.post(this.verifyProductDefectUrl, body).pipe(map((response:any)=>{
       return response.data;
     }));
