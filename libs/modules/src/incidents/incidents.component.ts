@@ -25,6 +25,14 @@ import {ItemReferencesProvider} from "../../../services/src/providers/item-refer
 
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
+declare let ScanditMatrixSimple;
+
+const BACKGROUND_COLOR_ERROR: string = '#e8413e';
+const BACKGROUND_COLOR_INFO: string = '#15789e';
+const TEXT_COLOR: string = '#FFFFFF';
+const HEADER_BACKGROUND: string = '#222428';
+const HEADER_COLOR: string = '#FFFFFF';
+
 @Component({
   selector: 'suite-incidents',
   templateUrl: './incidents.component.html',
@@ -81,6 +89,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   dateOnFront = new Date();
   state: boolean;
   color: string;
+  private lastCodeScanned = '';
+  private timeMillisToResetScannedCode = 2000;
 
   constructor(
     private fb: FormBuilder,
@@ -106,7 +116,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   ngOnInit() {
-
 
     this.signatures = null;
     this.toolbarProvider.currentPage.next("Registro defectuoso")
@@ -299,13 +308,52 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         this.incidenceForm.patchValue({
           productReference: this.barcode
         })
-        this.getSizeListByReference(e);
+        this.getSizeListByReference(e, null, null);
       }
     } else {
       this.intermediary.presentToastError(`Código de producto [${e}] inválido`, PositionsToast.BOTTOM);
     }
 
   }
+
+  scanNewCode(){
+    this.lastCodeScanned = '';
+    ScanditMatrixSimple.init((response) => {
+      if(response && response.result && response.actionIonic){
+        this.executeAction(response.actionIonic, response.params);
+      } else if (response && response.barcode) {
+        if(response.barcode != this.lastCodeScanned){
+          this.lastCodeScanned = response.barcode;
+          ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
+          let code = response.barcode.data;
+          if(this.itemReferencesProvider.checkCodeValue(code) === this.itemReferencesProvider.codeValue.PRODUCT){
+            this.incidenceForm.patchValue({
+              productReference: code
+            })
+            this.getSizeListByReference(code, ()=>{
+              ScanditMatrixSimple.finish();
+              setTimeout(() => {
+                if(document.getElementById('input-ta')){
+                  document.getElementById('input-ta').focus();
+                }
+              },100);
+            }, (msg)=>{
+              ScanditMatrixSimple.setText(msg, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+              ScanditMatrixSimple.showText(true);
+              this.hideTextMessage(4000)
+            });
+
+          } else {
+            ScanditMatrixSimple.setText(`Código de producto [${code}] inválido`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+            ScanditMatrixSimple.showText(true);
+            this.hideTextMessage(4000)
+          }
+        }
+
+      }
+    }, 'Registrar defectuoso', HEADER_BACKGROUND, HEADER_COLOR);
+  }
+
   print() {
     console.log("imprimir...")
   }
@@ -739,51 +787,74 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
 
-  private getSizeListByReference(dataWrote: string) {
+  private getSizeListByReference(dataWrote: string, successCallback: () => any, errorCallback: (msg) => any) {
     const body = {
       reference: dataWrote
     };
     this.productsService.verifyProduct(body).subscribe((res) => {
-      console.log("TEST::res", res);
       if (res !== undefined) {
-        this.intermediaryService.presentToastError('El producto solicitado ya se encuentra registrado', PositionsToast.BOTTOM).then(() => {
-          this.readed = false
-        });
+        if(errorCallback){
+          errorCallback('El producto solicitado ya se encuentra registrado');
+        } else {
+          this.intermediaryService.presentToastError('El producto solicitado ya se encuentra registrado', PositionsToast.BOTTOM).then(() => {
+            this.readed = false
+          });
+        }
       } else {
         this.productsService.getInfo(dataWrote).then(async (res: ProductModel.ResponseInfo) => {
           if (res.code === 200) {
-            this.readed = true
+            this.readed = true;
+            if(successCallback){
+              successCallback();
+            }
           } else if (res.code === 0) {
-            this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
-              this.readed = false
-            });
-
+            if(errorCallback){
+              errorCallback('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.');
+            } else {
+              this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
+                this.readed = false
+              });
+            }
+          } else {
+            if(errorCallback){
+              errorCallback('No se ha podido consultar la información del producto escaneado.');
+            } else {
+              this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+                this.readed = false
+              });
+            }
+          }
+        }, (error) => {
+          console.error('Error::Subscribe::GetInfo -> ', error);
+          if(errorCallback){
+            errorCallback('No se ha podido consultar la información del producto escaneado.');
           } else {
             this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
               this.readed = false
             });
-
           }
-        }, (error) => {
-          console.error('Error::Subscribe::GetInfo -> ', error);
-          this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
-            this.readed = false
-          });
-
         })
           .catch((error) => {
             console.error('Error::Subscribe::GetInfo -> ', error);
-            this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
-              this.readed = false
-            });
+            if(errorCallback){
+              errorCallback('No se ha podido consultar la información del producto escaneado.');
+            } else {
+              this.intermediaryService.presentToastError('No se ha podido consultar la información del producto escaneado.', PositionsToast.BOTTOM).then(() => {
+                this.readed = false
+              });
+            }
           });
       }
     }, error => {
       const msg = error && error.error && error.error.errors ? error.error.errors : `Ha ocurrido un error al consultar la información del producto [${dataWrote}]`
       console.error('Error::Subscribe::GetInfo -> ', error);
-      this.intermediaryService.presentToastError(msg, PositionsToast.BOTTOM).then(() => {
-        this.readed = false
-      });
+      if(errorCallback){
+        errorCallback(msg);
+      } else {
+        this.intermediaryService.presentToastError(msg, PositionsToast.BOTTOM).then(() => {
+          this.readed = false
+        });
+      }
     });
 
   }
@@ -855,6 +926,29 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   onActiveKeyboard() {
 
+  }
+
+
+  private hideTextMessage(delay: number){
+    ScanditMatrixSimple.setTimeout("hideText", delay, "");
+  }
+
+  private executeAction(action: string, paramsString: string){
+    let params = [];
+    try{
+      params = JSON.parse(paramsString);
+    } catch (e) {
+
+    }
+
+    switch (action){
+      case 'lastCodeScannedStart':
+        this.lastCodeScanned = '';
+        break;
+      case 'hideText':
+        ScanditMatrixSimple.showText(false);
+        break;
+    }
   }
 
 }

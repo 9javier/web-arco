@@ -2,11 +2,16 @@
   <form [formGroup]="incidenceForm">
     <ng-container *ngIf="!readed;else read">
       <scanner-manual (newValue)=newValue($event) placeholder="PRODUCTO"></scanner-manual>
+      <ion-fab vertical="top" horizontal="end" class="scandit-fab">
+        <ion-fab-button (click)="scanNewCode()">
+          <i class="material-icons">crop_free</i>
+        </ion-fab-button>
+      </ion-fab>
     </ng-container>
     <ng-template #read>
       <ion-item>
         <ion-label class="label-text">Producto:</ion-label>
-        <ion-input class="input-barcode" formControlName="productReference" type="text" readonly
+        <ion-input class="input-barcode" id="input-product-reference" formControlName="productReference" type="text" readonly
           style="text-align: right;"></ion-input><br>
         <ion-input *ngIf="barcodeRoute!=null" class="input-barcode" formControlName="productReference" type="text"
           readonly style="text-align: right;">{{barcode}}</ion-input><br>
