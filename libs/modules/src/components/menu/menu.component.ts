@@ -757,6 +757,12 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      id:'incidents',
+      title: 'Defectuosos',
+      icon:'warning',
+      url: '/defect-handler'
+    },
+    {
       title: 'Configuración',
       open: false,
       type: 'wrapper',
@@ -770,34 +776,7 @@ export class MenuComponent implements OnInit {
           tooltip: 'Ajustes de configuración de la aplicación. Ej: Mac de la impresora'
         }
       ]
-    },
-   /* {
-      title: 'Manejo de defectos',
-      open: false,
-      type: 'wrapper',
-      icon: 'archive',
-      children: [
-        {
-          id:'incidents',
-          title: 'Registro defectuso',
-          icon:'warning',
-          url: '/defect-handler'
-        },
-        // {
-        //   id: 'firm',
-        //   title: 'Firma',
-        //   icon: 'color-wand',
-        //   url: '/signature'
-        // }
-      ]
-    },*/
-
-    {
-      id:'incidents',
-      title: 'Defectuosos',
-      icon:'warning',
-      url: '/defect-handler'
-    },
+    }
 
 
   ];
