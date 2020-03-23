@@ -21,6 +21,7 @@ import { PositionsToast } from '../../../services/src/models/positionsToast.type
 import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
 import { Subscription } from 'rxjs';
 import { KeyboardService } from '../../../services/src/lib/keyboard/keyboard.service';
+import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
 
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
@@ -97,6 +98,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     private alertController: AlertController,
     private toolbarProvider: ToolbarProvider,
     private dropService: DropFilesService,
+    private itemReferencesProvider: ItemReferencesProvider,
 
   ) {
 
@@ -291,22 +293,18 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   newValue(e) {
-    console.log(e);
-    this.barcode = e;
-    if (this.barcode && this.barcode.length > 0) {
-
-      this.incidenceForm.patchValue({
-        productReference: this.barcode
-      })
-      console.log(this.incidenceForm.value);
-
-
-      this.getSizeListByReference(e);
-
+    if(this.itemReferencesProvider.checkCodeValue(e) === this.itemReferencesProvider.codeValue.PRODUCT){
+      this.barcode = e;
+      if (this.barcode && this.barcode.length > 0) {
+        this.incidenceForm.patchValue({
+          productReference: this.barcode
+        })
+        this.getSizeListByReference(e);
+      }
+    } else {
+      this.intermediary.presentToastError(`Código de producto [${e}] inválido`, PositionsToast.BOTTOM);
     }
 
-    console.log("on new Value");
-    console.log(this.statusManagament);
   }
   print() {
     console.log("imprimir...")
@@ -780,6 +778,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
             });
           });
       }
+    }, error => {
+      const msg = error && error.error && error.error.errors ? error.error.errors : `Ha ocurrido un error al consultar la información del producto [${dataWrote}]`
+      console.error('Error::Subscribe::GetInfo -> ', error);
+      this.intermediaryService.presentToastError(msg, PositionsToast.BOTTOM).then(() => {
+        this.readed = false
+      });
     });
 
   }
