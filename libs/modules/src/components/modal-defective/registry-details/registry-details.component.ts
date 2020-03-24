@@ -134,21 +134,24 @@ export class RegistryDetailsComponent implements OnInit {
   }
 
   getRequireStatus(defectType: number, statusName: string) {
-    const status = this.statusManagement.classifications.find((x) => x.defectType === defectType);
-
-    switch (statusName) {
-      case 'contact':
-        return status.requireContact;
-      case 'history':
-        return status.passHistory;
-      case 'photo':
-        return status.requirePhoto;
-      case 'signature':
-        return status.requireOk;
-      case 'ticket':
-        return status.ticketEmit;
-      case 'orders':
-        return status.allowOrders;
+    if(this.statusManagement && this.statusManagement.classifications){
+      const status = this.statusManagement.classifications.find((x) => x.defectType === defectType);
+      if(status){
+        switch (statusName) {
+          case 'contact':
+            return status.requireContact;
+          case 'history':
+            return status.passHistory;
+          case 'photo':
+            return status.requirePhoto;
+          case 'signature':
+            return status.requireOk;
+          case 'ticket':
+            return status.ticketEmit;
+          case 'orders':
+            return status.allowOrders;
+        }
+      }
     }
   }
 }

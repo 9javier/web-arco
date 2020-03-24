@@ -75,7 +75,7 @@
         <ion-textarea class="text-observations" type="text" rows="4" value="{{registry?.observations}}" readonly="true">
         </ion-textarea>
       </ion-item>
-      <ion-item *ngIf="getRequireStatus(registry.statusManagementDefect.defectType, 'contact')" class="contact">
+      <ion-item *ngIf="registry && registry.statusManagementDefect && registry.statusManagementDefect.defectType && getRequireStatus(registry.statusManagementDefect.defectType, 'contact')" class="contact">
         <ion-list>
           <ion-list-header>
             <h2>Contacto</h2>
