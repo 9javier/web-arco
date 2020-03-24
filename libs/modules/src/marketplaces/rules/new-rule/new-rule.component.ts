@@ -13,8 +13,6 @@ export class NewRuleComponent implements OnInit {
 
   @ViewChild('minPriceInput') minPriceInput;
   @ViewChild('maxPriceInput') maxPriceInput;
-  // @ViewChild('stockInput') stockInput;
-  // @ViewChild('reduceStockInput') reduceStockInput;
   @ViewChild('ruleNameWindow') ruleNameWindow;
   @ViewChild('includeReferenceInput') includeReferenceInput;
   @ViewChild('excludeReferenceInput') excludeReferenceInput;
@@ -32,9 +30,6 @@ export class NewRuleComponent implements OnInit {
   private minPriceFilter;
   private maxPriceFilter;
   private priceRange;
-  // private stockFilter;
-  // private stockToReduce;
-  // private stockToReduceDescription;
   private filterDescription;
   private ruleName;
   private originalRuleName;
@@ -44,6 +39,7 @@ export class NewRuleComponent implements OnInit {
   private excludeReferenceArray;
   private referencesExceptions;
   private categorySearched;
+  private market;
 
   constructor(
     private modalController: ModalController,
@@ -56,6 +52,7 @@ export class NewRuleComponent implements OnInit {
 
   ngOnInit() {
     this.mode = this.navParams.get('mode');
+    this.market = this.navParams.get('market');
     this.numberOfProducts = 0;
     this.ruleFilterType = this.navParams.get('ruleFilterType');
     this.selectedDestinationCategories = [];
@@ -63,9 +60,6 @@ export class NewRuleComponent implements OnInit {
     this.minPriceFilter = '';
     this.maxPriceFilter = '';
     this.priceRange = '';
-    // this.stockFilter = '';
-    // this.stockToReduce = '';
-    // this.stockToReduceDescription = '';
     this.selectedCategories = [];
     this.ruleName = '';
     this.referencesExceptions = [];
@@ -296,15 +290,9 @@ export class NewRuleComponent implements OnInit {
         this.selectedCategories = this.navParams.get('selectedCategories');
         this.minPriceFilter = this.navParams.get('minPriceFilter') == 0 ? '' : this.navParams.get('minPriceFilter');
         this.maxPriceFilter = this.navParams.get('maxPriceFilter') == 0 ? '' : this.navParams.get('maxPriceFilter');
-        // this.stockFilter = this.navParams.get('stockFilter') == 0 ? '' : this.navParams.get('stockFilter');
         this.numberOfProducts = this.navParams.get('numberOfProducts');
         this.selectedDestinationCategories = this.navParams.get('selectedDestinationCategories');
-        // this.stockToReduce = this.navParams.get('stockToReduce') == 0 ? '' : this.navParams.get('stockToReduce');
         this.referencesExceptions = this.navParams.get('referencesExceptions') == [] ? [] : this.navParams.get('referencesExceptions');
-
-        // if (this.ruleFilterType == 'stock') {
-        //   this.addReduceStockFilter();
-        // }
 
         if (this.referencesExceptions && this.referencesExceptions.length) {
           for (let exception of this.referencesExceptions) {
@@ -379,10 +367,6 @@ export class NewRuleComponent implements OnInit {
               }
             }
             break;
-
-          // case 'stock':
-          //   this.addStockFilter();
-          //   break;
         }
       } else {
         this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
@@ -844,69 +828,6 @@ export class NewRuleComponent implements OnInit {
     }
   }
 
-  /*formatStock() {
-    if (this.stockFilter == '') {
-      return true;
-    }
-
-    return (/^[0-9]\d*$/.test(this.stockFilter));
-  }
-
-  blurStockInput() {
-    if (/^[0-9]\d*$/.test(this.stockFilter)) {
-      this.stockFilter = parseInt(this.stockFilter).toString();
-    } else {
-      this.stockFilter = '';
-    }
-    this.addStockFilter();
-    this.filterProducts();
-  }
-
-  addStockFilter() {
-    if (this.stockFilter != '' && /^[0-9]\d*$/.test(this.stockFilter)) {
-      this.filterDescription = 'Stock de seguridad: ' + this.stockFilter;
-    } else {
-      this.filterDescription = '';
-    }
-  }
-
-  checkEnterKeyStockInput(e) {
-    if (e.key == "Enter") {
-      this.stockInput.nativeElement.blur();
-    }
-  }
-
-  formatReduceStock() {
-    if (this.stockToReduce == '') {
-      return true;
-    }
-
-    return (/^[0-9]\d*$/.test(this.stockToReduce));
-  }
-
-  blurReduceStockInput() {
-    if (/^[0-9]\d*$/.test(this.stockToReduce)) {
-      this.stockToReduce = parseInt(this.stockToReduce).toString();
-    } else {
-      this.stockToReduce = '';
-    }
-    this.addReduceStockFilter();
-  }
-
-  addReduceStockFilter() {
-    if (this.stockToReduce != '' && /^[0-9]\d*$/.test(this.stockToReduce)) {
-      this.stockToReduceDescription = this.stockToReduce;
-    } else {
-      this.stockToReduceDescription = '';
-    }
-  }
-
-  checkEnterKeyReduceStockInput(e) {
-    if (e.key == "Enter") {
-      this.reduceStockInput.nativeElement.blur();
-    }
-  }*/
-
   selectCategoryRow(category) {
     if (this.selectedDestinationCategories.some(cat => (cat.id == category.id))) {
       for (let i = 0; i < this.selectedDestinationCategories.length; i++) {
@@ -956,15 +877,6 @@ export class NewRuleComponent implements OnInit {
         return this.selectedDestinationCategories.length;
 
         break;
-
-      // case 'stock':
-      //
-      //   if (this.stockToReduce == '' || this.stockToReduce == 0 || !this.formatReduceStock() || this.stockFilter == '' || (parseInt(this.stockToReduce) > parseInt(this.stockFilter))) {
-      //     return false;
-      //   }
-      //   return this.formatStock();
-      //
-      //   break;
 
       default:
         return false;
@@ -1055,10 +967,8 @@ export class NewRuleComponent implements OnInit {
             categoriesFilter: this.selectedCategories,
             minPriceFilter: this.minPriceFilter == '' ? '0.00' : this.minPriceFilter,
             maxPriceFilter: this.maxPriceFilter == '' ? '0.00' : this.maxPriceFilter,
-            // stockFilter: 0,
             products: this.numberOfProducts,
             destinationCategories: [],
-            // stockToReduce: 0,
             referencesExceptions: this.referencesExceptions,
             description
           };
@@ -1139,31 +1049,12 @@ export class NewRuleComponent implements OnInit {
             categoriesFilter: this.selectedCategories,
             minPriceFilter: this.minPriceFilter == '' ? '0.00' : this.minPriceFilter,
             maxPriceFilter: this.maxPriceFilter == '' ? '0.00' : this.maxPriceFilter,
-            // stockFilter: 0,
             products: this.numberOfProducts,
             destinationCategories: this.selectedDestinationCategories,
-            // stockToReduce: 0,
             referencesExceptions: this.referencesExceptions,
             description
           };
           break;
-
-        // case 'stock':
-        //   description += this.stockFilter;
-        //   rule = {
-        //     name: this.ruleName,
-        //     filterType: this.ruleFilterType,
-        //     categoriesFilter: [],
-        //     minPriceFilter: '0.00',
-        //     maxPriceFilter: '0.00',
-        //     stockFilter: parseInt(this.stockFilter),
-        //     products: this.numberOfProducts,
-        //     destinationCategories: [],
-        //     stockToReduce: parseInt(this.stockToReduce),
-        //     referencesExceptions: [],
-        //     description
-        //   };
-        //   break;
       }
 
       this.renderer.setStyle(this.ruleNameWindow.nativeElement, 'display', 'none');

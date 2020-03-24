@@ -2,7 +2,7 @@
   <div class="mp-catalog-table-wrapper">
     <table mat-table [dataSource]="catalogTableData">
 
-      <tr mat-header-row *matHeaderRowDef="catalogTableHeader; sticky: true;"></tr>
+      <tr mat-header-row *matHeaderRowDef="catalogTableHeader;" [ngClass]="catalogData.length ? '' : 'table-empty'"></tr>
       <tr mat-row *matRowDef="let row; columns: catalogTableHeader;"></tr>
 
       <ng-container matColumnDef="select">
@@ -15,47 +15,74 @@
       </ng-container>
 
       <ng-container matColumnDef="ref">
-        <th mat-header-cell *matHeaderCellDef><span>Ref.</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Ref.</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchReference"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.ref}} </td>
       </ng-container>
 
       <ng-container matColumnDef="model">
-        <th mat-header-cell *matHeaderCellDef><span>Modelo</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Modelo</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchModel"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.model}} </td>
       </ng-container>
 
       <ng-container matColumnDef="brand">
-        <th mat-header-cell *matHeaderCellDef><span>Marca</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Marca</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchBrand"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.brand}} </td>
       </ng-container>
 
       <ng-container matColumnDef="color">
-        <th mat-header-cell *matHeaderCellDef><span>Color</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Color</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchColor"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.color}} </td>
       </ng-container>
 
       <ng-container matColumnDef="family">
-        <th mat-header-cell *matHeaderCellDef><span>Familia</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Familia</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchFamily"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.family}} </td>
       </ng-container>
 
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef><span>Descripción</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Descripción</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchDescription"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.description}} </td>
       </ng-container>
 
       <ng-container matColumnDef="pvp">
-        <th mat-header-cell *matHeaderCellDef><span>PVP</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>PVP</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchPrice"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.pvp}} </td>
       </ng-container>
 
       <ng-container matColumnDef="discount">
-        <th mat-header-cell *matHeaderCellDef><span>Precio rebaja</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Precio rebaja</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchDiscount"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.discount}} </td>
       </ng-container>
 
       <ng-container matColumnDef="units">
-        <th mat-header-cell *matHeaderCellDef><span>Uds.</span></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span>Uds.</span>
+          <input matInput type="text" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchStock"/>
+        </th>
         <td mat-cell *matCellDef="let product"> {{product.units}} </td>
       </ng-container>
 
