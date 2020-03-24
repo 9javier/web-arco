@@ -1,5 +1,7 @@
-import {WarehouseModel} from "@suite/services";
+import {ModelModel, SizeModel, WarehouseModel} from "@suite/services";
 import Warehouse = WarehouseModel.Warehouse;
+import Model = ModelModel.Model;
+import Size = SizeModel.Size;
 
 export namespace DeliveryRequestModel {
 
@@ -18,7 +20,9 @@ export namespace DeliveryRequestModel {
     warehouseId: number,
     productId: number,
     workWaveId: number,
-    selected?: boolean
+    selected?: boolean,
+    model?: Model,
+    size?: Size
   }
 
 }

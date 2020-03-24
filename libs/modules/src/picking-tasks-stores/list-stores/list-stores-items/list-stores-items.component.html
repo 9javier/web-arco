@@ -37,8 +37,9 @@
           <p>Cantidad: <b>{{ line.qtyLineRequests }}</b> </p>
         </ion-label>
         <ion-label *ngIf="!line.employee">
-          <h2>Referencia: {{ line.deliveryRequestExternalId }}</h2>
-          <p *ngIf="line.destinyShop">Destino: {{ line.destinyShop.name}}</p>
+          <h2>Referencia: <b>{{ line.deliveryRequestExternalId }}</b></h2>
+          <p>Modelo: <b>{{ line.model.name }}</b>, Talla: <b>{{ line.size.name }}</b></p>
+          <p *ngIf="line.destinyShop">Destino: <b>{{ line.destinyShop.name}}</b></p>
         </ion-label>
       </ion-item>
     </ion-list>
