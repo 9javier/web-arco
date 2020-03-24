@@ -208,6 +208,7 @@ export class DefectHandlerComponent implements OnInit {
     let modal = (await this.modalController.create({
       component: DetailsRegisterComponent,
       componentProps: {
+        id: registry.id,
         productId: registry.product.id,
         showChangeState: true
       }

@@ -265,6 +265,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
         // this.incidenceForm.patchValue({ gestionChange: resp.statusManagementDefect.id })
         this.incidenceForm.patchValue({
+          id: resp.id,
+          productId: resp.product.id,
           productReference: resp.product.reference,
           barcode: resp.product.reference,
           registerDate: Date.now(),

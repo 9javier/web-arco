@@ -181,6 +181,8 @@ export class ChangeState2Component implements OnInit {
     });
 
     this.incidenceForm = this.fb.group({
+      id: [this.registry.data.id],
+      productId: [this.registry.data.product.id],
       productReference: [this.registry.data.product.reference],
       dateDetection: [this.date],
       observations: [this.registry.data.observations],

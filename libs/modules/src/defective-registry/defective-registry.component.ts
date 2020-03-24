@@ -560,6 +560,7 @@ export class DefectiveRegistryComponent implements OnInit {
     const modal = await this.modalController.create({
       component: RegistryDetailsComponent,
       componentProps: {
+        id: registry.id,
         productId: registry.product.id,
         showChangeState: true,
       },
