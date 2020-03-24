@@ -8,7 +8,7 @@ import { environment } from '@suite/services';
   styleUrls: ['./modal-review.component.scss']
 })
 export class ModalReviewComponent implements OnInit {
-  private baseUrlPhoto = environment.apiBasePhoto;
+  baseUrlPhoto = environment.apiBasePhoto;
   imgSrc
   constructor(private modalController: ModalController,
     public navParams: NavParams) {
