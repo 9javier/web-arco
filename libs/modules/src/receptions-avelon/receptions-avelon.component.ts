@@ -60,7 +60,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }[];
   response: ReceptionAvelonModel.Reception;
   oldBrands: ReceptionAvelonModel.Data[] = [];
-  subscriptions: Subscription;
+  subscriptions: Subscription[] = [];
   providers: Array<any>;
   isReceptionStarted: boolean;
   expedition: string;
@@ -120,7 +120,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.isReceptionStarted = false;
     this.deliveryNote = null;
     this.expeditionStarted = null;
-    this.subscriptions = this.reception.getAllProviders().subscribe(
+    this.subscriptions.push(this.reception.getAllProviders().subscribe(
       (data: Array<ReceptionAvelonModel.Providers>) => {
         this.providers = data;
         this.providersAux = data;
@@ -137,14 +137,20 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           );
         this.intermediaryService.dismissLoading();
       }
-    );
+    ));
     this.stateExpeditionAvelonService.getIndex().subscribe(response=>{
       this.stateExpeditionAvelonProvider.states = response;
     });
   }
 
   ngOnDestroy() {
-    this.subscriptions.unsubscribe();
+    for (let subscription of this.subscriptions) {
+      try {
+        subscription.unsubscribe();
+      } catch (error) {
+        console.error('Error to try unsubscribe of some observable');
+      }
+    }
     clearInterval(this.interval);
   }
 
@@ -485,8 +491,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   listSelected() {
-    this.reception.getEmitList().subscribe((event: any) => {
-
+    this.subscriptions.push(this.reception.getEmitList().subscribe((event: any) => {
       switch (event.type) {
         case 'brands':
           if (event.dato.selected) {
@@ -549,7 +554,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           break;
       }
 
-    });
+    }));
   }
 
   getModelAndColorColors(brandId: number){
