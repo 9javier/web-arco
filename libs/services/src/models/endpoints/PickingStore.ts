@@ -54,6 +54,13 @@ export namespace PickingStoreModel {
     errors: any;
   }
 
+  export interface StoreOnlineRequests extends HttpRequestModel.Response {
+    data: StoresLineRequestsModel.StoreOnlineRequests;
+    message: string;
+    code: number;
+    errors: any;
+  }
+
   export interface Pagination {
     page: number;
     limit: number;

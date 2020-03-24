@@ -1,5 +1,6 @@
 import {ModelModel, SizeModel, WarehouseModel} from "@suite/services";
 import {EmployeeModel} from "./Employee";
+import {DeliveryRequestModel} from "./DeliveryRequest";
 
 export namespace StoresLineRequestsModel {
 
@@ -18,6 +19,28 @@ export namespace StoresLineRequestsModel {
     warehouse: WarehouseModel.Warehouse,
     lines: OrderRequests[],
     selected?: boolean
+  }
+
+  export interface StoreRequests {
+    lines: OrderRequests[],
+    selected: boolean
+  }
+
+  export interface RequestGroup {
+    name: string,
+    lines: Array<DeliveryRequestModel.DeliveryRequest | OrderRequests>,
+    selected: boolean
+  }
+
+  export interface StoreOnlineRequests {
+    store: StoreRequests,
+    onlineHomeRequests: DeliveryRequestModel.DeliveryRequest[],
+    onlineStoreRequests: DeliveryRequestModel.DeliveryRequest[]
+  }
+
+  export interface RequestGroupSelected {
+    selected: boolean,
+    requestGroup: RequestGroup
   }
 
   export interface StoresOrderRequestsSelected {

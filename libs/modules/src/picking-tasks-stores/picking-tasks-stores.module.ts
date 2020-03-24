@@ -7,16 +7,18 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { PickingTasksStoresRoutingModule } from "./picking-tasks-stores-routing.module";
 import { PickingTasksStoresComponent } from "./picking-tasks-stores.component";
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
-import {ListPickingTasksTemplateComponent} from "./list/list.component";
-import {PickingTaskTemplateComponent} from "./list/list-items/list-items.component";
 import {ListStoresPickingTasksTemplateComponent} from "./list-stores/list-stores.component";
 import {StoresPickingTaskTemplateComponent} from "./list-stores/list-stores-items/list-stores-items.component";
 import {StoresPickingTaskInitiatedTemplateComponent} from "./list-stores/list-stores-initiated/list-stores-initiated.component";
-import {PopoverListStoresComponent} from "./list/list-items/popover-list-stores/popover-list-stores.component";
 import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
-  declarations: [PickingTasksStoresComponent, ListPickingTasksTemplateComponent, PickingTaskTemplateComponent, ListStoresPickingTasksTemplateComponent, StoresPickingTaskTemplateComponent, StoresPickingTaskInitiatedTemplateComponent, PopoverListStoresComponent],
+  declarations: [
+    PickingTasksStoresComponent,
+    ListStoresPickingTasksTemplateComponent,
+    StoresPickingTaskTemplateComponent,
+    StoresPickingTaskInitiatedTemplateComponent
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -33,7 +35,9 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatTooltipModule
   ],
   entryComponents: [
-    ListPickingTasksTemplateComponent, PickingTaskTemplateComponent, ListStoresPickingTasksTemplateComponent, StoresPickingTaskTemplateComponent, StoresPickingTaskInitiatedTemplateComponent, PopoverListStoresComponent
+    ListStoresPickingTasksTemplateComponent,
+    StoresPickingTaskTemplateComponent,
+    StoresPickingTaskInitiatedTemplateComponent
   ]
 })
 export class PickingTasksStoresModule {}

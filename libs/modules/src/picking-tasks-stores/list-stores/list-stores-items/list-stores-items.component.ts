@@ -9,8 +9,8 @@ import {DateTimeParserService} from "../../../../../services/src/lib/date-time-p
 })
 export class StoresPickingTaskTemplateComponent implements OnInit {
 
-  @Input() orderRequestByStore: StoresLineRequestsModel.StoresOrderRequests = null;
-  @Output() selectStore = new EventEmitter<StoresLineRequestsModel.StoresOrderRequestsSelected>();
+  @Input() requestGroup: StoresLineRequestsModel.RequestGroup = null;
+  @Output() selectGroup = new EventEmitter<StoresLineRequestsModel.RequestGroupSelected>();
 
   private totalRequestsSelected: number = 0;
 
@@ -18,17 +18,15 @@ export class StoresPickingTaskTemplateComponent implements OnInit {
     public dateTimeParserService: DateTimeParserService
   ) {}
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   getRequestsSelected() : string {
-    if (this.orderRequestByStore) {
-      let requestsSelected = this.orderRequestByStore.lines.filter(request => request.selected).length;
+    if (this.requestGroup) {
+      let requestsSelected = this.requestGroup.lines.filter(request => request.selected).length;
       if (requestsSelected > 0) {
-        return `${this.orderRequestByStore.lines.filter(request => request.selected).length} / ${this.orderRequestByStore.lines.length}`;
+        return `${this.requestGroup.lines.filter(request => request.selected).length} / ${this.requestGroup.lines.length}`;
       } else {
-        return `${this.orderRequestByStore.lines.length}`;
+        return `${this.requestGroup.lines.length}`;
       }
     } else {
       return '0';
@@ -39,26 +37,27 @@ export class StoresPickingTaskTemplateComponent implements OnInit {
     $event.stopPropagation();
   }
 
-  changeSelectStore() {
-    this.selectStore.next({store: this.orderRequestByStore, selected: this.orderRequestByStore.selected});
-    for (let request of this.orderRequestByStore.lines) {
-      request.selected = this.orderRequestByStore.selected;
+  changeSelectGroup() {
+    this.selectGroup.next({selected: this.requestGroup.selected, requestGroup: this.requestGroup});
+    for (let line of this.requestGroup.lines) {
+      line.selected = this.requestGroup.selected;
     }
-
-    if (this.orderRequestByStore.selected) {
-      this.totalRequestsSelected = this.orderRequestByStore.lines.length;
+    if (this.requestGroup.selected) {
+      this.totalRequestsSelected = this.requestGroup.lines.length;
     } else {
       this.totalRequestsSelected = 0;
     }
   }
 
-  changeSelectRequest(data, lineRequest: StoresLineRequestsModel.OrderRequests) {
-    this.totalRequestsSelected = this.orderRequestByStore.lines.filter(orderRequest => orderRequest.selected).length;
-    if (data) {
-      this.orderRequestByStore.selected = true;
+  changeSelectRequest(event) {
+    this.totalRequestsSelected = this.requestGroup.lines.filter(line => line.selected).length;
+    if (event) {
+      this.requestGroup.selected = true;
+      this.selectGroup.next({selected: this.requestGroup.selected, requestGroup: this.requestGroup});
     } else {
       if (this.totalRequestsSelected == 0) {
-        this.orderRequestByStore.selected = false;
+        this.requestGroup.selected = false;
+        this.selectGroup.next({selected: this.requestGroup.selected, requestGroup: this.requestGroup});
       }
     }
   }

@@ -4,8 +4,8 @@ import {PickingScanditService} from "../../../../services/src/lib/scandit/pickin
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 import {PickingStoreService} from "../../../../services/src/lib/endpoint/picking-store/picking-store.service";
 import {PickingStoreModel} from "../../../../services/src/models/endpoints/PickingStore";
-import {WarehouseModel} from "@suite/services";
 import {Events} from "@ionic/angular";
+import RequestGroup = StoresLineRequestsModel.RequestGroup;
 
 @Component({
   selector: 'list-stores-picking-tasks-template',
@@ -14,13 +14,15 @@ import {Events} from "@ionic/angular";
 })
 export class ListStoresPickingTasksTemplateComponent implements OnInit {
 
-  public orderRequestsByStores: StoresLineRequestsModel.StoresOrderRequests[] = [];
-  public stores: WarehouseModel.Warehouse[] = [];
-  public lineRequests: StoresLineRequestsModel.OrderRequests[] = [];
-  private allStoresSelected: boolean = false;
-  private qtyStoresSelected: number = 0;
-  public isLoadingData: boolean = true;
-  public isPickingInitiated: boolean = false;
+  requestGroups: {
+    store: RequestGroup,
+    onlineHome: RequestGroup,
+    onlineStore: RequestGroup
+  };
+  allGroupsSelected: boolean;
+  amountGroupsSelected: number;
+  isLoadingData: boolean;
+  isPickingInitiated: boolean;
 
   constructor(
     private events: Events,
@@ -30,94 +32,103 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadRejectionReasons();
-    this.loadPossibleLineRequestsByStores();
-    this.allStoresSelected = false;
-    this.qtyStoresSelected = 0;
-  }
-
-  private loadRejectionReasons() {
-    this.pickingStoreService
-      .getLoadRejectionReasons()
-      .then((res: PickingStoreModel.ResponseLoadRejectionReasons) => {
-        let resData: Array<PickingStoreModel.RejectionReasons> = res.data;
-        this.pickingProvider.listRejectionReasonsToStorePickings = resData;
-      }, (error) => {
-        console.error('Error::Subscribe::pickingStoreService::getLoadRejectionReasons', error);
-      })
-      .catch((error) => {
-        console.error('Error::Subscribe::pickingStoreService::getLoadRejectionReasons', error);
-      });
-  }
-
-  private loadPossibleLineRequestsByStores() {
-    this.pickingStoreService
-      .getLineRequests()
-      .then((res: PickingStoreModel.ResponseOrderRequests) => {
-        if ((res.code == 200 || res.code == 201) && res.data && res.data.length > 0) {
-          this.orderRequestsByStores = res.data;
-          this.stores = [];
-          this.lineRequests = [];
-          this.isLoadingData = false;
-          this.isPickingInitiated = false;
-        } else {
-          this.orderRequestsByStores = [];
-          this.stores = [];
-          this.lineRequests = [];
-          this.isLoadingData = false;
-          console.error('Error Subscribe::List line-requests by store::', res);
-        }
-      }, (error) => {
-        this.orderRequestsByStores = [];
-        this.stores = [];
-        this.lineRequests = [];
-        this.isLoadingData = false;
-        console.error('Error Subscribe::List line-requests by store::', error);
-      })
-      .catch((error) => {
-        this.orderRequestsByStores = [];
-        this.stores = [];
-        this.lineRequests = [];
-        this.isLoadingData = false;
-        console.error('Error Subscribe::List line-requests by store::', error);
-      });
-  }
-
-  selectStore(data: StoresLineRequestsModel.StoresOrderRequestsSelected) {
-    data.store.selected = data.selected;
-    if (data.store.selected) {
-      this.qtyStoresSelected++;
-    } else {
-      this.qtyStoresSelected--;
-    }
-    this.allStoresSelected = this.qtyStoresSelected == this.orderRequestsByStores.length;
-  }
-
-  checkLineRequestSelected(): boolean {
-    let someSelected = this.orderRequestsByStores.filter((store) => {
-      let returnValue = false;
-      if (!store.selected) {
-        returnValue = !!store.lines.find(request => request.selected);
-      } else {
-        returnValue = store.selected;
+    this.requestGroups = {
+      store: {
+        name: 'Tiendas',
+        lines: [],
+        selected: false
+      },
+      onlineHome: {
+        name: 'Online Domicilio',
+        lines: [],
+        selected: false
+      },
+      onlineStore: {
+        name: 'Online Tienda',
+        lines: [],
+        selected: false
       }
-      return returnValue;
-    });
-    return this.isPickingInitiated || (!this.isPickingInitiated && !!(someSelected.length));
+    };
+    this.allGroupsSelected = true;
+    this.amountGroupsSelected = 0;
+    this.isLoadingData = true;
+    this.isPickingInitiated = false;
+    this.loadRequestGroups();
+  }
+
+  private loadRequestGroups() {
+    this.pickingStoreService.getLineRequestsStoreOnline().then((response: PickingStoreModel.StoreOnlineRequests) => {
+      if (response.code == 200 || response.code == 201) {
+        if(response.data.store.lines.length > 0) {
+          this.requestGroups.store.lines = response.data.store.lines;
+          this.requestGroups.store.selected = response.data.store.selected;
+          if(!this.requestGroups.store.selected){
+            this.allGroupsSelected = false;
+          }
+        }
+        if(response.data.onlineHomeRequests.length > 0){
+          this.requestGroups.onlineHome.selected = true;
+          for(let request of response.data.onlineHomeRequests){
+            request.selected = true;
+            this.requestGroups.onlineHome.lines.push(request);
+          }
+        }
+        if(response.data.onlineStoreRequests.length > 0){
+          this.requestGroups.onlineStore.selected = true;
+          for(let request of response.data.onlineStoreRequests){
+            request.selected = true;
+            this.requestGroups.onlineStore.lines.push(request);
+          }
+        }
+        this.isLoadingData = false;
+      } else {
+        console.error(response);
+      }
+    }, error => console.error(error)).catch(error => console.error(error));
+  }
+
+  selectGroup(requestGroupSelected: StoresLineRequestsModel.RequestGroupSelected) {
+    requestGroupSelected.requestGroup.selected = requestGroupSelected.selected;
+    if (requestGroupSelected.requestGroup.selected) {
+      this.amountGroupsSelected++;
+    } else {
+      this.amountGroupsSelected--;
+    }
+    this.allGroupsSelected = this.amountGroupsSelected == 3;
+  }
+
+  checkRequestSelected(): boolean {
+    let anySelected: boolean = false;
+    if (this.requestGroups.store.selected || this.requestGroups.onlineHome.selected || this.requestGroups.onlineStore.selected) {
+      anySelected = true;
+    }else{
+      for(let line of this.requestGroups.store.lines){
+        if(line.selected){
+          anySelected = true;
+          break;
+        }
+      }
+      if(!anySelected){
+        for(let line of this.requestGroups.onlineHome.lines){
+          if(line.selected){
+            anySelected = true;
+            break;
+          }
+        }
+        if(!anySelected){
+          for(let line of this.requestGroups.onlineStore.lines){
+            if(line.selected){
+              anySelected = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    return this.isPickingInitiated || (!this.isPickingInitiated && anySelected);
   }
 
   initPicking() {
-    let listStoresIdsToStorePickings: number[] = [];
-    let listRequestsIdsToStorePickings: number[] = [];
-
-    let listOrdersRequestsToStorePickings = this.orderRequestsByStores.filter((store) => store.selected);
-    for (let storeLineRequest of listOrdersRequestsToStorePickings) {
-      listStoresIdsToStorePickings = listStoresIdsToStorePickings.concat(storeLineRequest.warehouse.id);
-      listRequestsIdsToStorePickings = listRequestsIdsToStorePickings.concat(storeLineRequest.lines.filter(orderRequest => orderRequest.selected).map(orderRequest => orderRequest.request.id));
-    }
-    this.pickingProvider.listStoresIdsToStorePicking = listStoresIdsToStorePickings;
-    this.pickingProvider.listRequestsIdsToStorePicking = listRequestsIdsToStorePickings;
-
     let filtersToGetProducts: PickingStoreModel.ParamsFiltered = {
       orderbys: [],
       sizes: [],
@@ -127,48 +138,44 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
     };
 
     if ((<any>window).cordova) {
-      this.pickingStoreService
-        .postPickingStoreChangeStatus({
-          status: 2,
-          warehouseIds: this.pickingProvider.listStoresIdsToStorePicking,
-          requestIds: this.pickingProvider.listRequestsIdsToStorePicking
-        })
-        .then((res: PickingStoreModel.ResponseChangeStatus) => {
-          if (res.code == 200 || res.code == 201) {
-            this.pickingStoreService
-              .postLineRequestFiltered(filtersToGetProducts)
-              .then((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
-                if (res.code == 200 || res.code == 201) {
-                  this.pickingProvider.listProductsToStorePickings = res.data.pending;
-                  this.pickingProvider.listProductsProcessedToStorePickings = res.data.processed;
-                  this.pickingProvider.listFiltersPicking = res.data.filters;
-                  this.pickingScanditService.picking();
-                }
-              });
-          } else {
-            console.error('Error Subscribe::Change status for picking-store::', res);
-          }
-        }, (error) => {
-          console.error('Error Subscribe::Change status for picking-store::', error);
-        })
-        .catch((error) => {
-          console.error('Error Subscribe::Change status for picking-store::', error);
-        });
+      this.pickingStoreService.postPickingStoreChangeStatus({
+        status: 2,
+        warehouseIds: this.pickingProvider.listStoresIdsToStorePicking,
+        requestIds: this.pickingProvider.listRequestsIdsToStorePicking
+      }).then((response: PickingStoreModel.ResponseChangeStatus) => {
+        if (response.code == 200 || response.code == 201) {
+          this.pickingStoreService.postLineRequestFiltered(filtersToGetProducts).then(async (res: PickingStoreModel.ResponseLineRequestsFiltered) => {
+            if (res.code == 200 || res.code == 201) {
+              this.pickingProvider.listProductsToStorePickings = res.data.pending;
+              this.pickingProvider.listProductsProcessedToStorePickings = res.data.processed;
+              this.pickingProvider.listFiltersPicking = res.data.filters;
+              await this.pickingScanditService.picking();
+            }
+          });
+        } else {
+          console.error(response);
+        }
+      },error => console.error(error)).catch(error => console.error(error));
     }
   }
 
-  selectAllStores(selected) {
+  selectAllGroups(selected: boolean) {
     if (selected) {
-      this.qtyStoresSelected = this.orderRequestsByStores.length;
+      this.amountGroupsSelected = 3;
     } else {
-      this.qtyStoresSelected = 0;
+      this.amountGroupsSelected = 0;
     }
-
-    for (let iStore in this.orderRequestsByStores) {
-      this.orderRequestsByStores[iStore].selected = selected;
-      for (let lineRequest of this.orderRequestsByStores[iStore].lines) {
-        lineRequest.selected = selected;
-      }
+    this.requestGroups.store.selected = selected;
+    for(let line of this.requestGroups.store.lines){
+      line.selected = selected;
+    }
+    this.requestGroups.onlineHome.selected = selected;
+    for(let line of this.requestGroups.onlineHome.lines){
+      line.selected = selected;
+    }
+    this.requestGroups.onlineStore.selected = selected;
+    for(let line of this.requestGroups.onlineStore.lines){
+      line.selected = selected;
     }
   }
 

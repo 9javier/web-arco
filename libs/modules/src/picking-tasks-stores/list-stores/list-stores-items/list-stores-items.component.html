@@ -1,11 +1,11 @@
 <mat-accordion>
-  <div class="row-no-requests" *ngIf="!orderRequestByStore.lines">
+  <div class="row-no-requests" *ngIf="!requestGroup.lines">
     <ion-row>
       <ion-col size="1" class="centered-col">
         <ion-checkbox disabled></ion-checkbox>
       </ion-col>
       <ion-col size="7" class="centered-col">
-        <mat-panel-title>{{orderRequestByStore.warehouse.name}}</mat-panel-title>
+        <mat-panel-title>{{requestGroup.name}}</mat-panel-title>
       </ion-col>
       <ion-col size="4" class="qty-col centered-col">
         <mat-panel-description>Peticiones: 0</mat-panel-description>
@@ -13,14 +13,14 @@
     </ion-row>
   </div>
 
-  <mat-expansion-panel *ngIf="orderRequestByStore.lines">
+  <mat-expansion-panel *ngIf="requestGroup.lines">
     <mat-expansion-panel-header>
       <ion-row>
         <ion-col size="1" class="centered-col">
-          <ion-checkbox [(ngModel)]="orderRequestByStore.selected" (click)="avoidPropagation($event)" (ngModelChange)="changeSelectStore()"></ion-checkbox>
+          <ion-checkbox [(ngModel)]="requestGroup.selected" (click)="avoidPropagation($event)" (ngModelChange)="changeSelectGroup()"></ion-checkbox>
         </ion-col>
         <ion-col size="7" class="centered-col">
-          <mat-panel-title>{{orderRequestByStore.warehouse.reference}} {{orderRequestByStore.warehouse.name}}</mat-panel-title>
+          <mat-panel-title>{{requestGroup.name}}</mat-panel-title>
         </ion-col>
         <ion-col size="4" class="qty-col centered-col">
           <mat-panel-description>Peticiones: {{getRequestsSelected()}}</mat-panel-description>
@@ -28,19 +28,17 @@
       </ion-row>
     </mat-expansion-panel-header>
 
-    <ion-list *ngIf="orderRequestByStore.lines">
-      <ion-item *ngFor="let orderRequest of orderRequestByStore.lines">
-        <ion-checkbox [(ngModel)]="orderRequest.selected" (ngModelChange)="changeSelectRequest($event, orderRequest)"></ion-checkbox>
-        <ion-label>
-          <h2>
-            {{ orderRequest.employee.name + ' ' + orderRequest.employee.surname }}
-          </h2>
-          <p>
-            {{ dateTimeParserService.dateTime(orderRequest.request.date) }}
-          </p>
-          <p>
-            Cantidad: <b>{{ orderRequest.qtyLineRequests }}</b>
-          </p>
+    <ion-list *ngIf="requestGroup.lines">
+      <ion-item *ngFor="let line of requestGroup.lines">
+        <ion-checkbox [(ngModel)]="line.selected" (ngModelChange)="changeSelectRequest($event)"></ion-checkbox>
+        <ion-label *ngIf="line.employee">
+          <h2>{{ line.employee.name + ' ' + line.employee.surname }}</h2>
+          <p>{{ dateTimeParserService.dateTime(line.request.date) }}</p>
+          <p>Cantidad: <b>{{ line.qtyLineRequests }}</b> </p>
+        </ion-label>
+        <ion-label *ngIf="!line.employee">
+          <h2>Referencia: {{ line.deliveryRequestExternalId }}</h2>
+          <p *ngIf="line.destinyShop">Destino: {{ line.destinyShop.name}}</p>
         </ion-label>
       </ion-item>
     </ion-list>
