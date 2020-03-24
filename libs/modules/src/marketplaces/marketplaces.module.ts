@@ -18,12 +18,14 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import { CatalogComponent } from './catalog/catalog.component';
 import { CatalogMarketplacesComponent } from './catalog-marketplaces/catalog-marketplaces.component';
 import { StorePriorityComponent } from './store-priority/store-priority.component';
+import { LogisticsOperators } from './logistics-operators/logistics-operators.component';
 import { MappingsComponent } from './mappings/mappings.component';
 import { RulesComponent } from './rules/rules.component';
 import { RulesModule } from './rules/rules.module';
 import { SecurityStocksComponent } from './security-stocks/security-stocks.component';
 import {CategorizeProductsModule} from "./catalog/modals/categorize-products/categorize-products.module";
 import {FormsModule} from "@angular/forms";
+import {LogisticsOperatorsModule} from "./logistics-operators/logistics-operators.module";
 
 const routes: Routes = [
   {
@@ -74,6 +76,14 @@ const routes: Routes = [
     data: {
       name: 'Prioridad de Tienda'
     }
+  },
+
+  {
+    path: 'logistics-operators',
+    component: LogisticsOperators,
+    data: {
+      name: 'Parametrización logística'
+    }
   }
 ];
 
@@ -85,7 +95,8 @@ const routes: Routes = [
     MappingsComponent,
     RulesComponent,
     SecurityStocksComponent,
-    StorePriorityComponent
+    StorePriorityComponent,
+    LogisticsOperators
   ],
   entryComponents: [MarketplacesComponent],
   imports: [
@@ -102,7 +113,7 @@ const routes: Routes = [
     MatSelectModule,
     RulesModule,
     CategorizeProductsModule,
-    RulesModule,
+    LogisticsOperatorsModule,
     MatListModule,
     MatPaginatorModule,
     FormsModule

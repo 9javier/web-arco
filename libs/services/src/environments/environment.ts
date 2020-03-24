@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
   apiBase: 'http://localhost:8081/api',
+  apiLogisticOperator: 'http://localhost:3003/api',
   apiSorter: 'http://localhost:8081/api',
   urlBase: 'http://localhost:8081',
   apiRule: "https://localhost:5001",

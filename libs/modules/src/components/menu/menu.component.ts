@@ -344,7 +344,13 @@ export class MenuComponent implements OnInit {
           id: 'store-priority',
           url: '/marketplaces/store-priority',
           icon: 'ios-albums'
-        }
+        },
+        {
+          title: 'Parametrización Logística',
+          id: 'logistics-operators',
+          url: '/marketplaces/logistics-operators',
+          icon: 'cube'
+        },
       ]
     },
   ];
