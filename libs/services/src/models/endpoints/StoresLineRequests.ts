@@ -66,7 +66,8 @@ export namespace StoresLineRequestsModel {
     employee: EmployeeModel.Employee,
     request: Request,
     qtyLineRequests: number,
-    selected: boolean
+    selected: boolean,
+    warehouseId: number
   }
 
   export interface Request {

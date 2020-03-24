@@ -6,6 +6,7 @@ import {PickingStoreService} from "../../../../services/src/lib/endpoint/picking
 import {PickingStoreModel} from "../../../../services/src/models/endpoints/PickingStore";
 import {Events} from "@ionic/angular";
 import RequestGroup = StoresLineRequestsModel.RequestGroup;
+import OrderRequests = StoresLineRequestsModel.OrderRequests;
 
 @Component({
   selector: 'list-stores-picking-tasks-template',
@@ -129,33 +130,42 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
   }
 
   initPicking() {
-    let filtersToGetProducts: PickingStoreModel.ParamsFiltered = {
-      orderbys: [],
-      sizes: [],
-      colors: [],
-      models: [],
-      brands: []
-    };
+    if(this.requestGroups.store.lines.length > 0 && this.requestGroups.store.selected){
+      this.pickingProvider.listStoresIdsToStorePicking = this.requestGroups.store.lines.filter(line => line.selected).map((line: OrderRequests) => line.warehouseId);
+      this.pickingProvider.listRequestsIdsToStorePicking = this.requestGroups.store.lines.filter(line => line.selected).map((line: OrderRequests) => line.request.id);
 
-    if ((<any>window).cordova) {
-      this.pickingStoreService.postPickingStoreChangeStatus({
-        status: 2,
-        warehouseIds: this.pickingProvider.listStoresIdsToStorePicking,
-        requestIds: this.pickingProvider.listRequestsIdsToStorePicking
-      }).then((response: PickingStoreModel.ResponseChangeStatus) => {
-        if (response.code == 200 || response.code == 201) {
-          this.pickingStoreService.postLineRequestFiltered(filtersToGetProducts).then(async (res: PickingStoreModel.ResponseLineRequestsFiltered) => {
-            if (res.code == 200 || res.code == 201) {
-              this.pickingProvider.listProductsToStorePickings = res.data.pending;
-              this.pickingProvider.listProductsProcessedToStorePickings = res.data.processed;
-              this.pickingProvider.listFiltersPicking = res.data.filters;
-              await this.pickingScanditService.picking();
-            }
-          });
-        } else {
-          console.error(response);
-        }
-      },error => console.error(error)).catch(error => console.error(error));
+      let filtersToGetProducts: PickingStoreModel.ParamsFiltered = {
+        orderbys: [],
+        sizes: [],
+        colors: [],
+        models: [],
+        brands: []
+      };
+
+      if ((<any>window).cordova) {
+        this.pickingStoreService.postPickingStoreChangeStatus({
+          status: 2,
+          warehouseIds: this.pickingProvider.listStoresIdsToStorePicking,
+          requestIds: this.pickingProvider.listRequestsIdsToStorePicking
+        }).then((response: PickingStoreModel.ResponseChangeStatus) => {
+          if (response.code == 200 || response.code == 201) {
+            this.pickingStoreService.postLineRequestFiltered(filtersToGetProducts).then(async (res: PickingStoreModel.ResponseLineRequestsFiltered) => {
+              if (res.code == 200 || res.code == 201) {
+                this.pickingProvider.listProductsToStorePickings = res.data.pending;
+                this.pickingProvider.listProductsProcessedToStorePickings = res.data.processed;
+                this.pickingProvider.listFiltersPicking = res.data.filters;
+                await this.pickingScanditService.picking();
+              } else {
+                console.error(res);
+              }
+            },error => console.error(error)).catch(error => console.error(error));
+          } else {
+            console.error(response);
+          }
+        },error => console.error(error)).catch(error => console.error(error));
+      }
+    }else{
+
     }
   }
 
