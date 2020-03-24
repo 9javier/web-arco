@@ -410,6 +410,12 @@ export class MenuComponent implements OnInit {
           id: 'brands-enabled-reception',
           url: '/brands-enabled-reception',
           icon: 'cog'
+        },
+        {
+          title: 'Incidencias',
+          id: 'incidences-reception',
+          url: '/incidences-reception',
+          icon: 'notifications'
         }
       ]
     },

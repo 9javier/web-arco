@@ -352,6 +352,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'incidences-reception',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/incidences-reception-list/incidences-reception-list.module#IncidencesReceptionListModule',
+    data: {
+      name: 'Incidencias'
+    }
+  },
+  {
     path: 'prices',
     redirectTo: 'products',
     data: {
@@ -427,7 +435,7 @@ const routes: Routes = [
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/receptionss-avelon/receptionss-avelon.module#ReceptionssAvelonModule',
     data: {
-      name: 'Recepciones2'
+      name: 'Recepciones'
     }
   },
   {
