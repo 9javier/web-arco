@@ -3,6 +3,8 @@ import {ShoesPickingModel} from "../../models/endpoints/ShoesPicking";
 import {PickingModel} from "../../models/endpoints/Picking";
 import {StoresLineRequestsModel} from "../../models/endpoints/StoresLineRequests";
 import {PickingStoreModel} from "../../models/endpoints/PickingStore";
+import {DeliveryRequestModel} from "../../models/endpoints/DeliveryRequest";
+import DeliveryRequest = DeliveryRequestModel.DeliveryRequest;
 
 @Injectable({
   providedIn: 'root'
@@ -164,6 +166,22 @@ export class PickingProvider {
   }
   set listProductsToStorePickings(value: StoresLineRequestsModel.LineRequests[]) {
     this._listProductsToStorePickings = value;
+  }
+
+  private _deliveryRequestsHome: DeliveryRequest[] = null;
+  get deliveryRequestsHome(): DeliveryRequest[] {
+    return this._deliveryRequestsHome;
+  }
+  set deliveryRequestsHome(value: DeliveryRequest[]) {
+    this._deliveryRequestsHome = value;
+  }
+
+  private _deliveryRequestsStore: DeliveryRequest[] = null;
+  get deliveryRequestsStore(): DeliveryRequest[] {
+    return this._deliveryRequestsStore;
+  }
+  set deliveryRequestsStore(value: DeliveryRequest[]) {
+    this._deliveryRequestsStore = value;
   }
 
   private _listProductsProcessedToStorePickings: StoresLineRequestsModel.LineRequests[] = null;

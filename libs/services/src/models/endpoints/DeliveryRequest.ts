@@ -6,6 +6,8 @@ import Size = SizeModel.Size;
 export namespace DeliveryRequestModel {
 
   export interface DeliveryRequest {
+    createdAt: string,
+    updatedAt: string,
     id: number,
     reference: number,
     deliveryRequestId: number,
@@ -13,16 +15,16 @@ export namespace DeliveryRequestModel {
     status: number,
     shippingMode: number,
     customerOrderEntryId: number,
-    assignedShop: Warehouse,
-    destinyShop: Warehouse,
     modelId: number,
     sizeId: number,
     warehouseId: number,
     productId: number,
     workWaveId: number,
-    selected?: boolean,
+    assignedShop: Warehouse,
+    destinyShop: Warehouse,
     model?: Model,
-    size?: Size
+    size?: Size,
+    selected?: boolean
   }
 
 }
