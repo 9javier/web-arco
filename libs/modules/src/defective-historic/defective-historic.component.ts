@@ -548,7 +548,9 @@ export class DefectiveHistoricComponent implements OnInit {
     return (await this.modalController.create({
       component: RegistryDetailsComponent,
       componentProps: {
-        productId: registry.product.id
+        id: registry.id,
+        productId: registry.product.id,
+        history: true
       }
     })).present();
   }

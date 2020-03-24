@@ -141,7 +141,8 @@ export class ChangeStateComponent implements OnInit {
 
   initForm() {
     this.incidenceForm = this.fb.group({
-      productId: 1,
+      id: [this.registry.data.id],
+      productId: [this.registry.data.product.id],
       productReference: [this.registry.data.product.reference],
       dateDetection: [moment().format("YYYY-MM-DD")],
       observations: [this.registry.data.observations],
