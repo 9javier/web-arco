@@ -26,7 +26,7 @@ import { BehaviorSubject, of, Observable } from 'rxjs';
 })
 export class IncidencesReceptionListComponent implements OnInit {
 
-  public displayedColumns = ['id', 'type', 'process', 'date', 'time', 'user', 'code', 'model', 'size', 'brand', 'model-name', 'color', 'lifestyle', 'season', 'warehouse', 'location', 'destiny', 'sorter-way', /*'history',*/ 'status', 'user-status', 'date-status', 'time-status'];
+  public displayedColumns = ['id', 'type', 'process', 'date', 'time', 'user', 'code', 'model', 'size', 'brand', 'model-name', 'color', 'lifestyle', 'season', 'status', 'user-status', 'date-status', 'time-status'];
   public incidences: IncidenceReceptionModel.IncidenceReception[] = [];
   public typeFilters = IncidenceReceptionModel.TypeFilters;
   public listAvailableStatus: any[] = [];
