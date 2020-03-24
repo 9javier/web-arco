@@ -261,15 +261,19 @@ export class BrandsEnabledReceptionComponent implements OnInit {
   private reduceFilters(entities){
     if (this.lastUsedFilter !== 'brands') {
       let filteredBrands = entities['brands'] as unknown as string[];
-      for (let index in this.brands) {
-        this.brands[index].hide = filteredBrands.includes(this.brands[index].value);
+      if(filteredBrands){
+        for (let index in this.brands) {
+          this.brands[index].hide = filteredBrands.includes(this.brands[index].value);
+        }
       }
       this.filterButtonBrands.listItems = this.brands;
     }
     if (this.lastUsedFilter !== 'enableds') {
       let filteredEnableds = entities['enableds'] as unknown as string[];
-      for (let index in this.enableds) {
-        this.enableds[index].hide = filteredEnableds.includes(this.enableds[index].value);
+      if(filteredEnableds){
+        for (let index in this.enableds) {
+          this.enableds[index].hide = filteredEnableds.includes(this.enableds[index].value);
+        }
       }
       this.filterButtonEnableds.listItems = this.enableds;
     }
