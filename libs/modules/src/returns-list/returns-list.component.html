@@ -117,8 +117,8 @@
       </ng-container>
 
       <ng-container matColumnDef="defectTypeParent">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Tipo Defectuoso
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeParent [title]="'Tipos Defectuoso'"
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Tipo defecto
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeParent [title]="'Tipo defecto'"
                                [listItems]="entities.defectTypeParent"
                                [isFiltering]="isFilteringDefectTypeParent != entities.defectTypeParent.length"
                                (applyFilters)="applyFilters($event, 'defectTypeParent')">
@@ -128,8 +128,8 @@
       </ng-container>
 
       <ng-container matColumnDef="defectTypeChild">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Subtipo de Defectuoso
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeChild [title]="'Subtipos de Defectuoso'"
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Subtipo defecto
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeChild [title]="'Subtipo defecto'"
                                [listItems]="entities.defectTypeChild"
                                [isFiltering]="isFilteringDefectTypeChild != entities.defectTypeChild.length"
                                (applyFilters)="applyFilters($event, 'defectTypeChild')">

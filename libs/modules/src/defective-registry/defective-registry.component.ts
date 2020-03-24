@@ -22,7 +22,7 @@ import { RegistryDetailsComponent } from '../components/modal-defective/registry
 export class DefectiveRegistryComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select', 'id', 'user', 'statusManagementDefect', 'warehouse', 'product', 'model', 'size', 'brand', 'color', 'dateDetection', 'defectTypeParent', 'defectTypeChild'];
+  displayedColumns: string[] = ['id', 'user', 'statusManagementDefect', 'warehouse', 'product', 'model', 'size', 'brand', 'color', 'dateDetection', 'defectTypeParent', 'defectTypeChild'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
   originalTableStatus: DamagedModel.Status[];
