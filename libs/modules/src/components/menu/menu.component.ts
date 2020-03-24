@@ -404,6 +404,12 @@ export class MenuComponent implements OnInit {
           id: 'commercial-fields',
           url: '/commercial-fields',
           icon: 'cog'
+        },
+        {
+          title: 'Marcas habilitadas recepción sin pedido',
+          id: 'brands-enabled-reception',
+          url: '/brands-enabled-reception',
+          icon: 'cog'
         }
       ]
     },

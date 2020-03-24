@@ -25,6 +25,9 @@ export * from './state-expedition-avelon/state-expedition-avelon.module';
 export * from './commercial-fields/commercial-fields.component';
 export * from './commercial-fields/commercial-fields.module';
 
+export * from './brands-enabled-reception/brands-enabled-reception.component';
+export * from './brands-enabled-reception/brands-enabled-reception.module';
+
 export * from './pallets/pallets.component';
 export * from './pallets/pallets.module';
 
