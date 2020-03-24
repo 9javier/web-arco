@@ -1,10 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { SortModel } from '../../../services/src/models/endpoints/Sort';
-import { MatPaginator } from '@angular/material';
+import { MatSort, MatTableDataSource, Sort } from '@angular/material';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import { IntermediaryService, IncidentsService } from '../../../services/src';
-import { Router, NavigationExtras } from '@angular/router';
+import { IntermediaryService, PriceModel } from '@suite/services';
+import { DefectiveRegistryService } from '../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
+import { Router } from '@angular/router';
 import * as moment from 'moment';
+import { DefectiveRegistryModel } from '../../../services/src/models/endpoints/DefectiveRegistry';
+import { ModalController } from '@ionic/angular';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { validators } from '../utils/validators';
+import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
+import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
+import { DetailsRegisterComponent } from './details-register/details-register.component';
 
 @Component({
   selector: 'suite-defect-handler',
@@ -12,131 +19,322 @@ import * as moment from 'moment';
   styleUrls: ['./defect-handler.component.scss']
 })
 export class DefectHandlerComponent implements OnInit {
+  @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
+  @ViewChild(MatSort) sort: MatSort;
+  displayedColumns: string[] = ['id', 'barcode', 'registerDate', 'state'];
+  OrderSelect;
+  dataSource;
+  originalTableStatus: DamagedModel.Status[];
+  columns = {};
+  entities;
+  pagerValues = [10, 20, 80];
 
-  defects: Array<any> = [];
-  pagerValues = [50, 100, 500];
-  private page: number = 1;
-  private limit: number = this.pagerValues[0];
-  private sortValues: any;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
-  displayedColumns: string[] = ['barcode', 'registerDate', 'state', 'select'];
-  dataSource: any;
+  mobileVersionTypeList: 'list' | 'table' = 'list';
+  showFiltersMobileVersion: boolean = false;
+  pauseListenFormChange = false;
+  isRefresh = false;
+  prices: Array<PriceModel.Price> = [];
+  requestTimeout;
+
+  ngInit: boolean;
+  ngInitFilter: boolean;
+  /**Filters */
+  product: Array<TagsInputOption> = [];
+  model: Array<TagsInputOption> = [];
+  size: Array<TagsInputOption> = [];
+  color: Array<TagsInputOption> = [];
+  brand: Array<TagsInputOption> = [];
+  statusManagementDefect: Array<TagsInputOption> = [];
+  groups: Array<TagsInputOption> = [];
+
+  /**form to select elements to print or for anything */
+  selectedForm: FormGroup = this.formBuilder.group({
+    selector: false
+  }, {
+    validators: validators.haveItems("toSelect")
+  });
+
+  form: FormGroup = this.formBuilder.group({
+    product: [],
+    model: [],
+    size: [],
+    color: [],
+    brand: [],
+    dateDetection: [],
+    statusManagementDefect: [],
+    defectTypeParent: [],
+    defectTypeChild: [],
+    warehouse: [],
+    pagination: this.formBuilder.group({
+      page: 1,
+      limit: this.pagerValues[0]
+    }),
+    orderby: this.formBuilder.group({
+      type: 1,
+      order: "asc"
+    })
+  });
+  length: any;
 
   constructor(
     private intermediaryService: IntermediaryService,
     private router: Router,
-    private incidentsService: IncidentsService
-
+    private defectiveRegistryService: DefectiveRegistryService,
+    private modalController: ModalController,
+    private formBuilder: FormBuilder,
   ) { }
 
-  ngOnInit() {
-    this.initList()
-    this.listenChanges()
+  ionViewWillEnter() {
+    if (this.ngInit == false) {
+      this.getList(this.form);
+    }
+    this.ngInit = false;
   }
-  listenChanges(): void {
-    let previousPageSize = this.limit;
+
+  ngOnInit() {
+    this.ngInit = true;
+    this.initEntity();
+    this.initForm();
+    this.getFilters();
+    this.listenChanges();
+    this.getDefectListAfterUpdate();
+  }
+
+  initEntity() {
+    this.entities = {
+      product: [],
+      model: [],
+      size: [],
+      color: [],
+      brand: [],
+      dateDetection: [],
+      statusManagementDefect: [],
+      defectTypeParent: [],
+      defectTypeChild: [],
+      warehouse: [],
+      orderby: this.formBuilder.group({
+        type: 1,
+        order: "asc"
+      })
+    }
+  }
+
+  initForm() {
+    this.form.patchValue({
+      product: [],
+      model: [],
+      size: [],
+      color: [],
+      brand: [],
+      dateDetection: [],
+      statusManagementDefect: [],
+      defectTypeParent: [],
+      defectTypeChild: [],
+      warehouse: [],
+      orderby: this.formBuilder.group({
+        type: 1,
+        order: "asc"
+      })
+    })
+  }
+
+  listenChanges() {
+    let previousPageSize = this.form.value.pagination.limit;
     /**detect changes in the paginator */
-    this.paginatorComponent.page.subscribe(page => {
+    this.paginator.page.subscribe(page => {
       /**true if only change the number of results */
-      let flag = previousPageSize == page.pageSize;
+      let flag = previousPageSize === page.pageSize;
       previousPageSize = page.pageSize;
-      this.limit = page.pageSize;
-      this.page = flag ? page.pageIndex : 1;
-      this.getList(this.page, this.limit, this.sortValues);
+      this.form.value.pagination = {
+        limit: page.pageSize,
+        page: flag ? page.pageIndex : 1
+      };
+      this.getList(this.form)
     });
   }
 
-  initList() {
-    this.intermediaryService.presentLoading() 
-    const body = {
-      pagination: {
-        page: 1,
-        limit: 50
-      },
-      orderBy: {
-        type: 'barcode',
-        order: 'asc'
-      }
-    }
-    this.incidentsService.getAllIncidentProduct(body).subscribe(
-      resp => {
+  getListData() {
+    this.defectiveRegistryService.getListDefectAfterUpdate(this.form.value);
 
-        this.defects = resp.results;
-        console.log(this.defects);
-        this.defects.map(elem => {
-          elem.registerDate = moment(elem.registerDate).format('DD-MM-YYYY')
-        })
-        this.dataSource = this.defects
-        let paginator = resp.pagination;
-        this.paginatorComponent.length = paginator.totalResults;
-        this.paginatorComponent.pageIndex = paginator.selectPage;
-        this.paginatorComponent.lastPage = paginator.lastPage;
-      },
-      err => {
-        console.log(err);
-        this.intermediaryService.dismissLoading()
-      },
-      () => {
-        this.intermediaryService.dismissLoading()
-      }
-    )
   }
 
-
-  getList(page: number, limit: number, sort: any) {
-    console.log('sort', sort);
-    
-    const body = {
-      pagination: {
-        page,
-        limit
-      },
-      orderBy: {
-        type: sort.type,
-        order: sort.order
+  async getDefectListAfterUpdate() {
+    this.defectiveRegistryService.getData().subscribe((resp: any) => {
+      if (resp.results) {
+        this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
+        this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
+        const paginator = resp.pagination;
+        this.groups = resp.ordertypes;
+        this.paginator.length = paginator.totalResults;
+        this.paginator.pageIndex = paginator.selectPage;
+        this.paginator.lastPage = paginator.lastPage;
       }
-    }
-    this.incidentsService.getAllIncidentProduct(body).subscribe(
-      resp => {
-        this.defects = resp.results
-        console.log(this.defects);
-        this.defects.map(elem => {
-          elem.registerDate = moment(elem.registerDate).format('DD-MM-YYYY')
-        })
-        this.dataSource = this.defects
-        let paginator = resp.pagination;
-        this.paginatorComponent.length = paginator.totalResults;
-        this.paginatorComponent.pageIndex = paginator.selectPage;
-        this.paginatorComponent.lastPage = paginator.lastPage;
+    },
+      async err => {
+        await this.intermediaryService.dismissLoading()
       },
-      err => {
-        console.log(err);
-        this.intermediaryService.dismissLoading()
-      },
-      () => {
-        this.intermediaryService.dismissLoading()
-      }
-    )
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      })
+    //this.clearFilters();
+    //this.getFilters();
   }
-  sortData(e) {
-    if (e.direction == '') {
-      this.sortValues = { type: '', order: '' };
-    } else {
-      this.sortValues = { type: e.active.toLowerCase(), order: e.direction.toLowerCase() };
-    }
-    console.log(this.sortValues);
-    this.getList(this.page, this.limit, this.sortValues);
+
+  async getList(form?: FormGroup) {
+    this.defectiveRegistryService.getListDefect(form.value).subscribe((resp: any) => {
+      if (resp.results) {
+        this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
+        this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
+        const paginator = resp.pagination;
+        this.groups = resp.ordertypes;
+        this.paginator.length = paginator.totalResults;
+        this.paginator.pageIndex = paginator.selectPage;
+        this.paginator.lastPage = paginator.lastPage;
+      }
+    },
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      })
   }
 
   goDefect(row) {
-    const navigationExtras: NavigationExtras = {
-      state : {
-        "reference" : row.id,
-      }      
-    };
-
-    this.router.navigate(['/incidents'], navigationExtras);
+    this.goDetails(row);
   }
 
+  async goDetails(registry: DefectiveRegistryModel.DefectiveRegistry) {
+    let modal = (await this.modalController.create({
+      component: DetailsRegisterComponent,
+      componentProps: {
+        productId: registry.product.id,
+        showChangeState: true
+      }
+    }));
+
+
+    modal.present();
+  }
+
+  openFiltersMobile() {
+    this.showFiltersMobileVersion = !this.showFiltersMobileVersion;
+  }
+
+  applyFilters() {
+    if (this.pauseListenFormChange) return;
+    clearTimeout(this.requestTimeout);
+    this.requestTimeout = setTimeout(async () => {
+
+      await this.searchInContainer();
+    }, 100);
+  }
+
+  getFilters(): void {
+    this.ngInitFilter = true;
+    this.defectiveRegistryService.getFiltersEntitiesFalseAl().subscribe((filters) => {
+      this.product = filters.product;
+      this.model = filters.model;
+      this.size = filters.size;
+      this.color = filters.color;
+      this.brand = filters.brand;
+      this.statusManagementDefect = filters.statusManagementDefect;
+      this.applyFilters();
+    }, (err) => {
+      console.log(err);
+      this.isRefresh = false;
+    });
+  }
+
+  async searchInContainer(): Promise<void> {
+    await this.intermediaryService.presentLoading();
+
+    const status = this.form.get('statusManagementDefect').value;
+
+    if (Array.isArray(status)) {
+      this.form.patchValue({ statusManagementDefect: status });
+    } else {
+      this.form.patchValue({ statusManagementDefect: [status] });
+    }
+
+    this.getList(this.form).then(async () => {
+      this.showFiltersMobileVersion = false;
+      await this.intermediaryService.dismissLoading();
+      await this.intermediaryService.dismissLoading();
+      this.isRefresh = false;
+    }, async (err) => {
+      console.log(err);
+      await this.intermediaryService.dismissLoading();
+      await this.intermediaryService.dismissLoading();
+      this.isRefresh = false;
+    });
+  }
+
+  sanitize(object) {
+    /**mejorable */
+    object = JSON.parse(JSON.stringify(object));
+    if (!object.orderby.type) {
+      delete object.orderby.type;
+    } else {
+      object.orderby.type = Number(object.orderby.type);
+    }
+    if (!object.orderby.order)
+      delete object.orderby.order;
+    if (object.productReferencePattern) {
+      object.productReferencePattern = "%" + object.productReferencePattern + "%";
+    }
+    Object.keys(object).forEach(key => {
+      if (object[key] instanceof Array) {
+        if (object[key][0] instanceof Array) {
+          object[key] = object[key][0];
+        } else {
+          for (let i = 0; i < object[key].length; i++) {
+            if (object[key][i] === null || object[key][i] === "") {
+              object[key].splice(i, 1);
+            }
+          }
+        }
+      }
+      if (object[key] === null || object[key] === "") {
+        delete object[key];
+      }
+    });
+    return object;
+  }
+
+  private getFormValueCopy() {
+    return JSON.parse(JSON.stringify(this.form.value || {}));
+  }
+
+  initSelectForm(items): void {
+    this.selectedForm.removeControl("toSelect");
+    this.selectedForm.addControl("toSelect", this.formBuilder.array(items.map(prices => new FormControl(false))));
+  }
+
+  getStatusName(defectType: number) {
+    const status = this.originalTableStatus.find((x) => x.id === defectType);
+    return status.name;
+  }
+
+  async sortData(event: Sort) {
+    // this.form.value.orderby.type = this.columns[event.active];
+    // this.form.value.orderby.order = event.direction !== '' ? event.direction : 'asc';
+    //
+    // this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+    //   this.getList(this.form);
+    // });
+  }
+
+  clearFilters() {
+    this.initForm();
+    this.getFilters();
+  }
+
+  async refresh() {
+    if (!this.isRefresh) {
+      await this.intermediaryService.presentLoading();
+      this.isRefresh = true;
+      this.clearFilters();
+    }
+  }
 }

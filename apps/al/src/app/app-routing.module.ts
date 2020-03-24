@@ -333,7 +333,8 @@ const routes: Routes = [
     data: {
       name: 'Manejo de defectos'
     }
-  }
+  },
+ 
 ];
 
 @NgModule({

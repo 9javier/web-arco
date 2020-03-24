@@ -5,7 +5,7 @@ import { ActionToolbarModel } from "../../../../services/src/models/endpoints/Ac
 import { PopoverController, Platform } from "@ionic/angular";
 import { PopoverMenuToolbarComponent } from "../popover-menu-toolbar/popover-menu-toolbar.component";
 import { KeyboardService } from '../../../../services/src/lib/keyboard/keyboard.service';
-import {Location} from "@angular/common";
+import { Location } from "@angular/common";
 
 @Component({
   selector: 'toolbar',
@@ -48,8 +48,24 @@ export class ToolbarAlComponent implements OnInit {
     this.toolbarProvider.currentPage.subscribe((page) => {
       this.currentPage = page;
       // muesta el boton del teclado en los titulos que tengan la ocurrencia "manual" en su cadena
-      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual') || this.currentPage.includes(' láser') || this.currentPage.includes('(láser)') || this.currentPage.includes(' laser') || this.currentPage.includes('Verificación de artículos') || this.currentPage.includes('Entrada') || this.currentPage.includes('Lista de auditorias') || this.currentPage.includes('Salida') || this.currentPage.includes('Auditorías') || this.currentPage.includes('Ventilación de traspasos') || this.currentPage.includes('Ventilación sin Sorter') || this.currentPage.includes('Traspaso embalaje') || this.currentPage.includes('Recepción de mercancía') || this.currentPage.startsWith('#') || this.currentPage.includes('Expediciones pendientes')) {
-        if(this.currentPage.includes('Código exposición manual') || this.currentPage.includes('Reetiquetado productos manual')){
+      if (
+        this.currentPage.includes('manual') ||
+        this.currentPage.includes('Manual') ||
+        this.currentPage.includes(' láser') ||
+        this.currentPage.includes('(láser)') ||
+        this.currentPage.includes(' laser') ||
+        this.currentPage.includes('Verificación de artículos') ||
+        this.currentPage.includes('Entrada') ||
+        this.currentPage.includes('Lista de auditorias') ||
+        this.currentPage.includes('Salida') ||
+        this.currentPage.includes('Auditorías') ||
+        this.currentPage.includes('Ventilación de traspasos') ||
+        this.currentPage.includes('Ventilación sin Sorter') ||
+        this.currentPage.includes('Traspaso embalaje') ||
+        this.currentPage.includes('Recepción de mercancía') ||
+        this.currentPage.includes('Registro defectuoso')
+      ) {
+        if (this.currentPage.includes('Código exposición manual') || this.currentPage.includes('Reetiquetado productos manual')) {
           this.showKeyboard = false;
         } else {
           this.showKeyboard = true;

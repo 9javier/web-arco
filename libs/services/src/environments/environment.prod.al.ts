@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  apiBasePhoto: 'http://localhost:8081',
   apiBase: 'http://conexion1.globalretail.es:57354/api',
   apiSorter: 'http://conexion1.globalretail.es:57354/api',
   urlBase: 'http://conexion1.globalretail.es:57354',

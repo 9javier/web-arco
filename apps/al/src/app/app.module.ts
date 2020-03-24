@@ -26,13 +26,13 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
-
-
-
+import { ReviewImagesModule } from '../../../../libs/modules/src/incidents/components/review-images/review-images.module';
+import { RegistryDetailsModule } from '../../../../libs/modules/src/components/modal-defective/registry-details-al/registry-details-al.module';
+import { ChangeState2Module } from '../../../../libs/modules/src/defect-handler/change-state2/change-state2.module';
 registerLocaleData(localeEs);
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent,],
   entryComponents: [],
   imports: [
     BrowserModule,
@@ -46,7 +46,10 @@ registerLocaleData(localeEs);
     ServicesModule,
     BrowserAnimationsModule,
     ScannerConfigurationModule,
-    ToolbarAlModule
+    ToolbarAlModule,
+    ReviewImagesModule,
+    RegistryDetailsModule,
+    ChangeState2Module
   ],
   providers: [
     StatusBar,

@@ -11,10 +11,14 @@ import { InputCodesComponent } from './components/input-codes/input-codes.compon
 import { HideKeyboardModule } from 'hide-keyboard';
 import { CdkTableModule } from '@angular/cdk/table';
 import { SignatureComponent } from '../signature/signature.component';
+import { SignatureModule } from '../signature/signature.module';
+import { DropFilesModule } from '../drop-files/drop-files.module';
+import { ReviewImagesComponent } from './components/review-images/review-images.component';
+import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-keyboard.module';
 
 @NgModule({
   declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent,],
-  entryComponents: [IncidentsComponent, PhotoModalComponent, ],
+  entryComponents: [IncidentsComponent, PhotoModalComponent],
   imports: [
     CommonModule,
     IncidentsRoutingModule,
@@ -24,6 +28,9 @@ import { SignatureComponent } from '../signature/signature.component';
     ScannerManualModule,
     HideKeyboardModule,
     CdkTableModule,
+    SignatureModule,
+    DropFilesModule,
+    
   ],
   exports: [
     

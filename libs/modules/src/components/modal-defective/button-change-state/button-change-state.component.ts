@@ -26,11 +26,22 @@ export class ButtonChangeStateComponent implements OnInit {
       const modal = await this.modalController.create({
         component: ChangeStateComponent,
         componentProps: {
-          registry: this.registry
-        }
+          registry: this.registry,
+          showChangeState: this.showChangeState
+        },
+        backdropDismiss: false
       });
 
       return await modal.present();
     });
+
+
+
+
+
+
   }
+
+
+
 }

@@ -23,14 +23,18 @@ export class ScannerManualComponent implements OnInit {
   }
 
   ngOnInit() {
+    
+  }
+  ngAfterViewInit(){
 
   }
-
   keyUpInput(event) {
     let data = (this.value || "").trim();
     this.currentValue.next(data);
     if (event.keyCode == 13 && data && !this.isScanBlocked) {
       this.newValue.next(data);
+      this.setValue(null);
+      this.focusToInput();
     } else if (event.keyCode == 13 && this.isScanBlocked) {
       this.setValue(null);
       this.focusToInput();
@@ -39,7 +43,10 @@ export class ScannerManualComponent implements OnInit {
 
   public focusToInput() {
     setTimeout(() => {
-      document.getElementById('input-ta').focus();
+      const input = document.getElementById('input-ta')
+      if(input) {
+        input.focus()
+      } 
     }, 500);
   }
 

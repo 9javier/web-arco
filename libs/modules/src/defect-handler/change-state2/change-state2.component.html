@@ -1,0 +1,123 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>{{ registry.data.id }}</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content >
+  <form [formGroup]="incidenceForm">
+  <ion-item>
+    <ion-label class="label-text">Producto:</ion-label>
+    <ion-input class="input-barcode" type="text" readonly>{{registry.data.product.reference}}</ion-input><br>
+  </ion-item>
+  <ion-item>
+    <ion-label class="label-text">Fecha</ion-label>
+    <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format disabled></ion-datetime>
+  </ion-item>
+  <ion-item>
+    <ion-label class="label-text">Estado de gestion</ion-label>
+    <ion-select  (ionChange)="gestionChange($event)" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
+      <ion-select-option  *ngFor="let item of allDefectType" [value]="item.id" >{{item.name}}</ion-select-option>
+    </ion-select>
+  </ion-item> 
+
+  <ion-item>
+    <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
+    <ion-input style="margin-left: 10%;" disabled>{{ ParentAndChild }}</ion-input>
+    <!--<ion-select (ionChange)="defectChange($event)" placeholder="Selecciona" disabled>
+      <ion-select-option >{{ ParentAndChild }}</ion-select-option>
+    </ion-select> -->
+  </ion-item>
+
+ 
+
+
+  <ion-item *ngIf="selectGestionState == true">
+    <ion-label position="floating" class="label-text">Observaciones</ion-label>
+    <ion-textarea  formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-textarea>
+  </ion-item>
+
+  <div *ngIf="requireContact == true && selectGestionState == true" class="contact">
+    <div formGroupName = "contact">
+      <ion-item lines="none">
+        <ion-label class="ion-text-capitalize label-text">Contacto</ion-label><br>
+      </ion-item>
+     <ion-item lines="none">
+       <ion-input type="text" formControlName="name"  (keyup)="onKeyName($event)" placeholder="Nombre" maxlength="50"></ion-input><br>
+     </ion-item>
+     <ion-item lines="none">
+       <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo" maxlength="50"></ion-input><br>
+     </ion-item>
+     <ion-item lines="none">
+       <ion-input type="number" formControlName="phone"  (keyup)="onKeyTel($event)" placeholder="Teléfono" maxlength="25"></ion-input>
+     </ion-item>
+    </div>
+  </div>
+
+  <div *ngIf="selectGestionState == true">
+
+  <ion-item lines="none" *ngIf="requirePhoto == true" lines="none">
+    <ion-label class="ion-text-capitalize label-text">capturar / buscar fotos</ion-label>
+    <ion-button (click)="takePhoto()" class="icon-camare">
+      <ion-icon name="camera"></ion-icon>
+    </ion-button>
+    <ion-button (click)="searchPhoto()">
+      <ion-icon name="images"></ion-icon>
+    </ion-button>
+  </ion-item>
+  
+  <ion-item *ngIf="requirePhoto && photoList" (click)="showPhotoList()" lines="none">
+    <ion-label class="label-text">Fotos</ion-label>
+    <ion-icon slot="end" *ngIf="displayPhotoList" name="arrow-down"></ion-icon>
+    <ion-icon slot="end" *ngIf="!displayPhotoList" name="arrow-up"></ion-icon>
+  </ion-item>
+  <ion-list *ngIf="photoList && requirePhoto && displayPhotoList">
+    <ion-item  lines="none" *ngFor="let item of photos; let i = index">
+      <ion-img (click)="onOpenReviewModal(item)"  slot="start" [src]="item.pathIcon"></ion-img>
+      <ion-button slot="end"(click)="deleteImage(item, i, photos)">
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+  </div>
+ 
+<div *ngIf="selectGestionState == true">
+  <ion-item lines="none" *ngIf="requireOk == true">
+    <ion-label lines="none" class="ion-text-capitalize label-text">generar firma</ion-label>
+    <ion-button (click)="signModal()">
+      <ion-icon name="finger-print"></ion-icon>
+    </ion-button>
+  </ion-item>
+  <ion-item *ngIf="signatures && requireOk == true" (click)="openSignatureList()" lines="none">
+    <ion-label class="label-text">Firma</ion-label>
+    <ion-icon slot="end" *ngIf="signatureList" name="arrow-down"></ion-icon>
+    <ion-icon slot="end" *ngIf="!signatureList" name="arrow-up"></ion-icon>
+  </ion-item>
+  <ion-list  *ngIf="signatures && signatureList && requireOk">
+    <ion-item lines="none">
+      <ion-img (click)="onOpenReviewModal(signatures)" slot="start" [src]="signatures.pathIcon"></ion-img>
+      <ion-button slot="end" (click)="deleteSignature(signatures)">
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+  </div>
+  <!--<ion-label>{{imgUrl}}</ion-label>-->
+
+  <div *ngIf="selectGestionState == true">
+  <ion-item lines="none">
+    <ion-label class="ion-text-capitalize label-text">devolución a fabrica</ion-label>
+    <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
+  </ion-item>
+  </div>
+
+
+  <ion-button  [disabled]="selectGestionState == false" (click)="send()" expand="block" shape="round">
+    actualizar
+  </ion-button>
+  </form>
+</ion-content>

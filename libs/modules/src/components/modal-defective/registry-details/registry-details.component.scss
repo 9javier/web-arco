@@ -10,6 +10,10 @@ ion-list {
   color: var(--ion-color-secondary);
 }
 
+.signature, .photos, ion-item-divider {
+  margin-top: 20px;
+}
+
 .form-fields {
   margin-top: 24px;
   ion-row {
@@ -90,4 +94,13 @@ mat-expansion-panel {
   img {
     width: 100%;
   }
+}
+
+
+// ion-item.observations.item-label.item-interactive.item-textarea.item-input.item.md.in-list.ion-focusable.hydrated.item-has-value {
+//   margin-bottom: -9% !important;
+// }
+
+ion-item.contact.ng-star-inserted.item.md.in-list.ion-focusable.hydrated {
+  margin-top: -11% !important;
 }

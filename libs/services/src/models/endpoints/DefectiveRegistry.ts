@@ -13,6 +13,7 @@ export namespace DefectiveRegistryModel {
     defectTypeChild?: DefectTypeChild;
     numberObservations?: number;
     photo?: string;
+    photos?: (any)[];
     warehouse?: Warehouse;
     factoryReturn?: boolean;
   }
