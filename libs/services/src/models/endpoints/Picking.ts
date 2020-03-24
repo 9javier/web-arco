@@ -35,7 +35,8 @@ export namespace PickingModel {
     typeString?: string,
     storeRef?: string,
     quantityPending?: number,
-    quantityScanned?: number
+    quantityScanned?: number,
+    destinyProducts: {name: string, reference: string}[]
   }
 
   export interface PickingUpdate {

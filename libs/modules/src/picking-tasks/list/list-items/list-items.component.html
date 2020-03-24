@@ -8,16 +8,13 @@
 
   <mat-grid-tile colspan="7" class="destinies-list">
     <div class="tile-value">
-      <p *ngIf="pickingAssignment.workWavesOrderWarehouses.length > 0">
+      <p>
         <span class="store-ref">
-          {{ pickingAssignment.workWavesOrderWarehouses[0].warehouse.reference }}&nbsp;
+          {{ pickingAssignment.destinyProducts[0].reference }}&nbsp;
         </span>
-        {{ pickingAssignment.workWavesOrderWarehouses[0].warehouse.name }}
+        {{ pickingAssignment.destinyProducts[0].name }}
       </p>
-      <p *ngIf="pickingAssignment.workWavesOrderWarehouses.length > 0">
-        DOMICILIO
-      </p>
-      <p *ngIf="pickingAssignment.workWavesOrderWarehouses.length > 1" (click)="showStoresPopover($event)"
+      <p *ngIf="pickingAssignment.destinyProducts.length > 1" (click)="showStoresPopover($event)"
         class="show-stores-list">
         Ver más
       </p>

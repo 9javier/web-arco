@@ -28,7 +28,7 @@ export class PickingTaskTemplateComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
 
-    this.pickingProvider.listStoresToPopoverList = this.pickingAssignment.workWavesOrderWarehouses;
+    this.pickingProvider.listStoresToPopoverList = this.pickingAssignment.destinyProducts;
 
     const popover = await this.popoverController.create({
       cssClass: 'popover-list-stores',

@@ -225,11 +225,11 @@ export class PickingProvider {
     this._pickingSelectedToStart = value;
   }
 
-  private _listStoresToPopoverList: Array<PickingModel.WorkwaveOrderWarehouse> = new Array<PickingModel.WorkwaveOrderWarehouse>();
-  get listStoresToPopoverList(): Array<PickingModel.WorkwaveOrderWarehouse> {
+  private _listStoresToPopoverList: Array<{name: string, reference: string}> = new Array<{name: string, reference: string}>();
+  get listStoresToPopoverList(): Array<{name: string, reference: string}> {
     return this._listStoresToPopoverList;
   }
-  set listStoresToPopoverList(value: Array<PickingModel.WorkwaveOrderWarehouse>) {
+  set listStoresToPopoverList(value: Array<{name: string, reference: string}>) {
     this._listStoresToPopoverList = value;
   }
 }
