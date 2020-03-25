@@ -91,7 +91,8 @@ export namespace PickingStoreModel {
     colors?: FilterObj[],
     models?: FilterObj[],
     ordertypes?: FilterObj[],
-    sizes?: FilterObj[]
+    sizes?: FilterObj[],
+    types?: FilterObj[]
   }
 
   export interface ResponseDataLineRequestsPending {

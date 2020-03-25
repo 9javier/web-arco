@@ -84,12 +84,14 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
   private static ArrayList<KeyPairBoolData> filtersBrands;
   private static ArrayList<KeyPairBoolData> filtersSizes;
   private static ArrayList<KeyPairBoolData> filtersColors;
+  private static ArrayList<KeyPairBoolData> filtersTypes;
 
   private final int FILTER_SORT_TYPE = 1;
   private final int FILTER_MODEL = 2;
   private final int FILTER_BRAND = 3;
   private final int FILTER_SIZE = 4;
   private final int FILTER_COLOR = 5;
+  private final int FILTER_TYPE = 6;
 
   private static final int SORT_TYPE_NONE = 1;
   private static final int SORT_TYPE_ASC = 2;
@@ -344,6 +346,13 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     TextView tvFilterSize = findViewById(resources.getIdentifier("tvFilterSize", "id", package_name));
     TextView tvFilterColor = findViewById(resources.getIdentifier("tvFilterColor", "id", package_name));
 
+    if(true){
+      LinearLayout filterTypeLayout = findViewById(resources.getIdentifier("filterTypeLayout", "id", package_name));
+      filterTypeLayout.setVisibility(View.VISIBLE);
+      TextView tvFilterType = findViewById(resources.getIdentifier("tvFilterType", "id", package_name));
+      tvFilterType.setOnClickListener(view -> this.openSearchItemsSpinner(resources, package_name, tvFilterType, filtersTypes, FILTER_TYPE, "Tipos"));
+    }
+
     tvSortBy.setOnClickListener(view -> {
       this.openSortItemsSpinner(resources, package_name, tvSortBy, filtersSortTypes, FILTER_SORT_TYPE, "Ordenar por");
     });
@@ -404,6 +413,9 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
             case FILTER_COLOR:
               defaultMessageFilter = "Filtro color";
               break;
+            case FILTER_TYPE:
+              defaultMessageFilter = "Filtro tipo";
+              break;
           }
           tvSelected.setText(defaultMessageFilter);
         }
@@ -421,6 +433,9 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
           case FILTER_COLOR:
             filtersColors = searchItemsAdapter.getAllItems();
             break;
+          case FILTER_TYPE:
+            filtersTypes = searchItemsAdapter.getAllItems();
+            break;
         }
         responseFiltersToIonic();
       });
@@ -437,6 +452,9 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
             break;
           case FILTER_COLOR:
             filtersColors = originListItemsForCancel;
+            break;
+          case FILTER_TYPE:
+            filtersTypes = originListItemsForCancel;
             break;
         }
       });
@@ -544,6 +562,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       filtersToIonic.put("brand", KeyPairBoolData.arrayToJsonArray(filtersBrands));
       filtersToIonic.put("size", KeyPairBoolData.arrayToJsonArray(filtersSizes));
       filtersToIonic.put("color", KeyPairBoolData.arrayToJsonArray(filtersColors));
+      filtersToIonic.put("type", KeyPairBoolData.arrayToJsonArray(filtersTypes));
       jsonObject.put("filters", filtersToIonic);
     } catch (JSONException e) {
 
@@ -562,6 +581,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       filtersBrands = new ArrayList<>();
       filtersSizes = new ArrayList<>();
       filtersColors = new ArrayList<>();
+      filtersTypes = new ArrayList<>();
 
       if (filtersPickingStores.getOrderTypes().size() > 0) {
         for (SingleFilterPickingStores orderType : filtersPickingStores.getOrderTypes()) {
@@ -610,6 +630,16 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
           keyPairBoolData.setName(color.getName());
           keyPairBoolData.setObject(color);
           filtersColors.add(keyPairBoolData);
+        }
+      }
+
+      if (filtersPickingStores.getTypes().size() > 0) {
+        for (SingleFilterPickingStores type : filtersPickingStores.getTypes()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(type.getId());
+          keyPairBoolData.setName(type.getName());
+          keyPairBoolData.setObject(type);
+          filtersTypes.add(keyPairBoolData);
         }
       }
     }

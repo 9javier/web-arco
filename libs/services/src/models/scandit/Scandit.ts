@@ -16,7 +16,8 @@ export namespace ScanditModel {
       model: Filters[],
       brand: Filters[],
       size: Filters[],
-      color: Filters[]
+      color: Filters[],
+      type?: Filters[]
     },
     reasonId: number,
     requestReference: string,

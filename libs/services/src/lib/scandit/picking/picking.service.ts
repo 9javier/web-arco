@@ -300,11 +300,12 @@ export class PickingScanditService {
                   };
                 })
               };
+              const typesFiltered = response.filters.type.map(filter => {
+                return filter.id;
+              });
               ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
-              this.pickingStoreService
-                .postLineRequestFiltered(filtersToGetProducts)
-                .then((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
-                  ScanditMatrixSimple.hideLoadingDialog();
+              if(typesFiltered.length == 0 || (typesFiltered.length > 0 && typesFiltered.includes(1))){
+                this.pickingStoreService.postLineRequestFiltered(filtersToGetProducts).then((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
                   if (res.code == 200) {
                     listProductsToStorePickings = res.data.pending;
                     listProductsProcessed = res.data.processed;
@@ -328,6 +329,9 @@ export class PickingScanditService {
                         if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
                           show = false;
                         }
+                        if(typesFiltered.length > 0 && !typesFiltered.includes(2)){
+                          show = false;
+                        }
                         return show;
                       }));
                       listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsHome.filter(request => {
@@ -345,6 +349,9 @@ export class PickingScanditService {
                           show = false;
                         }
                         if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
+                          show = false;
+                        }
+                        if(typesFiltered.length > 0 && !typesFiltered.includes(2)){
                           show = false;
                         }
                         return show;
@@ -428,6 +435,9 @@ export class PickingScanditService {
                         if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
                           show = false;
                         }
+                        if(typesFiltered.length > 0 && !typesFiltered.includes(3)){
+                          show = false;
+                        }
                         return show;
                       }));
                       listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsStore.filter(request => {
@@ -445,6 +455,9 @@ export class PickingScanditService {
                           show = false;
                         }
                         if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
+                          show = false;
+                        }
+                        if(typesFiltered.length > 0 && !typesFiltered.includes(3)){
                           show = false;
                         }
                         return show;
@@ -509,14 +522,243 @@ export class PickingScanditService {
                       }
                     }
 
+                    ScanditMatrixSimple.hideLoadingDialog();
+
                     if(this.packing){
                       ScanditMatrixSimple.sendPickingStoresProducts(this.packingReferences, listProductsProcessed, null);
                     }else{
                       ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
                     }
                     this.refreshListPickingsStores();
+                  }else{
+                    console.error(res);
                   }
-                }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
+                },() => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
+              }else{
+                listProductsToStorePickings = [];
+                listProductsProcessed = [];
+
+                //add delivery requests filtered
+                if(this.pickingProvider.deliveryRequestsHome){
+                  listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsHome.filter(request => {
+                    let show: boolean = true;
+                    if(request.status != 0){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
+                      show = false;
+                    }
+                    if(typesFiltered.length > 0 && !typesFiltered.includes(2)){
+                      show = false;
+                    }
+                    return show;
+                  }));
+                  listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsHome.filter(request => {
+                    let show: boolean = true;
+                    if(request.status != 3){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
+                      show = false;
+                    }
+                    if(typesFiltered.length > 0 && !typesFiltered.includes(2)){
+                      show = false;
+                    }
+                    return show;
+                  }));
+                  if(!this.pickingProvider.deliveryRequestsStore){
+                    for(let i = filtersToGetProducts.orderbys.length-1; i > -1; i--){
+                      switch (filtersToGetProducts.orderbys[i].type) {
+                        case 1:
+                          if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
+                          }else{
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.color.name.localeCompare(b.model.color.name));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.color.name.localeCompare(b.model.color.name));
+                          }
+                          break;
+                        case 2:
+                          if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.size.name.localeCompare(a.size.name));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => b.size.name.localeCompare(a.size.name));
+                          }else{
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.size.name.localeCompare(b.size.name));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => a.size.name.localeCompare(b.size.name));
+                          }
+                          break;
+                        case 3:
+                          if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
+                          }else{
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+                          }
+                          break;
+                        case 4:
+                          if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.createdAt.localeCompare(a.reference));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => b.reference.localeCompare(a.reference));
+                          }else{
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.reference.localeCompare(b.reference));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => a.reference.localeCompare(b.reference));
+                          }
+                          break;
+                        case 5:
+                          if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
+                          }else{
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+                          }
+                          break;
+                        case 6:
+                          if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.name.localeCompare(a.model.name));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.name.localeCompare(a.model.name));
+                          }else{
+                            listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.name.localeCompare(b.model.name));
+                            listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.name.localeCompare(b.model.name));
+                          }
+                          break;
+                      }
+                    }
+                  }
+                }
+                if(this.pickingProvider.deliveryRequestsStore){
+                  listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsStore.filter(request => {
+                    let show: boolean = true;
+                    if(request.status != 0){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
+                      show = false;
+                    }
+                    if(typesFiltered.length > 0 && !typesFiltered.includes(3)){
+                      show = false;
+                    }
+                    return show;
+                  }));
+                  listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsStore.filter(request => {
+                    let show: boolean = true;
+                    if(request.status != 3){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id)){
+                      show = false;
+                    }
+                    if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
+                      show = false;
+                    }
+                    if(typesFiltered.length > 0 && !typesFiltered.includes(3)){
+                      show = false;
+                    }
+                    return show;
+                  }));
+                  for(let i = filtersToGetProducts.orderbys.length-1; i > -1; i--){
+                    switch (filtersToGetProducts.orderbys[i].type) {
+                      case 1:
+                        if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
+                        }else{
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.color.name.localeCompare(b.model.color.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.color.name.localeCompare(b.model.color.name));
+                        }
+                        break;
+                      case 2:
+                        if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.size.name.localeCompare(a.size.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.size.name.localeCompare(a.size.name));
+                        }else{
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.size.name.localeCompare(b.size.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.size.name.localeCompare(b.size.name));
+                        }
+                        break;
+                      case 3:
+                        if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
+                        }else{
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+                        }
+                        break;
+                      case 4:
+                        if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.createdAt.localeCompare(a.reference));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.reference.localeCompare(a.reference));
+                        }else{
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.reference.localeCompare(b.reference));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.reference.localeCompare(b.reference));
+                        }
+                        break;
+                      case 5:
+                        if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
+                        }else{
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+                        }
+                        break;
+                      case 6:
+                        if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.name.localeCompare(a.model.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.name.localeCompare(a.model.name));
+                        }else{
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.name.localeCompare(b.model.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.name.localeCompare(b.model.name));
+                        }
+                        break;
+                    }
+                  }
+                }
+
+                ScanditMatrixSimple.hideLoadingDialog();
+
+                if(this.packing){
+                  ScanditMatrixSimple.sendPickingStoresProducts(this.packingReferences, listProductsProcessed, null);
+                }else{
+                  ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+                }
+                this.refreshListPickingsStores();
+              }
             } else if (response.action == 'request_reject') {
               ScanditMatrixSimple.showLoadingDialog('Rechazando artículo del traspaso...');
 

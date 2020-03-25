@@ -190,7 +190,21 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
           name: 'Nombre modelo',
         },
       ],
-      sizes: []
+      sizes: [],
+      types: [
+        {
+          id: 1,
+          name: 'Tiendas',
+        },
+        {
+          id: 2,
+          name: 'Online Domicilio',
+        },
+        {
+          id: 3,
+          name: 'Online Tienda',
+        },
+      ]
     };
     for(let request of homeDeliveryRequests){
       if(!filters.brands.map(brand => brand.id).includes(request.model.brand.id)){
