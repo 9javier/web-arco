@@ -26,6 +26,7 @@ export class MarketplacesMgaService {
   private getAllRulesUrl = this.apiGeneralLogisticOperator + '/logistics-operators-rules/';
   private deleteRulesUrl = this.apiGeneralLogisticOperator + '/logistics-operators-rules/{{idRule}}';
   private updateRulesUrl = this.apiGeneralLogisticOperator + '/logistics-operators-rules/';
+  private getWarehouseUrl = this.apiGeneralLogisticOperator + '/warehouse/';
   private getReferencesFilteredUrl = this.apiBase + '/products/models/filtered';
 
   constructor(
@@ -153,6 +154,15 @@ export class MarketplacesMgaService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       return this.http.put<any>(this.updateRulesUrl + data.id, data, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getWarehouse():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getWarehouseUrl, {headers}).pipe(map(response=>{
         return response.data;
       }));
     }));

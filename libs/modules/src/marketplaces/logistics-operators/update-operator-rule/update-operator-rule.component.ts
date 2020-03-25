@@ -15,17 +15,23 @@ export class UpdateOperatorRuleComponent implements OnInit {
   private countries;
   private markets;
   private logisticsOperators;
+  private warehousesOrigins;
+  private warehousesDestinies;
   private rules;
   private dataBody;
   private isChecked = {'isChecked': false};
   private marketsCheck;
   private provincesCheck;
   private countriesCheck;
+  private warehousesOriginsCheck;
+  private warehousesDestiniesCheck;
   private operatorSelected;
   private selectMarkets = false;
   private selectProvinces = false;
   private selectCountries = false;
-  private activateButton = {'markets': true, 'provinces': true, 'countries': true, 'logisticOperator': true};
+  private selectWarehousesOrigins = false;
+  private selectWarehousesDestinies = false;
+  private activateButton = {'markets': true, 'warehousesOrigins': true, 'warehousesDestinies': true, 'provinces': true, 'countries': true, 'logisticOperator': true};
   private elementRule;
   private selectedOperator;
 
@@ -42,10 +48,14 @@ export class UpdateOperatorRuleComponent implements OnInit {
     this.countries = '';
     this.markets = '';
     this.rules = '';
+    this.warehousesOrigins = '';
+    this.warehousesDestinies = '';
     this.dataBody = '';
     this.marketsCheck = [];
     this.provincesCheck = [];
     this.countriesCheck = [];
+    this.warehousesOriginsCheck = [];
+    this.warehousesDestiniesCheck = [];
     this.operatorSelected = '';
     this.elementRule = this.navParams.get('element');
 
@@ -82,6 +92,30 @@ export class UpdateOperatorRuleComponent implements OnInit {
         document.getElementById('mat-expantion-markets').style.overflowY = 'scroll';
         document.getElementById('mat-expantion-markets').style.marginRight = '-25px';
         document.getElementById('ion-list-markets').style.paddingRight = '25px';
+      }
+    });
+
+    this.marketplacesMgaService.getWarehouse().subscribe(count => {
+      this.warehousesOrigins = count;
+      this.checkAlreadySeleted(this.warehousesOrigins, this.elementRule.warehouseOrigin);
+      this.initSelectedChecked(this.warehousesOrigins, 'warehousesOrigins');
+      if(this.warehousesOrigins.length > 5){
+        document.getElementById('mat-expantion-warehouses-origins').style.maxHeight = '280px';
+        document.getElementById('mat-expantion-warehouses-origins').style.overflowY = 'scroll';
+        document.getElementById('mat-expantion-warehouses-origins').style.marginRight = '-25px';
+        document.getElementById('ion-list-warehouses-origins').style.paddingRight = '25px';
+      }
+    });
+
+    this.marketplacesMgaService.getWarehouse().subscribe(count => {
+      this.warehousesDestinies = count;
+      this.checkAlreadySeleted(this.warehousesDestinies, this.elementRule.warehouseDestiny);
+      this.initSelectedChecked(this.warehousesDestinies, 'warehousesDestinies');
+      if(this.warehousesDestinies.length > 5){
+        document.getElementById('mat-expantion-warehouses-destinies').style.maxHeight = '280px';
+        document.getElementById('mat-expantion-warehouses-destinies').style.overflowY = 'scroll';
+        document.getElementById('mat-expantion-warehouses-destinies').style.marginRight = '-25px';
+        document.getElementById('ion-list-warehouses-destinies').style.paddingRight = '25px';
       }
     });
 
@@ -124,6 +158,20 @@ export class UpdateOperatorRuleComponent implements OnInit {
           }
         }
         break;
+      case 'warehousesOrigins':
+        for (let i = 0; i < elements.length; i++) {
+          if (elements[i].isChecked === true) {
+            this.warehousesOriginsCheck.push(elements[i]);
+          }
+        }
+        break;
+      case 'warehousesDestinies':
+        for (let i = 0; i < elements.length; i++) {
+          if (elements[i].isChecked === true) {
+            this.warehousesDestiniesCheck.push(elements[i]);
+          }
+        }
+        break;
       case 'province':
         for (let i = 0; i < elements.length; i++) {
           if (elements[i].isChecked === true) {
@@ -155,6 +203,34 @@ export class UpdateOperatorRuleComponent implements OnInit {
       this.removeItem(this.marketsCheck, market);
       if(this.marketsCheck.length === 0){
         this.activateButton.markets = false;
+      }
+    }
+  }
+
+  warehousesOriginsSelected(warehouse){
+    if(warehouse.isChecked === true){
+      this.warehousesOriginsCheck.push(warehouse);
+      if(this.warehousesOriginsCheck.length > 0){
+        this.activateButton.warehousesOrigins = true;
+      }
+    }else{
+      this.removeItem(this.warehousesOriginsCheck, warehouse);
+      if(this.warehousesOriginsCheck.length === 0){
+        this.activateButton.warehousesOrigins = false;
+      }
+    }
+  }
+
+  warehousesDestiniesSelected(warehouse){
+    if(warehouse.isChecked === true){
+      this.warehousesDestiniesCheck.push(warehouse);
+      if(this.warehousesDestiniesCheck.length > 0){
+        this.activateButton.warehousesDestinies = true;
+      }
+    }else{
+      this.removeItem(this.warehousesDestiniesCheck, warehouse);
+      if(this.warehousesDestiniesCheck.length === 0){
+        this.activateButton.warehousesDestinies = false;
       }
     }
   }
@@ -201,6 +277,8 @@ export class UpdateOperatorRuleComponent implements OnInit {
       "id": this.elementRule.idRule,
       "logisticOperator": this.operatorSelected,
       "markets": this.marketsCheck,
+      "warehousesOrigins": this.warehousesOriginsCheck,
+      "warehousesDestinies": this.warehousesDestiniesCheck,
       "provinces": this.provincesCheck,
       "countries": this.countriesCheck
     };
@@ -218,23 +296,44 @@ export class UpdateOperatorRuleComponent implements OnInit {
   openSelects(select){
     if(select === 'markets'){
       this.selectMarkets = true;
+      this.selectWarehousesOrigins = false;
+      this.selectWarehousesDestinies = false;
+      this.selectProvinces = false;
+      this.selectCountries = false;
+    }
+    if(select === 'warehousesOrigins'){
+      this.selectWarehousesOrigins = true;
+      this.selectWarehousesDestinies = false;
+      this.selectMarkets = false;
+      this.selectProvinces = false;
+      this.selectCountries = false;
+    }
+    if(select === 'warehousesDestinies'){
+      this.selectWarehousesDestinies = true;
+      this.selectWarehousesOrigins = false;
+      this.selectMarkets = false;
       this.selectProvinces = false;
       this.selectCountries = false;
     }
     if(select === 'provinces'){
       this.selectProvinces = true;
       this.selectMarkets = false;
+      this.selectWarehousesOrigins = false;
+      this.selectWarehousesDestinies = false;
       this.selectCountries = false;
     }
     if(select === 'countries'){
       this.selectCountries = true;
       this.selectProvinces = false;
       this.selectMarkets = false;
+      this.selectWarehousesOrigins = false;
+      this.selectWarehousesDestinies = false;
     }
     if(select === 'logistic-operator'){
       this.selectCountries = false;
       this.selectProvinces = false;
       this.selectMarkets = false;
+      this.selectWarehousesOrigins = false;
     }
   }
 

@@ -15,13 +15,15 @@ import {UpdateOperatorRuleComponent} from "./update-operator-rule/update-operato
 })
 export class LogisticsOperators implements OnInit {
 
-  displayedColumns: string[] = ['select', 'marketplace', 'provincia', 'pais', 'operadorLogistico'];
+  displayedColumns: string[] = ['select', 'marketplace', 'warehouseOrigin', 'warehouseDestiny', 'provincia', 'pais', 'operadorLogistico'];
   private dataSource;
   private operatorsRules;
   private operator = [];
   private provinces  = [];
   private countries  = [];
   private markets = [];
+  private warehousesOrigins = [];
+  private warehousesDestinies = [];
   private idRule;
   private rulesData = [];
   private selection;
@@ -51,16 +53,24 @@ export class LogisticsOperators implements OnInit {
         for (let x = 0; x < this.operatorsRules[i].markets.length; x++) {
           this.markets.push({id: this.operatorsRules[i].markets[x].id, name: this.operatorsRules[i].markets[x].name});
         }
+        for (let x = 0; x < this.operatorsRules[i].warehousesOrigins.length; x++) {
+          this.warehousesOrigins.push({id: this.operatorsRules[i].warehousesOrigins[x].id, name: this.operatorsRules[i].warehousesOrigins[x].name});
+        }
+        for (let x = 0; x < this.operatorsRules[i].warehousesDestinies.length; x++) {
+          this.warehousesDestinies.push({id: this.operatorsRules[i].warehousesDestinies[x].id, name: this.operatorsRules[i].warehousesDestinies[x].name});
+        }
         for (let z = 0; z < this.operatorsRules[i].provinces.length; z++) {
           this.provinces.push({id: this.operatorsRules[i].provinces[z].id, name: this.operatorsRules[i].provinces[z].name});
         }
         for (let s = 0; s < this.operatorsRules[i].countries.length; s++) {
           this.countries.push({id: this.operatorsRules[i].countries[s].id, name: this.operatorsRules[i].countries[s].name});
         }
-        this.rulesData.push({idRule: this.idRule, marketplace: this.markets, provincia: this.provinces, pais: this.countries, operadorLogistico: this.operator});
+        this.rulesData.push({idRule: this.idRule, marketplace: this.markets, warehouseOrigin: this.warehousesOrigins, warehouseDestiny: this.warehousesDestinies, provincia: this.provinces, pais: this.countries, operadorLogistico: this.operator});
 
         this.operator = [];
         this.markets = [];
+        this.warehousesOrigins = [];
+        this.warehousesDestinies = [];
         this.provinces = [];
         this.countries = [];
       }

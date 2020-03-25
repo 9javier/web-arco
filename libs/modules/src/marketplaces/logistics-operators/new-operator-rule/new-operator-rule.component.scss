@@ -30,10 +30,9 @@ ion-header {
 }
 
 ion-content {
-  .prueba{
-    max-height: 300px;
-    overflow: scroll;
-    margin-right: -25px;
+
+  ion-label.label-title{
+    font-weight: 500;
   }
 
   ion-list{
