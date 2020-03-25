@@ -482,6 +482,36 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Preparación de pedidos',
+      icon:'basket',
+      type: 'wrapper',
+      open: true,
+      children: [
+        {
+          title: 'Generar etiquetas de envio',
+          id: 'order-preparation',
+          url: '/order-preparation',
+          icon: 'basket',
+          tooltip: 'Imprimir etiquetas de contenedores'
+        },
+        {
+          title: 'Manifiesto transportista',
+          id: 'order-preparation',
+          url: '/transport-manifest',
+          icon: 'barcode',
+          tooltip: 'Albaran'
+        },
+        {
+          title: 'Etiquetas manuales',
+          id: 'order-preparation',
+          url: '/labels-manual',
+          icon: 'barcode',
+          tooltip: 'Imprimir etiquetas manuales'
+        },
+       
+      ]
+    },
+    {
       title: 'Tarifas',
       id: 'tarifas',
       open: false,

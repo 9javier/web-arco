@@ -1,0 +1,55 @@
+.wrapp-center{
+    text-align: center; 
+    margin-left: auto;
+    margin-right: auto;   
+}
+
+.container{
+    display: table-cell;
+    vertical-align: middle;
+}
+.text-title{
+    font-weight: bold;
+}
+.text-send-by{
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.expediton{
+    margin-top: 10%;
+}
+
+.item{
+    margin-top: 10%;
+}
+
+.item-expedition{
+    margin-top: 15%;
+}
+
+.text-item{
+ font-size: 1em;
+}
+
+.text-error{
+font-size: 16px;
+}
+.error-mesage{
+    margin-top: 60%;
+    margin-left: 4px;
+}
+.close-icon{
+    font-size: 90px;
+}
+
+.text-blocked{
+    font-weight: bold;
+    font-size: 1.5em;
+    color: red;
+}
+
+.blocked{
+    margin-top: 30%;
+    margin-bottom: 5%;
+}

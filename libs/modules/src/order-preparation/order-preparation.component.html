@@ -1,0 +1,80 @@
+<ion-content *ngIf="initPage == true">
+    <ion-grid>
+        
+        <div class="wrapp-center">
+            <h2>Generar etiquetas de envío</h2>
+            <ion-button (click)="printLabels()">Imprimir</ion-button>  
+        </div>
+
+            
+
+            
+        
+         
+    </ion-grid>
+               
+                 
+</ion-content>
+
+<!--print error-->
+<ion-content *ngIf="PrintError == true">
+    <div class="wrapp-center">
+        <ion-icon  class="close-icon" name="close" color="danger" style="margin-top: 5%;"></ion-icon>
+        <div style="margin-top: 5%;">
+            <ion-label class="text-title">Pedido  </ion-label>
+            <ion-label class="text-title">SPARTOO</ion-label>
+            <ion-label class="text-title">Nº</ion-label>
+            <ion-label class="text-title">4564546545</ion-label>
+        </div>
+       
+    <div class="item">
+        <ion-label color="dark" >Error al generar etiqueta</ion-label>
+    </div>
+    
+    <div class="error-mesage">
+        <p  class="text-error">Vuelve a intentarlo cuando el pedido no tenga alerta.</p>
+        <p class="text-error">Si al final del día no se pudo generar la etiqueta, envía</p>
+        <p class="text-error">un email a cliente@kraclonline.com con el asunto</p>
+        <ion-label class="text-title">Etiqueta: 163547</ion-label>
+    </div>
+</div>
+</ion-content>
+
+<!--Get expediton-->
+<ion-content *ngIf="StatusPrint == true" class="expediton">
+    <div class="wrapp-center">
+        <ion-icon class="close-icon" name="checkmark" color="success"></ion-icon>
+        <div class="item-expedition">
+            <ion-label class="text-title">Pedido  </ion-label>
+            <ion-label class="text-title">SPARTOO</ion-label>
+            <ion-label class="text-title">Nº</ion-label>
+            <ion-label class="text-title">4564546545</ion-label>
+        </div>
+        <div class="item">
+            <ion-label color="dark" >BOLSA SEUR</ion-label>
+        </div>
+
+        <div class="item">
+            <ion-label color="dark" class="text-item" >Nº Bultos 2</ion-label>
+            <br>
+            <ion-label color="dark" class="text-send-by">Enviado por Seul </ion-label>
+        </div>
+
+        <div class="item">
+            <ion-button color="danger" (click)="scanner()">Escanear etiqueta de envio {{ statusScanner() }}</ion-button>
+        </div>
+   
+    </div>
+</ion-content>
+
+
+<!--Blocked Order-->
+<ion-content *ngIf="blockedOrder == true">
+    <div class="wrapp-center">
+        <div class="blocked">
+            <ion-label class="text-blocked">Pedido bloqueado</ion-label><br>
+        </div>
+        <ion-label class="text-title" >No puedes Imprimir etiquetas.</ion-label><br>
+        <ion-label class="text-title" >Por favor llama a central.</ion-label>
+    </div>
+</ion-content>

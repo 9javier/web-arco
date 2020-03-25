@@ -308,6 +308,18 @@ export * from './workwave-template-online-store/workwave-template-online-store.m
 export * from './picking-online-store-verify/picking-online-store-verify.component';
 export * from './picking-online-store-verify/picking-online-store-verify.module';
 
+// Orders preparations
+export * from './order-preparation/order-preparation.component';
+export * from './order-preparation/order-preparation.module';
+
+// Transport manifest
+export * from './transport-manifest/transport-manifest.component';
+export * from './transport-manifest/transport-manifest.module';
+
+// Labels Manual
+export * from './labels-manual/labels-manual.component';
+export * from './labels-manual/labels-manual.module';
+
 // Scanner item for manual input or laser scanners
 export * from './components/scanner-manual/scanner-manual.component';
 export * from './components/scanner-manual/scanner-manual.module';
