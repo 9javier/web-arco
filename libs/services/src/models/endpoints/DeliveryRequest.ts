@@ -9,7 +9,7 @@ export namespace DeliveryRequestModel {
     createdAt: string,
     updatedAt: string,
     id: number,
-    reference: number,
+    reference: string,
     deliveryRequestId: number,
     deliveryRequestExternalId: string,
     status: number,
@@ -22,9 +22,9 @@ export namespace DeliveryRequestModel {
     workWaveId: number,
     assignedShop: Warehouse,
     destinyShop: Warehouse,
-    model?: Model,
-    size?: Size,
-    selected?: boolean
+    model: Model,
+    size: Size,
+    selected: boolean
   }
 
 }

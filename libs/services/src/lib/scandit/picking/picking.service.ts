@@ -9,6 +9,9 @@ import {Events} from "@ionic/angular";
 import {environment} from "../../../environments/environment";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
+import {ModelModel, SizeModel} from "@suite/services";
+import Model = ModelModel.Model;
+import Size = SizeModel.Size;
 
 declare let Scandit;
 declare let GScandit;
@@ -46,9 +49,20 @@ export class PickingScanditService {
       models: [],
       brands: []
     };
-    let listProductsToStorePickings = this.pickingProvider.listProductsToStorePickings;
-    let listProductsProcessed = this.pickingProvider.listProductsProcessedToStorePickings;
+    let listProductsToStorePickings: ListItem[] = this.pickingProvider.listProductsToStorePickings;
+    let listProductsProcessed: ListItem[] = this.pickingProvider.listProductsProcessedToStorePickings;
     let listRejectionReasons = this.pickingProvider.listRejectionReasonsToStorePickings;
+
+    //add delivery requests
+    if(this.pickingProvider.deliveryRequestsHome){
+      listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 0));
+      listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 3));
+    }
+    if(this.pickingProvider.deliveryRequestsStore){
+      listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 0));
+      listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 3));
+    }
+
     this.lastCodeScanned = 'start';
     this.processed = listProductsProcessed;
     this.packingReferences = [];
@@ -294,6 +308,207 @@ export class PickingScanditService {
                   if (res.code == 200) {
                     listProductsToStorePickings = res.data.pending;
                     listProductsProcessed = res.data.processed;
+
+                    //add delivery requests filtered
+                    if(this.pickingProvider.deliveryRequestsHome){
+                      listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsHome.filter(request => {
+                        let show: boolean = true;
+                        if(request.status != 0){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
+                          show = false;
+                        }
+                        return show;
+                      }));
+                      listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsHome.filter(request => {
+                        let show: boolean = true;
+                        if(request.status != 3){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
+                          show = false;
+                        }
+                        return show;
+                      }));
+                      if(!this.pickingProvider.deliveryRequestsStore){
+                        for(let i = filtersToGetProducts.orderbys.length-1; i > -1; i--){
+                          switch (filtersToGetProducts.orderbys[i].type) {
+                            case 1:
+                              if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
+                              }else{
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.color.name.localeCompare(b.model.color.name));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.color.name.localeCompare(b.model.color.name));
+                              }
+                              break;
+                            case 2:
+                              if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.size.name.localeCompare(a.size.name));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => b.size.name.localeCompare(a.size.name));
+                              }else{
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.size.name.localeCompare(b.size.name));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => a.size.name.localeCompare(b.size.name));
+                              }
+                              break;
+                            case 3:
+                              if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
+                              }else{
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+                              }
+                              break;
+                            case 4:
+                              if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.createdAt.localeCompare(a.reference));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => b.reference.localeCompare(a.reference));
+                              }else{
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.reference.localeCompare(b.reference));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => a.reference.localeCompare(b.reference));
+                              }
+                              break;
+                            case 5:
+                              if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
+                              }else{
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+                              }
+                              break;
+                            case 6:
+                              if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.name.localeCompare(a.model.name));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.name.localeCompare(a.model.name));
+                              }else{
+                                listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.name.localeCompare(b.model.name));
+                                listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.name.localeCompare(b.model.name));
+                              }
+                              break;
+                          }
+                        }
+                      }
+                    }
+                    if(this.pickingProvider.deliveryRequestsStore){
+                      listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsStore.filter(request => {
+                        let show: boolean = true;
+                        if(request.status != 0){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
+                          show = false;
+                        }
+                        return show;
+                      }));
+                      listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsStore.filter(request => {
+                        let show: boolean = true;
+                        if(request.status != 3){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id)){
+                          show = false;
+                        }
+                        if(filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name)){
+                          show = false;
+                        }
+                        return show;
+                      }));
+                      for(let i = filtersToGetProducts.orderbys.length-1; i > -1; i--){
+                        switch (filtersToGetProducts.orderbys[i].type) {
+                          case 1:
+                            if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
+                            }else{
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.color.name.localeCompare(b.model.color.name));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.color.name.localeCompare(b.model.color.name));
+                            }
+                            break;
+                          case 2:
+                            if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.size.name.localeCompare(a.size.name));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => b.size.name.localeCompare(a.size.name));
+                            }else{
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.size.name.localeCompare(b.size.name));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => a.size.name.localeCompare(b.size.name));
+                            }
+                            break;
+                          case 3:
+                            if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
+                            }else{
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+                            }
+                            break;
+                          case 4:
+                            if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.createdAt.localeCompare(a.reference));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => b.reference.localeCompare(a.reference));
+                            }else{
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.reference.localeCompare(b.reference));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => a.reference.localeCompare(b.reference));
+                            }
+                            break;
+                          case 5:
+                            if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
+                            }else{
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+                            }
+                            break;
+                          case 6:
+                            if(filtersToGetProducts.orderbys[i].order == 'desc'){
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.name.localeCompare(a.model.name));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.name.localeCompare(a.model.name));
+                            }else{
+                              listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.name.localeCompare(b.model.name));
+                              listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.name.localeCompare(b.model.name));
+                            }
+                            break;
+                        }
+                      }
+                    }
+
                     if(this.packing){
                       ScanditMatrixSimple.sendPickingStoresProducts(this.packingReferences, listProductsProcessed, null);
                     }else{
@@ -366,7 +581,7 @@ export class PickingScanditService {
       }, 'Picking', this.scanditProvider.colorsHeader.background.color, this.scanditProvider.colorsHeader.color.color, textPickingStoresInit, environment.urlBase);
   }
 
-  private loadLineRequestsPending(listProductsToStorePickings: StoresLineRequestsModel.LineRequests[], listProductsProcessed: StoresLineRequestsModel.LineRequests[], filtersToGetProducts: PickingStoreModel.ParamsFiltered, typePacking: number) {
+  private loadLineRequestsPending(listProductsToStorePickings: ListItem[], listProductsProcessed: ListItem[], filtersToGetProducts: PickingStoreModel.ParamsFiltered, typePacking: number) {
     ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
     this.pickingStoreService
       .postLineRequestFiltered(filtersToGetProducts)
@@ -504,4 +719,15 @@ export class PickingScanditService {
     }
   }
 
+}
+
+interface ListItem {
+  createdAt: string,
+  updatedAt: string,
+  id: number,
+  reference: string,
+  status: number,
+  model: Model,
+  size: Size,
+  selected: boolean
 }

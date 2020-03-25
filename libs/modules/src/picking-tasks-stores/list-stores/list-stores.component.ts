@@ -166,20 +166,20 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
       models: [],
       ordertypes: [
         {
-          id: 4,
-          name: 'Fecha',
-        },
-        {
-          id: 3,
-          name: 'Ref. modelo',
-        },
-        {
           id: 1,
           name: 'Color',
         },
         {
           id: 2,
           name: 'Talla',
+        },
+        {
+          id: 3,
+          name: 'Ref. modelo',
+        },
+        {
+          id: 4,
+          name: 'Fecha',
         },
         {
           id: 5,
@@ -275,16 +275,16 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
                 this.pickingProvider.listProductsToStorePickings = res.data.pending;
                 this.pickingProvider.listProductsProcessedToStorePickings = res.data.processed;
                 this.pickingProvider.listFiltersPicking.brands = this.pickingProvider.listFiltersPicking.brands.concat(res.data.filters.brands.filter(newValue => {
-                  return !this.pickingProvider.listFiltersPicking.brands.map(value => value.id).includes(newValue.id);
+                  return !this.pickingProvider.listFiltersPicking.brands.map(value => value.name).includes(newValue.name);
                 })).sort((a, b) => a.name.localeCompare(b.name));
                 this.pickingProvider.listFiltersPicking.colors = this.pickingProvider.listFiltersPicking.colors.concat(res.data.filters.colors.filter(newValue => {
-                  return !this.pickingProvider.listFiltersPicking.colors.map(value => value.id).includes(newValue.id);
+                  return !this.pickingProvider.listFiltersPicking.colors.map(value => value.name).includes(newValue.name);
                 })).sort((a, b) => a.name.localeCompare(b.name));
                 this.pickingProvider.listFiltersPicking.models = this.pickingProvider.listFiltersPicking.models.concat(res.data.filters.models.filter(newValue => {
-                  return !this.pickingProvider.listFiltersPicking.models.map(value => value.id).includes(newValue.id);
+                  return !this.pickingProvider.listFiltersPicking.models.map(value => value.reference).includes(newValue.reference);
                 })).sort((a, b) => a.reference.localeCompare(b.reference));
                 this.pickingProvider.listFiltersPicking.sizes = this.pickingProvider.listFiltersPicking.sizes.concat(res.data.filters.sizes.filter(newValue => {
-                  return !this.pickingProvider.listFiltersPicking.sizes.map(value => value.id).includes(newValue.id);
+                  return !this.pickingProvider.listFiltersPicking.sizes.map(value => value.name).includes(newValue.name);
                 })).sort((a, b) => a.name.localeCompare(b.name));
                 await this.pickingScanditService.picking();
               } else {
