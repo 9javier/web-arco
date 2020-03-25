@@ -971,5 +971,6 @@ interface ListItem {
   status: number,
   model: Model,
   size: Size,
-  selected: boolean
+  selected: boolean,
+  shippingMode?: number
 }

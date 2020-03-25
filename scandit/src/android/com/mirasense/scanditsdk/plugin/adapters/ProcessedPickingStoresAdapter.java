@@ -42,6 +42,7 @@ public class ProcessedPickingStoresAdapter extends ArrayAdapter<JSONObject> {
     TextView tvModelValue = itemView.findViewById(resources.getIdentifier("tvModelValue", "id", packageName));
     TextView tvSizeValue = itemView.findViewById(resources.getIdentifier("tvSizeValue", "id", packageName));
     TextView tvBrandValue = itemView.findViewById(resources.getIdentifier("tvBrandValue", "id", packageName));
+    TextView tvTypeValue = itemView.findViewById(resources.getIdentifier("tvTypeValue", "id", packageName));
 
     try {
       if (!products.get(position).isNull("model")) {
@@ -52,6 +53,11 @@ public class ProcessedPickingStoresAdapter extends ArrayAdapter<JSONObject> {
       }
       if (!products.get(position).isNull("size")) {
         tvSizeValue.setText(products.get(position).getJSONObject("size").getString("name"));
+      }
+      if (!products.get(position).isNull("shippingMode")) {
+        tvTypeValue.setText("PO");
+      }else{
+        tvTypeValue.setText("PT");
       }
     } catch (JSONException e) {
       e.printStackTrace();
