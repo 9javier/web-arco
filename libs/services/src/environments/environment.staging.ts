@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  apiBasePhoto: 'http://localhost:8081',
   apiBase: 'http://192.168.254.109:8080/api',
   apiSorter: 'http://192.168.254.109:8080/api',
   urlBase: 'http://192.168.254.109:8080',

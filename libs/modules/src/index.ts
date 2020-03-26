@@ -22,6 +22,11 @@ export * from './jail/jail.module';
 export * from './state-expedition-avelon/state-expedition-avelon.component';
 export * from './state-expedition-avelon/state-expedition-avelon.module';
 
+export * from './commercial-fields/commercial-fields.component';
+export * from './commercial-fields/commercial-fields.module';
+
+export * from './brands-enabled-reception/brands-enabled-reception.component';
+export * from './brands-enabled-reception/brands-enabled-reception.module';
 
 export * from './pallets/pallets.component';
 export * from './pallets/pallets.module';
@@ -61,6 +66,10 @@ export * from './incidences-list/incidences-list.module';
 // Incidences Popover
 export * from './incidences-popover/incidences-popover.component';
 export * from './incidences-popover/incidences-popover.module';
+
+// Incidences Reception List
+export * from './incidences-reception-list/incidences-reception-list.component';
+export * from './incidences-reception-list/incidences-reception-list.module';
 
 // Picking Scan Packing
 export * from './picking-scan-packing/picking-scan-packing.component';
@@ -115,6 +124,14 @@ export * from './defective-registry/defective-registry.module';
 
 export * from './defective-historic/defective-historic.component';
 export * from './defective-historic/defective-historic.module';
+
+/**returns-list */
+export * from './returns-list/returns-list.component';
+export * from './returns-list/returns-list.module';
+
+/**returns-list-products */
+export * from './returns-list-products/returns-list-products.component';
+export * from './returns-list-products/returns-list-products.module';
 
 /**breadcrumb */
 export * from './components/breadcrumb/breadcrumb.component';
@@ -360,3 +377,8 @@ export * from './signature/signature.module'
 //seasons enabled reception
 export  * from './seasons-enabled/seasons-enabled.component'
 export  * from './seasons-enabled/seasons-enabled.module';
+
+
+//Drop Files
+export * from './drop-files/drop-files.component'
+export * from './drop-files/drop-files.module'

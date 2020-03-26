@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { TypesService } from '@suite/services';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { environment, IncidentsService, TypesService } from '@suite/services';
 import { PrinterService } from "../../../../../services/src/lib/printer/printer.service";
 import { AlertController, LoadingController, ModalController, NavParams } from "@ionic/angular";
 import { InventoryService, WarehouseService } from '@suite/services';
@@ -7,6 +7,7 @@ import { DefectiveRegistryModel } from '../../../../../services/src/models/endpo
 import { DefectiveRegistryService } from '../../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
 import { DamagedModel } from '../../../../../services/src/models/endpoints/Damaged';
 import { ChangeStateComponent } from '../change-state/change-state.component';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'suite-registry-details',
@@ -14,10 +15,15 @@ import { ChangeStateComponent } from '../change-state/change-state.component';
   styleUrls: ['./registry-details.component.scss']
 })
 export class RegistryDetailsComponent implements OnInit {
+  id: number;
+  isHistory: boolean;
+  private baseUrlPhoto = environment.apiBasePhoto;
   section = 'information';
   title = 'Ubicación ';
   originalTableStatus: DamagedModel.Status[];
-  registry: DefectiveRegistryModel.DefectiveRegistry;
+  productId: string;
+  registry: any = {};
+  registry_data: any ={};
   registryHistorical;
   showChangeState = false;
   date: any;
@@ -38,6 +44,7 @@ export class RegistryDetailsComponent implements OnInit {
   warehouseSelected: number;
   columnSelected: number;
   dates: any[] = [];
+  statusManagement;
 
   constructor(
     private typeService: TypesService,
@@ -49,8 +56,11 @@ export class RegistryDetailsComponent implements OnInit {
     private alertController: AlertController,
     private inventoryService: InventoryService,
     private loadingController: LoadingController,
+    private incidentsService: IncidentsService,
   ) {
-    this.registry = this.navParams.get("registry");
+    this.id = this.navParams.get("id");
+    this.isHistory = this.navParams.get("history");
+    this.productId = this.navParams.get("productId");
     this.showChangeState = this.navParams.get("showChangeState");
   }
 
@@ -64,8 +74,10 @@ export class RegistryDetailsComponent implements OnInit {
     this.listReferences = this.warehouseService.listReferences;
 
     this.warehouseSelected = null;
+    this.getRegistryDetail();
     this.getRegistryHistorical();
     this.getActionTypes();
+    this.getStatusManagement();
   }
 
   getActionTypes(): void {
@@ -76,14 +88,30 @@ export class RegistryDetailsComponent implements OnInit {
     })
   }
 
+  getStatusManagement() {
+    this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
+      this.statusManagement = resp;
+    })
+  }
+
   getRegistryHistorical(): void {
-    this.defectiveRegistryService.getHistorical({ productReference: this.registry.product.reference }).subscribe(historical => {
-      this.registryHistorical = historical.results;
-      this.originalTableStatus = historical.statuses;
+    this.defectiveRegistryService.getHistorical({ id: this.id, isHistory: this.isHistory }).subscribe(historical => {
+      this.registryHistorical = historical;
+    });
+  }
+
+  getRegistryDetail(): void {
+    this.defectiveRegistryService.getDataDefect({ id: this.id, isHistory: this.isHistory }).subscribe(lastHistorical => {
+      this.registry_data = {
+        data: lastHistorical.data,
+        status: lastHistorical.statuses};
+      this.registry = lastHistorical.data;
+      this.originalTableStatus = lastHistorical.statuses;
     });
   }
 
   async close() {
+    this.defectiveRegistryService.setRefreshList(true);
     await this.modalController.dismiss();
   }
 
@@ -105,7 +133,29 @@ export class RegistryDetailsComponent implements OnInit {
   }
 
   getStatusName(defectType: number) {
-    const status = this.originalTableStatus.find((x) => x.id === defectType);
-    return status.name;
+    const tableStatus = this.originalTableStatus.find((x) => x.id === defectType);
+    return tableStatus.name ? tableStatus.name : '-';
+  }
+
+  getRequireStatus(defectType: number, statusName: string) {
+    if(this.statusManagement && this.statusManagement.classifications){
+      const status = this.statusManagement.classifications.find((x) => x.defectType === defectType);
+      if(status){
+        switch (statusName) {
+          case 'contact':
+            return status.requireContact;
+          case 'history':
+            return status.passHistory;
+          case 'photo':
+            return status.requirePhoto;
+          case 'signature':
+            return status.requireOk;
+          case 'ticket':
+            return status.ticketEmit;
+          case 'orders':
+            return status.allowOrders;
+        }
+      }
+    }
   }
 }

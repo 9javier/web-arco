@@ -5,6 +5,8 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { MatExpansionModule, MatTooltipModule } from '@angular/material';
 import { ButtonChangeStateModule } from '../button-change-state/button-change-state.module';
+import {SignatureComponent} from '../../../signature/signature.component';
+import {SignatureModule} from '../../../signature/signature.module';
 
 @NgModule({
   declarations: [RegistryDetailsComponent],
@@ -15,7 +17,7 @@ import { ButtonChangeStateModule } from '../button-change-state/button-change-st
     FormsModule,
     MatTooltipModule,
     MatExpansionModule,
-    ButtonChangeStateModule
+    ButtonChangeStateModule,
   ],
   exports: [RegistryDetailsComponent]
 })

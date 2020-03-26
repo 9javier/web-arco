@@ -1,6 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { RegistryDetailsComponent } from './product-details.component';
+import { RegistryDetailsComponent } from './registry-details.component';
 
 describe('ProductDetailsComponent', () => {
   let component: RegistryDetailsComponent;

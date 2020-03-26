@@ -224,6 +224,21 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Devoluciones',
+      open: true,
+      type: 'wrapper',
+      icon: 'return-left',
+      children: [
+        {
+          title: 'Lista',
+          id: 'returns-list',
+          url: '/returns-list',
+          icon: 'list-box',
+          tooltip: 'Listado de registro de devoluciones'
+        }
+      ]
+    },
+    {
       title: 'Picking tiendas',
       open: true,
       type: 'wrapper',
@@ -398,6 +413,24 @@ export class MenuComponent implements OnInit {
           id: 'seasons-enabled',
           url: '/seasons-enabled',
           icon: 'cog'
+        },
+        {
+          title: 'Habilitar campos comerciales',
+          id: 'commercial-fields',
+          url: '/commercial-fields',
+          icon: 'cog'
+        },
+        {
+          title: 'Marcas habilitadas recepción sin pedido',
+          id: 'brands-enabled-reception',
+          url: '/brands-enabled-reception',
+          icon: 'cog'
+        },
+        {
+          title: 'Incidencias',
+          id: 'incidences-reception',
+          url: '/incidences-reception',
+          icon: 'notifications'
         }
       ]
     },
@@ -406,6 +439,12 @@ export class MenuComponent implements OnInit {
       id: 'regions',
       url: '/regions',
       icon: 'map'
+    },
+    {
+      title: 'Drop Files',
+      id: 'drop-file',
+      url: '/drop-files',
+      icon: 'folder'
     },
   ];
 
@@ -743,6 +782,12 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      id:'incidents',
+      title: 'Defectuosos',
+      icon:'warning',
+      url: '/defect-handler'
+    },
+    {
       title: 'Configuración',
       open: false,
       type: 'wrapper',
@@ -756,27 +801,9 @@ export class MenuComponent implements OnInit {
           tooltip: 'Ajustes de configuración de la aplicación. Ej: Mac de la impresora'
         }
       ]
-    },
-    {
-      title: 'Manejo de defectos',
-      open: false,
-      type: 'wrapper',
-      icon: 'archive',
-      children: [
-        {
-          id:'incidents',
-          title: 'Lista de defectos',
-          icon:'warning',
-          url: '/defect-handler'
-        },
-        {
-          id: 'firm',
-          title: 'Firma',
-          icon: 'color-wand',
-          url: '/signature'
-        }
-      ]
-    },
+    }
+
+
   ];
   private menuPages = {
     sga: this.sgaPages,
@@ -815,6 +842,10 @@ export class MenuComponent implements OnInit {
     this.toolbarProvider.currentPage.next(item.title);
     this.toolbarProvider.optionsActions.next([]);
     this.menuTitle.emit(item.title);
+  }
+
+  setTitle(title){
+    this.toolbarProvider.currentPage.next(title);
   }
 
   loadUpdate() {

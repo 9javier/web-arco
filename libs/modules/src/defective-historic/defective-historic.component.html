@@ -1,64 +1,31 @@
 <ion-content>
   <div class="incidences-container">
     <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
-      <ng-container matColumnDef="select">
-        <mat-header-cell class="my-sticky-col info  checkbox header-checkbox" *matHeaderCellDef>
-
-          <div class="content-checkbox">
-            <ng-container *ngIf="dataSource !== undefined" >
-              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? masterToggle() : null"
-                            [checked]="selection.hasValue() && isAllSelected()"
-                            [indeterminate]="selection.hasValue() && !isAllSelected()"
-                            [aria-label]="checkboxLabel()">
-              </mat-checkbox>
-            </ng-container>
-          </div>
-          <div>Todas</div>
-        </mat-header-cell>
-        <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
-          <ng-container *ngIf="dataSource !== undefined" >
-            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                          [matRippleColor]="'black'" (click)="$event.stopPropagation()"
-                          (change)="$event ? selection.toggle(row) : null"
-                          [checked]="selection.isSelected(row)"
-                          [aria-label]="checkboxLabel(row)">
-            </mat-checkbox>
-          </ng-container>
-        </mat-cell>
-      </ng-container>
-
       <ng-container matColumnDef="id">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Id
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.id}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="product">
-        <mat-header-cell class="my-sticky-col info reference" *matHeaderCellDef mat-sort-header>Código de Producto
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProduct [title]="'Códigos de Productos'"
-                               [listItems]="entities.product"
-                               [isFiltering]="isFilteringProduct != entities.product.length"
-                               (applyFilters)="applyFilters($event, 'product')">
+        <mat-header-cell class="my-sticky-col info checkbox" *matHeaderCellDef mat-sort-header>ID
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonId [title]="'IDS'"
+                               [listItems]="entities.id"
+                               [isFiltering]="isFilteringId != entities.id.length"
+                               (applyFilters)="applyFilters($event, 'id')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info reference"> {{element.product.reference}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info checkbox"> {{element.id}} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="dateDetection">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Fecha de Detección
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDateDetection [title]="'Fecha de Detección'"
-                               [listItems]="entities.dateDetection"
-                               [isFiltering]="isFilteringDateDetection != entities.dateDetection.length"
-                               (applyFilters)="applyFilters($event, 'dateDetection')">
+      <ng-container matColumnDef="user">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Usuario
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonUser [title]="'Usuario'"
+                               [listItems]="entities.user"
+                               [isFiltering]="isFilteringUser != entities.user.length"
+                               (applyFilters)="applyFilters($event, 'user')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.dateDetection | date:"dd/MM/yyyy"}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.user.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="statusManagementDefect">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Estado Defectuoso
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonStatusManagementDefect [title]="'Estado Defectuoso'"
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Estado
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonStatusManagementDefect [title]="'Estados'"
                                [listItems]="entities.statusManagementDefect"
                                [isFiltering]="isFilteringStatusManagementDefect != entities.statusManagementDefect.length"
                                (applyFilters)="applyFilters($event, 'statusManagementDefect')">
@@ -67,9 +34,86 @@
         <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{getStatusName(element.statusManagementDefect.defectType)}} </mat-cell>
       </ng-container>
 
+      <ng-container matColumnDef="warehouse">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Almacén
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonWarehouse [title]="'Almacenes'"
+                               [listItems]="entities.warehouse"
+                               [isFiltering]="isFilteringWarehouse != entities.warehouse.length"
+                               (applyFilters)="applyFilters($event, 'warehouse')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element.warehouse.reference}}-{{element.warehouse.name}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="product">
+        <mat-header-cell class="my-sticky-col info reference" *matHeaderCellDef mat-sort-header>Producto
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProduct [title]="'Productos'"
+                               [listItems]="entities.product"
+                               [isFiltering]="isFilteringProduct != entities.product.length"
+                               (applyFilters)="applyFilters($event, 'product')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info reference"> {{element?.product?.reference}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="model">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Artículo
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonModel [title]="'Artículos'"
+                               [listItems]="entities.model"
+                               [isFiltering]="isFilteringModel != entities.model.length"
+                               (applyFilters)="applyFilters($event, 'model')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element?.product?.model?.reference}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="size">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Talla
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonSize [title]="'Tallas'"
+                               [listItems]="entities.size"
+                               [isFiltering]="isFilteringSize != entities.size.length"
+                               (applyFilters)="applyFilters($event, 'size')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element?.product?.size?.name}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="brand">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Marca
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonBrand [title]="'Marcas'"
+                               [listItems]="entities.brand"
+                               [isFiltering]="isFilteringBrand != entities.brand.length"
+                               (applyFilters)="applyFilters($event, 'brand')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element?.product?.model?.brand?.name}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="color">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Color
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonColor [title]="'Colores'"
+                               [listItems]="entities.color"
+                               [isFiltering]="isFilteringColor != entities.color.length"
+                               (applyFilters)="applyFilters($event, 'color')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element?.product?.model?.color?.name}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="dateDetection">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Fecha
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDateDetection [title]="'Fechas'"
+                               [listItems]="entities.dateDetection"
+                               [isFiltering]="isFilteringDateDetection != entities.dateDetection.length"
+                               (applyFilters)="applyFilters($event, 'dateDetection')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.dateDetection | date:"dd/MM/yyyy"}} </mat-cell>
+      </ng-container>
+
       <ng-container matColumnDef="defectTypeParent">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Grupo Defectuoso
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeParent [title]="'Grupo Defectuoso'"
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Tipo defecto
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeParent [title]="'Tipos defecto'"
                                [listItems]="entities.defectTypeParent"
                                [isFiltering]="isFilteringDefectTypeParent != entities.defectTypeParent.length"
                                (applyFilters)="applyFilters($event, 'defectTypeParent')">
@@ -79,47 +123,14 @@
       </ng-container>
 
       <ng-container matColumnDef="defectTypeChild">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Tipo de Defectuoso
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeChild [title]="'Tipo de Defectuoso'"
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Subtipo defecto
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeChild [title]="'Subtipo defecto'"
                                [listItems]="entities.defectTypeChild"
                                [isFiltering]="isFilteringDefectTypeChild != entities.defectTypeChild.length"
                                (applyFilters)="applyFilters($event, 'defectTypeChild')">
           </suite-filter-button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element.defectTypeChild.name}}  </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="numberObservations">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Número Observaciones
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonNumberObservations [title]="'Número Observaciones'"
-                               [listItems]="entities.numberObservations"
-                               [isFiltering]="isFilteringNumberObservations != entities.numberObservations.length"
-                               (applyFilters)="applyFilters($event, 'numberObservations')">
-          </suite-filter-button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.numberObservations}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="photo">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Foto
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonPhoto [title]="'Foto'"
-                               [listItems]="entities.photo"
-                               [isFiltering]="isFilteringPhoto != entities.photo.length"
-                               (applyFilters)="applyFilters($event, 'photo')">
-          </suite-filter-button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number" (click)="$event.stopPropagation()"><a href="javascript:;" (click)="showImageModal(element.product.reference, element.photo)">{{element.photo}}</a></mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="warehouse">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Almacén
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonWarehouse [title]="'Almacén'"
-                               [listItems]="entities.warehouse"
-                               [isFiltering]="isFilteringWarehouse != entities.warehouse.length"
-                               (applyFilters)="applyFilters($event, 'warehouse')">
-          </suite-filter-button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element.warehouse.name}}  </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>

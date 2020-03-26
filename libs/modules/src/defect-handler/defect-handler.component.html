@@ -1,56 +1,136 @@
 <ion-content class="ion-padding">
-  <ion-text color="primary">
-    <suite-breadcrumb></suite-breadcrumb>
-  </ion-text>
-  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goDefect(row)"></tr>
-    <ng-container matColumnDef="barcode">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="barcode">
-        Referencia
-      </th>
-      <td mat-cell *matCellDef="let defect">
-        {{ defect?.barcode }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="registerDate">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="registerDate">
-        Fecha de registro
-      </th>
-      <td mat-cell *matCellDef="let defect">
-        {{ defect?.registerDate }}
-      </td>
-    </ng-container>
-    <!-- <ng-container matColumnDef="defectType">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="defectType">
-        Tipo de defecto
-      </th>
-      <td mat-cell *matCellDef="let defect">
-        {{ defect?.defectTypeChild.name }}
-      </td>
-    </ng-container> -->
-    <ng-container matColumnDef="state">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="state">
-        Estado
-      </th>
-      <td mat-cell *matCellDef="let defect">
-        {{ defect?.statusManagementDefect.id }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="select">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="select">
-      </th>
-      <td mat-cell *matCellDef="let defect">
-        <i class="material-icons action-icon">send</i>
-      </td>
-    </ng-container>
-
-  </table>
-  <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button [routerLink]="['/incidents']">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  <div >
+    <div class="list-header-filters-mobile">
+      <ion-grid *ngIf="mobileVersionTypeList == 'list'">
+        <ion-row class="header-mobile">
+          <ion-col size="11" class="information">
+          </ion-col>
+          <ion-col size="1" class="filters-mobile" (click)="openFiltersMobile()">
+            <div class="filters-mobile" [ngClass]="showFiltersMobileVersion ? 'filters-opened' : ''">
+              <i class="material-icons">filter_list</i>
+            </div>
+          </ion-col>
+        </ion-row>
+        <form *ngIf="showFiltersMobileVersion" [formGroup]="form">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="6">
+                <ion-label>Producto:</ion-label>
+                <suite-tags-input placeholder="Producto" [options]="product" formControlName="product" multiple="true">
+                </suite-tags-input>
+              </ion-col>
+              <ion-col size="6">
+                <ion-label>Modelo:</ion-label>
+                <suite-tags-input placeholder="Modelo" [options]="model" formControlName="model"
+                                  multiple="true"></suite-tags-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="6">
+                <ion-label>Talla:</ion-label>
+                <suite-tags-input placeholder="Talla" [options]="size" formControlName="size"
+                                  multiple="true">
+                </suite-tags-input>
+              </ion-col>
+              <ion-col size="6">
+                <ion-label>Color:</ion-label>
+                <suite-tags-input placeholder="Color" [options]="color" formControlName="color" multiple="true">
+                </suite-tags-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="6">
+                <ion-label>Marca:</ion-label>
+                <suite-tags-input placeholder="Marca" [options]="brand" formControlName="brand" multiple="true">
+                </suite-tags-input>
+              </ion-col>
+              <ion-col size="6">
+                <ion-label>Estado:</ion-label>
+                <ion-item class="item-filter">
+                  <ion-select formControlName="statusManagementDefect" placeholder="Filtrar">
+                    <ion-select-option *ngFor="let status of statusManagementDefect; let i = index" [value]="status.id" [attr.selected]="!i">
+                      {{ status.name }}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12">
+                <ion-label>Ordenar:</ion-label>
+                <ion-item formGroupName="orderby" class="item-filter">
+                  <ion-select formControlName="type" interface="popover" placeholder="Ordenar">
+                    <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col class="btn-remove" size="6">
+                <ion-button (click)="clearFilters()">
+                  Borra Filtros
+                </ion-button>
+              </ion-col>
+              <ion-col class="btn-apply" size="6">
+                <ion-button (click)="applyFilters()">
+                  Aplicar Filtros
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </form>
+      </ion-grid>
+    </div>
+    <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" style="width: 100%;">
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goDefect(row)"></tr>
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="id">
+          ID
+        </th>
+        <td mat-cell *matCellDef="let defect">
+          {{ defect?.id }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="barcode">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="barcode">
+          Referencia
+        </th>
+        <td mat-cell *matCellDef="let defect">
+          {{ defect?.product.reference }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="registerDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="registerDate">
+          Fecha de registro
+        </th>
+        <td mat-cell *matCellDef="let defect">
+          {{ defect?.dateDetection | date:"dd/MM/yyyy"}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="state">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="state">
+          Estado
+        </th>
+        <td mat-cell *matCellDef="let defect">
+          {{ getStatusName(defect?.statusManagementDefect.defectType) }}
+        </td>
+      </ng-container>
+    </table>
+  </div>
 </ion-content>
+<ion-footer class="footer-products">
+  <ion-toolbar>
+    <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+  </ion-toolbar>
+  <div class="toolbar-buttons">
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+      <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="refresh()"><i
+        class="material-icons">refresh</i></ion-fab-button>
+      <ion-fab-button [routerLink]="['/incidents']">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </div>
+</ion-footer>
