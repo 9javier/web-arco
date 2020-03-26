@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
   apiBase: 'http://192.168.254.111:8080/api',
+  apiLogisticOperator: 'http://192.168.254.111:3051/api',
   apiSorter: 'http://192.168.254.111:8080/api',
   urlBase: 'http://192.168.254.111:8080',
   apiRule: "http://192.168.254.111:5000",
