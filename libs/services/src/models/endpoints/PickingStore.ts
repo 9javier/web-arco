@@ -1,8 +1,11 @@
 import {StoresLineRequestsModel} from "./StoresLineRequests";
-import {WarehouseModel} from "@suite/services";
+import {ModelModel, SizeModel, WarehouseModel} from "@suite/services";
 import {HttpRequestModel} from "./HttpRequest";
 
 export namespace PickingStoreModel {
+
+  import Model = ModelModel.Model;
+  import Size = SizeModel.Size;
 
   export interface ListStoresIds {
     warehouseIds: number[]
@@ -17,8 +20,19 @@ export namespace PickingStoreModel {
   }
 
   export interface SendProcess {
-    productReference: string,
-    filters: ParamsFiltered
+    productReference: string
+  }
+
+  export interface ListItem {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    reference: string,
+    status: number,
+    model: Model,
+    size: Size,
+    selected: boolean,
+    shippingMode?: number
   }
 
   export interface ChangeStatus {
@@ -170,10 +184,7 @@ export namespace PickingStoreModel {
   }
 
   export interface ResponseSendProcess extends HttpRequestModel.Response {
-    data: {
-      inventory: any,
-      linesRequestFiltered: ResponseDataLineRequestsFiltered
-    };
+    data: ListItem;
     message: string;
     code: number;
     errors: any;

@@ -3,15 +3,12 @@ import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {PickingProvider} from "../../../providers/picking/picking.provider";
 import {PickingStoreService} from "../../endpoint/picking-store/picking-store.service";
 import {PickingStoreModel} from "../../../models/endpoints/PickingStore";
-import {StoresLineRequestsModel} from "../../../models/endpoints/StoresLineRequests";
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {Events} from "@ionic/angular";
 import {environment} from "../../../environments/environment";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
-import {ModelModel, SizeModel} from "@suite/services";
-import Model = ModelModel.Model;
-import Size = SizeModel.Size;
+import ListItem = PickingStoreModel.ListItem;
 
 declare let Scandit;
 declare let GScandit;
@@ -55,12 +52,28 @@ export class PickingScanditService {
 
     //add delivery requests
     if(this.pickingProvider.deliveryRequestsHome){
-      listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 0));
-      listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 3));
+      if(listProductsToStorePickings){
+        listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 0));
+      }else{
+        listProductsToStorePickings = this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 0);
+      }
+      if(listProductsProcessed){
+        listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 3));
+      }else{
+        listProductsProcessed = this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 3);
+      }
     }
     if(this.pickingProvider.deliveryRequestsStore){
-      listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 0));
-      listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 3));
+      if(listProductsToStorePickings){
+        listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 0));
+      }else{
+        listProductsToStorePickings = this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 0);
+      }
+      if(listProductsProcessed){
+        listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 3));
+      }else{
+        listProductsProcessed = this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 3);
+      }
     }
 
     this.lastCodeScanned = 'start';
@@ -95,61 +108,70 @@ export class PickingScanditService {
 
                 if (listProductsToStorePickings.length > 0) {
                   let paramsPickingStoreProcess: PickingStoreModel.SendProcess = {
-                    productReference: codeScanned,
-                    filters: filtersToGetProducts
+                    productReference: codeScanned
                   };
                   ScanditMatrixSimple.showLoadingDialog('Comprobando producto...');
-                  this.pickingStoreService
-                    .postPickingStoreProcess(paramsPickingStoreProcess)
-                    .then((res: PickingStoreModel.ResponseSendProcess) => {
-                      ScanditMatrixSimple.hideLoadingDialog();
-                      if (res.code == 200 || res.code == 201) {
-                        listProductsToStorePickings = res.data.linesRequestFiltered.pending;
-                        listProductsProcessed = res.data.linesRequestFiltered.processed;
-                        if(this.packing){
-                          ScanditMatrixSimple.sendPickingStoresProducts(this.packingReferences, listProductsProcessed, null);
-                        }else{
-                          ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+                  this.pickingStoreService.postPickingStoreProcess(paramsPickingStoreProcess).then((res: PickingStoreModel.ResponseSendProcess) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    if (res.code == 200 || res.code == 201) {
+
+                      const processedRequest: ListItem = res.data;
+                      //delete processed request from pending requests
+                      for(let index = 0; index < listProductsToStorePickings.length; index++){
+                        if(listProductsToStorePickings[index].id == processedRequest.id && listProductsToStorePickings[index].shippingMode == processedRequest.shippingMode){
+                          processedRequest.model = listProductsToStorePickings[index].model;
+                          processedRequest.size = listProductsToStorePickings[index].size;
+                          listProductsToStorePickings.splice(index, 1);
+                          break;
                         }
-                        ScanditMatrixSimple.setText(
-                          `Producto ${codeScanned} escaneado y añadido al traspaso.`,
-                          this.scanditProvider.colorsMessage.info.color,
-                          this.scanditProvider.colorText.color,
-                          18);
-                        this.hideTextMessage(2000);
-                        if (listProductsToStorePickings.length < 1) {
-                          ScanditMatrixSimple.setTimeout("setNotProductPending", 2 * 1000, JSON.stringify([typePacking]));
-                        }
-                        this.refreshListPickingsStores();
-                      } else {
-                        ScanditMatrixSimple.setText(
-                          res.errors,
-                          this.scanditProvider.colorsMessage.error.color,
-                          this.scanditProvider.colorText.color,
-                          18);
-                        this.hideTextMessage(2000);
-                        this.loadLineRequestsPending(listProductsToStorePickings, listProductsProcessed, filtersToGetProducts, typePacking);
                       }
-                    }, (error) => {
-                      ScanditMatrixSimple.hideLoadingDialog();
+                      //add processed request to processed requests
+                      listProductsProcessed.push(processedRequest);
+
+                      if(this.packing){
+                        ScanditMatrixSimple.sendPickingStoresProducts(this.packingReferences, listProductsProcessed, null);
+                      }else{
+                        ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+                      }
                       ScanditMatrixSimple.setText(
-                        error.error.errors,
+                        `Producto ${codeScanned} escaneado y procesado.`,
+                        this.scanditProvider.colorsMessage.info.color,
+                        this.scanditProvider.colorText.color,
+                        18
+                      );
+                      this.hideTextMessage(2000);
+                      if (listProductsToStorePickings.length < 1) {
+                        ScanditMatrixSimple.setTimeout("setNotProductPending", 2 * 1000, JSON.stringify([typePacking]));
+                      }
+                      this.refreshListPickingsStores();
+                    } else {
+                      ScanditMatrixSimple.setText(
+                        res.errors,
                         this.scanditProvider.colorsMessage.error.color,
                         this.scanditProvider.colorText.color,
                         18);
                       this.hideTextMessage(2000);
                       this.loadLineRequestsPending(listProductsToStorePickings, listProductsProcessed, filtersToGetProducts, typePacking);
-                    })
-                    .catch((error) => {
-                      ScanditMatrixSimple.hideLoadingDialog();
-                      ScanditMatrixSimple.setText(
-                        error.error.errors,
-                        this.scanditProvider.colorsMessage.error.color,
-                        this.scanditProvider.colorText.color,
-                        18);
-                      this.hideTextMessage(2000);
-                      this.loadLineRequestsPending(listProductsToStorePickings, listProductsProcessed, filtersToGetProducts, typePacking);
-                    });
+                    }
+                  }, (error) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    ScanditMatrixSimple.setText(
+                      error.error.errors,
+                      this.scanditProvider.colorsMessage.error.color,
+                      this.scanditProvider.colorText.color,
+                      18);
+                    this.hideTextMessage(2000);
+                    this.loadLineRequestsPending(listProductsToStorePickings, listProductsProcessed, filtersToGetProducts, typePacking);
+                  }).catch((error) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    ScanditMatrixSimple.setText(
+                      error.error.errors,
+                      this.scanditProvider.colorsMessage.error.color,
+                      this.scanditProvider.colorText.color,
+                      18);
+                    this.hideTextMessage(2000);
+                    this.loadLineRequestsPending(listProductsToStorePickings, listProductsProcessed, filtersToGetProducts, typePacking);
+                  });
                 } else {
                   ScanditMatrixSimple.setText(
                     this.pickingProvider.literalsJailPallet[typePacking].scan_to_end,
@@ -825,24 +847,48 @@ export class PickingScanditService {
 
   private loadLineRequestsPending(listProductsToStorePickings: ListItem[], listProductsProcessed: ListItem[], filtersToGetProducts: PickingStoreModel.ParamsFiltered, typePacking: number) {
     ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
-    this.pickingStoreService
-      .postLineRequestFiltered(filtersToGetProducts)
-      .then((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
-        ScanditMatrixSimple.hideLoadingDialog();
-        if (res.code == 200 || res.code == 201) {
-          listProductsToStorePickings = res.data.pending;
-          listProductsProcessed = res.data.processed;
-          if(this.packing){
-            ScanditMatrixSimple.sendPickingStoresProducts(this.packingReferences, listProductsProcessed, null);
+    this.pickingStoreService.postLineRequestFiltered(filtersToGetProducts).then((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
+      ScanditMatrixSimple.hideLoadingDialog();
+      if (res.code == 200 || res.code == 201) {
+        listProductsToStorePickings = res.data.pending;
+        listProductsProcessed = res.data.processed;
+        //add delivery requests
+        if(this.pickingProvider.deliveryRequestsHome){
+          if(listProductsToStorePickings){
+            listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 0));
           }else{
-            ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+            listProductsToStorePickings = this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 0);
           }
-          if (listProductsToStorePickings.length < 1) {
-            ScanditMatrixSimple.setTimeout("setNotProductPending",  2 * 1000, JSON.stringify([typePacking]));
+          if(listProductsProcessed){
+            listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 3));
+          }else{
+            listProductsProcessed = this.pickingProvider.deliveryRequestsHome.filter(request => request.status == 3);
           }
-          this.refreshListPickingsStores();
         }
-      }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
+        if(this.pickingProvider.deliveryRequestsStore){
+          if(listProductsToStorePickings){
+            listProductsToStorePickings = listProductsToStorePickings.concat(this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 0));
+          }else{
+            listProductsToStorePickings = this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 0);
+          }
+          if(listProductsProcessed){
+            listProductsProcessed = listProductsProcessed.concat(this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 3));
+          }else{
+            listProductsProcessed = this.pickingProvider.deliveryRequestsStore.filter(request => request.status == 3);
+          }
+        }
+
+        if(this.packing){
+          ScanditMatrixSimple.sendPickingStoresProducts(this.packingReferences, listProductsProcessed, null);
+        }else{
+          ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+        }
+        if (listProductsToStorePickings.length < 1) {
+          ScanditMatrixSimple.setTimeout("setNotProductPending",  2 * 1000, JSON.stringify([typePacking]));
+        }
+        this.refreshListPickingsStores();
+      }
+    }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
   }
 
   private finishPicking() {
@@ -961,16 +1007,4 @@ export class PickingScanditService {
     }
   }
 
-}
-
-interface ListItem {
-  createdAt: string,
-  updatedAt: string,
-  id: number,
-  reference: string,
-  status: number,
-  model: Model,
-  size: Size,
-  selected: boolean,
-  shippingMode?: number
 }
