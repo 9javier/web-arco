@@ -16,6 +16,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { FileUploadOptions, FileTransferObject, FileUploadResult, FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { Router } from '@angular/router';
 import { DefectiveRegistryService } from '../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
+import { PrintTicketService } from '../../../../services/src/lib/print-ticket/print-ticket.service';
 
 @Component({
   selector: 'suite-change-state2',
@@ -96,6 +97,7 @@ export class ChangeState2Component implements OnInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private defectiveRegistryService: DefectiveRegistryService,
+    private printTicketService: PrintTicketService,
 
   ) {
     this.registry = this.navParams.get("registry");
@@ -352,7 +354,8 @@ export class ChangeState2Component implements OnInit {
 
 
   print() {
-    console.log("imprimir...")
+    console.log("Print");
+    this.printTicketService.printTicket();
   }
 
   initGestionState() {

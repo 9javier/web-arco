@@ -22,6 +22,7 @@ import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar
 import { Subscription } from 'rxjs';
 import { KeyboardService } from '../../../services/src/lib/keyboard/keyboard.service';
 import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
+import { PrintTicketService } from '../../../services/src/lib/print-ticket/print-ticket.service';
 
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
@@ -109,6 +110,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     private toolbarProvider: ToolbarProvider,
     private dropService: DropFilesService,
     private itemReferencesProvider: ItemReferencesProvider,
+    private printTicketService: PrintTicketService,
 
   ) {
 
@@ -284,7 +286,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           //   name: contact.name,
           //   email: contact.email,
           //   phone: contact.phone
-          // })            
+          // })
         });
         this.typeIdBC = resp.statusManagementDefect.id;
         this.onChange(resp.defectTypeChild.id);
@@ -358,6 +360,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   print() {
     console.log("imprimir...")
+    this.printTicketService.printTicket();
   }
 
   validate() {
@@ -702,7 +705,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         const response: any = JSON.parse(result.response)
         console.log('response: ', response);
         console.log(response.data);
-        
+
         response.data.pathMedium = `${environment.apiBasePhoto}${response.data.pathMedium}`
         response.data.pathIcon = `${environment.apiBasePhoto}${response.data.pathIcon}`
         this.img = response.data;
