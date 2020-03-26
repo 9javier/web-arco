@@ -367,7 +367,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Expediciones',
+      title: 'Recepción de fábrica',
       open: true,
       type: 'wrapper',
       icon: 'archive',
@@ -753,7 +753,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Expediciones',
+      title: 'Recepción de fábrica',
       open: false,
       type: 'wrapper',
       icon: 'archive',
