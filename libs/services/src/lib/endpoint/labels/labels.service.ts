@@ -19,6 +19,7 @@ export class LabelsService {
   /**urls of the service */
   private getIndexUrl = environment.apiBase+"/labels";
   private getStatusLabelsUrl = environment.apiBase+"/labels/status";
+  private postPrintLabelStoreUrl = environment.apiBase+"/labels/code";
   constructor(private http:HttpClient) { }
 
   /**
@@ -34,6 +35,12 @@ export class LabelsService {
   getIndexLabels():Observable<any>{
     return this.http.get(this.getStatusLabelsUrl).pipe(map((response:any)=>{
       return response.data
+    }));
+  }
+
+  postPrintLabels(body):Observable<any>{
+    return this.http.post(this.postPrintLabelStoreUrl,body).pipe(map((response:any)=>{
+      return response
     }));
   }
    refreshScanner() {

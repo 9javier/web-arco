@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild,
   Input,Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { LabelsService } from '@suite/services';
+import { IntermediaryService } from '@suite/services';
+
 @Component({
   selector: 'order-preparation',
   templateUrl: './order-preparation.component.html',
@@ -20,7 +22,8 @@ export class OrderPreparationComponent implements OnInit {
   numAllScanner: number =0
   constructor(
     private labelsService: LabelsService,
-    private router: Router
+    private router: Router,
+    private intermediaryService: IntermediaryService
   ) { }
 
   ngOnInit() {
@@ -39,27 +42,37 @@ initNumsScanner(){
   showExpedition(){
     this.StatusPrint=true;
     this.initPage = false;
+    this.blockedOrder = false;
   }
 
 
   async print(){
+    await this.intermediaryService.presentLoading();
     this.labelsService.getIndexLabels().subscribe(result =>{
       console.log(result[0].status);
       let status = result[0].status;
       let blocked = result[0].blocked;
-      this.numAllScanner = 4;
-      this.numScanner = 4;
+      this.dataSource=result
+      this.numAllScanner = result[0].numberLumps;
+      this.numScanner = result[0].numberLumps;
       this.labelsService.setNumAllScanner(this.numAllScanner);
       if(blocked == false){
         if(status == true){
+          this.intermediaryService.dismissLoading();
           this.showExpedition();
         }else{
+          this.intermediaryService.dismissLoading();
           this.showErrorExpedition();
         }
       }else{
+        this.intermediaryService.dismissLoading();
         this.showBlockedOrder();
       }
 
+    },
+    async (err) => {
+      console.log(err);
+      await this.intermediaryService.dismissLoading();
     });
   }
 
@@ -116,6 +129,10 @@ initNumsScanner(){
     
     return status ;
 
+  }
+
+  showAlerts(){
+    this.router.navigate(['/order-preparation/alerts']);
   }
 
 }

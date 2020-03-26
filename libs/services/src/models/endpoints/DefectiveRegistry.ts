@@ -108,4 +108,11 @@ export namespace DefectiveRegistryModel {
     type:number,
     order:string
    }
+
+   export interface test {
+    id?: number;
+    name?:string,
+    code:string
+
+  }
 }

@@ -1,0 +1,41 @@
+
+<ion-content>
+ <table mat-table [dataSource]="dataSource" style="width: 100%;">
+      <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>
+          No.Pedido
+        </th>
+        <td mat-cell *matCellDef="let alert">
+          {{ alert.id }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>
+          Nombre
+        </th>
+        <td mat-cell *matCellDef="let alert">
+          {{ alert.name }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="barcode">
+        <th mat-header-cell *matHeaderCellDef >
+          Código error
+        </th>
+        <td mat-cell *matCellDef="let alert">
+          {{ alert.code }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="scanner">
+        <th mat-header-cell *matHeaderCellDef >
+        </th>
+        <td mat-cell *matCellDef="let alert">
+            <ion-icon *ngIf="alert.type == 1" class="status-error" name="arrow-dropup"></ion-icon>
+            <a *ngIf="alert.type == 2" href="">escannear error</a>
+        </td>
+      </ng-container>
+</table>
+
+
+</ion-content>

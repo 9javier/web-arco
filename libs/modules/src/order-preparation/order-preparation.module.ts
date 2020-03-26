@@ -2,18 +2,16 @@ import { IonicModule } from '@ionic/angular';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule, Routes } from "@angular/router";
 import { CommonModule } from '@angular/common';
-import { MatListModule } from '@angular/material/list';
-import {
-  
-  MatTableModule,
- 
-} from '@angular/material';
 import { InputCodesComponent } from "./input-codes/input-codes.component";
+import { ListAlertsComponent } from "./list-alerts/list-alerts.component";
 import { HideKeyboardModule } from 'hide-keyboard';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CdkTableModule } from "@angular/cdk/table";
 import { OrderPreparationComponent } from './order-preparation.component';
 import { OrderPreparationRoutingModule } from "./order-preparation-routing.module";
+import { MatListModule, MatTableModule, MatPaginatorModule, MatSortModule } from '@angular/material';
+
+
+
 
 const routes: Routes = [
   {
@@ -23,19 +21,20 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [OrderPreparationComponent,InputCodesComponent],
+  declarations: [OrderPreparationComponent,InputCodesComponent,ListAlertsComponent],
   imports: [
     CommonModule,
     IonicModule,
     RouterModule.forChild(routes),
     MatListModule,
     MatTableModule,
-    CdkTableModule,
+    MatPaginatorModule,
+    MatSortModule,
     FormsModule,
     HideKeyboardModule,
     OrderPreparationRoutingModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  entryComponents: [InputCodesComponent]
+  entryComponents: [InputCodesComponent,ListAlertsComponent]
 })
 export class OrderPreparationModule { }

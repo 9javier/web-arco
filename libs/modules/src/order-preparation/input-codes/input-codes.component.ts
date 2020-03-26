@@ -103,7 +103,7 @@ export class InputCodesComponent implements OnInit {
           break;
         case this.itemReferencesProvider.codeValue.PRODUCT_MODEL:
           //this.getSizeListByReference(dataWrote);
-          this.printLabels();
+          this.printLabels(dataWrote);
           break;
         default:
           this.audioProvider.playDefaultError();
@@ -300,10 +300,9 @@ export class InputCodesComponent implements OnInit {
     }
   }
 
-  public printLabels(){
+  public printLabels(barcode){
     if(this.numScanner > 0){
-        this.labelService.numScanner(this.numScanner= (this.numScanner-1));
-        this.router.navigate(['/order-preparation']);
+        this.printLabelStore(barcode);
     }else{
       this.router.navigate(['/order-preparation']);
     }
@@ -322,6 +321,25 @@ export class InputCodesComponent implements OnInit {
       this.numAllSann = resp;
     });
     
+  }
+
+  async printLabelStore(barcode_){
+    let body ={
+      barcode : barcode_
+    }
+    this.intermediaryService.presentLoading();
+    this.labelService.postPrintLabels(body).subscribe( result =>{
+      console.log("resultado");
+      console.log(result);
+      this.labelService.numScanner(this.numScanner= (this.numScanner-1));
+      this.router.navigate(['/order-preparation']);
+      this.intermediaryService.dismissLoading();
+    }, error => {
+      console.log(error);
+      this.intermediaryService.dismissLoading();
+    });
+
+   
   }
 
 }

@@ -43,28 +43,27 @@
 <!--Get expediton-->
 <ion-content *ngIf="StatusPrint == true" class="expediton">
     <div class="wrapp-center">
-        <ion-icon class="close-icon" name="checkmark" color="success"></ion-icon>
-        <div class="item-expedition">
-            <ion-label class="text-title">Pedido  </ion-label>
-            <ion-label class="text-title">SPARTOO</ion-label>
-            <ion-label class="text-title">Nº</ion-label>
-            <ion-label class="text-title">4564546545</ion-label>
-        </div>
-        <div class="item">
-            <ion-label color="dark" >BOLSA SEUR</ion-label>
-        </div>
+        <div *ngFor="let label of dataSource">
+            <ion-icon class="close-icon" name="checkmark" color="success"></ion-icon>
+            <div class="item-expedition">
+                <ion-label class="text-title">Pedido {{label.order}} </ion-label>
+                <ion-label class="text-title"> Nº {{label.numberOrder}}</ion-label>
+            </div>
+            <div class="item">
+                <ion-label color="dark" >{{label.description}}</ion-label>
+            </div>
 
-        <div class="item">
-            <ion-label color="dark" class="text-item" >Nº Bultos 2</ion-label>
-            <br>
-            <ion-label color="dark" class="text-send-by">Enviado por Seul </ion-label>
-        </div>
+            <div class="item">
+                <ion-label color="dark" class="text-item" >Nº Bultos {{label.numberLumps}}</ion-label>
+                <br>
+                <ion-label color="dark" class="text-send-by">Enviado por {{label.sendBy}} </ion-label>
+            </div>
 
-        <div class="item">
-            <ion-button color="danger" (click)="scanner()">Escanear etiqueta de envio {{ statusScanner() }}</ion-button>
-        </div>
-   
+            <div class="item">
+                <ion-button color="danger" (click)="scanner()">Escanear etiqueta de envio {{ statusScanner() }}</ion-button>
+            </div>
     </div>
+</div>
 </ion-content>
 
 
@@ -76,5 +75,11 @@
         </div>
         <ion-label class="text-title" >No puedes Imprimir etiquetas.</ion-label><br>
         <ion-label class="text-title" >Por favor llama a central.</ion-label>
+    </div>
+    <div class="wrapp-center">
+        <ion-button (click)="printLabels()">Actualizar</ion-button>
+    </div>
+    <div class="wrapp-center">
+        <ion-button (click)="showAlerts()">Ver alertas</ion-button>
     </div>
 </ion-content>
