@@ -278,7 +278,11 @@ export class ReceptionScanditService {
               if (res.data.quantity > 0) {
                 // Close Scandit and navigate to list of products received
                 ScanditMatrixSimple.finish();
-                this.router.navigate(['print', 'product', 'received', 'scandit', res.data.hasNewProducts]);
+                const routeFragments = ['print', 'product', 'received', 'scandit', res.data.hasNewProducts];
+                if (res.data.hasRequestedProducts) {
+                  routeFragments.push(true);
+                }
+                this.router.navigate(routeFragments);
               }
             }, 1.5 * 1000);
           } else if (this.typeReception == 2) {

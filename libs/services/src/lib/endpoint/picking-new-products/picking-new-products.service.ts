@@ -13,6 +13,7 @@ export class PickingNewProductsService {
 
   private postGetByWarehouseIdPickingIdUrl = environment.apiBase + '/picking-new-products/warehouse/picking';
   private postSearchUrl = environment.apiBase + '/picking-new-products/search';
+  private getCheckReceivedInfoUrl = environment.apiBase + '/picking-new-products/${id}/products/received/check';
 
   constructor(
     private http: HttpClient,
@@ -36,4 +37,9 @@ export class PickingNewProductsService {
     }));
   }
 
+  getCheckReceivedInfo(storeId: number): Observable<{hasNewProducts: boolean, receiveRequestedProducts: boolean}> {
+    return this.http.get<{data: {hasNewProducts: boolean, receiveRequestedProducts: boolean}}>(this.getCheckReceivedInfoUrl.replace('${id}', storeId.toString())).pipe(map(response => {
+      return response.data;
+    }));
+  }
 }

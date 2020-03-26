@@ -3,6 +3,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Platform, ToastController} from "@ionic/angular";
 import {ReceptionScanditService} from "../../../services/src/lib/scandit/reception/reception.service";
 import {Location} from "@angular/common";
+import {PickingNewProductsService} from "../../../services/src/lib/endpoint/picking-new-products/picking-new-products.service";
+import {AuthenticationService} from "@suite/services";
 
 @Component({
   selector: 'app-print-received-product',
@@ -15,6 +17,8 @@ export class PrintReceivedProductComponent implements OnInit {
   private returnToScandit: boolean = false;
   private backButtonOverride: any = null;
 
+  private snackbarItem: HTMLIonToastElement = null;
+
   constructor(
     private route: ActivatedRoute,
     private platform: Platform,
@@ -22,15 +26,25 @@ export class PrintReceivedProductComponent implements OnInit {
     private router: Router,
     private toastCtrl: ToastController,
     private receptionScanditService: ReceptionScanditService,
+    private pickingNewProductsService: PickingNewProductsService,
+    private authenticationService: AuthenticationService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    const storeId = (await this.authenticationService.getStoreCurrentUser()).id;
+
+    this.pickingNewProductsService
+      .getCheckReceivedInfo(storeId)
+      .subscribe(async res => {
+        if (res.receiveRequestedProducts) {
+          this.presentSnackbar('Se han recibido productos que habías solicitado a otras tiendas..', 'VER', 'requested');
+        } else if (res.hasNewProducts) {
+          this.presentSnackbar('Nuevos productos para la tienda detectados.', 'VER', 'news');
+        }
+      }, error => console.error('Error to check info of received products'));
+
     this.route.url.subscribe((url: any )=> {
       if (url && url.length > 0 && url[0].path == 'scandit') {
-        if (url[1].path === 'true') {
-          this.presentSnackbar('Nuevos productos para la tienda detectados.', 'VER');
-        }
-
         this.returnToScandit = true;
       } else{
         this.returnToScandit = false;
@@ -48,21 +62,32 @@ export class PrintReceivedProductComponent implements OnInit {
 
   ngOnDestroy() {
     this.backButtonOverride.unsubscribe();
+    if (this.snackbarItem) {
+      this.snackbarItem.dismiss();
+      this.snackbarItem = null;
+    }
   }
 
-  async presentSnackbar(message: string, closeBtn: string = 'CERRAR') {
-    let toast = await this.toastCtrl.create({
-      message: message,
-      closeButtonText: closeBtn,
-      color: 'dark',
-      showCloseButton: true
-    });
+  async presentSnackbar(message: string, closeBtn: string = 'CERRAR', redirectPage: 'news'|'requested') {
+    if (!this.snackbarItem) {
+      this.snackbarItem = await this.toastCtrl.create({
+        message: message,
+        closeButtonText: closeBtn,
+        color: 'dark',
+        showCloseButton: true
+      });
 
-    toast.onDidDismiss().then(() => {
-      this.router.navigate(['new-products']);
-    });
+      this.snackbarItem.onDidDismiss().then(() => {
+        this.snackbarItem = null;
+        if (redirectPage == "news") {
+          this.router.navigate(['new-products']);
+        } else {
+          this.router.navigate(['requested-products']);
+        }
+      });
 
-    return toast.present();
+      return this.snackbarItem.present();
+    }
   }
 
 }
