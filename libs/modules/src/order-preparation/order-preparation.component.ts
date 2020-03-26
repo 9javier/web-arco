@@ -77,8 +77,7 @@ initNumsScanner(){
   }
 
   showErrorExpedition(){
-    this.StatusPrint=false;
-    this.initPage = false;
+    this.close();
     this.PrintError =true;
   }
 
@@ -93,11 +92,6 @@ initNumsScanner(){
     
   }
 
-  close(){
-    this.StatusPrint = false;
-    this.initPage = false;
-    this.PrintError =false;
-  }
 
   showBlockedOrder(){
     this.close();
@@ -133,6 +127,18 @@ initNumsScanner(){
 
   showAlerts(){
     this.router.navigate(['/order-preparation/alerts']);
+  }
+
+  close(){
+    this.StatusPrint = false;
+    this.initPage = false;
+    this.PrintError =false;
+    this.blockedOrder = false;
+  }
+
+  return(){
+    this.close();
+    this.initPage = true;
   }
 
 }

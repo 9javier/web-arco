@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrderPreparationComponent } from './order-preparation.component';
 import { OrderPreparationRoutingModule } from "./order-preparation-routing.module";
 import { MatListModule, MatTableModule, MatPaginatorModule, MatSortModule } from '@angular/material';
+import { MatTooltipModule } from "@angular/material";
 
 
 
@@ -32,7 +33,8 @@ const routes: Routes = [
     MatSortModule,
     FormsModule,
     HideKeyboardModule,
-    OrderPreparationRoutingModule
+    OrderPreparationRoutingModule,
+    MatTooltipModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [InputCodesComponent,ListAlertsComponent]
