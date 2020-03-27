@@ -1,11 +1,14 @@
 import {StoresLineRequestsModel} from "./StoresLineRequests";
 import {ModelModel, SizeModel, WarehouseModel} from "@suite/services";
 import {HttpRequestModel} from "./HttpRequest";
+import {DeliveryRequestModel} from "./DeliveryRequest";
+import Model = ModelModel.Model;
+import Size = SizeModel.Size;
+import DeliveryRequest = DeliveryRequestModel.DeliveryRequest;
+import {LineRequestModel} from "./LineRequest";
+import LineRequest = LineRequestModel.LineRequest;
 
 export namespace PickingStoreModel {
-
-  import Model = ModelModel.Model;
-  import Size = SizeModel.Size;
 
   export interface ListStoresIds {
     warehouseIds: number[]
@@ -68,8 +71,8 @@ export namespace PickingStoreModel {
     errors: any;
   }
 
-  export interface StoreOnlineRequests extends HttpRequestModel.Response {
-    data: StoresLineRequestsModel.StoreOnlineRequests;
+  export interface StoreOnlineRequestsResponse extends HttpRequestModel.Response {
+    data: Array<LineRequest | DeliveryRequest>;
     message: string;
     code: number;
     errors: any;

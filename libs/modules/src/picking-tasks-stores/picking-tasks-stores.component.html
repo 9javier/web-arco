@@ -1,3 +1,56 @@
 <ion-content>
-  <list-stores-picking-tasks-template></list-stores-picking-tasks-template>
+  <div class="main-element-list-pickings">
+    <div class="row-no-requests" *ngIf="requests.length > 0">
+      <ion-row *ngIf="requests.length > 0">
+        <ion-col size="auto" class="centered-col">
+          <ion-checkbox [(ngModel)]="allRequestsSelected" (ngModelChange)="selectAllRequests($event)"></ion-checkbox>
+        </ion-col>
+        <ion-col size="auto" class="centered-col">
+          <mat-panel-title>Seleccionar todo</mat-panel-title>
+        </ion-col>
+        <ion-col id="filtros" size="auto" class="centered-col">
+          <ion-button>Filtros</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <ion-progress-bar type="indeterminate" *ngIf="isLoadingData"></ion-progress-bar>
+
+    <div class="scroll-list" *ngIf="!isLoadingData && requests.length > 0">
+      <ion-list>
+        <ion-item *ngFor="let request of requests">
+          <ion-checkbox slot="start" [(ngModel)]="request.selected" (click)="selectRequest(request.selected)"></ion-checkbox>
+          <ion-label>
+            <ion-row>
+              <ion-col><b>Fecha:</b> {{getDate(request)}}</ion-col>
+              <ion-col><b>Artículo:</b> {{request.model.reference}}</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col><b>Marca:</b> {{request.model.brand.name}}</ion-col>
+              <ion-col><b>Talla:</b> {{request.size.name}}</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col><b>Estado:</b> {{getStatus(request)}}</ion-col>
+              <ion-col><b>Tipo:</b> {{getType(request)}}</ion-col>
+            </ion-row>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div *ngIf="!isLoadingData && requests.length == 0" class="msg-empty-pickings">
+      <p class="msg-empty-pickings">No hay peticiones pendientes para la tienda</p>
+    </div>
+  </div>
+
+  <ion-footer class="footer-products">
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+      <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="ngOnInit()">
+        <i class="material-icons">refresh</i>
+      </ion-fab-button>
+      <ion-fab-button (click)="initPicking()" *ngIf="checkRequestSelected()">
+        <i class="material-icons">play_arrow</i>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-footer>
 </ion-content>

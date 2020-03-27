@@ -1,11 +1,16 @@
 import {ModelModel, SizeModel, WarehouseModel} from "@suite/services";
 import {EmployeeModel} from "./Employee";
 import {DeliveryRequestModel} from "./DeliveryRequest";
+import DeliveryRequest = DeliveryRequestModel.DeliveryRequest;
+import Warehouse = WarehouseModel.Warehouse;
+import Model = ModelModel.Model;
+import Size = SizeModel.Size;
+import Employee = EmployeeModel.Employee;
 
 export namespace StoresLineRequestsModel {
 
   export interface StoresLineRequests {
-    warehouse: WarehouseModel.Warehouse,
+    warehouse: Warehouse,
     lines: LineRequests[],
     selected?: boolean
   }
@@ -16,7 +21,7 @@ export namespace StoresLineRequestsModel {
   }
 
   export interface StoresOrderRequests {
-    warehouse: WarehouseModel.Warehouse,
+    warehouse: Warehouse,
     lines: OrderRequests[],
     selected?: boolean
   }
@@ -28,14 +33,14 @@ export namespace StoresLineRequestsModel {
 
   export interface RequestGroup {
     name: string,
-    lines: Array<DeliveryRequestModel.DeliveryRequest | OrderRequests>,
+    lines: Array<DeliveryRequest | OrderRequests>,
     selected: boolean
   }
 
   export interface StoreOnlineRequests {
     store: StoreRequests,
-    onlineHomeRequests: DeliveryRequestModel.DeliveryRequest[],
-    onlineStoreRequests: DeliveryRequestModel.DeliveryRequest[]
+    onlineHomeRequests: DeliveryRequest[],
+    onlineStoreRequests: DeliveryRequest[]
   }
 
   export interface RequestGroupSelected {
@@ -57,13 +62,13 @@ export namespace StoresLineRequestsModel {
     status: number,
     requestDateTime: string,
     typeShippingOrderLineRequest: number,
-    model: ModelModel.Model,
-    size: SizeModel.Size,
+    model: Model,
+    size: Size,
     selected: boolean
   }
 
   export interface OrderRequests {
-    employee: EmployeeModel.Employee,
+    employee: Employee,
     request: Request,
     qtyLineRequests: number,
     selected: boolean,
@@ -75,4 +80,5 @@ export namespace StoresLineRequestsModel {
     reference: number,
     id: number
   }
+
 }
