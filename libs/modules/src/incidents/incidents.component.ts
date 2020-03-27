@@ -23,6 +23,8 @@ import { Subscription } from 'rxjs';
 import { KeyboardService } from '../../../services/src/lib/keyboard/keyboard.service';
 import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
 import { PrintTicketService } from '../../../services/src/lib/print-ticket/print-ticket.service';
+import {DefectiveRegistryModel} from "../../../services/src/models/endpoints/DefectiveRegistry";
+import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
@@ -358,9 +360,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }, 'Registrar defectuoso', HEADER_BACKGROUND, HEADER_COLOR);
   }
 
-  print() {
-    console.log("incidents Print")
-    this.printTicketService.printTicket();
+  print(defective: DefectiveRegistry) {
+    console.log("incidents Print");
+    this.printTicketService.printTicket(defective);
   }
 
   validate() {

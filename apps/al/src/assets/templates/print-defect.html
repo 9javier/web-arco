@@ -4,31 +4,31 @@
   <style id="styleToCssFromAjax"></style>
 </head>
 <body>
-<div class="contentTicket" style="border:solid 1px #000;">
+<div class="contentTicket" style="border:solid 1px #000;max-width: 400px">
   <div class="divTitleTicket" style="text-align: center;">
     <h3><u>GESTION INCIDENCIA</u></h3>
   </div>
   <div class="row">
     <div class="divHalfRow divResumeTotalText" >
-      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Nº incidencia</b><br/>
-      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Fecha inicio de incidencia</b><br/>
-      <b>-&nbsp;&nbsp;&nbsp;&nbsp;TIENDA: </b><br/>
-      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Dirección tienda + telefono tienda</b><br/>
-      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Razón social tienda</b><br/><br/>
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Nº incidencia: {{incidenceId}}</b><br/>
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Fecha inicio de incidencia: {{incidenceDate}}</b><br/>
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;TIENDA: {{warehouse}}</b><br/>
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Dirección tienda + telefono tienda: {{warehouseDirection}} + {{warehouseTlf}}</b><br/>
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Razón social tienda: {{Razón social tienda}}}</b><br/><br/>
     </div>
   </div>
   <div class="row"  style="border: 1px;">
     <div class="divHalfRow divPaymentTextRight"  style="border-top-style:dashed;border-width: 1px;">
-      <br/><b>-&nbsp;&nbsp;&nbsp;&nbsp;Estado actual de la incidencia</b><br/>
-      -&nbsp;&nbsp;&nbsp;&nbsp;Fecha estado actual<br/><br/>
+      <br/><b>-&nbsp;&nbsp;&nbsp;&nbsp;Estado actual de la incidencia: {{status}}</b><br/>
+      -&nbsp;&nbsp;&nbsp;&nbsp;Fecha estado actual: {{dateDetection}}<br/><br/>
     </div>
   </div>
   <div class="row">
     <div class="divHalfRow divPaymentTextRight" style="border-top-style:dashed;border-width: 1px;">
-      <br/>-&nbsp;&nbsp;&nbsp;&nbsp;Artículo + talla<br/>
-      -&nbsp;&nbsp;&nbsp;&nbsp;barcode<br/>
-      -&nbsp;&nbsp;&nbsp;&nbsp;Tipo de defecto/s<br/>
-      -&nbsp;&nbsp;&nbsp;&nbsp;Observaciones<br/><br/>
+      <br/>-&nbsp;&nbsp;&nbsp;&nbsp;Artículo + talla: {{product}} + {{size}}<br/>
+      -&nbsp;&nbsp;&nbsp;&nbsp;barcode: {{barcode}}<br/>
+      -&nbsp;&nbsp;&nbsp;&nbsp;Tipo de defecto/s: {{defectType}}<br/>
+      -&nbsp;&nbsp;&nbsp;&nbsp;Observaciones: {{observations}}<br/><br/>
     </div>
   </div>
   <div class="divMessagesFinalTicket" style="border-top-style:dashed;border-width: 1px;">

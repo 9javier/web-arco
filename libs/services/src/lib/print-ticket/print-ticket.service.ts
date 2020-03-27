@@ -12,6 +12,8 @@ import { IntermediaryService, ProductModel } from '@suite/services';
 import { RequestsProvider } from "../../providers/requests/requests.provider";
 import { HttpRequestModel } from "../../models/endpoints/HttpRequest";
 import { TimesToastType } from '../../models/timesToastType';
+import {DefectiveRegistryModel} from "../../models/endpoints/DefectiveRegistry";
+import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 
 declare let cordova: any;
 
@@ -259,32 +261,29 @@ export class PrintTicketService {
     }
   }*/
 
-  public async printTicket() {
-/*    if (cordova.plugins.printer) {
-      console.log("cordova.plugins.printer",cordova.plugins.printer);
-    }*/
+  public async printTicket(defective: DefectiveRegistry) {
+
     try {
       fetch('assets/templates/print-defect.html').then(res => res.text()).then(data => {
-        console.log("TEST::html", data);
+        let incidenceNumber = 22;
+        let htmlToPrintA = data.replace('{{incidenceId}}', incidenceNumber.toString());
+        let htmlToPrintB = htmlToPrintA.replace('{{incidenceDate}}', incidenceNumber.toString());
+        let htmlToPrintC = htmlToPrintB.replace('{{warehouse}}', incidenceNumber.toString());
+        let htmlToPrintD = htmlToPrintC.replace('{{warehouseDirection}}', incidenceNumber.toString());
+        let htmlToPrintE = htmlToPrintD.replace('{{warehouseTlf}}', incidenceNumber.toString());
+        let htmlToPrintF = htmlToPrintE.replace('{{Razón social tienda}}', incidenceNumber.toString());
+        let htmlToPrintG = htmlToPrintF.replace('{{status}}', incidenceNumber.toString());
+        let htmlToPrintH = htmlToPrintG.replace('{{dateDetection}}', incidenceNumber.toString());
+        let htmlToPrintI = htmlToPrintH.replace('{{product}}', incidenceNumber.toString());
+        let htmlToPrintJ = htmlToPrintI.replace('{{size}}', incidenceNumber.toString());
+        let htmlToPrintK = htmlToPrintJ.replace('{{barcode}}', incidenceNumber.toString());
+        let htmlToPrintL = htmlToPrintK.replace('{{defectType}}', incidenceNumber.toString());
+        let htmlToPrintM = htmlToPrintL.replace('{{observations}}', incidenceNumber.toString());
 
-        /*      let cssResponse = this.getCssToHtmlToPrint();
-              let htmlResponse = this.getHtmlToPrint();
-              let htmlToPrint = htmlResponse.replace('<style id="styleToCssFromAjax"></style>', '<style id="styleToCssFromAjax">' + cssResponse + '</style>');*/
-
-        document.addEventListener('deviceready', function () {
-          console.log("deviceready");
-          //(cordova.plugins.printer) {
-            console.log("antes");
-            console.log("cordova.plugins.printer", cordova.plugins.printer);
-            cordova.plugins.printer.check(function (available, count) {
-              console.log("check");
-              cordova.plugins.printer.print(data, 'print-defect.html');
-            }, function (error) {
-              console.log("error", error);
-              return error;
-            });
-          //}
-        }, false);
+        console.log("TEST::htmlToPrint", htmlToPrintM);
+        if(cordova.plugins.printer) {
+          cordova.plugins.printer.print(htmlToPrintM);
+        }
       });
     }catch (e) {}
 

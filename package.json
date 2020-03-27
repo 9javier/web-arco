@@ -127,15 +127,15 @@
       },
       "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-nativeaudio": {},
-      "com.mirasense.scanditsdk.plugin": {},
-      "cordova-plugin-zebra-printer": {},
       "cordova-plugin-camera": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-file-transfer": {},
       "cordova-plugin-printer": {
         "ANDROID_SUPPORT_V4_VERSION": "28.+"
-      }
+      },
+      "com.mirasense.scanditsdk.plugin": {},
+      "cordova-plugin-zebra-printer": {}
     },
     "platforms": [
       "android"
