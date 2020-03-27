@@ -96,7 +96,7 @@
               <ion-grid>
                 <ion-row class="custom-panel-header">
                   <ion-col size="1" class="check-print">
-                    <ion-checkbox (click)="$event.stopPropagation(); itemSelected(item.product.id);" [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                    <ion-checkbox [disabled]="item.attended" (click)="$event.stopPropagation(); itemSelected(item.id);" [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
                   </ion-col>
                   <ion-col size="11" class="content-prices-header">
                     <mat-panel-title>
@@ -117,9 +117,15 @@
                           <span class="size">talla</span> {{ item.product.size }}
                         </ion-col>
                       </ion-row>
+                      <ion-row class="row-attended" *ngIf="item.attended">
+                        <ion-col class="attended" size="12">
+                          <p>
+                            Atendido
+                          </p>
+                        </ion-col>
+                      </ion-row>
                     </mat-panel-description>
                   </ion-col>
-
                 </ion-row>
               </ion-grid>
             </mat-expansion-panel-header>

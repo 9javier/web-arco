@@ -119,7 +119,7 @@ div.list-items-mobile {
 
         mat-panel-description.panel-description {
           display: block;
-          ion-row.row-family-lifestyle-size, ion-row.row-price-stock {
+          ion-row.row-family-lifestyle-size, ion-row.row-price-stock, ion-row.row-attended {
             width: 100%;
             margin-top: 8px;
             ion-col {
@@ -146,6 +146,12 @@ div.list-items-mobile {
             ion-col.stock {
               width: 100%;
               text-align: end;
+            }
+            ion-col.attended {
+              p {
+                color: green;
+                font-weight: bold;
+              }
             }
           }
         }

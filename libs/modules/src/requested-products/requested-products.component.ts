@@ -30,7 +30,7 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
   @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
 
   public showFiltersMobileVersion = false;
-  public itemIdSelected: any = [];
+  public itemIdsSelected: number[] = [];
   public selectedForm: FormGroup = this.formBuilder.group({
     selector: false
   }, {
@@ -95,6 +95,25 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
   }
   //endregion
 
+  private loadToolbarActions() {
+    const actionsToolbar = [
+      {
+        icon: 'refresh',
+        label: 'Recargar',
+        action: () => this.restartScreen()
+      }];
+
+    if (this.itemIdsSelected.length > 0) {
+      actionsToolbar.unshift({
+        icon: 'checkmark',
+        label: 'Marcar como atendidos',
+        action: () => this.attendItems()
+      });
+    }
+
+    this.toolbarProvider.optionsActions.next(actionsToolbar);
+  }
+
   private async startCleanScreen() {
     this.selectedForm = this.formBuilder.group({
       selector: false
@@ -112,12 +131,14 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
         .postListReceivedProductsRequested(storeId, null)
         .subscribe((res: PickingNewProductsModel.ReceivedProductsRequested[]) => {
           this.products = res;
+          this.intermediaryService.dismissLoading();
           this.initSelectForm(this.products);
         }, (error) => {
           let errorMessage = 'Ha ocurrido un error al intentar consultar los productos recibidos que se han solicitado.';
           if (error.error.errors) {
             errorMessage = error.error.errors;
           }
+          this.intermediaryService.dismissLoading();
           this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
         });
     }
@@ -125,6 +146,25 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
 
   private restartScreen() {
     this.startCleanScreen();
+  }
+
+  private attendItems() {
+    this.intermediaryService.presentLoading('Marcando como antendido...', () => {
+      this.pickingNewProductsService
+        .putAttendReceivedProductsRequested({
+          receivedProductsRequestedIds: this.itemIdsSelected
+        })
+        .subscribe((res) => {
+          this.restartScreen();
+        }, (error) => {
+          let errorMessage = 'Ha ocurrido un error al intentar marcar los productos como ya atendidos.';
+          if (error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          this.intermediaryService.dismissLoading();
+          this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+        });
+    });
   }
 
   private sanitize(object) {
@@ -168,35 +208,16 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
     this.selectedForm.addControl("toSelect", this.formBuilder.array(items.map(item => new FormControl(false))));
   }
 
-  private loadToolbarActions() {
-    const actionsToolbar = [
-      {
-        icon: 'refresh',
-        label: 'Recargar',
-        action: () => this.restartScreen()
-      }];
-
-    if (this.itemIdSelected.length > 0) {
-      actionsToolbar.unshift({
-        icon: 'checkmark',
-        label: 'Marcar como atendidos',
-        action: () => this.restartScreen()
-      });
-    }
-
-    this.toolbarProvider.optionsActions.next(actionsToolbar);
-  }
-
   //region Methods for VIEW
   public selectAll(event): void {
     let value = event.detail.checked;
 
     for (let index = 0; index < this.products.length; index++) {
-      this.itemSelected(this.products[index].product.id, false);
+      if (!this.products[index].attended) {
+        this.itemSelected(this.products[index].id, false);
+        (<FormArray>this.selectedForm.controls.toSelect).controls[index].setValue(value);
+      }
     }
-    (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control => {
-      control.setValue(value);
-    });
 
     this.loadToolbarActions();
   }
@@ -228,11 +249,11 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
   }
 
   public itemSelected(item, reloadToolbarActions: boolean = true) {
-    const index = this.itemIdSelected.indexOf(item, 0);
+    const index = this.itemIdsSelected.indexOf(item, 0);
     if (index > -1) {
-      this.itemIdSelected.splice(index, 1);
+      this.itemIdsSelected.splice(index, 1);
     } else {
-      this.itemIdSelected.push(item);
+      this.itemIdsSelected.push(item);
     }
 
     if (reloadToolbarActions) {

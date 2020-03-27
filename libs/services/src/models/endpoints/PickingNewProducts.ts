@@ -87,6 +87,7 @@ export namespace PickingNewProductsModel {
 
   //region get received items requested
   export interface ReceivedProductsRequested {
+    id: number,
     attended: boolean,
     product: {
       id: number,
