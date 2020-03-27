@@ -354,7 +354,7 @@ export class ChangeState2Component implements OnInit {
 
 
   print() {
-    console.log("Print");
+    console.log("change-state2 Print");
     this.printTicketService.printTicket();
   }
 

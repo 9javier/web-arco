@@ -38,7 +38,7 @@ export class PrintTicketService {
     private priceService: PriceService,
     private requestsProvider: RequestsProvider
   ) { }
-
+/*
   public async openConnection(showAlert: boolean = false) {
     this.address = await this.getConfiguredAddress();
     console.debug("PRINT::openConnection 1 [" + new Date().toJSON() + "]", this.address);
@@ -196,11 +196,11 @@ export class PrintTicketService {
   }
 
 
-  /**
+  /!**
    * Print string
    * @param strToPrint string to print
    * @param macAddress
-   */
+   *!/
   public async printProductBoxTag(strToPrint: string, macAddress?: string) {
     console.debug("PRINT::printProductBoxTag 1 [" + new Date().toJSON() + "]", { strToPrint, macAddress: macAddress });
     if (macAddress) {
@@ -218,14 +218,14 @@ export class PrintTicketService {
     }
   }
 
-  /**
+  /!**
    * Turn an array of objects into string ready to be printed
    * @param options - the options to be converted in the needed string
-   */
+   *!/
   buildString(options: Array<PrintModel.Print>): string {
     console.debug("PRINT::buildString 1 [" + new Date().toJSON() + "]", options);
     let strToPrint: string = "";
-    /**If need separator between labels */
+    /!**If need separator between labels *!/
     let separator: string = "";
     options.forEach(option => {
       strToPrint += this.getTextToPrinter(option) + separator;
@@ -236,12 +236,12 @@ export class PrintTicketService {
 
 
 
-  /**
+  /!**
    * Esta función es la equivalente a @see printProductBoxTag
    * pero con la diferencia que será usada para imprimir los precios
    * el asunto es que no sabía que labeltype correspondía a cada printOption
    * así que por ahora haré un diccionario y ustedes modifíquenlo a su conveniencia
-   */
+   *!/
   public async printPricesInZebra(strToPrint: string, macAddress?: string) {
     console.debug("PRINT::printPricesInZebra 1 [" + new Date().toJSON() + "]", { strToPrint, macAddress });
     if (macAddress) {
@@ -257,43 +257,52 @@ export class PrintTicketService {
       return await this.connect()
         .then(() => this.toPrintFromString(strToPrint));
     }
-  }
+  }*/
 
   public async printTicket() {
-    let titleFromCode = "Ticket Gestión Incidencia";
+/*    if (cordova.plugins.printer) {
+      console.log("cordova.plugins.printer",cordova.plugins.printer);
+    }*/
+    try {
+      fetch('assets/templates/print-defect.html').then(res => res.text()).then(data => {
+        console.log("TEST::html", data);
 
-    let cssResponse = this.getCssToHtmlToPrint();
-    let htmlResponse = this.getHtmlToPrint();
-    let htmlToPrint = htmlResponse.replace('<style id="styleToCssFromAjax"></style>', '<style id="styleToCssFromAjax">' + cssResponse + '</style>');
-    console.log("htmlToPrint",htmlToPrint);
-    cordova.plugins.printer.check(function (available, count) {
-      cordova.plugins.printer.print(htmlToPrint, 'ticket.html');
+        /*      let cssResponse = this.getCssToHtmlToPrint();
+              let htmlResponse = this.getHtmlToPrint();
+              let htmlToPrint = htmlResponse.replace('<style id="styleToCssFromAjax"></style>', '<style id="styleToCssFromAjax">' + cssResponse + '</style>');*/
+
+        document.addEventListener('deviceready', function () {
+          console.log("deviceready");
+          //(cordova.plugins.printer) {
+            console.log("antes");
+            console.log("cordova.plugins.printer", cordova.plugins.printer);
+            cordova.plugins.printer.check(function (available, count) {
+              console.log("check");
+              cordova.plugins.printer.print(data, 'print-defect.html');
+            }, function (error) {
+              console.log("error", error);
+              return error;
+            });
+          //}
+        }, false);
       });
+    }catch (e) {}
+
   }
 
-  public async getCssToHtmlToPrint() {
-    let css = this.http.get('css/ticket.css');
-    return css;
-  }
-
-  public async getHtmlToPrint() {
-    let html = this.http.get('templates/ticket.html');
-    return html;
-  }
-
-  /**
+ /* /!**
    * Get products by reference in api
    * @returns an observable with the list of products needed
-   */
+   *!/
   getProductsByReference(references: string[]): Promise<HttpRequestModel.Response> {
     console.debug("PRINT::getProductsByReference 1 [" + new Date().toJSON() + "]", references);
     return this.requestsProvider.post(this.getProductsByReferenceUrl, { references });
   }
 
-  /**
+  /!**
    * Obtain the prices by reference and then print each of these prices
    * @param referencesObject - object with the array of references to be sended
-   */
+   *!/
   printPrices(referencesObject, isNewProduct = false) {
     console.debug("PRINT::printPrices 1 [" + new Date().toJSON() + "]", referencesObject);
     let observable: Observable<boolean> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
@@ -305,7 +314,7 @@ export class PrintTicketService {
           return s.next();
         })
       }));
-      /**obtain the products */
+      /!**obtain the products *!/
       console.debug("PRINT::printPrices 3 [" + new Date().toJSON() + "]", referencesObject);
       return this.priceService.getIndexByModelTariff(referencesObject).pipe(flatMap((prices) => {
         let dataToPrint;
@@ -339,10 +348,10 @@ export class PrintTicketService {
     return observable;
   }
 
-  /**
+  /!**
    * Send notification to server after print any labels
    * @param ids - the ids of printed labels
-   */
+   *!/
   printNotify(ids: Array<Number>): Observable<boolean> {
     console.debug("PRINT::printNotify 1 [" + new Date().toJSON() + "]", ids);
     return this.http.post(this.printNotifyUrl, { references: ids }).pipe(map(response => {
@@ -351,10 +360,10 @@ export class PrintTicketService {
     }));
   }
 
-  /**
+  /!**
    * Send notification to server after print any labels and return the result inside a promise because the observable fails with android activity
    * @param ids - the ids of printed labels
-   */
+   *!/
   printNotifyPromiseReturned(ids: number[]): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.printNotifyUrl, { references: ids });
   }
@@ -376,10 +385,10 @@ export class PrintTicketService {
     }));
   }
 
-  /**
+  /!**
    * Obtain product by reference and then print each of these products
    * @param listReferences references to print
-   */
+   *!/
 
   private convertArrayFromPrint(data: any, cntPrint: number = 1, outputArray?: Boolean): Array<any> {
     let dataJoin = []
@@ -404,7 +413,7 @@ export class PrintTicketService {
 
   printTagBarcode(listReferences: string[], cntPrint: number = 1): Observable<boolean | Observable<any>> {
     console.debug("PRINT::printTagBarcode 1 [" + new Date().toJSON() + "]", listReferences);
-    /** declare and obsevable to merge all print results */
+    /!** declare and obsevable to merge all print results *!/
     let observable: Observable<boolean | Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
       let innerObservable: Observable<any> = new Observable(observer => {
         observer.next(true);
@@ -413,7 +422,7 @@ export class PrintTicketService {
           return s.next();
         })
       }));
-      /**obtain the products */
+      /!**obtain the products *!/
       console.debug("PRINT::printTagBarcode 2 [" + new Date().toJSON() + "]", listReferences);
 
       return this.getProductsByReference(listReferences).then((response: HttpRequestModel.Response) => {
@@ -469,12 +478,12 @@ export class PrintTicketService {
       arrayProductsToProcess = dataToProcess;
     }
     console.debug("PRINT::processProductToPrintTagBarcode 2 [" + new Date().toJSON() + "]", arrayProductsToProcess);
-    /** Iterate and build object to print */
+    /!** Iterate and build object to print *!/
     for (let iProduct in arrayProductsToProcess) {
       let product = arrayProductsToProcess[iProduct];
 
       let printOptions: PrintModel.Print = {
-        /** Build the needed data for print */
+        /!** Build the needed data for print *!/
         type: 1,
         product: {
           productShoeUnit: {
@@ -499,23 +508,23 @@ export class PrintTicketService {
         }
       };
 
-      /** Build the array for obtain the string to send to printer */
+      /!** Build the array for obtain the string to send to printer *!/
       options.push(printOptions);
     }
 
     console.debug("PRINT::processProductToPrintTagBarcode 3 [" + new Date().toJSON() + "]", options);
     if (options) {
-      /** Obtain the string from options */
+      /!** Obtain the string from options *!/
       return this.buildString(options);
     } else {
       return null;
     }
   }
 
-  /**
+  /!**
    * Print the prices of products
    * @param listReferences references of products
-   */
+   *!/
   printTagPrices(listReferences: string[]): Observable<boolean | Observable<any>> {
     console.debug("PRINT::printTagPrices 1 [" + new Date().toJSON() + "]", listReferences);
     let observable: Observable<boolean | Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
@@ -582,7 +591,7 @@ export class PrintTicketService {
     }
 
     console.debug("PRINT::processProductToPrintTagPrice 2 [" + new Date().toJSON() + "]", arrayPricesToProcess);
-    /** Iterate and build object to print */
+    /!** Iterate and build object to print *!/
     for (let iPrice in arrayPricesToProcess) {
       let price = arrayPricesToProcess[iPrice];
 
@@ -633,13 +642,13 @@ export class PrintTicketService {
           printOptions.product.productShoeUnit.model.id = price.model.id;
           printOptions.sizeId = sizeId;
         }
-        /** Build the array for obtain the string to send to printer */
+        /!** Build the array for obtain the string to send to printer *!/
         options.push(printOptions);
       }
     }
     console.debug("PRINT::processProductToPrintTagPrice 3 [" + new Date().toJSON() + "]", options);
     if (options) {
-      /** Obtain the string from options */
+      /!** Obtain the string from options *!/
       return { valuePrint: this.buildString(options), options: options };
     } else {
       return null;
@@ -663,22 +672,22 @@ export class PrintTicketService {
   }
 
   tail: Array<string> = [];
-  /**es el texto que se va a imprimir, pero también funciona a modo de bandera que nos dice si algo está imprimiéndose */
+  /!**es el texto que se va a imprimir, pero también funciona a modo de bandera que nos dice si algo está imprimiéndose *!/
   tailStr: string = "";
   printInterval;
   failed = false;
 
 
-  /**
+  /!**
    * Print labels with the zebra printed from string
    * @param textToPrint - string to be printed
    * @param failed - the solicitude comes from a failed request
-   */
+   *!/
   private async toPrintFromString(textToPrint: string, callbackSuccess?: () => any, callbackFail?: () => any,  macAddress?) {
 
 
     console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", { textToPrint, macAddress });
-    /**añadimos esto a la lógica del toPrint */
+    /!**añadimos esto a la lógica del toPrint *!/
     if (macAddress) {
       this.address = macAddress;
       console.debug("PRINT::toPrintFromString 2 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address });
@@ -825,10 +834,10 @@ export class PrintTicketService {
           '^FD' + stringToBarcode + '^XZ\n';
         break;
       case PrintModel.LabelTypes.LABEL_INFO_PRODUCT: // Tag with product reference, size and model details
-        /*
+        /!*
          * Original Code
         ^XA^LH30,5^CI27^AVN^FO1,5^FD@item^FS^AVN^FO0,15^FB325,1,0,R,0^FD@talla^FS^ABN^FO3,70^FD@brand^FS^ABN^FO3,85^FD@style^FS^ABN^FO3,100^FD@detcol^FS^AQN^FO0,110^FB325,1,0,R,0^FD@season^FS^FO10,125^BY2,3.0^BCN,40,Y,N,N^FD>;@barcode^FS^XZ
-        */
+        *!/
         toPrint = "^XA^CI28^LH30,5^AVN^FO1,5^FD"
           + printOptions.product.productShoeUnit.model.reference
           + "^FS^AVN^FO0,15^FB325,1,0,R,0^FD";
@@ -888,10 +897,10 @@ export class PrintTicketService {
         break;
 
       case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT: // Tag with product price
-        /*
+        /!*
          * Original Code
         ^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD@iniciales^FS^ADN^FO10,95^FB320,1,0,R,0^FD@porcent^FS^AVN^FO0,55^FB320,1,0,C,0^FD@saleprice1 €^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,123^FD@item^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD@barcode^FS^AAN^FO0,145^FB330,1,0,R,0^FD@brand^FS^AAN^FO10,190^FB315,1,0,L,0^FD@style^FS^AAN^FO0,190^FB315,1,0,R,0^FD@detcol^FS^ADN^FO0,125^FB330,1,0,R,0^FD@siglas^FS^ADN^FO0,157^FB330,1,0,R,0^FD@TagSzRng^FS^XZ
-        */
+        *!/
         toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD"
           + printOptions.product.productShoeUnit.model.reference
           + "^FS^ADN^FO10,95^FB320,1,0,R,0^FD";
@@ -921,10 +930,10 @@ export class PrintTicketService {
         toPrint += "^FS^XZ";
         break;
       case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT: // Tag with current product price and previous price
-        /*
+        /!*
          * Original Code
         ^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD@iniciales^FS^ADN^FO8,108^FB320,1,0,R,0^FD@porcent^FS^AEN^FO10,30^FB310,1,0,L,0^FD@saleprice1€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,58^FB340,1,0,C,0^FD@saleprice2 €^FS^AP^FO0,123^GB335,0,3^FS^AQ^FWB^FO5,130^FD@item^FS^FWN^FO40,135^BY2,3.0^BCN,50,N,N,N^FD@barcode^FS^ADN^FO0,130^FB330,1,0,R,0^FD@siglas^FS^AAN^FO0,155^FB330,1,0,R,0^FD@brand^FS^ADN^FO0,175^FB330,1,0,R,0^FD@TagSzRng^FS^XZ
-        */
+        *!/
         toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO8,108^FB320,1,0,R,0^FD";
         if (printOptions.price.percent) {
           toPrint += printOptions.price.percent + '%';
@@ -951,10 +960,10 @@ export class PrintTicketService {
         break;
       case PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET: // Tag with original product pvp and product pvp for outlet
       case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET: // Tag with original product pvp and product pvp for outlet
-        /*
+        /!*
          * Original Code
         ^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD@iniciales^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:@saleprice1€^FS^AUN^FO0,80^FB335,1,0,R,0^FD@saleprice4 €^FS^ARN^FO0,80^FB340,1,0,L,0^FDPVP Outlet:^FS^AP^FO0,127^GB335,0,3^FS^AQ^FWB^FO5,135^FD@item^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD@barcode^FS^ADN^FO0,137^FB330,1,0,R,0^FD@siglas^FS^ADN^FO0,155^FB330,1,0,R,0^FD@porcent^FS^ADN^FO0,175^FB330,1,0,R,0^FD@TagSzRng^FS^XZ
-        */
+        *!/
         toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD";
         // toPrint += 'TagSzRng';
         toPrint += "^FS^AFN^FO0,30^FB310,1,0,L,0^FD"
@@ -983,10 +992,10 @@ export class PrintTicketService {
         toPrint += "^FS^XZ";
         break;
       case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET: // Tag with original product pvp, product pvp for outlet and last product price
-        /*
+        /!*
          * Original Code
         ^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD@iniciales^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:@saleprice1€^FS^AFN^FO0,60^FB310,1,0,L,0^FDPVP Outlet:@saleprice4€^FS^ATN^FO0,90^FB335,1,0,R,0^FD@saleprice5 €^FS^ARN^FO0,100^FB340,1,0,L,0^FDÚltimo precio:^FS^AP^FO0,127^GB335,0,3^FS^AQ^FWB^FO5,135^FD@item^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD@barcode^FS^ADN^FO0,137^FB330,1,0,R,0^FD@siglas^FS^ADN^FO0,155^FB330,1,0,R,0^FD@porcent^FS^ADN^FO10,175^FB320,1,0,R,0^FD@TagSzRng^FS^XZ
-        */
+        *!/
         toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD";
         toPrint += "^FS^AFN^FO0,30^FB310,1,0,L,0^FD"
           + "PVP:";
@@ -1066,12 +1075,12 @@ export class PrintTicketService {
         barcodesPopupWindow.document.write(printPageHtml);
 
         barcodesPopupWindow.document.close(); // necessary for IE >= 10
-        barcodesPopupWindow.focus(); // necessary for IE >= 10*/
+        barcodesPopupWindow.focus(); // necessary for IE >= 10*!/
 
         barcodesPopupWindow.print();
 
         resolve();
       }));
-  }
+  }*/
 
 }

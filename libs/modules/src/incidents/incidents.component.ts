@@ -359,7 +359,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   print() {
-    console.log("imprimir...")
+    console.log("incidents Print")
     this.printTicketService.printTicket();
   }
 
