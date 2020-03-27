@@ -31,17 +31,19 @@ export class PrintReceivedProductComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const storeId = (await this.authenticationService.getStoreCurrentUser()).id;
+    if (await this.authenticationService.isStoreUser()) {
+      const storeId = (await this.authenticationService.getStoreCurrentUser()).id;
 
-    this.pickingNewProductsService
-      .getCheckReceivedInfo(storeId)
-      .subscribe(async res => {
-        if (res.receiveRequestedProducts) {
-          this.presentSnackbar('Se han recibido productos que habías solicitado a otras tiendas..', 'VER', 'requested');
-        } else if (res.hasNewProducts) {
-          this.presentSnackbar('Nuevos productos para la tienda detectados.', 'VER', 'news');
-        }
-      }, error => console.error('Error to check info of received products'));
+      this.pickingNewProductsService
+        .getCheckReceivedInfo(storeId)
+        .subscribe(async res => {
+          if (res.receiveRequestedProducts) {
+            this.presentSnackbar('Se han recibido productos que habías solicitado a otras tiendas.', 'VER', 'requested');
+          } else if (res.hasNewProducts) {
+            this.presentSnackbar('Nuevos productos para la tienda detectados.', 'VER', 'news');
+          }
+        }, error => console.error('Error to check info of received products'));
+    }
 
     this.route.url.subscribe((url: any )=> {
       if (url && url.length > 0 && url[0].path == 'scandit') {
