@@ -5,13 +5,10 @@ import { FilterButtonComponent } from '../components/filter-button/filter-button
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
-import { IntermediaryService, JailModel } from '@suite/services';
-import { AlertController, ModalController } from '@ionic/angular';
+import { IntermediaryService } from '@suite/services';
+import { AlertController } from '@ionic/angular';
 import { SelectionModel } from '@angular/cdk/collections';
 import { OplExpeditionsService } from '../../../services/src/lib/endpoint/opl-expeditions/opl-expeditions.service';
-import { Observable } from 'rxjs';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { TimesToastType } from '../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'suite-unlock-expeditions',
@@ -22,7 +19,7 @@ export class UnlockExpeditionsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = ['expedition', 'barcode', 'date', 'warehouse', 'locked'];
-  dataSource;
+  dataSource: MatTableDataSource<any>;
   selection = new SelectionModel<any>(true, []);
   originalTableStatus: any[];
   columns = {};
@@ -31,7 +28,6 @@ export class UnlockExpeditionsComponent implements OnInit {
   @ViewChild('filterButtonBarcode') filterButtonBarcode: FilterButtonComponent;
   @ViewChild('filterButtonDate') filterButtonDate: FilterButtonComponent;
   @ViewChild('filterButtonWarehouse') filterButtonWarehouse: FilterButtonComponent;
-
 
   isFilteringExpedition: number = 0;
   isFilteringBarcode: number = 0;
@@ -201,6 +197,12 @@ export class UnlockExpeditionsComponent implements OnInit {
           this.paginator.length = paginator.totalResults;
           this.paginator.pageIndex = paginator.selectPage;
           this.paginator.lastPage = paginator.lastPage;
+        }
+
+        if (resp.filters) {
+          resp.filters.forEach(element => {
+            this.columns[element.name] = element.id;
+          });
         }
       },
       async err => {
