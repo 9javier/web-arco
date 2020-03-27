@@ -55,6 +55,4 @@
     <plugin name="com.mirasense.scanditsdk.plugin" spec="file:scandit" />
     <plugin name="cordova-plugin-nativeaudio" spec="^3.0.9" />
     <engine name="android" spec="7.1.4" />
-    <engine name="ios" spec="5.0.1" />
-    <engine name="browser" spec="6.0.0" />
 </widget>
