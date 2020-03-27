@@ -45,7 +45,9 @@ export namespace ReceptionModel {
     data: {
       remainingProducts: number,
       inventoryPacking: any,
-      hasNewProducts: boolean
+      hasNewProducts: boolean,
+      hasRequestedProducts?: boolean,
+      productRequestedId?: number
     },
     message: string,
     code: number,

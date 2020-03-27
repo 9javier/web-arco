@@ -13,6 +13,8 @@ import {environment as al_environment} from "../../../../../../apps/al/src/envir
 import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 import {PrinterService} from "../../printer/printer.service";
 import {LocalStorageProvider} from "../../../providers/local-storage/local-storage.provider";
+import {PickingNewProductsService} from "../../endpoint/picking-new-products/picking-new-products.service";
+import {PickingNewProductsModel} from "../../../models/endpoints/PickingNewProducts";
 
 declare let ScanditMatrixSimple;
 
@@ -32,6 +34,7 @@ export class ReceptionScanditService {
   private readonly timeMillisToResetScannedCode: number = 1000;
 
   private refenceProductToPrint: string = null;
+  private requestedProductId: number = null;
 
   constructor(
     private router: Router,
@@ -43,11 +46,12 @@ export class ReceptionScanditService {
     private authenticationService: AuthenticationService,
     private receptionService: ReceptionService,
     private printerService: PrinterService,
+    private pickingNewProductsService: PickingNewProductsService,
     private scanditProvider: ScanditProvider,
     private receptionProvider: ReceptionProvider,
     private localStorageProvider: LocalStorageProvider,
     private itemReferencesProvider: ItemReferencesProvider
-  ) {
+) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
 
@@ -136,6 +140,14 @@ export class ReceptionScanditService {
                 this.printNewProductPriceTag();
               } else {
                 this.refenceProductToPrint = null;
+              }
+              break;
+            case 'requested_attended':
+              this.scannerPaused = false;
+              if (response.response) {
+                this.attendProductReceived(this.requestedProductId);
+              } else {
+                this.requestedProductId = null;
               }
               break;
             default:
@@ -348,7 +360,10 @@ export class ReceptionScanditService {
           this.receptionService.postUpdateStock({productReference: referenceProduct});
 
           const hideAlerts: boolean = Boolean(await this.localStorageProvider.get('hideAlerts'));
-          if (response.data.hasNewProducts && !hideAlerts) {
+          if (response.data.hasRequestedProducts) {
+            this.requestedProductId = response.data.productRequestedId;
+            ScanditMatrixSimple.showWarning(true, 'El producto escaneado corresponde a un producto solicitado a otra tienda.', 'requested_attended', 'Atendido', 'No atender');
+          } else if (response.data.hasNewProducts && !hideAlerts) {
             ScanditMatrixSimple.showWarning(true, `El producto escaneado es nuevo en la tienda. ¿Quiere imprimir su código de exposición ahora?`, 'new_product_expo', 'Sí', 'No');
           } else {
             this.refenceProductToPrint = null;
@@ -440,6 +455,37 @@ export class ReceptionScanditService {
     }, error => {
       console.log('error', error);
     });
+  }
+
+  private attendProductReceived(requestedProductId: number) {
+    if (requestedProductId) {
+      this.pickingNewProductsService
+        .promisePutAttendReceivedProductsRequested({receivedProductsRequestedIds: [requestedProductId]})
+        .then((result: PickingNewProductsModel.ResponseListReceivedProductsRequested) => {
+          if (result.code == 201) {
+            ScanditMatrixSimple.setText(
+              'Producto atendido correctamente',
+              this.scanditProvider.colorsMessage.success.color,
+              this.scanditProvider.colorText.color,
+              16);
+            this.hideTextMessage(1500);
+          } else {
+            ScanditMatrixSimple.setText(
+              'Ha ocurrido un error al intentar marcar como atendido el producto.',
+              this.scanditProvider.colorsMessage.error.color,
+              this.scanditProvider.colorText.color,
+              16);
+            this.hideTextMessage(4000);
+          }
+        }, error => {
+          ScanditMatrixSimple.setText(
+            'Ha ocurrido un error al intentar marcar como atendido el producto.',
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(4000);
+        });
+    }
   }
 
   private hideTextMessage(delay: number) {

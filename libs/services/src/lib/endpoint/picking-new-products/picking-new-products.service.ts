@@ -5,6 +5,8 @@ import {environment} from "../../../environments/environment";
 import {map, switchMap} from "rxjs/operators";
 import {AuthenticationService} from "@suite/services";
 import {PickingNewProductsModel} from "../../../models/endpoints/PickingNewProducts";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,8 @@ export class PickingNewProductsService {
 
   constructor(
     private http: HttpClient,
-    private auth: AuthenticationService
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider
   ) {}
 
   postGetByWarehouseIdPickingId(params?: PickingNewProductsModel.ParamsGetByWarehouseIdPickingId): Observable<PickingNewProductsModel.ResponseGetByWarehouseIdPickingId> {
@@ -55,5 +58,9 @@ export class PickingNewProductsService {
     return this.http.put<PickingNewProductsModel.ResponseListReceivedProductsRequested>(this.putAttendReceivedProductsRequestedUrl, params).pipe(map(response => {
       return response.data;
     }));
+  }
+
+  promisePutAttendReceivedProductsRequested(params: {receivedProductsRequestedIds: number[]}): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.put(this.putAttendReceivedProductsRequestedUrl, params);
   }
 }
