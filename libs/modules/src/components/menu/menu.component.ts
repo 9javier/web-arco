@@ -431,6 +431,12 @@ export class MenuComponent implements OnInit {
           id: 'incidences-reception',
           url: '/incidences-reception',
           icon: 'notifications'
+        },
+        {
+          title: 'Desbloquear',
+          id: 'unlock-expeditions',
+          url: '/unlock-expeditions',
+          icon: 'unlock'
         }
       ]
     },

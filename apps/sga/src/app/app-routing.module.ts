@@ -477,6 +477,14 @@ const routes: Routes = [
     data: {
       name: 'Drop-Files'
     }
+  },
+  {
+    path:'unlock-expeditions',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/unlock-expeditions/unlock-expeditions.module#UnlockExpeditionsModule',
+    data: {
+      name: 'Desbloquear'
+    }
   }
 ];
 
