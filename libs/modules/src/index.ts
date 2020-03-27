@@ -378,3 +378,7 @@ export  * from './seasons-enabled/seasons-enabled.module';
 //Drop Files
 export * from './drop-files/drop-files.component'
 export * from './drop-files/drop-files.module'
+
+//Unlock Expeditions
+export * from './unlock-expeditions/unlock-expeditions.component'
+export * from './unlock-expeditions/unlock-expeditions.module'
