@@ -9,7 +9,7 @@
 }
 .container-label-print-sucess{
     text-align: center; 
-    margin-top:-8% ;   
+    margin-top:-15% ;   
 }
 .container{
     display: table-cell;
@@ -89,4 +89,13 @@ font-size: 16px;
       }
     }
   }
- 
+
+.description{
+    max-width: 60%;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.wrapp-description{
+    margin-top: 10%;
+}

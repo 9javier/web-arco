@@ -14,12 +14,18 @@ export class LabelsService {
   private emitData = new BehaviorSubject({});
   private getData$ = this.emitData.asObservable();
   private emitNumAllScanner = new BehaviorSubject({});
+  private emitScannerAlert = new BehaviorSubject({});
   private getNumAllScanner$ = this.emitNumAllScanner.asObservable();
+  private getScannerAlert$ = this.emitScannerAlert.asObservable();
 
   /**urls of the service */
   private getIndexUrl = environment.apiBase+"/labels";
   private getStatusLabelsUrl = environment.apiBase+"/labels/status";
   private postPrintLabelStoreUrl = environment.apiBase+"/labels/code";
+  private getListAlertsUrl = environment.apiBase+"/labels/alerts";
+  private getPrintLabelByIdsUrl = environment.apiBase+"/labels/";
+
+
   constructor(private http:HttpClient) { }
 
   /**
@@ -37,10 +43,21 @@ export class LabelsService {
       return response.data
     }));
   }
+  getLabelsPrintById(id,body):Observable<any>{
+    return this.http.post(this.getPrintLabelByIdsUrl+id,body).pipe(map((response:any)=>{
+      return response.data
+    }));
+  }
+
+  getListAlerts():Observable<any>{
+    return this.http.get(this.getListAlertsUrl).pipe(map((response:any)=>{
+      return response.data
+    }));
+  }
 
   postPrintLabels(body):Observable<any>{
     return this.http.post(this.postPrintLabelStoreUrl,body).pipe(map((response:any)=>{
-      return response
+      return response.data;
     }));
   }
    refreshScanner() {
@@ -63,5 +80,13 @@ export class LabelsService {
 
   getNumAllScanner() {
     return this.getNumAllScanner$;
+  }
+
+  setScannerAlert(body){
+    this.emitScannerAlert.next(body);
+  }
+
+  getScannerAlert() {
+    return this.getScannerAlert$;
   }
 }

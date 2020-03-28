@@ -28,6 +28,7 @@ export class InputCodesComponent implements OnInit {
   dataToWrite: string = 'PRODUCTO';
   inputProduct: string = null;
   lastCodeScanned: string = 'start';
+  PrintError:boolean = false;
   private lastProductReferenceScanned: string = 'start';
   numScanner:number = 0;
   private isStoreUser: boolean = false;
@@ -323,23 +324,30 @@ export class InputCodesComponent implements OnInit {
     
   }
 
-  async printLabelStore(barcode_){
+  async printLabelStore(reference_){
     let body ={
-      barcode : barcode_
+      reference : reference_
     }
     this.intermediaryService.presentLoading();
     this.labelService.postPrintLabels(body).subscribe( result =>{
-      console.log("resultado");
-      console.log(result);
-      this.labelService.numScanner(this.numScanner= (this.numScanner-1));
-      this.router.navigate(['/order-preparation']);
       this.intermediaryService.dismissLoading();
+      console.log(result[0]);
+      if(result[0].status == true){
+        this.labelService.numScanner(this.numScanner= (this.numScanner-1));
+        this.router.navigate(['/order-preparation']);
+      }else{
+        this.PrintError =true;
+      }
+      
     }, error => {
       console.log(error);
       this.intermediaryService.dismissLoading();
     });
+  }
 
-   
+  return(){
+    this.PrintError = false;
+    this.router.navigate(['/order-preparation']);
   }
 
 }

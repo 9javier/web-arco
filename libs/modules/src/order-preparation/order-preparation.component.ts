@@ -19,7 +19,9 @@ export class OrderPreparationComponent implements OnInit {
   blockedOrder: boolean = false;
   statusLabels: number = 2;
   numScanner:number = 0;
-  numAllScanner: number =0
+  numAllScanner: number =0;
+  goScanner:boolean = false;
+  expeditButton:boolean = false;
   constructor(
     private labelsService: LabelsService,
     private router: Router,
@@ -27,11 +29,12 @@ export class OrderPreparationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.initNumsScanner();
+    this.initNumsScanner();  
   }
 initNumsScanner(){
   this.getNumScann();
   this.getAllNumScann();
+  this.getScannerAlert();
 }
   
 
@@ -40,14 +43,13 @@ initNumsScanner(){
   }
 
   showExpedition(){
+    this.close();
     this.StatusPrint=true;
-    this.initPage = false;
-    this.blockedOrder = false;
   }
 
 
   async print(){
-    await this.intermediaryService.presentLoading();
+    await this.intermediaryService.presentLoading("cargando expedición...");
     this.labelsService.getIndexLabels().subscribe(result =>{
       console.log(result[0].status);
       let status = result[0].status;
@@ -82,14 +84,12 @@ initNumsScanner(){
   }
 
   scanner(){
-
     if(this.numScanner != 0){
       this.labelsService.numScanner(this.numScanner);
       this.router.navigate(['/order-preparation/code']);
     }else{
       //finish scanner process
     }
-    
   }
 
 
@@ -104,6 +104,7 @@ initNumsScanner(){
       this.numScanner = resp;
       if(resp == 0){
         console.log("finish scanner");
+        this.expeditButton =true;
       }
     })
     
@@ -115,6 +116,54 @@ initNumsScanner(){
       this.numAllScanner = resp;
     })
     
+  }
+
+  async getScannerAlert() {
+    this.labelsService.getScannerAlert().subscribe((result: any) => {
+      console.log(result);
+     let status= result.status;
+      if(status == true && this.initPage == false){
+        this.close();
+        this.printById(result);
+      }
+    })
+  }
+
+  async printById(result){
+    let id = result.id;
+    let body ={
+     reference: result.id 
+    };
+    await this.intermediaryService.presentLoading("cargando expedición...");
+    this.labelsService.getLabelsPrintById(id,body).subscribe(result =>{
+      let data=[];
+      data.push(result);
+      console.log(data[0].status);
+      let status = data[0].status;
+      let blocked = data[0].blocked;
+      this.dataSource=data;
+      this.numAllScanner = data[0].numberLumps;
+      this.numScanner = data[0].numberLumps;
+      this.intermediaryService.dismissLoading();
+      this.labelsService.setNumAllScanner(this.numAllScanner);
+      if(blocked == false){
+        if(status == true){
+          this.intermediaryService.dismissLoading();
+          this.showExpedition();
+        }else{
+          this.intermediaryService.dismissLoading();
+          this.showErrorExpedition();
+        }
+      }else{
+        this.intermediaryService.dismissLoading();
+        this.showBlockedOrder();
+      }
+
+    },
+    async (err) => {
+      console.log(err);
+      await this.intermediaryService.dismissLoading();
+    });
   }
 
   statusScanner(){
@@ -134,6 +183,7 @@ initNumsScanner(){
     this.initPage = false;
     this.PrintError =false;
     this.blockedOrder = false;
+    this.expeditButton = false;
   }
 
   return(){

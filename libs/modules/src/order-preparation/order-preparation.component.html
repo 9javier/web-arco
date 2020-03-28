@@ -62,10 +62,9 @@
                             <ion-label class="text-title">Pedido {{label.order}} </ion-label>
                             <ion-label class="text-title"> Nº {{label.numberOrder}}</ion-label>
                         </div>
-                        <div class="item">
-                            <ion-label color="dark" >{{label.description}}</ion-label>
-                        </div>
-            
+                           <div class="wrapp-description" style="margin-top: 10%">
+                                <ion-label class="description" color="dark" >{{label.description}}</ion-label>
+                            </div> 
                         <div class="item">
                             <ion-label color="dark" class="text-item" >Nº Bultos {{label.numberLumps}}</ion-label>
                             <br>
@@ -73,7 +72,8 @@
                         </div>
             
                         <div class="item">
-                            <ion-button color="danger" (click)="scanner()">Escanear etiqueta de envio {{ statusScanner() }}</ion-button>
+                            <ion-button *ngIf="expeditButton == false" color="danger" (click)="scanner()">Escanear etiqueta de envio {{ statusScanner() }}</ion-button>
+                            <ion-button *ngIf="expeditButton == true" (click)="return()">Consultar nueva expedición</ion-button>
                         </div>
                      </div>
                 </div>

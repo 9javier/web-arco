@@ -5,7 +5,7 @@ export namespace PrintLabelsModel {
    export interface AlertsTable{
     id?: number;
     name?:string,
-    code:string
-
+    referernce:string,
+    typeError:number
   }
 }

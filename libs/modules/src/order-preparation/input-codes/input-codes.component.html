@@ -1,4 +1,41 @@
-<div class="content-ta">
+<div class="content-ta"  *ngIf="PrintError == false">
   <input id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)"
     (focus)="onFocus($event)" [(ngModel)]="inputProduct">
 </div>
+
+<!--print error-->
+<ion-content *ngIf="PrintError == true">
+  <ion-grid>
+      <ion-row justufy-content-center align-items-center class="max-height">
+          <ion-col>
+              <div class="wrapp-center">
+                  <ion-icon  class="close-icon" name="close" color="danger" style="margin-top: 5%;"></ion-icon>
+                  <div style="margin-top: 5%;">
+                      <ion-label class="text-title">Pedido  </ion-label>
+                      <ion-label class="text-title">SPARTOO</ion-label>
+                      <ion-label class="text-title">Nº</ion-label>
+                      <ion-label class="text-title">4564546545</ion-label>
+                  </div>
+                 
+              <div class="item">
+                  <ion-label color="dark" >Error al generar etiqueta</ion-label>
+              </div>
+              
+              <div class="error-mesage">
+                  <p  class="text-error">Vuelve a intentarlo cuando el pedido no tenga alerta.
+                      Si al final del día no se pudo generar la etiqueta, envía
+                      un email a cliente@kraclonline.com con el asunto
+                  </p>
+                  <ion-label class="text-title">Etiqueta: 163547</ion-label>
+              </div>
+              </div>
+          </ion-col>
+      </ion-row>
+  </ion-grid>    
+</ion-content>
+
+<ion-footer class="footer-products" *ngIf="PrintError == true">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button  matTooltip="Regresar" matTooltipClass="tooltip" (click)="return()" ><ion-icon name="arrow-back"></ion-icon></ion-fab-button>
+  </ion-fab>
+</ion-footer>
