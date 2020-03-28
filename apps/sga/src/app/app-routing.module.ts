@@ -111,6 +111,22 @@ const routes: Routes = [
     }
   },
   {
+    path: 'commercial-fields',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/commercial-fields/commercial-fields.module#CommercialFieldsModule',
+    data: {
+      name: 'Campos Comerciales'
+    }
+  },
+  {
+    path: 'brands-enabled-reception',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/brands-enabled-reception/brands-enabled-reception.module#BrandsEnabledReceptionModule',
+    data: {
+      name: 'Marcas habilitadas recepción sin pedido'
+    }
+  },
+  {
     path: 'pallets',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
@@ -352,6 +368,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'incidences-reception',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/incidences-reception-list/incidences-reception-list.module#IncidencesReceptionListModule',
+    data: {
+      name: 'Incidencias'
+    }
+  },
+  {
     path: 'prices',
     redirectTo: 'products',
     data: {
@@ -427,7 +451,7 @@ const routes: Routes = [
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/receptionss-avelon/receptionss-avelon.module#ReceptionssAvelonModule',
     data: {
-      name: 'Recepciones2'
+      name: 'Recepciones'
     }
   },
   {
@@ -452,6 +476,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/drop-files/drop-files.module#DropFilesModule',
     data: {
       name: 'Drop-Files'
+    }
+  },
+  {
+    path:'unlock-expeditions',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/unlock-expeditions/unlock-expeditions.module#UnlockExpeditionsModule',
+    data: {
+      name: 'Desbloquear'
     }
   }
 ];

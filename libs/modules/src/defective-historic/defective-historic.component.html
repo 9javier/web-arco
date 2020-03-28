@@ -1,47 +1,20 @@
 <ion-content>
   <div class="incidences-container">
     <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
-      <ng-container matColumnDef="select">
-        <mat-header-cell class="my-sticky-col info  checkbox header-checkbox" *matHeaderCellDef>
-
-          <div class="content-checkbox">
-            <ng-container *ngIf="dataSource !== undefined" >
-              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? masterToggle() : null"
-                            [checked]="selection.hasValue() && isAllSelected()"
-                            [indeterminate]="selection.hasValue() && !isAllSelected()"
-                            [aria-label]="checkboxLabel()">
-              </mat-checkbox>
-            </ng-container>
-          </div>
-          <div>Todas</div>
-        </mat-header-cell>
-        <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
-          <ng-container *ngIf="dataSource !== undefined" >
-            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                          [matRippleColor]="'black'" (click)="$event.stopPropagation()"
-                          (change)="$event ? selection.toggle(row) : null"
-                          [checked]="selection.isSelected(row)"
-                          [aria-label]="checkboxLabel(row)">
-            </mat-checkbox>
-          </ng-container>
-        </mat-cell>
-      </ng-container>
-
       <ng-container matColumnDef="id">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>ID
+        <mat-header-cell class="my-sticky-col info checkbox" *matHeaderCellDef mat-sort-header>ID
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonId [title]="'IDS'"
                                [listItems]="entities.id"
                                [isFiltering]="isFilteringId != entities.id.length"
                                (applyFilters)="applyFilters($event, 'id')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.id}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info checkbox"> {{element.id}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="user">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>User
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonUser [title]="'Usuarios'"
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Usuario
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonUser [title]="'Usuario'"
                                [listItems]="entities.user"
                                [isFiltering]="isFilteringUser != entities.user.length"
                                (applyFilters)="applyFilters($event, 'user')">
@@ -139,8 +112,8 @@
       </ng-container>
 
       <ng-container matColumnDef="defectTypeParent">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Tipo Defectuoso
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeParent [title]="'Tipos Defectuoso'"
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Tipo defecto
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeParent [title]="'Tipos defecto'"
                                [listItems]="entities.defectTypeParent"
                                [isFiltering]="isFilteringDefectTypeParent != entities.defectTypeParent.length"
                                (applyFilters)="applyFilters($event, 'defectTypeParent')">
@@ -150,8 +123,8 @@
       </ng-container>
 
       <ng-container matColumnDef="defectTypeChild">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Subtipo de Defectuoso
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeChild [title]="'Subtipos de Defectuoso'"
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Subtipo defecto
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectTypeChild [title]="'Subtipo defecto'"
                                [listItems]="entities.defectTypeChild"
                                [isFiltering]="isFilteringDefectTypeChild != entities.defectTypeChild.length"
                                (applyFilters)="applyFilters($event, 'defectTypeChild')">

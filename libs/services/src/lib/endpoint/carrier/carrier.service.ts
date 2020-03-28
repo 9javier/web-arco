@@ -1,16 +1,16 @@
-import { map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
 import { RequestsProvider } from "../../../providers/requests/requests.provider";
 import { HttpRequestModel } from "../../../models/endpoints/HttpRequest";
 import { environment } from '../../../environments/environment';
 import {ExcellModell} from "../../../models/endpoints/Excell";
-import {Injectable} from '@angular/core';
-import {IncidenceModel} from "../../../models/endpoints/Incidence";
-import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
-import {AuthenticationService} from "../authentication/authentication.service";
-import {from, Observable} from "rxjs";
-import {switchMap} from "rxjs/operators";
 import {InventoryModel} from "../../../models/endpoints/Inventory";
+import { AuthenticationService } from '../authentication/authentication.service';
+import { PATH } from "../../../../../../config/base";
+import { from, Observable } from "rxjs";
+import { map, switchMap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { response } from 'express';
 
 @Injectable({
   providedIn: 'root'
@@ -41,11 +41,13 @@ export class CarrierService {
   private movementHistory = environment.apiBase + '/packing/warehouse/movementHistory';
   private typeMovement = environment.apiBase + '/types/movement-history';
   private sendexcell = environment.apiBase + "/packing/export-to-excel";
+  private searchInContainerUrl = environment.apiBase + "/packing/search";
+  private getFiltersUrl = environment.apiBase + "/packing/filters";
 
   constructor(
     private http: HttpClient,
     private requestsProvider: RequestsProvider,
-    private auth: AuthenticationService,
+    private auth: AuthenticationService
   ) {
   }
   /**
@@ -62,6 +64,39 @@ export class CarrierService {
   getAllWhs(): Observable<Array<CarrierModel.Carrier>> {
     return this.http.get<CarrierModel.CarrierResponse>(this.getAllWhsonCarries).pipe(map(response => {
       return response.data;
+    }));
+  }
+
+  /**
+   * Seach products in the inventory filtereds by params
+   * @param parameters filters
+   */
+  searchInContainer(parameters): Observable<CarrierModel.ResponseSearchInContainer> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post<CarrierModel.ResponseSearchInContainer>(this.searchInContainerUrl, parameters, { headers });
+    }));
+  }
+
+  getFilters(): Observable<CarrierModel.ResponseSearchInContainer> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post<CarrierModel.ResponseSearchInContainer>(this.getFiltersUrl, { headers });
+    }));
+  }
+
+  /**
+   * @author Gaetano Sabino
+   * @param parameters
+   */
+  getFileExcell(parameters: ExcellModell.fileExcell) {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+
+
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      return this.http.post(this.sendexcell, parameters, { headers, responseType: 'blob' });
     }));
   }
 
@@ -225,14 +260,4 @@ export class CarrierService {
         map(elem => elem.data)
       );
   }
-
-  getFileExcell(parameters: ExcellModell.fileExcell) {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
-      // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
-
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post(this.sendexcell, parameters, { headers, responseType: 'blob' });
-    }));
-  }
-
 }

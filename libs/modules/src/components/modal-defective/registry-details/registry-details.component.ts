@@ -15,6 +15,8 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./registry-details.component.scss']
 })
 export class RegistryDetailsComponent implements OnInit {
+  id: number;
+  isHistory: boolean;
   private baseUrlPhoto = environment.apiBasePhoto;
   section = 'information';
   title = 'Ubicación ';
@@ -56,6 +58,8 @@ export class RegistryDetailsComponent implements OnInit {
     private loadingController: LoadingController,
     private incidentsService: IncidentsService,
   ) {
+    this.id = this.navParams.get("id");
+    this.isHistory = this.navParams.get("history");
     this.productId = this.navParams.get("productId");
     this.showChangeState = this.navParams.get("showChangeState");
   }
@@ -91,13 +95,13 @@ export class RegistryDetailsComponent implements OnInit {
   }
 
   getRegistryHistorical(): void {
-    this.defectiveRegistryService.getHistorical({ productId: this.productId, productReference: '' }).subscribe(historical => {
+    this.defectiveRegistryService.getHistorical({ id: this.id, isHistory: this.isHistory }).subscribe(historical => {
       this.registryHistorical = historical;
     });
   }
 
   getRegistryDetail(): void {
-    this.defectiveRegistryService.getLastHistorical({ productId: this.productId }).subscribe(lastHistorical => {
+    this.defectiveRegistryService.getDataDefect({ id: this.id, isHistory: this.isHistory }).subscribe(lastHistorical => {
       this.registry_data = {
         data: lastHistorical.data,
         status: lastHistorical.statuses};
@@ -134,21 +138,24 @@ export class RegistryDetailsComponent implements OnInit {
   }
 
   getRequireStatus(defectType: number, statusName: string) {
-    const status = this.statusManagement.classifications.find((x) => x.defectType === defectType);
-
-    switch (statusName) {
-      case 'contact':
-        return status.requireContact;
-      case 'history':
-        return status.passHistory;
-      case 'photo':
-        return status.requirePhoto;
-      case 'signature':
-        return status.requireOk;
-      case 'ticket':
-        return status.ticketEmit;
-      case 'orders':
-        return status.allowOrders;
+    if(this.statusManagement && this.statusManagement.classifications){
+      const status = this.statusManagement.classifications.find((x) => x.defectType === defectType);
+      if(status){
+        switch (statusName) {
+          case 'contact':
+            return status.requireContact;
+          case 'history':
+            return status.passHistory;
+          case 'photo':
+            return status.requirePhoto;
+          case 'signature':
+            return status.requireOk;
+          case 'ticket':
+            return status.ticketEmit;
+          case 'orders':
+            return status.allowOrders;
+        }
+      }
     }
   }
 }

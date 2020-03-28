@@ -22,7 +22,7 @@ import { RegistryDetailsComponent } from '../components/modal-defective/registry
 export class DefectiveRegistryComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select', 'id', 'user', 'statusManagementDefect', 'warehouse', 'product', 'model', 'size', 'brand', 'color', 'dateDetection', 'defectTypeParent', 'defectTypeChild'];
+  displayedColumns: string[] = ['id', 'user', 'statusManagementDefect', 'warehouse', 'product', 'model', 'size', 'brand', 'color', 'dateDetection', 'defectTypeParent', 'defectTypeChild'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
   originalTableStatus: DamagedModel.Status[];
@@ -108,7 +108,6 @@ export class DefectiveRegistryComponent implements OnInit {
     this.initEntity();
     this.initForm();
     this.getFilters();
-    this.getColumns(this.form);
     this.getList(this.form);
     this.listenChanges();
 
@@ -207,22 +206,6 @@ export class DefectiveRegistryComponent implements OnInit {
         this.pauseListenFormChange = true;
       }, 0);
     })
-  }
-
-  async getColumns(form?: FormGroup) {
-    this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe(
-      (resp: any) => {
-        resp.filters.forEach(element => {
-          this.columns[element.name] = element.id;
-        });
-      },
-      async err => {
-        await this.intermediaryService.dismissLoading()
-      },
-      async () => {
-        await this.intermediaryService.dismissLoading()
-      }
-    )
   }
 
   private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
@@ -577,6 +560,7 @@ export class DefectiveRegistryComponent implements OnInit {
     const modal = await this.modalController.create({
       component: RegistryDetailsComponent,
       componentProps: {
+        id: registry.id,
         productId: registry.product.id,
         showChangeState: true,
       },

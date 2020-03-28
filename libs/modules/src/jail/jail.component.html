@@ -2,7 +2,9 @@
   <div class="table-container">
     <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="table-incidences">
       <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+        </th>
         <td mat-cell *matCellDef="let element;let i = dataIndex" [formGroup]="toDelete"
             (click)="prevent($event)">
           <ion-checkbox [formControl]="toDelete['controls']?.jails['controls'][i]['controls']?.selected">
@@ -11,39 +13,65 @@
       </ng-container>
 
       <ng-container matColumnDef="reference">
-        <th mat-header-cell *matHeaderCellDef>Referencia</th>
-        <td mat-cell *matCellDef="let element"> {{element.reference}} </td>
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('reference')">Referencia</span>
+          <suite-filter-button #filterButtonReferences class="filter" [title]="'Referencia'" [listItems]="references"
+                               [isFiltering]="isFilteringReferences != references.length"
+                               (applyFilters)="applyFilters($event, 'references')">
+          </suite-filter-button>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.reference}}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="packing">
-        <th mat-header-cell *matHeaderCellDef>Tipo</th>
-        <td mat-cell *matCellDef="let element"> {{typeById(element.packingType)?.name}} </td>
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('type')">Tipo</span>
+          <suite-filter-button #filterButtonTypes class="filter" [title]="'Tipo'" [listItems]="types"
+                               [isFiltering]="isFilteringTypes != types.length"
+                               (applyFilters)="applyFilters($event, 'types')">
+          </suite-filter-button>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.type.name}}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="destiny">
-        <th mat-header-cell *matHeaderCellDef>Destino</th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title">Destino</span>
+        </th>
         <td mat-cell *matCellDef="let element">
-          <div *ngIf="element.carrierWarehousesDestiny?.length == 0" class="no-warehouse">Sin destinos</div>
-          <div *ngIf="element.carrierWarehousesDestiny?.length == 1">
-            {{element.carrierWarehousesDestiny[0].warehouse?.reference }}
-            {{element.carrierWarehousesDestiny[0].warehouse?.name }}</div>
-          <div *ngIf="element.carrierWarehousesDestiny?.length > 1"
+          <div *ngIf="element.destiny.length == 0" class="no-warehouse">Sin destinos</div>
+          <div *ngIf="element.destiny.length == 1">
+            {{element.destiny[0].destinyWarehouse.reference }}
+            {{element.destiny[0].destinyWarehouse.name }}</div>
+          <div *ngIf="element.destiny.length > 1"
                (click)="showDestinations($event, element)"><span class="show-various-destinations">Varios destinos</span></div>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="warehouse">
-        <th mat-header-cell *matHeaderCellDef>Origen</th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('origin')">Origen</span>
+          <suite-filter-button #filterButtonOrigins class="filter" [title]="'Origen'" [listItems]="origins"
+                               [isFiltering]="isFilteringOrigins != origins.length"
+                               (applyFilters)="applyFilters($event, 'origins')">
+          </suite-filter-button>
+        </th>
         <td mat-cell *matCellDef="let element">
-          {{element?.warehouse ? (element.warehouse.reference + ' ' + element.warehouse.name) : '' }}
-          <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
+          {{element?.origin ? (element.origin.reference + ' ' + element.origin.name) : '' }}
+          <div class="no-warehouse" *ngIf="!element.origin"> sin warehouse asociado</div>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="products-status">
-        <th mat-header-cell *matHeaderCellDef class="right-content right-space">Productos</th>
-        <td mat-cell *matCellDef="let element" class="right-content right-space">
-          {{ element.packingInventorys && element.packingInventorys.length > 0 ? element.packingInventorys.length : 'vacía' }}
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('product')">Productos</span>
+        </th>
+        <td mat-cell *matCellDef="let element" >
+          {{ element.product && element.product > 0 ? element.product : 'vacía' }}
         </td>
       </ng-container>
 
@@ -51,8 +79,8 @@
         <th mat-header-cell *matHeaderCellDef class="right-content left-border"></th>
         <td mat-cell *matCellDef="let element" class="right-content left-border">
           <i
-            matTooltip="Enviar {{typeById(element.packingType)?.name | lowercase}} {{ element.packingInventorys && element.packingInventorys.length > 0 ? '' : 'vacía' }}"
-            matTooltipClass="tooltip" *ngIf="isAvailableSend(element) && element.packingInventorys.length == 0" (click)="toSend($event,element)"
+            matTooltip="Enviar {{typeById(element.type)?.name | lowercase}} {{ element.product && element.product > 0 ? '' : 'vacía' }}"
+            matTooltipClass="tooltip" *ngIf="isAvailableSend(element)" (click)="toSend($event,element)"
             class="material-icons action-icon">send</i>
         </td>
       </ng-container>
@@ -68,7 +96,7 @@
           <i class="material-icons settings-header">settings</i>
         </th>
         <td mat-cell *matCellDef="let element" class="center-content">
-          <i matTooltip="Actualizar {{typeById(element.packingType)?.name | lowercase}}"
+          <i matTooltip="Actualizar {{typeById(element.type)?.name | lowercase}}"
              matTooltipClass="tooltip" (click)="toUpdate($event,element)"
              class="material-icons action-icon">edit</i>
         </td>
@@ -83,7 +111,7 @@
 
       <ng-container matColumnDef="buttons-print">
         <th mat-header-cell *matHeaderCellDef></th>
-        <td matTooltip="Imprimir {{typeById(element.packingType)?.name | lowercase}}" matTooltipClass="tooltip"
+        <td matTooltip="Imprimir {{typeById(element.type)?.name | lowercase}}" matTooltipClass="tooltip"
             mat-cell *matCellDef="let element">
           <i (click)="print($event,element)" class="material-icons action-icon">print</i>
         </td>
@@ -111,6 +139,7 @@
       <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
     </table>
   </div>
+  <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
 </ion-content>
 
 <ion-footer class="footer-products">
