@@ -22,6 +22,23 @@ export class PickingTasksStoresComponent implements OnInit {
   allRequestsSelected: boolean;
   amountRequestsSelected: number;
   isLoadingData: boolean;
+  filtersOpen: boolean;
+  filterForm: {
+    date: string,
+    article: string,
+    brand: string,
+    size: string,
+    status: string,
+    type: string
+  };
+  filterOptions: {
+    dates: string[],
+    articles: string[],
+    brands: string[],
+    sizes: string[],
+    statuses: string[],
+    types: string[]
+  };
 
   constructor(
     private pickingStoreService: PickingStoreService,
@@ -34,6 +51,23 @@ export class PickingTasksStoresComponent implements OnInit {
     this.allRequestsSelected = false;
     this.amountRequestsSelected = 0;
     this.isLoadingData = true;
+    this.filtersOpen = false;
+    this.filterForm = {
+      date: '',
+      article: '',
+      brand: '',
+      size: '',
+      status: '',
+      type: ''
+    };
+    this.filterOptions = {
+      dates: [],
+      articles: [],
+      brands: [],
+      sizes: [],
+      statuses: [],
+      types: []
+    };
     this.loadRejectionReasons();
     this.loadRequests();
   }
@@ -54,9 +88,36 @@ export class PickingTasksStoresComponent implements OnInit {
         this.requests = response.data;
         for(let request of this.requests){
           request.selected = true;
+          request.hidden = false;
         }
         this.allRequestsSelected = true;
         this.amountRequestsSelected = this.requests.length;
+        for(let request of this.requests){
+          if(!this.filterOptions.dates.includes(this.getDate(request))){
+            this.filterOptions.dates.push(this.getDate(request));
+          }
+          if(!this.filterOptions.articles.includes(request.model.reference)){
+            this.filterOptions.articles.push(request.model.reference);
+          }
+          if(!this.filterOptions.brands.includes(request.model.brand.name)){
+            this.filterOptions.brands.push(request.model.brand.name);
+          }
+          if(!this.filterOptions.sizes.includes(request.size.name)){
+            this.filterOptions.sizes.push(request.size.name);
+          }
+          if(!this.filterOptions.statuses.includes(this.getStatus(request))){
+            this.filterOptions.statuses.push(this.getStatus(request));
+          }
+          if(!this.filterOptions.types.includes(this.getType(request))){
+            this.filterOptions.types.push(this.getType(request));
+          }
+        }
+        this.filterOptions.dates = this.filterOptions.dates.sort((a, b) => a.localeCompare(b));
+        this.filterOptions.articles = this.filterOptions.articles.sort((a, b) => a.localeCompare(b));
+        this.filterOptions.brands = this.filterOptions.brands.sort((a, b) => a.localeCompare(b));
+        this.filterOptions.sizes = this.filterOptions.sizes.sort((a, b) => a.localeCompare(b));
+        this.filterOptions.statuses =this.filterOptions.statuses.sort((a, b) => a.localeCompare(b));
+        this.filterOptions.types = this.filterOptions.types.sort((a, b) => a.localeCompare(b));
         this.isLoadingData = false;
       } else {
         console.error(response);
@@ -74,7 +135,14 @@ export class PickingTasksStoresComponent implements OnInit {
   }
 
   checkRequestSelected(): boolean {
-    return this.amountRequestsSelected > 0;
+    let anySelectedNotHiddenRequest: boolean = false;
+    for(let request of this.requests){
+      if(request.selected && !request.hidden){
+        anySelectedNotHiddenRequest = true;
+        break;
+      }
+    }
+    return anySelectedNotHiddenRequest;
   }
 
   selectAllRequests(selected: boolean) {
@@ -94,7 +162,7 @@ export class PickingTasksStoresComponent implements OnInit {
       const selectedPendingRequests: Array<LineRequest | DeliveryRequest> = [];
       const selectedProcessedRequests: Array<LineRequest | DeliveryRequest> = [];
       for(let request of this.requests){
-        if(request.selected){
+        if(request.selected && !request.hidden){
           if((request.hasOwnProperty('shippingMode') && request.status == 0) || (!request.hasOwnProperty('shippingMode') && request.status == 1)){
             selectedPendingRequests.push(request);
           }else{
@@ -154,27 +222,27 @@ export class PickingTasksStoresComponent implements OnInit {
           filters.brands.push({
             id: request.model.brand.id,
             name: request.model.brand.name
-          })
+          });
         }
         if(!filters.colors.map(color => color.id).includes(request.model.color.id)){
           filters.colors.push({
             id: request.model.color.id,
             name: request.model.color.name
-          })
+          });
         }
         if(!filters.models.map(model => model.id).includes(request.model.id)){
           filters.models.push({
             id: request.model.id,
             name: request.model.name,
             reference: request.model.reference
-          })
+          });
         }
         if(!filters.sizes.map(size => size.id).includes(request.size.id)){
           filters.sizes.push({
             id: request.size.id,
             name: request.size.name,
             reference: request.size.reference
-          })
+          });
         }
       }
       filters.brands = filters.brands.sort((a, b) => a.name.localeCompare(b.name));
@@ -233,6 +301,19 @@ export class PickingTasksStoresComponent implements OnInit {
       return type;
     }else{
       return 'Tienda'
+    }
+  }
+
+  applyFilter(){
+    for(const request of this.requests){
+      request.hidden = !(
+        (this.getDate(request) == this.filterForm.date || this.filterForm.date == '') &&
+        (request.model.reference == this.filterForm.article || this.filterForm.article == '') &&
+        (request.model.brand.name == this.filterForm.brand || this.filterForm.brand == '') &&
+        (request.size.name == this.filterForm.size || this.filterForm.size == '') &&
+        (this.getStatus(request) == this.filterForm.status || this.filterForm.status == '') &&
+        (this.getType(request) == this.filterForm.type || this.filterForm.type == '')
+      );
     }
   }
 

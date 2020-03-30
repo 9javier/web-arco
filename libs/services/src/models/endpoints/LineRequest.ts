@@ -25,7 +25,8 @@ export namespace LineRequestModel {
     customerOrderEntryId: number,
     hash: string,
     lineToClean: boolean,
-    selected: boolean
+    selected: boolean,
+    hidden: boolean
   }
 
 }

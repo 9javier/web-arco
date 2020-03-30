@@ -24,7 +24,8 @@ export namespace DeliveryRequestModel {
     destinyShop: Warehouse,
     model: Model,
     size: Size,
-    selected: boolean
+    selected: boolean,
+    hidden: boolean
   }
 
 }
