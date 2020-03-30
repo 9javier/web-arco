@@ -24,7 +24,11 @@ export class PickingTasksStoresComponent implements OnInit {
   isLoadingData: boolean;
   filtersOpen: boolean;
   filterForm: {
-    date: string,
+    date: {
+      mode: string,
+      Desde: Date,
+      Hasta: Date
+    },
     article: string,
     brand: string,
     size: string,
@@ -32,7 +36,7 @@ export class PickingTasksStoresComponent implements OnInit {
     type: string
   };
   filterOptions: {
-    dates: string[],
+    dateModes: string[],
     articles: string[],
     brands: string[],
     sizes: string[],
@@ -59,7 +63,11 @@ export class PickingTasksStoresComponent implements OnInit {
     this.isLoadingData = true;
     this.filtersOpen = false;
     this.filterForm = {
-      date: '',
+      date: {
+        mode: '',
+        Desde: null,
+        Hasta: null
+      },
       article: '',
       brand: '',
       size: '',
@@ -67,7 +75,7 @@ export class PickingTasksStoresComponent implements OnInit {
       type: ''
     };
     this.filterOptions = {
-      dates: [],
+      dateModes: ['Desde', 'Hasta'],
       articles: [],
       brands: [],
       sizes: [],
@@ -105,9 +113,6 @@ export class PickingTasksStoresComponent implements OnInit {
         this.allRequestsSelected = true;
         this.amountRequestsSelected = this.requests.length;
         for(let request of this.requests){
-          if(!this.filterOptions.dates.includes(this.getDate(request))){
-            this.filterOptions.dates.push(this.getDate(request));
-          }
           if(!this.filterOptions.articles.includes(request.model.reference)){
             this.filterOptions.articles.push(request.model.reference);
           }
@@ -124,7 +129,6 @@ export class PickingTasksStoresComponent implements OnInit {
             this.filterOptions.types.push(this.getType(request));
           }
         }
-        this.filterOptions.dates = this.filterOptions.dates.sort((a, b) => a.localeCompare(b));
         this.filterOptions.articles = this.filterOptions.articles.sort((a, b) => a.localeCompare(b));
         this.filterOptions.brands = this.filterOptions.brands.sort((a, b) => a.localeCompare(b));
         this.filterOptions.sizes = this.filterOptions.sizes.sort((a, b) => a.localeCompare(b));
@@ -319,7 +323,11 @@ export class PickingTasksStoresComponent implements OnInit {
   applyFilter(){
     for(const request of this.requests){
       request.hidden = !(
-        (this.getDate(request) == this.filterForm.date || this.filterForm.date == '') &&
+        (
+          (this.filterForm.date.mode == 'Desde' && new Date(request.createdAt) >= this.filterForm.date.Desde) ||
+          (this.filterForm.date.mode == 'Hasta' && new Date(request.createdAt) <= this.filterForm.date.Hasta) ||
+          (this.filterForm.date.mode == '')
+        ) &&
         (request.model.reference == this.filterForm.article || this.filterForm.article == '') &&
         (request.model.brand.name == this.filterForm.brand || this.filterForm.brand == '') &&
         (request.size.name == this.filterForm.size || this.filterForm.size == '') &&

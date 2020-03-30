@@ -3,9 +3,17 @@
     <ion-col>
       <mat-form-field>
         <mat-label>Fecha</mat-label>
-        <mat-select [(value)]="filterForm.date" (selectionChange)="applyFilter()">
+        <mat-select [(value)]="filterForm.date.mode" (selectionChange)="applyFilter()">
           <mat-option value="">Todas</mat-option>
-          <mat-option *ngFor="let date of filterOptions.dates" value="{{date}}">{{date}}</mat-option>
+          <mat-option class="date" *ngFor="let mode of filterOptions.dateModes" value="{{mode}}">
+            {{mode+' el'}}
+            <mat-form-field class="example-full-width">
+              <mat-label>{{filterForm.date[mode] ? filterForm.date[mode].toLocaleDateString('es-ES') : 'Selecciona una fecha'}}</mat-label>
+              <input matInput [matDatepicker]="picker" [(ngModel)]="filterForm.date[mode]">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker touchUi #picker></mat-datepicker>
+            </mat-form-field>
+          </mat-option>
         </mat-select>
       </mat-form-field>
     </ion-col>

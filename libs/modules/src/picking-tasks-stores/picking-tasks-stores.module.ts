@@ -9,7 +9,9 @@ import {
   MatRadioModule,
   MatExpansionModule,
   MatFormFieldModule,
-  MatSelectModule
+  MatSelectModule,
+  MatDatepickerModule,
+  MatInputModule
 } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { PickingTasksStoresRoutingModule } from "./picking-tasks-stores-routing.module";
@@ -36,7 +38,9 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatRadioModule,
     MatTooltipModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    MatDatepickerModule,
+    MatInputModule
   ]
 })
 export class PickingTasksStoresModule {}
