@@ -25,6 +25,7 @@ import {ItemReferencesProvider} from "../../../services/src/providers/item-refer
 import { PrintTicketService } from '../../../services/src/lib/print-ticket/print-ticket.service';
 import {DefectiveRegistryModel} from "../../../services/src/models/endpoints/DefectiveRegistry";
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
+import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
 
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
@@ -360,9 +361,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }, 'Registrar defectuoso', HEADER_BACKGROUND, HEADER_COLOR);
   }
 
-  print(defective: DefectiveRegistry) {
-    console.log("incidents Print");
-    this.printTicketService.printTicket(defective);
+  print(defective, status) {
+    this.printTicketService.printTicket(defective, status);
   }
 
   validate() {
@@ -480,12 +480,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       //   email: this.txtEmail,
       //   phone: this.txtTel,
       // },
-    })
+    });
+    //let defective = ;
     // console.log("hello world", this.incidenceForm);
     let This = this;
     await This.intermediary.presentLoading('Enviando...')
     if (this.ticketEmit == true) {
-      this.print();
+      //this.printTicketService.printTicket(this.incidenceForm, this.incidenceForm.statuManagementDefectId);
     }
 
     if (this.incidenceForm.value.observations == null) {
@@ -503,7 +504,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }
 
     let object = this.incidenceForm.value;
-    console.log("object", object);
     if (!this.requireContact) {
       delete object.contact;
     }
@@ -548,13 +548,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   async sendToIncidents(object) {
 
     let This = this;
-
     This.incidentsService.addRegistry(object).subscribe(
       resp => {
         if (this.ticketEmit == true) {
-          this.print();
+          this.printTicketService.printTicket(resp.result, resp.statusType);
         }
-        this.readed = false
+        this.readed = false;
         this.clearVariables();
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
@@ -592,7 +591,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       console.log(res.requirePhoto);
       this.ticketEmit = res.ticketEmit;
       this.passHistory = res.passHistory;
-      this.requirePhoto = res.requirePhoto
+      this.requirePhoto = res.requirePhoto;
       this.requireContact = res.requireContact;
       this.requireOk = res.requireOk;
       this.managementId = res.id;

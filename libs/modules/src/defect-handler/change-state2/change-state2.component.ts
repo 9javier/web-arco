@@ -329,10 +329,10 @@ export class ChangeState2Component implements OnInit {
       resp => {
 
         if (this.ticketEmit == true) {
-          this.print();
+          this.print(resp.result, resp.statusType);
         }
 
-        this.readed = false
+        this.readed = false;
         this.clearVariables();
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente');
@@ -353,9 +353,9 @@ export class ChangeState2Component implements OnInit {
 
 
 
-  print() {
+  print(defective, status) {
     console.log("change-state2 Print");
-    this.printTicketService.printTicket();
+    this.printTicketService.printTicket(defective, status);
   }
 
   initGestionState() {
