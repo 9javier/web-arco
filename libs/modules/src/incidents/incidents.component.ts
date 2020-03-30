@@ -189,16 +189,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.signaturesSubscription.unsubscribe();
   }
 
-  defectType(defecType_) {
-
-    let defecType = [];
-    defecType_['classifications'].forEach(element => {
-      let res = defecType_['statuses'].find(x => x.id == element.defectType);
-      if (res != undefined) {
-        defecType.push(res);
-      }
-    });
-    this.allDefectType = defecType;
+  defectType(defecType) {
+    this.allDefectType = defecType ? defecType.classifications : [];
   }
 
   initForm() {
@@ -571,10 +563,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     let id = e.detail.value;
     let res;
     if (this.barcodeRoute == null || this.barcodeRoute == undefined) {
-      res = this.statusManagament['classifications'].find(x => x.defectType == id);
+      res = this.statusManagament['classifications'].find(x => x.id == id);
 
     } else {
-      res = this.statusManagament.classifications != undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find(x => x.defectType == id);
+      res = this.statusManagament.classifications != undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find(x => x.id == id);
 
     }
 

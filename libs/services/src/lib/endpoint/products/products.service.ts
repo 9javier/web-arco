@@ -8,7 +8,6 @@ import { ProductModel } from '../../../models/endpoints/Product';
 
 import { environment } from '../../../environments/environment';
 import {map, switchMap} from 'rxjs/operators';
-import { from, observable } from 'rxjs';
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 import { UserModel } from '../../..';

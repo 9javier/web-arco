@@ -62,7 +62,7 @@
       </ion-item>
       <ion-item *ngIf="registry.statusManagementDefect">
         <ion-label>
-          Estado: {{getStatusName(registry.statusManagementDefect.defectType)}}
+          Estado: {{registry.statusManagementDefect.name}}
         </ion-label>
       </ion-item>
       <ion-item *ngIf="registry.defectTypeParent && registry.defectTypeChild">
@@ -135,7 +135,7 @@
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Estado: {{getStatusName(historical.statusManagementDefect.defectType)}}
+              Estado: {{historical.statusManagementDefect.name}}
             </mat-panel-title>
           </mat-expansion-panel-header>
           <ion-list>

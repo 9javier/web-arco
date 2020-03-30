@@ -33,9 +33,9 @@ export class DamagedShoesComponent implements OnInit {
     await this.intermediaryService.dismissLoading();
   }
 
-  changeAction(event, defectType: number, action: string) {
-    const item = this.tableClassifications.findIndex((x) => x.defectType === defectType);
-    this.tableClassifications[item][action] = event.checked;
+  changeAction(event, item, action: string) {
+    const index = this.tableClassifications.findIndex((x) => x.id === item.id);
+    this.tableClassifications[index][action] = event.checked;
     this.thereAreChanges = JSON.stringify(this.tableClassifications) !== this.originalClassifications;
   }
 
@@ -94,9 +94,7 @@ export class DamagedShoesComponent implements OnInit {
     this.tableClassifications.forEach((v) => {
       delete v.createdAt;
       delete v.updatedAt;
-      delete v.id;
     });
-
     await this.productsService.postDamagedUpdate(this.tableClassifications).then(() => {
       this.ngOnInit();
     });
@@ -104,7 +102,7 @@ export class DamagedShoesComponent implements OnInit {
 
   async postNewPermission(data: DamagedModel.ModalResponse){
     const item = {
-      defectType: data.defectType,
+      name: data.name,
       ticketEmit: data.actions[0].isChecked,
       passHistory: data.actions[1].isChecked,
       requirePhoto: data.actions[2].isChecked,
@@ -125,8 +123,4 @@ export class DamagedShoesComponent implements OnInit {
     return false;
   }
 
-  getStatusName(defectType: number) {
-    const status = this.originalTableStatus.find((x) => x.id === defectType);
-    return status.name;
-  }
 }
