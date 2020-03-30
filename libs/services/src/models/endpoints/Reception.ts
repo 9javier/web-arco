@@ -16,7 +16,8 @@ export namespace ReceptionModel {
     data: {
       pickingId: number,
       quantity: number,
-      hasNewProducts: boolean
+      hasNewProducts: boolean,
+      hasRequestedProducts?: boolean
     },
     message: string,
     code: number,
@@ -44,7 +45,9 @@ export namespace ReceptionModel {
     data: {
       remainingProducts: number,
       inventoryPacking: any,
-      hasNewProducts: boolean
+      hasNewProducts: boolean,
+      hasRequestedProducts?: boolean,
+      productRequestedId?: number
     },
     message: string,
     code: number,

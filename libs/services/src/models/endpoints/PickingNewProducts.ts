@@ -1,5 +1,6 @@
 import {ModelModel, ProductModel, SizeModel, WarehouseModel} from "@suite/services";
 import {FilterPriceModel} from "./FilterPrice";
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace PickingNewProductsModel {
 
@@ -74,4 +75,35 @@ export namespace PickingNewProductsModel {
   }
   //endregion
 
+  //region check info of received items
+  export interface CheckReceivedInfo {
+    hasNewProducts: boolean,
+    receiveRequestedProducts: boolean
+  }
+  export interface ResponseCheckReceivedInfo extends HttpRequestModel.Response {
+    data: CheckReceivedInfo
+  }
+  //endregion
+
+  //region get received items requested
+  export interface ReceivedProductsRequested {
+    id: number,
+    attended: boolean,
+    product: {
+      id: number,
+      reference: string,
+      model: {
+        reference: string,
+        brand: string,
+        family: string,
+        lifestyle: string,
+        photos: {urn: string}[]
+      },
+      size: string
+    }
+  }
+  export interface ResponseListReceivedProductsRequested extends HttpRequestModel.Response {
+    data: ReceivedProductsRequested[]
+  }
+  //endregion
 }
