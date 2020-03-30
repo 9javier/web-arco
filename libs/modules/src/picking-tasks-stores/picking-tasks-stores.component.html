@@ -59,6 +59,24 @@
       </mat-form-field>
     </ion-col>
   </ion-row>
+  <ion-row>
+    <ion-col>
+      <mat-form-field>
+        <mat-label>Ordenar por</mat-label>
+        <mat-select [(value)]="orderBy.value" (selectionChange)="applyOrder()">
+          <mat-option *ngFor="let option of orderBy.options" value="{{option}}">{{option}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ion-col>
+    <ion-col>
+      <mat-form-field>
+        <mat-label>Sentido</mat-label>
+        <mat-select [(value)]="orderBy.direction" (selectionChange)="applyOrder()">
+          <mat-option *ngFor="let direction of orderBy.directions" value="{{direction}}">{{direction}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ion-col>
+  </ion-row>
 </div>
 <ion-row *ngIf="requests.length > 0" id="topRow">
   <ion-col size="auto" class="centered-col">

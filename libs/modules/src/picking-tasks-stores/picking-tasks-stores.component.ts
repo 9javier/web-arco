@@ -39,6 +39,12 @@ export class PickingTasksStoresComponent implements OnInit {
     statuses: string[],
     types: string[]
   };
+  orderBy: {
+    options: string[],
+    value: string,
+    directions: string[],
+    direction: string
+  };
 
   constructor(
     private pickingStoreService: PickingStoreService,
@@ -67,6 +73,12 @@ export class PickingTasksStoresComponent implements OnInit {
       sizes: [],
       statuses: [],
       types: []
+    };
+    this.orderBy = {
+      options: ['Fecha', 'Artículo', 'Marca', 'Talla', 'Estado', 'Tipo'],
+      value: null,
+      directions: ['Ascendente', 'Descendente'],
+      direction: 'Ascendente'
     };
     this.loadRejectionReasons();
     this.loadRequests();
@@ -314,6 +326,52 @@ export class PickingTasksStoresComponent implements OnInit {
         (this.getStatus(request) == this.filterForm.status || this.filterForm.status == '') &&
         (this.getType(request) == this.filterForm.type || this.filterForm.type == '')
       );
+    }
+  }
+
+  applyOrder(){
+    if(this.orderBy.direction == 'Ascendente') {
+      switch (this.orderBy.value) {
+        case 'Fecha':
+          this.requests = this.requests.sort((a, b) => new Date(a.createdAt).getTime().toString().localeCompare(new Date(b.createdAt).getTime().toString()));
+          break;
+        case 'Artículo':
+          this.requests = this.requests.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+          break;
+        case 'Marca':
+          this.requests = this.requests.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+          break;
+        case 'Talla':
+          this.requests = this.requests.sort((a, b) => a.size.name.localeCompare(b.size.name));
+          break;
+        case 'Estado':
+          this.requests = this.requests.sort((a, b) => this.getStatus(a).localeCompare(this.getStatus(b)));
+          break;
+        case 'Tipo':
+          this.requests = this.requests.sort((a, b) => this.getType(a).localeCompare(this.getType(b)));
+          break;
+      }
+    }else{
+      switch (this.orderBy.value) {
+        case 'Fecha':
+          this.requests = this.requests.sort((b, a) => new Date(a.createdAt).getTime().toString().localeCompare(new Date(b.createdAt).getTime().toString()));
+          break;
+        case 'Artículo':
+          this.requests = this.requests.sort((b, a) => a.model.reference.localeCompare(b.model.reference));
+          break;
+        case 'Marca':
+          this.requests = this.requests.sort((b, a) => a.model.brand.name.localeCompare(b.model.brand.name));
+          break;
+        case 'Talla':
+          this.requests = this.requests.sort((b, a) => a.size.name.localeCompare(b.size.name));
+          break;
+        case 'Estado':
+          this.requests = this.requests.sort((b, a) => this.getStatus(a).localeCompare(this.getStatus(b)));
+          break;
+        case 'Tipo':
+          this.requests = this.requests.sort((b, a) => this.getType(a).localeCompare(this.getType(b)));
+          break;
+      }
     }
   }
 
