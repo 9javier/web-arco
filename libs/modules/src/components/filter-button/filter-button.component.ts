@@ -63,8 +63,8 @@ export class FilterButtonComponent implements OnInit {
   }
 
   showFiltersActive() {
-    let itemsFiltered = this.listItems.filter(item => item.checked);
-    if (itemsFiltered.length != this.listItems.length) {
+    let itemsFiltered = this.listItems ? this.listItems.filter(item => item.checked) : [];
+    if (this.listItems && itemsFiltered.length != this.listItems.length) {
       this.tooltipHaveValues  = itemsFiltered.map(item => item.value).join(', ');
     } else {
       this.tooltipHaveValues = null;
