@@ -20,7 +20,7 @@ import * as _ from 'lodash';
 export class PredistributionsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['avelonOrder','references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle', 'distribution', 'reserved'];
+  displayedColumns: string[] = ['avelonOrder','references','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle', 'distribution', 'reserved'];
   dataSourceOriginal;
   dataSource;
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
@@ -30,7 +30,6 @@ export class PredistributionsComponent implements OnInit {
 
   @ViewChild('filterButtonAvelonOrder') filterButtonAvelonOrder: FilterButtonComponent;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
-  @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
   @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
   @ViewChild('filterButtonDateServices') filterButtonDateServices: FilterButtonComponent;
   @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
@@ -44,7 +43,6 @@ export class PredistributionsComponent implements OnInit {
 
   isFilteringAvelonOrder: number = 0;
   isFilteringReferences: number = 0;
-  isFilteringSizes: number = 0;
   isFilteringWarehouses: number = 0;
   isFilteringDateServices: number = 0;
   isFilteringBrands: number = 0;
@@ -58,7 +56,6 @@ export class PredistributionsComponent implements OnInit {
   /**Filters */
   avelonOrder: Array<TagsInputOption> = [];
   references: Array<TagsInputOption> = [];
-  sizes: Array<TagsInputOption> = [];
   warehouses: Array<TagsInputOption> = [];
   date_service: Array<TagsInputOption> = [];
   brands: Array<TagsInputOption> = [];
@@ -78,7 +75,6 @@ export class PredistributionsComponent implements OnInit {
   form: FormGroup = this.formBuilder.group({
     avelonOrder: [],
     references: [],
-    sizes: [],
     warehouses: [],
     date_service: [],
     brands: [],
@@ -128,15 +124,14 @@ export class PredistributionsComponent implements OnInit {
       this.getList(this.form)
     });
 
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+/*    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
       this.getList(this.form);
-    });
+    });*/
   }
   initEntity() {
     this.entities = {
       avelonOrder: [],
       references: [],
-      sizes: [],
       warehouses: [],
       date_service: [],
       brands: [],
@@ -152,7 +147,6 @@ export class PredistributionsComponent implements OnInit {
     this.form.patchValue({
       avelonOrder: [],
       references: [],
-      sizes: [],
       warehouses: [],
       date_service: [],
       brands: [],
@@ -162,6 +156,10 @@ export class PredistributionsComponent implements OnInit {
       category: [],
       family: [],
       lifestyle: [],
+      pagination: this.formBuilder.group({
+        page: 1,
+        limit: this.pagerValues[0]
+      }),
     })
   }
 
@@ -237,16 +235,14 @@ export class PredistributionsComponent implements OnInit {
   async savePredistributions() {
     this.intermediaryService.presentLoading();
     let list = [];
-
     this.dataSource.data.forEach((dataRow, index) => {
       if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution || this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
         list.push({
           distribution: !!dataRow.distribution,
           reserved: !!dataRow.reserved,
           modelId: dataRow.model.id,
-          sizeId: dataRow.size.id,
           warehouseId: dataRow.warehouse.id,
-          expeditionLineId: dataRow.expeditionLineId
+          avelonOrderId: dataRow.avelonOrder,
         })
       }
     });
@@ -269,7 +265,6 @@ export class PredistributionsComponent implements OnInit {
     this.predistributionsService.entities().subscribe(entities => {
       this.avelonOrder = this.updateFilterSource(entities.avelonOrder, 'avelonOrder');
       this.references = this.updateFilterSource(entities.references, 'references');
-      this.sizes = this.updateFilterSource(entities.sizes, 'sizes');
       this.warehouses = this.updateFilterSource(entities.warehouses, 'warehouses');
       this.date_service = this.updateFilterSource(entities.date_service, 'date_service');
       this.brands = this.updateFilterSource(entities.brands, 'brands');
@@ -293,22 +288,22 @@ export class PredistributionsComponent implements OnInit {
       (resp:any) => {
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
         const paginator = resp.pagination;
-
+        this.paginator.cantSelect = paginator.limit;
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
         this.paginator.lastPage = paginator.lastPage;
+
         this.selectionPredistribution.clear();
         this.selectionReserved.clear();
-
         this.dataSource.data.forEach(row => {
-        if (row.distribution) {
-          this.selectionPredistribution.select(row);
-        }
-        if (row.reserved) {
-           this.selectionReserved.select(row);
-        }
-        this.dataSourceOriginal = _.cloneDeep(this.dataSource)
-       });
+          if (row.distribution) {
+            this.selectionPredistribution.select(row);
+          }
+          if (row.reserved) {
+             this.selectionReserved.select(row);
+          }
+          this.dataSourceOriginal = _.cloneDeep(this.dataSource)
+        });
       },
       async err => {
         await this.intermediaryService.dismissLoading()
@@ -456,24 +451,6 @@ export class PredistributionsComponent implements OnInit {
           }
         }
         break;
-      case 'sizes':
-        let sizesFiltered: number[] = [];
-        for (let size of filters) {
-          if (size.checked) sizesFiltered.push(size.id);
-        }
-        if (sizesFiltered.length >= this.sizes.length) {
-          this.form.value.sizes = [];
-          this.isFilteringSizes = this.sizes.length;
-        } else {
-          if (sizesFiltered.length > 0) {
-            this.form.value.sizes = sizesFiltered;
-            this.isFilteringSizes = sizesFiltered.length;
-          } else {
-            this.form.value.sizes = ["99999"];
-            this.isFilteringSizes = this.sizes.length;
-          }
-        }
-        break;
       case 'warehouses':
         let warehousesFiltered: number[] = [];
         for (let warehouse of filters) {
@@ -555,7 +532,6 @@ export class PredistributionsComponent implements OnInit {
   private reduceFilters(entities){
     this.filterButtonAvelonOrder.listItems = this.reduceFilterEntities(this.avelonOrder, entities,'avelonOrder');
     this.filterButtonReferences.listItems = this.reduceFilterEntities(this.references, entities,'references');
-    this.filterButtonSizes.listItems = this.reduceFilterEntities(this.sizes, entities,'sizes');
     this.filterButtonWarehouses.listItems = this.reduceFilterEntities(this.warehouses, entities,'warehouses');
     this.filterButtonDateServices.listItems = this.reduceFilterEntities(this.date_service, entities,'date_service');
     this.filterButtonBrands.listItems = this.reduceFilterEntities(this.brands, entities,'brands');
