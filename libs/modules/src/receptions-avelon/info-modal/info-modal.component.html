@@ -37,8 +37,8 @@
         <span>La expedición escaneada está bloqueada. Escanee otra expedición.</span>
       </p>
       <p class="blocked" *ngIf="!expedition.receptionBlocked && expedition.noPendingReceptions">
-        <span *ngIf="expedition.noPendingConfirms">La expedición no tiene pedido. Escanee otra expedición.</span>
-        <span *ngIf="!expedition.noPendingConfirms">La expedición tiene líneas de pedido pendiente de confirmar. Escanee otra expedición.</span>
+        <span *ngIf="expedition.noPendingConfirms && expedition.receptionDisabled">La expedición no tiene pedido. Escanee otra expedición.</span>
+        <span *ngIf="!expedition.noPendingConfirms && expedition.receptionDisabled">La expedición tiene líneas de pedido pendiente de confirmar. Escanee otra expedición.</span>
       </p>
     </mat-card-content>
 
@@ -77,8 +77,8 @@
         <span>La expedición escaneada está bloqueada. Escanee otra expedición.</span>
       </p>
       <p class="blocked" *ngIf="!anotherExpedition.receptionBlocked && anotherExpedition.noPendingReceptions">
-        <span *ngIf="anotherExpedition.noPendingConfirms">La expedición no tiene pedido. Escanee otra expedición.</span>
-        <span *ngIf="!anotherExpedition.noPendingConfirms">La expedición tiene líneas de pedido pendiente de confirmar. Escanee otra expedición.</span>
+        <span *ngIf="anotherExpedition.noPendingConfirms && anotherExpedition.receptionDisabled">La expedición no tiene pedido. Escanee otra expedición.</span>
+        <span *ngIf="!anotherExpedition.noPendingConfirms && anotherExpedition.receptionDisabled">La expedición tiene líneas de pedido pendiente de confirmar. Escanee otra expedición.</span>
       </p>
     </mat-card-content>
 
