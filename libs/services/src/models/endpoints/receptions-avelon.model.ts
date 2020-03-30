@@ -119,6 +119,7 @@ export namespace ReceptionAvelonModel {
     receptionBlocked: boolean,
     noPendingReceptions: boolean,
     noPendingConfirms: boolean,
-    receptionDisabled: boolean
+    receptionDisabled: boolean,
+    disabledReason: string
   }
 }
