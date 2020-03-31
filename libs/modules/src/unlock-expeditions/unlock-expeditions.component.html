@@ -43,7 +43,7 @@
                                (applyFilters)="applyFilters($event, 'warehouse')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.warehouse.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.warehouse.reference}}-{{element.warehouse.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="locked">
