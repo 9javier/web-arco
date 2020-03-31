@@ -1,0 +1,325 @@
+import {Injectable} from '@angular/core';
+import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
+import {PickingProvider} from "../../../providers/picking/picking.provider";
+import {PickingStoreService} from "../../endpoint/picking-store/picking-store.service";
+import {PickingStoreModel} from "../../../models/endpoints/PickingStore";
+import {ScanditModel} from "../../../models/scandit/Scandit";
+import {Events} from "@ionic/angular";
+import {environment} from "../../../environments/environment";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
+import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
+import ListItem = PickingStoreModel.ListItem;
+import ResponsePostPacking = PickingStoreModel.ResponsePostPacking;
+import ResponsePickingStores = ScanditModel.ResponsePickingStores;
+import ParamsFiltered = PickingStoreModel.ParamsFiltered;
+import SendProcess = PickingStoreModel.SendProcess;
+import ResponseSendProcess = PickingStoreModel.ResponseSendProcess;
+
+declare let ScanditMatrixSimple;
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PickingStoreOnlineScanditService {
+
+  private readonly timeMillisToResetScannedCode: number = 1000;
+  private lastCodeScanned: string;
+
+  constructor(
+    private events: Events,
+    private pickingStoreService: PickingStoreService,
+    private scanditProvider: ScanditProvider,
+    private pickingProvider: PickingProvider,
+    private itemReferencesProvider: ItemReferencesProvider
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
+
+  async picking() {
+    let filtersToGetProducts: ParamsFiltered = {
+      orderbys: [],
+      sizes: [],
+      colors: [],
+      models: [],
+      brands: []
+    };
+    let listProductsToStorePickings: ListItem[] = this.pickingProvider.selectedPendingRequests;
+    let listProductsProcessed: ListItem[] = this.pickingProvider.selectedProcessedRequests;
+    let listRejectionReasons = this.pickingProvider.listRejectionReasonsToStorePickings;
+
+    this.lastCodeScanned = 'start';
+    let typePacking: number = 1;
+    let scannerPaused: boolean = false;
+    let filtersPicking = this.pickingProvider.listFiltersPicking;
+
+    ScanditMatrixSimple.initPickingStores(
+      (response: ResponsePickingStores) => {
+        if (response && response.result && response.actionIonic) {
+          let params = [];
+          try{
+            params = JSON.parse(response.params);
+          } catch (e) {}
+          switch (response.actionIonic){
+            case 'lastCodeScannedStart':
+              this.lastCodeScanned = 'start';
+              break;
+            case 'setNotProductPending':
+              let typePacking = params[0];
+              this.setText('No hay más productos pendientes de añadir al traspaso.', this.scanditProvider.colorsMessage.info.color, 16);
+              ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].press_scan_packings_to_continue);
+              break;
+            case 'loadProducts':
+              let listProductsToStorePickings = params[0];
+              let listProductsProcessed = params[1];
+              let filtersPicking = params[2];
+              let listRejectionReasons = params[3];
+              ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, filtersPicking);
+              ScanditMatrixSimple.sendPickingStoresRejectionReasons(listRejectionReasons);
+              break;
+            case 'hideText':
+              ScanditMatrixSimple.showText(false);
+              break;
+          }
+        } else {
+          if (!scannerPaused && response.result) {
+            if (response.barcode && response.barcode.data && this.lastCodeScanned != response.barcode.data) {
+              if (this.itemReferencesProvider.checkCodeValue(response.barcode.data) == this.itemReferencesProvider.codeValue.PRODUCT) {
+                this.lastCodeScanned = response.barcode.data;
+                ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
+                if (listProductsToStorePickings.length > 0) {
+                  let paramsPickingStoreProcess: SendProcess = {
+                    productReference: this.lastCodeScanned,
+                    storeOnline: true
+                  };
+                  ScanditMatrixSimple.showLoadingDialog('Comprobando producto...');
+                  this.pickingStoreService.postPickingStoreProcess(paramsPickingStoreProcess).then((res: ResponseSendProcess) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    if (res.code == 201) {
+                      const processedRequest: ListItem = res.data;
+                      //delete processed request from pending requests
+                      for (let index = 0; index < listProductsToStorePickings.length; index++) {
+                        if (listProductsToStorePickings[index].id == processedRequest.id && listProductsToStorePickings[index].shippingMode == processedRequest.shippingMode) {
+                          processedRequest.model = listProductsToStorePickings[index].model;
+                          processedRequest.size = listProductsToStorePickings[index].size;
+                          listProductsToStorePickings.splice(index, 1);
+                          break;
+                        }
+                      }
+                      for (let index = 0; index < this.pickingProvider.selectedPendingRequests.length; index++) {
+                        if (
+                          this.pickingProvider.selectedPendingRequests[index].id == processedRequest.id &&
+                          ((this.pickingProvider.selectedPendingRequests[index].hasOwnProperty('shippingMode') && processedRequest.shippingMode) ||
+                          (!this.pickingProvider.selectedPendingRequests[index].hasOwnProperty('shippingMode') && !processedRequest.shippingMode))
+                        ) {
+                          this.pickingProvider.selectedPendingRequests.splice(index, 1);
+                          break;
+                        }
+                      }
+                      //add processed request to processed requests
+                      listProductsProcessed.push(processedRequest);
+                      this.pickingProvider.selectedProcessedRequests.push(res.data);
+                      //other stuff
+                      ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+                      this.setText(`Producto ${this.lastCodeScanned} escaneado y procesado.`, this.scanditProvider.colorsMessage.info.color, 18);
+                      if (listProductsToStorePickings.length < 1) {
+                        ScanditMatrixSimple.setTimeout("setNotProductPending", 2 * 1000, JSON.stringify([typePacking]));
+                      }
+                      this.events.publish('picking-stores:refresh');
+                    } else {
+                      this.setText(res.errors, this.scanditProvider.colorsMessage.error.color, 18);
+                    }
+                  }, (error) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.setText(error.error.errors, this.scanditProvider.colorsMessage.error.color, 18);
+                  }).catch((error) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.setText(error.error.errors, this.scanditProvider.colorsMessage.error.color, 18);
+                  });
+                } else {
+                  this.setText(this.pickingProvider.literalsJailPallet[typePacking].scan_to_end, this.scanditProvider.colorsMessage.success.color, 16);
+                }
+              } else {
+                this.setText('Escanee un producto válido', this.scanditProvider.colorsMessage.error.color, 18);
+              }
+            } else {
+              switch (response.action) {
+                case 'matrix_simple':
+                  ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
+                  ScanditMatrixSimple.setTimeout("loadProducts", 1000, JSON.stringify([listProductsToStorePickings, listProductsProcessed, filtersPicking, listRejectionReasons]));
+                  if (listProductsToStorePickings.length < 1) {
+                    ScanditMatrixSimple.setText(
+                      `No hay más productos pendientes de añadir al traspaso.`,
+                      this.scanditProvider.colorsMessage.info.color,
+                      this.scanditProvider.colorText.color,
+                      16);
+                    ScanditMatrixSimple.setTimeout("hideText", 2000, "");
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].press_scan_packings_to_continue);
+                  }
+                  break;
+                case 'matrix_simple_finish':
+                  ScanditMatrixSimple.finishPickingStores();
+                  break;
+                case 'filters':
+                  filtersToGetProducts = {
+                    models: response.filters.model.map(filter => {
+                      return filter.id;
+                    }),
+                    brands: response.filters.brand.map(filter => {
+                      return filter.id;
+                    }),
+                    colors: response.filters.color.map(filter => {
+                      return filter.id;
+                    }),
+                    sizes: response.filters.size.map(filter => {
+                      return filter.name;
+                    }),
+                    orderbys: response.filters.sort.map(filter => {
+                      return {
+                        type: filter.id,
+                        order: filter.type_sort.toLowerCase()
+                      };
+                    })
+                  };
+                  const typesFiltered = response.filters.type.map(filter => {
+                    return filter.id;
+                  });
+                  ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
+                  //filter
+                  listProductsToStorePickings = this.pickingProvider.selectedPendingRequests.filter(request => {
+                    return !(
+                      filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id) ||
+                      filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id) ||
+                      filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id) ||
+                      filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name) ||
+                      typesFiltered.length > 0 && !typesFiltered.includes(1) && !request.hasOwnProperty('shippingMode') ||
+                      typesFiltered.length > 0 && !typesFiltered.includes(2) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 1 ||
+                      typesFiltered.length > 0 && !typesFiltered.includes(3) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 3
+                    );
+                  });
+                  listProductsProcessed = this.pickingProvider.selectedProcessedRequests.filter(request => {
+                    return !(
+                      filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id) ||
+                      filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id) ||
+                      filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id) ||
+                      filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name) ||
+                      typesFiltered.length > 0 && !typesFiltered.includes(1) && !request.hasOwnProperty('shippingMode') ||
+                      typesFiltered.length > 0 && !typesFiltered.includes(2) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 1 ||
+                      typesFiltered.length > 0 && !typesFiltered.includes(3) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 3
+                    );
+                  });
+                  //order
+                  for (let i = filtersToGetProducts.orderbys.length - 1; i > -1; i--) {
+                    switch (filtersToGetProducts.orderbys[i].type) {
+                      case 1:
+                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
+                        } else {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.color.name.localeCompare(b.model.color.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.color.name.localeCompare(b.model.color.name));
+                        }
+                        break;
+                      case 2:
+                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.size.name.localeCompare(a.size.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.size.name.localeCompare(a.size.name));
+                        } else {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.size.name.localeCompare(b.size.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.size.name.localeCompare(b.size.name));
+                        }
+                        break;
+                      case 3:
+                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
+                        } else {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.reference.localeCompare(b.model.reference));
+                        }
+                        break;
+                      case 4:
+                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.createdAt.localeCompare(a.reference));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.reference.localeCompare(a.reference));
+                        } else {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.reference.localeCompare(b.reference));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.reference.localeCompare(b.reference));
+                        }
+                        break;
+                      case 5:
+                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
+                        } else {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.brand.name.localeCompare(b.model.brand.name));
+                        }
+                        break;
+                      case 6:
+                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.name.localeCompare(a.model.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.name.localeCompare(a.model.name));
+                        } else {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.model.name.localeCompare(b.model.name));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.model.name.localeCompare(b.model.name));
+                        }
+                        break;
+                    }
+                  }
+                  ScanditMatrixSimple.hideLoadingDialog();
+                  ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+                  this.events.publish('picking-stores:refresh');
+                  break;
+                case 'request_reject':
+                  ScanditMatrixSimple.showLoadingDialog('Rechazando artículo del traspaso...');
+                  let reasonId = response.reasonId;
+                  let requestReference = response.requestReference;
+                  this.pickingStoreService.postRejectRequest({
+                    filters: filtersToGetProducts,
+                    reasonRejectionId: reasonId,
+                    reference: requestReference
+                  }).then((res: PickingStoreModel.ResponseRejectRequest) => {
+                    let resData: PickingStoreModel.RejectRequest = res.data;
+                    listProductsToStorePickings = resData.linesRequestFiltered.pending;
+                    listProductsProcessed = resData.linesRequestFiltered.processed;
+                    ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+                    this.events.publish('picking-stores:refresh');
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.setText('El artículo ha sido rechazado del traspaso actual.', this.scanditProvider.colorsMessage.success.color, 16);
+                    ScanditMatrixSimple.hideInfoProductDialog();
+                  }, error => {
+                    console.error(error);
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.setText('Ha ocurrido un error al intentar rechazar el artículo en el traspaso actual.', this.scanditProvider.colorsMessage.error.color, 16);
+                  }).catch(error => {
+                    console.error(error);
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.setText('Ha ocurrido un error al intentar rechazar el artículo en el traspaso actual.', this.scanditProvider.colorsMessage.error.color, 16);
+                  });
+                  break;
+              }
+            }
+          }
+        }
+      },
+      'Picking',
+      this.scanditProvider.colorsHeader.background.color,
+      this.scanditProvider.colorsHeader.color.color,
+      'Escanea los productos a incluir',
+      environment.urlBase
+    );
+
+  }
+
+  private setText(message, color, code){
+    ScanditMatrixSimple.setText(
+      message,
+      color,
+      this.scanditProvider.colorText.color,
+      code
+    );
+    ScanditMatrixSimple.setTimeout("hideText", 2000, "");
+  }
+
+}

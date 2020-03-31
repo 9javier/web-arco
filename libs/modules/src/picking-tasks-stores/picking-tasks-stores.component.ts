@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {PickingScanditService} from "../../../services/src/lib/scandit/picking/picking.service";
 import {PickingProvider} from "../../../services/src/providers/picking/picking.provider";
 import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-store/picking-store.service";
 import {PickingStoreModel} from "../../../services/src/models/endpoints/PickingStore";
@@ -10,6 +9,7 @@ import Filters = PickingStoreModel.Filters;
 import LineRequest = LineRequestModel.LineRequest;
 import StoreOnlineRequestsResponse = PickingStoreModel.StoreOnlineRequestsResponse;
 import ResponseLoadRejectionReasons = PickingStoreModel.ResponseLoadRejectionReasons;
+import {PickingStoreOnlineScanditService} from "../../../services/src/lib/scandit/pickingStoreOnline/pickingStoreOnline.service";
 
 @Component({
   selector: 'suite-picking-tasks-stores',
@@ -52,7 +52,7 @@ export class PickingTasksStoresComponent implements OnInit {
 
   constructor(
     private pickingStoreService: PickingStoreService,
-    private pickingScanditService: PickingScanditService,
+    private pickingOnlineStoreScanditService: PickingStoreOnlineScanditService,
     private pickingProvider: PickingProvider
   ) {}
 
@@ -270,7 +270,7 @@ export class PickingTasksStoresComponent implements OnInit {
       this.pickingProvider.selectedProcessedRequests = selectedProcessedRequests;
       this.pickingProvider.requestFilters = filters;
       //init picking service
-      this.pickingScanditService.picking().catch(console.error);
+      this.pickingOnlineStoreScanditService.picking().catch(console.error);
     }
   }
 

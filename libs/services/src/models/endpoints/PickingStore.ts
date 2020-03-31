@@ -23,7 +23,8 @@ export namespace PickingStoreModel {
   }
 
   export interface SendProcess {
-    productReference: string
+    productReference: string,
+    storeOnline?: boolean
   }
 
   export interface ListItem {
@@ -187,7 +188,7 @@ export namespace PickingStoreModel {
   }
 
   export interface ResponseSendProcess extends HttpRequestModel.Response {
-    data: ListItem;
+    data: (DeliveryRequest | LineRequest);
     message: string;
     code: number;
     errors: any;
