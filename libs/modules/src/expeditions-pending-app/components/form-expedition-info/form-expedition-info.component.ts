@@ -54,4 +54,10 @@ export class FormExpeditionInfoComponent implements OnInit, OnDestroy {
       this.keyboardService.setInputFocused(event.target.id);
     }
   }
+
+  public keyUpInput(event) {
+    if (event.keyCode == 13) {
+      this.check();
+    }
+  }
 }
