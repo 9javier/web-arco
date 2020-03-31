@@ -33,6 +33,16 @@ div.fields-to-search {
   mat-list {
     mat-list-item {
       height: 56px;
+      mat-form-field.model-selector {
+        font-size: 14px;
+        width: 100px;
+        margin-left: 16px;
+        height: 50px;
+      }
+    }
+    mat-list-item.model-selector {
+      border-bottom: 1px solid black;
+      border-top: 1px solid black;
     }
     mat-icon.right {
       right: 16px;

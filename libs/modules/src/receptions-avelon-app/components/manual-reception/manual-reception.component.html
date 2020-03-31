@@ -11,6 +11,17 @@
     </div>
 
     <mat-list>
+      <mat-list-item matRipple (click)="listItems(1)" class="model-selector">
+        <h4 mat-line>Ver modelos por</h4>
+        <mat-form-field class="model-selector" (click)="$event.preventDefault();$event.stopPropagation()">
+          <mat-select [(value)]="typeModelVisualization" (valueChange)="changeValue()">
+            <mat-option [value]="TypesModel.MODEL_NAME">NOMBRE</mat-option>
+            <mat-option [value]="TypesModel.MODEL_REFERENCE">REFERENCIA</mat-option>
+            <mat-option [value]="TypesModel.PROVIDER_REFERENCE">REF. PROVEEDOR</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-list-item>
+
       <mat-list-item matRipple (click)="listItems(1)">
         <mat-icon mat-list-icon>list</mat-icon>
         <h4 mat-line>Marca</h4>

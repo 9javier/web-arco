@@ -4,10 +4,10 @@ import { CommonModule } from '@angular/common';
 import { ManualReceptionComponent } from './manual-reception.component';
 import {
   MatButtonModule,
-  MatCardModule,
+  MatCardModule, MatFormFieldModule,
   MatIconModule,
   MatListModule,
-  MatRippleModule,
+  MatRippleModule, MatSelectModule,
   MatTooltipModule
 } from "@angular/material";
 import {FilterItemsListModule} from "../filter-items-list/filter-items-list.module";
@@ -36,7 +36,9 @@ import {SizeSelectModule} from "../../../components/size-select/size-select.modu
     MatTooltipModule,
     MatCardModule,
     ModalDestinyReceptionModule,
-    SizeSelectModule
+    SizeSelectModule,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   exports: [ManualReceptionComponent]
 })
