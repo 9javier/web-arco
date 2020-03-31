@@ -1,10 +1,10 @@
 export const environment = {
   production: false,
-  apiBasePhoto: 'http://192.168.8.104:8081',
-  apiBase: 'http://192.168.8.104:8080/api',
-  apiSorter: 'http://192.168.8.104:8080/api',
-  urlBase: 'http://192.168.8.104:8080',
-  uploadFiles: 'http://192.168.8.104:8081/api/upload-files',
+  apiBasePhoto: 'http://localhost:8081',
+  apiBase: 'http://localhost:8080/api',
+  apiSorter: 'http://localhost:8080/api',
+  urlBase: 'http://localhost:8080',
+  uploadFiles: 'http://localhost:8081/api/upload-files',
   sga: {
     client_id: "krack-client-sga",
     client_secret: "fGx4=yU-j4^jAAjZtV+YTDsm-@R$HAK3"
