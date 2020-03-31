@@ -15,6 +15,7 @@ export class ScannerManualComponent implements OnInit {
   @Output() newValue = new EventEmitter();
   @Output() currentValue = new EventEmitter();
   @Input() inputId: string = 'input-ta';
+  @Input() showKeyboard: boolean = false;
 
   public isScanBlocked: boolean = false;
 
