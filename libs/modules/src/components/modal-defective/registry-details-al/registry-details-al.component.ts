@@ -17,7 +17,6 @@ import { Router, NavigationExtras } from '@angular/router';
 export class RegistryDetailsComponent implements OnInit {
   section = 'information';
   title = 'Ubicación ';
-  originalTableStatus: DamagedModel.Status[];
   productId: string;
   registry: any = {};
   registryHistorical;
@@ -89,7 +88,6 @@ export class RegistryDetailsComponent implements OnInit {
   getRegistryDetail(): void {
     this.defectiveRegistryService.getLastHistorical({ productId: this.productId }).subscribe(lastHistorical => {
       this.registry = lastHistorical.data;
-      this.originalTableStatus = lastHistorical.statuses;
     });
   }
 
@@ -112,11 +110,6 @@ export class RegistryDetailsComponent implements OnInit {
       buttons: ['OK']
     });
     await alert.present();
-  }
-
-  getStatusName(defectType: number) {
-    const status = this.originalTableStatus.find((x) => x.id === defectType);
-    return status.name ? status.name : '-';
   }
 
   changeState(id:number){

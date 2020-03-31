@@ -18,7 +18,6 @@ export class DetailsRegisterComponent implements OnInit {
   private baseUrlPhoto = environment.apiBasePhoto;
   section = 'information';
   title = 'Ubicación ';
-  originalTableStatus: DamagedModel.Status[];
   productId: string;
   registry: any = {};
   registry_data: any ={};
@@ -104,7 +103,6 @@ export class DetailsRegisterComponent implements OnInit {
         data: lastHistorical.data,
         status: lastHistorical.statuses};
       this.registry = lastHistorical.data;
-      this.originalTableStatus = lastHistorical.statuses;
     });
   }
 
@@ -127,11 +125,6 @@ export class DetailsRegisterComponent implements OnInit {
       buttons: ['OK']
     });
     await alert.present();
-  }
-
-  getStatusName(defectType: number) {
-    const tableStatus = this.originalTableStatus.find((x) => x.id === defectType);
-    return tableStatus.name ? tableStatus.name : '-';
   }
 
   getRequireStatus(defectStatus, statusName: string) {
