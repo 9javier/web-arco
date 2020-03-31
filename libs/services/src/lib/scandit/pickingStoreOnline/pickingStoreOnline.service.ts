@@ -105,19 +105,8 @@ export class PickingStoreOnlineScanditService {
                           break;
                         }
                       }
-                      for (let index = 0; index < this.pickingProvider.selectedPendingRequests.length; index++) {
-                        if (
-                          this.pickingProvider.selectedPendingRequests[index].id == processedRequest.id &&
-                          ((this.pickingProvider.selectedPendingRequests[index].hasOwnProperty('shippingMode') && processedRequest.shippingMode) ||
-                          (!this.pickingProvider.selectedPendingRequests[index].hasOwnProperty('shippingMode') && !processedRequest.shippingMode))
-                        ) {
-                          this.pickingProvider.selectedPendingRequests.splice(index, 1);
-                          break;
-                        }
-                      }
                       //add processed request to processed requests
                       listProductsProcessed.push(processedRequest);
-                      this.pickingProvider.selectedProcessedRequests.push(res.data);
                       //other stuff
                       ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
                       this.setText(`Producto ${this.lastCodeScanned} escaneado y procesado.`, this.scanditProvider.colorsMessage.info.color, 18);
