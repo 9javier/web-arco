@@ -193,6 +193,7 @@ export class BrandsEnabledReceptionComponent implements OnInit {
           return this.formBuilder.group({
             id: brand.id,
             name: brand.name,
+            provider: brand.provider,
             selected: brand.brandsEnabledReception && brand.brandsEnabledReception.enabled ? brand.brandsEnabledReception.enabled : false,
             brands: brand.brandsEnabledReception
           });
@@ -284,7 +285,7 @@ export class BrandsEnabledReceptionComponent implements OnInit {
     this.pauseListenFormChange = true;
     let value = this.form.get("brands").value;
     this.brands = brands.map(brand => {
-      brand.value = brand.name;
+      brand.value = brand.name + ' - ' + brand.provider ;
       brand.checked = true;
       brand.hide = false;
       return brand;

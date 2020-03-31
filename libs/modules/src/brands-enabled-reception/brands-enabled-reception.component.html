@@ -3,13 +3,13 @@
     <mat-table [dataSource]="dataSource" matSort multiTemplateDataRows class="table-incidences">
 
       <ng-container matColumnDef="Marca">
-        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Marca
-          <suite-filter-button class="ion-margin-vertical" #filterButtonBrands [title]="'Brand'" [listItems]="brands"
+        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Marca - Proveedor
+          <suite-filter-button class="ion-margin-vertical" #filterButtonBrands [title]="'Marca'" [listItems]="brands"
                               [isFiltering]="isFilteringBrands != brands.length"
                               (applyFilters)="applyFilters($event, 'brands')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.name}} - {{element.supplierName}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="Habilitada">

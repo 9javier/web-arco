@@ -493,7 +493,7 @@ export class ChangeState2Component implements OnInit {
     console.log("this.statusManagament", this.statusManagement);
     let res;
 
-    res = this.statusManagement['classifications'].find(x => x.defectType == id);
+    res = this.statusManagement['classifications'].find(x => x.id == id);
 
 
 
@@ -529,44 +529,8 @@ export class ChangeState2Component implements OnInit {
     this.defectChildId = e.detail.value;
   }
 
-  defectType_(defecType_) {
-
-    let defecType = [];
-    defecType_['status'].forEach(element => {
-      let res = defecType_.data.statusManagementDefect.defectType == element.id;
-
-      if (res == true) {
-
-      } else {
-        defecType.push(
-          {
-            id: element.id,
-            name: element.name
-          });
-      }
-    });
-
-    this.allDefectType = defecType;
-    console.log(this.allDefectType);
-  }
-
-
-  defectType(defecType_) {
-    console.log(defecType_);
-    let defecType = [];
-    defecType_['classifications'].forEach(element => {
-      let res = defecType_['statuses'].find(x => x.id == element.defectType);
-      if (res != undefined) {
-
-        if (res.id == this.registry.data.statusManagementDefect.defectType) {
-
-        } else {
-          defecType.push(res);
-        }
-
-      }
-    });
-    this.allDefectType = defecType;
+  defectType(defecType) {
+    this.allDefectType = defecType ? defecType.classifications : [];
 
   }
 
@@ -651,7 +615,8 @@ export class ChangeState2Component implements OnInit {
   clearVariables(type?: number) {
     if (!type) {
       this.incidenceForm.patchValue({
-        productReference: '',
+        id: this.registry.data.id,
+        productReference: this.registry.data.product.id,
         dateDetection: moment().format("YYYY-MM-DD"),
         observations: '',
         factoryReturn: false,

@@ -62,7 +62,7 @@
           </ion-item>
           <ion-item *ngIf="registry.statusManagementDefect">
             <ion-label>
-              Estado: {{getStatusName(registry.statusManagementDefect.defectType)}}
+              Estado: {{registry.statusManagementDefect.name}}
             </ion-label>
           </ion-item>
           <ion-item *ngIf="registry.defectTypeParent && registry.defectTypeChild">
@@ -74,7 +74,7 @@
             <ion-label>Observaciones:</ion-label>
             <ion-textarea class="text-observations" type="text" rows="4" value="{{registry?.observations}}" readonly="true"></ion-textarea>
           </ion-item>
-          <div *ngIf="getRequireStatus(registry?.statusManagementDefect?.defectType, 'contact')" class="contact">
+          <div *ngIf="getRequireStatus(registry?.statusManagementDefect, 'contact')" class="contact">
             <ion-list>
               <ion-list-header>
                 <h2>Contacto</h2>
@@ -134,7 +134,7 @@
             <mat-expansion-panel>
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                  Estado: {{getStatusName(historical.statusManagementDefect.defectType)}}
+                  Estado: {{historical.statusManagementDefect.name}}
                 </mat-panel-title>
               </mat-expansion-panel-header>
               <ion-list>
@@ -144,7 +144,7 @@
                   </ion-label>
                 </ion-item>
               </ion-list>
-              <div *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'contact')" class="contact">
+              <div *ngIf="getRequireStatus(historical.statusManagementDefect, 'contact')" class="contact">
                 <ion-list>
                   <ion-list-header>
                     <h2>Contacto</h2>
@@ -166,7 +166,7 @@
                   </ion-item>
                 </ion-list>
               </div>
-              <mat-expansion-panel class="photos" *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'photo') && historical?.photos?.length > 0">
+              <mat-expansion-panel class="photos" *ngIf="getRequireStatus(historical.statusManagementDefect, 'photo') && historical?.photos?.length > 0">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     Fotos
@@ -177,7 +177,7 @@
                   <ion-item-divider></ion-item-divider>
                 </ion-item>
               </mat-expansion-panel>
-              <mat-expansion-panel class="signature" *ngIf="getRequireStatus(historical.statusManagementDefect.defectType, 'signature') && historical.signature.pathMedium">
+              <mat-expansion-panel class="signature" *ngIf="getRequireStatus(historical.statusManagementDefect, 'signature') && historical.signature.pathMedium">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     Firma

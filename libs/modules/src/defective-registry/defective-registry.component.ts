@@ -25,7 +25,6 @@ export class DefectiveRegistryComponent implements OnInit {
   displayedColumns: string[] = ['id', 'user', 'statusManagementDefect', 'warehouse', 'product', 'model', 'size', 'brand', 'color', 'dateDetection', 'defectTypeParent', 'defectTypeChild'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
-  originalTableStatus: DamagedModel.Status[];
   columns = {};
 
   @ViewChild('filterButtonId') filterButtonId: FilterButtonComponent;
@@ -272,7 +271,6 @@ export class DefectiveRegistryComponent implements OnInit {
     this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe((resp: any) => {
       if (resp.results) {
         this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
-        this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
         const paginator = resp.pagination;
 
         this.paginator.length = paginator.totalResults;
@@ -568,11 +566,6 @@ export class DefectiveRegistryComponent implements OnInit {
     });
 
     return await modal.present();
-  }
-
-  getStatusName(defectType: number) {
-    const status = this.originalTableStatus.find((x) => x.id === defectType);
-    return status.name;
   }
 
   // async showImageModal(reference: string, photos: any[]) {

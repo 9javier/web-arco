@@ -484,6 +484,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Listado de todos los productos recibidos'
         },
         {
+          title: 'Productos solicitados',
+          id: 'received-products-requested',
+          url: '/requested-products',
+          icon: 'archive',
+          tooltip: 'Listado de todos los productos solicitados que se han recibido'
+        },
+        {
           title: 'Reetiquetado productos',
           id: 'print-product',
           url: 'print/product/relabel',

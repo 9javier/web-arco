@@ -79,7 +79,7 @@
                     Producto: {{ historical?.product?.reference }}
                   </p>
                   <p>
-                    Estado: {{getStatusName(historical.statusManagementDefect.defectType)}}
+                    Estado: {{historical.statusManagementDefect.name}}
                   </p>
                 </div>
               <mat-expansion-panel *ngIf="historical?.photos?.length > 0">
