@@ -221,6 +221,13 @@ export class MenuComponent implements OnInit {
           icon: 'flag',
           tooltip: 'Tipos de daños'
         },
+        {
+          title: 'Zonas',
+          id: 'defective-zones',
+          url: '/defective-zones',
+          icon: 'flag',
+          tooltip: 'Zonas'
+        },
       ]
     },
     {

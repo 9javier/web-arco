@@ -188,6 +188,13 @@ const routes: Routes = [
     data: {
       name: 'Tipos de defectos'
     }
+  },{
+    path: 'defective-zones',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-zones/defective-zones.module#DefectiveZonesModule',
+    data: {
+      name: 'Zonas'
+    }
   },
   {
     path: 'defective-registry',

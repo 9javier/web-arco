@@ -119,6 +119,9 @@ export * from './damaged-shoes/damaged-shoes.module';
 export * from './defective-management/defective-management.component';
 export * from './defective-management/defective-management.module';
 
+export * from './defective-zones/defective-zones.component';
+export * from './defective-zones/defective-zones.module';
+
 export * from './defective-registry/defective-registry.component';
 export * from './defective-registry/defective-registry.module';
 
