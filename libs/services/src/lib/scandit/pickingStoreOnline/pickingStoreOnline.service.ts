@@ -83,12 +83,13 @@ export class PickingStoreOnlineScanditService {
         } else {
           if (!scannerPaused && response.result) {
             if (response.barcode && response.barcode.data && this.lastCodeScanned != response.barcode.data) {
-              if (this.itemReferencesProvider.checkCodeValue(response.barcode.data) == this.itemReferencesProvider.codeValue.PRODUCT) {
-                this.lastCodeScanned = response.barcode.data;
+              const codeScanned = response.barcode.data;
+              if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT) {
+                this.lastCodeScanned = codeScanned;
                 ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
                 if (listProductsToStorePickings.length > 0) {
                   let paramsPickingStoreProcess: SendProcess = {
-                    productReference: this.lastCodeScanned,
+                    productReference: codeScanned,
                     storeOnline: true
                   };
                   ScanditMatrixSimple.showLoadingDialog('Comprobando producto...');
@@ -109,7 +110,7 @@ export class PickingStoreOnlineScanditService {
                       listProductsProcessed.push(processedRequest);
                       //other stuff
                       ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
-                      this.setText(`Producto ${this.lastCodeScanned} escaneado y procesado.`, this.scanditProvider.colorsMessage.info.color, 18);
+                      this.setText(`Producto ${codeScanned} escaneado y procesado.`, this.scanditProvider.colorsMessage.info.color, 18);
                       if (listProductsToStorePickings.length < 1) {
                         ScanditMatrixSimple.setTimeout("setNotProductPending", 2 * 1000, JSON.stringify([typePacking]));
                       }
