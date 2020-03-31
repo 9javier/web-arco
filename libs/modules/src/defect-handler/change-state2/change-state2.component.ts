@@ -329,7 +329,7 @@ export class ChangeState2Component implements OnInit {
       resp => {
 
         if (this.ticketEmit == true) {
-          this.print(resp.result, resp.statusType);
+          this.print(resp.result);
         }
 
         this.readed = false;
@@ -353,9 +353,8 @@ export class ChangeState2Component implements OnInit {
 
 
 
-  print(defective, status) {
-    console.log("change-state2 Print");
-    this.printTicketService.printTicket(defective, status);
+  print(defective) {
+    this.printTicketService.printTicket(defective);
   }
 
   initGestionState() {

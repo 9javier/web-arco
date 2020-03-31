@@ -24,69 +24,45 @@ declare let cordova: any;
   providedIn: 'root'
 })
 export class PrintTicketService {
-
-  private static readonly MAX_PRINT_ATTEMPTS = 5;
-
-  /**urls for printer service */
-  private getProductsByReferenceUrl: string = environment.apiBase + "/products/references";
-  private printNotifyUrl: string = environment.apiBase + "/tariffs/printReferences";
-  private printNotifyNewProductUrl: string = environment.apiBase + "/processes/receive-store/printReferences";
-
-  public stampe$: Subject<boolean> = new Subject();
-
-  private address: string;
-
   constructor(
-    private http: HttpClient,
-    private intermediaryService: IntermediaryService,
-    private settingsService: SettingsService,
-    private priceService: PriceService,
-    private warehouseService: WarehouseService,
-    private productsService: ProductsService,
-    private defectiveManagementService: DefectiveManagementService,
-    private requestsProvider: RequestsProvider
   ) { }
 
-  public async printTicket(defective, statusType) {
-    let product = await this.productsService.getInfo(defective.product.reference);
+  public async printTicket(defective) {
 
-    await this.defectiveManagementService.getShow(defective.defectTypeParent).subscribe(defectType => {
+    const modelName = defective && defective.product && defective.product.model ? defective.product.model.name : '';
+    const sizeName = defective && defective.product && defective.product.size ? defective.product.size.name : '';
+    const productReference = defective && defective.product ? defective.product.reference : '';
+    const defectType = defective && defective.defectTypeParent && defective.defectTypeChild ? defective.defectTypeParent.name + ' - ' + defective.defectTypeChild.name : '';
+    const observations = defective ? defective.observations : '';
+    const updatedAt = defective ? defective.updatedAt : '';
+    const incidenceDate = defective ? defective.dateDetection : '';
+    const incidenceId = defective ? defective.id.toString() : '';
+    const warehouseName = defective && defective.warehouse ? defective.warehouse.name : '';
+    const statusName = defective && defective.statusManagementDefect ? defective.statusManagementDefect.name : '';
+    try {
+      fetch('assets/templates/print-defect.html').then(res => res.text()).then(data => {
 
-      let defectTypeParent = defectType.name;
-      let defectTypeChild = "";
-      defectType.defectTypeChild.forEach( childType => {
-        if(childType.id == defective.defectTypeChild){
-          defectTypeChild = childType.name;
+        let htmlToPrintA = data.replace('{{incidenceId}}', incidenceId);
+        let htmlToPrintB = htmlToPrintA.replace('{{incidenceDate}}', incidenceDate);
+        let htmlToPrintC = htmlToPrintB.replace('{{warehouse}}', warehouseName);
+        let htmlToPrintD = htmlToPrintC.replace('{{warehouseDirection}}', "");
+        let htmlToPrintE = htmlToPrintD.replace('{{warehouseTlf}}', "");
+        let htmlToPrintF = htmlToPrintE.replace('{{Razón social}}', warehouseName);
+        let htmlToPrintG = htmlToPrintF.replace('{{status}}', statusName);
+        let htmlToPrintH = htmlToPrintG.replace('{{updatedAt}}', updatedAt);
+        let htmlToPrintI = htmlToPrintH.replace('{{product}}', modelName);
+        let htmlToPrintJ = htmlToPrintI.replace('{{size}}', sizeName);
+        let htmlToPrintK = htmlToPrintJ.replace('{{barcode}}', productReference);
+        let htmlToPrintL = htmlToPrintK.replace('{{defectType}}', defectType);
+        let htmlToPrintM = htmlToPrintL.replace('{{observations}}', observations);
+
+        if(cordova.plugins.printer) {
+          cordova.plugins.printer.print(htmlToPrintM);
         }
       });
-      this.warehouseService.getShow(defective.warehouse).subscribe(warehouseShow => {
-        let warehouseName = warehouseShow.name;
-
-        try {
-          fetch('assets/templates/print-defect.html').then(res => res.text()).then(data => {
-
-            let htmlToPrintA = data.replace('{{incidenceId}}', defective.id.toString());
-            let htmlToPrintB = htmlToPrintA.replace('{{incidenceDate}}', defective.dateDetection);
-            let htmlToPrintC = htmlToPrintB.replace('{{warehouse}}', warehouseName);
-            let htmlToPrintD = htmlToPrintC.replace('{{warehouseDirection}}', "");
-            let htmlToPrintE = htmlToPrintD.replace('{{warehouseTlf}}', "");
-            let htmlToPrintF = htmlToPrintE.replace('{{Razón social}}', warehouseName);
-            let htmlToPrintG = htmlToPrintF.replace('{{status}}', statusType);
-            let htmlToPrintH = htmlToPrintG.replace('{{updatedAt}}', defective.updatedAt);
-            let htmlToPrintI = htmlToPrintH.replace('{{product}}', product.data.model.name);
-            let htmlToPrintJ = htmlToPrintI.replace('{{size}}', product.data.size.name);
-            let htmlToPrintK = htmlToPrintJ.replace('{{barcode}}', defective.product.reference);
-            let htmlToPrintL = htmlToPrintK.replace('{{defectType}}', defectTypeParent +" - "+ defectTypeChild);
-            let htmlToPrintM = htmlToPrintL.replace('{{observations}}', defective.observations);
-
-            if(cordova.plugins.printer) {
-              cordova.plugins.printer.print(htmlToPrintM);
-            }
-          });
-        }catch (e) {}
-
-        });
-      });
+    }catch (e) {
+      console.error("Error get template", e)
+    }
   }
 
 }
