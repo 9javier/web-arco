@@ -234,13 +234,13 @@ export class PickingTasksStoresComponent implements OnInit {
         ]
       };
       for(let request of selectedPendingRequests.concat(selectedProcessedRequests)){
-        if(!filters.brands.map(brand => brand.id).includes(request.model.brand.id)){
+        if(!filters.brands.map(brand => brand.name).includes(request.model.brand.name)){
           filters.brands.push({
             id: request.model.brand.id,
             name: request.model.brand.name
           });
         }
-        if(!filters.colors.map(color => color.id).includes(request.model.color.id)){
+        if(!filters.colors.map(color => color.name).includes(request.model.color.name)){
           filters.colors.push({
             id: request.model.color.id,
             name: request.model.color.name
@@ -253,7 +253,7 @@ export class PickingTasksStoresComponent implements OnInit {
             reference: request.model.reference
           });
         }
-        if(!filters.sizes.map(size => size.id).includes(request.size.id)){
+        if(!filters.sizes.map(size => size.name).includes(request.size.name)){
           filters.sizes.push({
             id: request.size.id,
             name: request.size.name,

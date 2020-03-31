@@ -50,7 +50,7 @@ export class PickingStoreOnlineScanditService {
     this.lastCodeScanned = 'start';
     let typePacking: number = 1;
     let scannerPaused: boolean = false;
-    let filtersPicking = this.pickingProvider.listFiltersPicking;
+    let filtersPicking = this.pickingProvider.requestFilters;
 
     ScanditMatrixSimple.initPickingStores(
       (response: ResponsePickingStores) => {
@@ -181,38 +181,58 @@ export class PickingStoreOnlineScanditService {
                       };
                     })
                   };
-                  const typesFiltered = response.filters.type.map(filter => {
-                    return filter.id;
-                  });
+                  const appliedFilters = {
+                    models: response.filters.model.map(filter => {
+                      return filter.id;
+                    }),
+                    brands: response.filters.brand.map(filter => {
+                      return filter.name;
+                    }),
+                    colors: response.filters.color.map(filter => {
+                      return filter.name;
+                    }),
+                    sizes: response.filters.size.map(filter => {
+                      return filter.name;
+                    }),
+                    order: response.filters.sort.map(filter => {
+                      return {
+                        type: filter.id,
+                        order: filter.type_sort.toLowerCase()
+                      };
+                    }),
+                    types: response.filters.type.map(filter => {
+                      return filter.id;
+                    })
+                  };
                   ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
                   //filter
                   listProductsToStorePickings = this.pickingProvider.selectedPendingRequests.filter(request => {
                     return !(
-                      filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id) ||
-                      filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id) ||
-                      filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id) ||
-                      filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name) ||
-                      typesFiltered.length > 0 && !typesFiltered.includes(1) && !request.hasOwnProperty('shippingMode') ||
-                      typesFiltered.length > 0 && !typesFiltered.includes(2) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 1 ||
-                      typesFiltered.length > 0 && !typesFiltered.includes(3) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 3
+                      appliedFilters.brands.length > 0 && !appliedFilters.brands.includes(request.model.brand.name) ||
+                      appliedFilters.colors.length > 0 && !appliedFilters.colors.includes(request.model.color.name) ||
+                      appliedFilters.models.length > 0 && !appliedFilters.models.includes(request.model.id) ||
+                      appliedFilters.sizes.length > 0 && !appliedFilters.sizes.includes(request.size.name) ||
+                      appliedFilters.types.length > 0 && !appliedFilters.types.includes(1) && !request.hasOwnProperty('shippingMode') ||
+                      appliedFilters.types.length > 0 && !appliedFilters.types.includes(2) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 1 ||
+                      appliedFilters.types.length > 0 && !appliedFilters.types.includes(3) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 3
                     );
                   });
                   listProductsProcessed = this.pickingProvider.selectedProcessedRequests.filter(request => {
                     return !(
-                      filtersToGetProducts.brands.length > 0 && !filtersToGetProducts.brands.includes(request.model.brand.id) ||
-                      filtersToGetProducts.colors.length > 0 && !filtersToGetProducts.colors.includes(request.model.color.id) ||
-                      filtersToGetProducts.models.length > 0 && !filtersToGetProducts.models.includes(request.model.id) ||
-                      filtersToGetProducts.sizes.length > 0 && !filtersToGetProducts.sizes.includes(request.size.name) ||
-                      typesFiltered.length > 0 && !typesFiltered.includes(1) && !request.hasOwnProperty('shippingMode') ||
-                      typesFiltered.length > 0 && !typesFiltered.includes(2) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 1 ||
-                      typesFiltered.length > 0 && !typesFiltered.includes(3) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 3
+                      appliedFilters.brands.length > 0 && !appliedFilters.brands.includes(request.model.brand.name) ||
+                      appliedFilters.colors.length > 0 && !appliedFilters.colors.includes(request.model.color.name) ||
+                      appliedFilters.models.length > 0 && !appliedFilters.models.includes(request.model.id) ||
+                      appliedFilters.sizes.length > 0 && !appliedFilters.sizes.includes(request.size.name) ||
+                      appliedFilters.types.length > 0 && !appliedFilters.types.includes(1) && !request.hasOwnProperty('shippingMode') ||
+                      appliedFilters.types.length > 0 && !appliedFilters.types.includes(2) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 1 ||
+                      appliedFilters.types.length > 0 && !appliedFilters.types.includes(3) && request.hasOwnProperty('shippingMode') && request['shippingMode'] == 3
                     );
                   });
                   //order
-                  for (let i = filtersToGetProducts.orderbys.length - 1; i > -1; i--) {
-                    switch (filtersToGetProducts.orderbys[i].type) {
+                  for (let i = appliedFilters.order.length - 1; i > -1; i--) {
+                    switch (appliedFilters.order[i].type) {
                       case 1:
-                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                        if (appliedFilters.order[i].order == 'desc') {
                           listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
                           listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.color.name.localeCompare(a.model.color.name));
                         } else {
@@ -221,7 +241,7 @@ export class PickingStoreOnlineScanditService {
                         }
                         break;
                       case 2:
-                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                        if (appliedFilters.order[i].order == 'desc') {
                           listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.size.name.localeCompare(a.size.name));
                           listProductsProcessed = listProductsProcessed.sort((a, b) => b.size.name.localeCompare(a.size.name));
                         } else {
@@ -230,7 +250,7 @@ export class PickingStoreOnlineScanditService {
                         }
                         break;
                       case 3:
-                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                        if (appliedFilters.order[i].order == 'desc') {
                           listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
                           listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.reference.localeCompare(a.model.reference));
                         } else {
@@ -239,16 +259,16 @@ export class PickingStoreOnlineScanditService {
                         }
                         break;
                       case 4:
-                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
-                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.createdAt.localeCompare(a.reference));
-                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.reference.localeCompare(a.reference));
+                        if (appliedFilters.order[i].order == 'desc') {
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
                         } else {
-                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.reference.localeCompare(b.reference));
-                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.reference.localeCompare(b.reference));
+                          listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+                          listProductsProcessed = listProductsProcessed.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
                         }
                         break;
                       case 5:
-                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                        if (appliedFilters.order[i].order == 'desc') {
                           listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
                           listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.brand.name.localeCompare(a.model.brand.name));
                         } else {
@@ -257,7 +277,7 @@ export class PickingStoreOnlineScanditService {
                         }
                         break;
                       case 6:
-                        if (filtersToGetProducts.orderbys[i].order == 'desc') {
+                        if (appliedFilters.order[i].order == 'desc') {
                           listProductsToStorePickings = listProductsToStorePickings.sort((a, b) => b.model.name.localeCompare(a.model.name));
                           listProductsProcessed = listProductsProcessed.sort((a, b) => b.model.name.localeCompare(a.model.name));
                         } else {
