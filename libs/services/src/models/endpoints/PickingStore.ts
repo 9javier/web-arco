@@ -166,7 +166,8 @@ export namespace PickingStoreModel {
   export interface ParamsRejectRequest {
     reference: string,
     reasonRejectionId: number,
-    filters: ParamsFiltered
+    filters: ParamsFiltered,
+    storeOnline?: boolean
   }
 
   export interface RejectRequest {

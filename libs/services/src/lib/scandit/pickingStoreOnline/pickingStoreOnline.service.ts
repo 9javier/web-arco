@@ -9,11 +9,11 @@ import {environment} from "../../../environments/environment";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 import ListItem = PickingStoreModel.ListItem;
-import ResponsePostPacking = PickingStoreModel.ResponsePostPacking;
 import ResponsePickingStores = ScanditModel.ResponsePickingStores;
 import ParamsFiltered = PickingStoreModel.ParamsFiltered;
 import SendProcess = PickingStoreModel.SendProcess;
 import ResponseSendProcess = PickingStoreModel.ResponseSendProcess;
+import ResponseRejectRequest = PickingStoreModel.ResponseRejectRequest;
 
 declare let ScanditMatrixSimple;
 
@@ -282,22 +282,37 @@ export class PickingStoreOnlineScanditService {
                   this.events.publish('picking-stores:refresh');
                   break;
                 case 'request_reject':
-                  ScanditMatrixSimple.showLoadingDialog('Rechazando artículo del traspaso...');
+                  ScanditMatrixSimple.showLoadingDialog('Rechazando petición de tienda...');
                   let reasonId = response.reasonId;
                   let requestReference = response.requestReference;
                   this.pickingStoreService.postRejectRequest({
                     filters: filtersToGetProducts,
                     reasonRejectionId: reasonId,
-                    reference: requestReference
-                  }).then((res: PickingStoreModel.ResponseRejectRequest) => {
-                    let resData: PickingStoreModel.RejectRequest = res.data;
-                    listProductsToStorePickings = resData.linesRequestFiltered.pending;
-                    listProductsProcessed = resData.linesRequestFiltered.processed;
-                    ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
-                    this.events.publish('picking-stores:refresh');
-                    ScanditMatrixSimple.hideLoadingDialog();
-                    this.setText('El artículo ha sido rechazado del traspaso actual.', this.scanditProvider.colorsMessage.success.color, 16);
-                    ScanditMatrixSimple.hideInfoProductDialog();
+                    reference: requestReference,
+                    storeOnline: true
+                  }).then((res: ResponseRejectRequest) => {
+                    if(res.code == 201){
+                      //delete rejected request from pending requests and save it
+                      let rejectedRequest: ListItem;
+                      for (let index = 0; index < listProductsToStorePickings.length; index++) {
+                        if (listProductsToStorePickings[index].reference == requestReference && !listProductsToStorePickings[index].hasOwnProperty('shippingMode')) {
+                          rejectedRequest = listProductsToStorePickings.splice(index, 1)[0];
+                          break;
+                        }
+                      }
+                      //add rejected request to processed requests
+                      listProductsProcessed.push(rejectedRequest);
+                      //other stuff
+                      ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+                      this.events.publish('picking-stores:refresh');
+                      ScanditMatrixSimple.hideLoadingDialog();
+                      this.setText('La petición de tienda ha sido rechazada.', this.scanditProvider.colorsMessage.success.color, 16);
+                      ScanditMatrixSimple.hideInfoProductDialog();
+                    }else{
+                      console.error(res);
+                      ScanditMatrixSimple.hideLoadingDialog();
+                      this.setText('Ha ocurrido un error al intentar rechazar el artículo en el traspaso actual.', this.scanditProvider.colorsMessage.error.color, 16);
+                    }
                   }, error => {
                     console.error(error);
                     ScanditMatrixSimple.hideLoadingDialog();
