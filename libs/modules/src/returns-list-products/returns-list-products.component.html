@@ -47,7 +47,7 @@
                                (applyFilters)="applyFilters($event, 'statusManagementDefect')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{getStatusName(element.statusManagementDefect.defectType)}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.statusManagementDefect.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="warehouse">
