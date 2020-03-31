@@ -132,6 +132,18 @@ div.grid {
       ion-item {
         height: 50px;
         max-height: 50px;
+        mat-form-field.model-selector {
+          cursor: pointer;
+          font-size: 11px;
+          width: 100px;
+          margin-left: 16px;
+          height: 30px;
+          mat-icon {
+            font-size: 15px;
+            width: 15px;
+            height: 15px;
+          }
+        }
       }
     }
   }

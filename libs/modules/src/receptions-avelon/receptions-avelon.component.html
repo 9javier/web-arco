@@ -18,7 +18,16 @@
 
         <div class="col">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
-            <ion-title> Modelos </ion-title>
+            <ion-title>
+              Modelos
+              <mat-form-field class="model-selector" (click)="$event.preventDefault();$event.stopPropagation()">
+                <mat-select [(value)]="typeModelVisualization" (valueChange)="changeValue()">
+                  <mat-option [value]="TypesModel.MODEL_NAME">NOMBRE</mat-option>
+                  <mat-option [value]="TypesModel.MODEL_REFERENCE">REFERENCIA</mat-option>
+                  <mat-option [value]="TypesModel.PROVIDER_REFERENCE">REF. PROVEEDOR</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
           <suite-lists type="models" ></suite-lists>
