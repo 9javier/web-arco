@@ -16,6 +16,7 @@ import {FabExtendedModule} from "../../../components/button/fab/fab-extended/fab
 import {SizeInputModule} from "../../../components/size-input/size-input.module";
 import {ModalModelImagesModule} from "../modal-model-images/modal-model-images.module";
 import {ModalDestinyReceptionModule} from "../../modals/modal-model-images/destiny-reception.module";
+import {SizeSelectModule} from "../../../components/size-select/size-select.module";
 
 @NgModule({
   declarations: [ManualReceptionComponent],
@@ -34,7 +35,8 @@ import {ModalDestinyReceptionModule} from "../../modals/modal-model-images/desti
     ModalModelImagesModule,
     MatTooltipModule,
     MatCardModule,
-    ModalDestinyReceptionModule
+    ModalDestinyReceptionModule,
+    SizeSelectModule
   ],
   exports: [ManualReceptionComponent]
 })

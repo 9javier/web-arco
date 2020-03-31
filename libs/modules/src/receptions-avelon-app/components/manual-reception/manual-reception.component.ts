@@ -439,6 +439,14 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     this.eanCode = null;
   }
 
+  public sizeSelectedInSelector(item: ReceptionAvelonModel.LoadSizesList) {
+    for (let size of this.listSizes) {
+      if (size.id != item.id) {
+        size.quantity = 0;
+      }
+    }
+  }
+
   private checksEanAndPrint(eanCode: string) {
     if (this.checkOnlyOneSizeAndOneQuantity()) {
       this.checksNotifyReceptionAndPrint(eanCode);

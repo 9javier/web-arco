@@ -166,6 +166,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   resetReceptionProcess(){
     this.eanInput.nativeElement.value = "";
+    this.result.ean = null;
     this.listSizes = [];
 
     this.stateAnimationForm = 'in';
@@ -223,6 +224,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             case Type.EAN_CODE:
               this.eanInput.nativeElement.value = data.selected.id;
               this.result.ean = this.eanInput.nativeElement.value;
+              this.sizeSelectedInSelector(null);
               break;
             case undefined:
               this.expedition = data.selected.id;
@@ -636,6 +638,20 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       }
     }
     this.reception.setColorsList(this.response.colors);
+  }
+
+  public sizeSelectedInSelector(item: ReceptionAvelonModel.LoadSizesList) {
+    for (let size of this.listSizes) {
+      if ((item && size.id != item.id) || !item) {
+        size.quantity = 0;
+      }
+    }
+  }
+
+  public removeEanCode(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.result.ean = null;
   }
 
   public printProductsLoading() {

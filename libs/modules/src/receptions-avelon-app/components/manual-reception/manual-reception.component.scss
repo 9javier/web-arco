@@ -52,12 +52,17 @@ div.fields-to-search {
       padding: 0 4px;
       background: var(--ion-color-primary-contrast);
     }
-    div {
+    div.default {
       display: flex;
       flex-wrap: wrap;
       place-content: center;
       border: 1px solid var(--ion-color-primary);
       padding: 8px;
+      div.default-content {
+        display: flex;
+        flex-wrap: wrap;
+        place-content: center;
+      }
     }
 
     div.sizes-empty {
