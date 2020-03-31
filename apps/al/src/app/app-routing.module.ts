@@ -83,6 +83,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'requested-products',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/requested-products/requested-products.module#RequestedProductsModule',
+    data: {
+      name: 'Productos solicitados'
+    }
+  },
+  {
     path: 'building',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/building/building.module#BuildingModule',

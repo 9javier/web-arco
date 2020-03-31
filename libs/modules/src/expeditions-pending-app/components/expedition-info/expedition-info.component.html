@@ -21,12 +21,11 @@
     <p>
       Transportista: <span>{{expedition.shipper}}</span>
     </p>
-    <p class="blocked" *ngIf="expedition.receptionBlocked">
-      <span>La expedición escaneada está bloqueada. Escanee otra expedición.</span>
+    <p class="blocked" *ngIf="expedition.receptionDisabled && expedition.disabledReason">
+      <span>{{expedition.disabledReason}}</span>
     </p>
-    <p class="blocked" *ngIf="!expedition.receptionBlocked && expedition.noPendingReceptions">
-      <span *ngIf="expedition.noPendingConfirms">La expedición no tiene pedido. Escanee otra expedición.</span>
-      <span *ngIf="!expedition.noPendingConfirms">La expedición tiene líneas de pedido pendiente de confirmar. Escanee otra expedición.</span>
+    <p class="blocked" *ngIf="expedition.receptionDisabled && expedition.noPendingReceptions && !expedition.noPendingConfirms">
+      <span>Hay líneas de pedido pendientes de confirmar en la expedición.</span>
     </p>
   </mat-card-content>
 

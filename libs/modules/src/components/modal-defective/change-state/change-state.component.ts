@@ -261,6 +261,7 @@ export class ChangeStateComponent implements OnInit {
       const modal = await this.modalController.create({
         component: RegistryDetailsComponent,
         componentProps: {
+          id: this.registry.data.id,
           productId: this.registry.data.product.id,
           showChangeState: true
         },
@@ -301,7 +302,8 @@ export class ChangeStateComponent implements OnInit {
 
         this.readed = false
         this.incidenceForm.patchValue({
-          productId: 1,
+          id: This.registry.data.id,
+          productId: This.registry.data.product.id,
           productReference: '',
           dateDetection: this.dateNow,
           observations: '',
@@ -346,6 +348,7 @@ export class ChangeStateComponent implements OnInit {
 
         this.readed = false
         this.incidenceForm.patchValue({
+          id: This.registry.data.id,
           productId: 1,
           productReference: '',
           dateDetection: this.dateNow,
@@ -378,7 +381,6 @@ export class ChangeStateComponent implements OnInit {
   initGestionState() {
 
     let res;
-
     res = this.registry.data.statusManagementDefect;
 
 
@@ -429,7 +431,7 @@ export class ChangeStateComponent implements OnInit {
     console.log("this.statusManagament", this.statusManagement);
     let res;
 
-    res = this.statusManagement['classifications'].find(x => x.defectType == id);
+    res = this.statusManagement['classifications'].find(x => x.id == id);
 
 
 
@@ -465,45 +467,8 @@ export class ChangeStateComponent implements OnInit {
     this.defectChildId = e.detail.value;
   }
 
-  defectType_(defecType_) {
-
-    let defecType = [];
-    defecType_['status'].forEach(element => {
-      let res = defecType_.data.statusManagementDefect.defectType == element.id;
-
-      if (res == true) {
-
-      } else {
-        defecType.push(
-          {
-            id: element.id,
-            name: element.name
-          });
-      }
-    });
-
-    this.allDefectType = defecType;
-    console.log(this.allDefectType);
-  }
-
-
-  defectType(defecType_) {
-    console.log(defecType_);
-    let defecType = [];
-    defecType_['classifications'].forEach(element => {
-      let res = defecType_['statuses'].find(x => x.id == element.defectType);
-      if (res != undefined) {
-
-        if (res.id == this.registry.data.statusManagementDefect.defectType) {
-
-        } else {
-          defecType.push(res);
-        }
-
-      }
-    });
-    this.allDefectType = defecType;
-
+  defectType(defecType) {
+    this.allDefectType = defecType ? defecType.classifications : [];
   }
 
   getStatusManagement() {

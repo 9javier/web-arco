@@ -9,16 +9,12 @@
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-  <div class="controls-container">
+  <div class="controls-container" [formGroup]="formGroup">
     <p>
       <mat-form-field appearance="outline">
         <mat-label>Estado*</mat-label>
         <mat-icon matPrefix>format_line_spacing</mat-icon>
-        <mat-select (selectionChange)="changeDefectType($event.value)" [(value)]="selectedDefectType">
-          <mat-option *ngFor="let status of tStatus" [value]="status.id">
-            {{status.name}}
-          </mat-option>
-        </mat-select>
+        <input matInput type="text" placeholder="Estado" formControlName="name">
         <mat-error>Este campo es obligatorio.</mat-error>
       </mat-form-field>
     </p>

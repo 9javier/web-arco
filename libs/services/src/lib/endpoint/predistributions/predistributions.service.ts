@@ -52,7 +52,6 @@ export class PredistributionsService {
   entities() {
     const body = {
       references: [],
-      sizes: [],
       warehouses: [],
       date_service: [],
       brands: [],
@@ -90,7 +89,6 @@ export class PredistributionsService {
   entitiesBlocked() {
     const body = {
       references: [],
-      sizes: [],
       warehouses: [],
       date_service: [],
       brands: [],

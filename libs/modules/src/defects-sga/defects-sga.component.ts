@@ -133,17 +133,8 @@ export class DefectsSgaComponent implements OnInit, AfterViewInit, OnChanges, On
     
   }
 
-  defectType(defecType_){
-
-      let defecType =[];
-      defecType_['classifications'].forEach(element => {
-        let res = defecType_['statuses'].find( x => x.id == element.defectType);
-        if(res != undefined){
-          defecType.push(res);
-        }
-      });
-      this.allDefectType = defecType;
-
+  defectType(defecType){
+    this.allDefectType = defecType ? defecType.classifications : [];
   }
 
   initForm() {

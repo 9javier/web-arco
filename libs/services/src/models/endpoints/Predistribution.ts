@@ -6,6 +6,8 @@ export namespace PredistributionModel {
 
   export interface Predistribution {
     expeditionLineId?: number,
+    sizeId?:number,
+    avelonOrderId?: number,
     id?: number;
     warehouse?: Warehouse;
     article?: string;
@@ -18,9 +20,9 @@ export namespace PredistributionModel {
     pagination: Pagination,
     results: Array<any>
   }
-  interface Filters { 
-    id: number, 
-    name: string 
+  interface Filters {
+    id: number,
+    name: string
   }
 
 
@@ -32,7 +34,7 @@ export namespace PredistributionModel {
     totalResults: number
   }
 
-  
+
 
   export interface ResponseIndex {
     data: Predistribution[];
@@ -66,7 +68,6 @@ export namespace PredistributionModel {
     providers: Array<number | string>,
     brands: Array<number | string>,
     colors: Array<number | string>,
-    sizes: Array<number | string>,
     orderBy: OrderBy
     pagination: Pagination
    }
@@ -93,8 +94,9 @@ export namespace PredistributionModel {
     reserved: boolean,
     distribution: boolean,
     modelId: number,
-    sizeId: number,
     warehouseId: number,
+    sizeId: number,
+    avelonOrderId: number,
     userId:number
    }
 }

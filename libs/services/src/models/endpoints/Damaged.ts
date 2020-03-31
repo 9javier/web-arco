@@ -30,7 +30,7 @@ export namespace DamagedModel {
   }
 
   export interface ModalResponse {
-    defectType: number,
+    name: string,
     actions: {
       id: number,
       name: string,

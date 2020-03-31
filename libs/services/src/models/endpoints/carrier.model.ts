@@ -5,15 +5,26 @@ import {FiltersModel} from "@suite/services";
 
 export namespace CarrierModel{
 
+    export interface PackingWarehouseDestiny {
+      createdAt: string,
+      updatedAt: string,
+      id: number,
+      destinyWarehouse: WarehouseModel.Warehouse
+    }
+    export interface PackingType {
+      id: number,
+      name: string,
+      retornable: boolean
+    }
+
     export interface SearchInContainer{
-      createdAt: string;
-      updatedAt: string;
       id: number;
       status: number;
-      reference: number;
-      type: number,
-      warehouse: any,
-      products: number
+      reference: string;
+      type: PackingType,
+      origin: WarehouseModel.Warehouse,
+      destiny: PackingWarehouseDestiny[],
+      product: string
     }
 
     export interface ResponseFilters extends Request.Success{

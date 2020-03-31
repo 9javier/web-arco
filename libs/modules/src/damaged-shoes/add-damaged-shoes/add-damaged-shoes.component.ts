@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { DamagedModel } from '../../../../services/src/models/endpoints/Damaged';
+import {FormControl, FormGroup} from "@angular/forms";
 
 @Component({
   selector: 'suite-add-damaged-shoes',
@@ -11,15 +12,17 @@ export class AddDamagedShoesComponent implements OnInit {
   tAction: DamagedModel.Action[];
   tStatus: DamagedModel.Status[];
 
+  formGroup: FormGroup;
+
   form: {
-    defectType: number,
+    name: string,
     actions: {
       id: number,
       name: string,
       isChecked: boolean
     }[]
   } = {
-    defectType: 0,
+    name: '',
     actions: []
   };
 
@@ -30,13 +33,14 @@ export class AddDamagedShoesComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.formGroup = new FormGroup({name: new FormControl()});
     this.selectedDefectType = this.tStatus[0].id;
     const actions = this.tAction.map((x) => {
       return { id: x.id, name: x.name, isChecked: false}
     });
 
     this.form = {
-      defectType: this.selectedDefectType,
+      name: this.form.name,
       actions: actions
     };
   }
@@ -63,11 +67,8 @@ export class AddDamagedShoesComponent implements OnInit {
   }
 
   async submit() {
+    this.form.name = this.formGroup.get('name').value;
     await this.modalController.dismiss(this.form);
   }
 
-  changeDefectType(defectType: number) {
-    this.selectedDefectType = defectType;
-    this.form.defectType = this.selectedDefectType;
-  }
 }
