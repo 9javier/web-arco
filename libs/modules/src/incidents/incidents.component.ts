@@ -354,7 +354,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   print(defective, status) {
-    this.printTicketService.printTicket(defective, status);
+    this.printTicketService.printTicket(defective);
   }
 
   validate() {
@@ -543,7 +543,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     This.incidentsService.addRegistry(object).subscribe(
       resp => {
         if (this.ticketEmit == true) {
-          this.printTicketService.printTicket(resp.result, resp.statusType);
+          this.printTicketService.printTicket(resp.result);
         }
         this.readed = false;
         this.clearVariables();
