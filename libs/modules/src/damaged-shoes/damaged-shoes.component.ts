@@ -12,9 +12,7 @@ import { AddDamagedShoesComponent } from './add-damaged-shoes/add-damaged-shoes.
 export class DamagedShoesComponent implements OnInit {
   originalClassifications: string;
   tableClassifications: DamagedModel.Classifications[];
-  originalTableStatus: DamagedModel.Status[];
   tableAction: DamagedModel.Action[];
-  tableStatus: DamagedModel.Status[];
   tableColumns = ['statusId', 'status', 'ticketEmit', 'passHistory', 'requirePhoto', 'requireContact', 'requireOk', 'allowOrders'];
 
   thereAreChanges: boolean;
@@ -51,8 +49,7 @@ export class DamagedShoesComponent implements OnInit {
     const modal = await this.modalController.create({
       component: AddDamagedShoesComponent,
       componentProps: {
-        tAction: this.tableAction,
-        tStatus: this.tableStatus
+        tAction: this.tableAction
       }
     });
 
@@ -75,18 +72,7 @@ export class DamagedShoesComponent implements OnInit {
       const list: DamagedModel.List = response.data;
       this.originalClassifications = JSON.stringify(list.classifications);
       this.tableClassifications = list.classifications;
-      this.originalTableStatus = JSON.parse(JSON.stringify(list.statuses));
       this.tableAction = list.list_actions;
-      this.tableStatus = list.statuses.filter((status) => {
-        let result = true;
-        list.classifications.forEach((item) => {
-          if (item.defectType === status.id) {
-            result = false;
-          }
-        });
-
-        return result;
-      });
     });
   }
 

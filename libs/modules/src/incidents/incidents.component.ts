@@ -22,6 +22,10 @@ import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar
 import { Subscription } from 'rxjs';
 import { KeyboardService } from '../../../services/src/lib/keyboard/keyboard.service';
 import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
+import { PrintTicketService } from '../../../services/src/lib/print-ticket/print-ticket.service';
+import {DefectiveRegistryModel} from "../../../services/src/models/endpoints/DefectiveRegistry";
+import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
+import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
 
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
@@ -109,6 +113,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     private toolbarProvider: ToolbarProvider,
     private dropService: DropFilesService,
     private itemReferencesProvider: ItemReferencesProvider,
+    private printTicketService: PrintTicketService,
 
   ) {
 
@@ -276,7 +281,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           //   name: contact.name,
           //   email: contact.email,
           //   phone: contact.phone
-          // })            
+          // })
         });
         this.typeIdBC = resp.statusManagementDefect.id;
         this.onChange(resp.defectTypeChild.id);
@@ -348,8 +353,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }, 'Registrar defectuoso', HEADER_BACKGROUND, HEADER_COLOR);
   }
 
-  print() {
-    console.log("imprimir...")
+  print(defective, status) {
+    this.printTicketService.printTicket(defective, status);
   }
 
   validate() {
@@ -467,12 +472,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       //   email: this.txtEmail,
       //   phone: this.txtTel,
       // },
-    })
+    });
+    //let defective = ;
     // console.log("hello world", this.incidenceForm);
     let This = this;
     await This.intermediary.presentLoading('Enviando...')
     if (this.ticketEmit == true) {
-      this.print();
+      //this.printTicketService.printTicket(this.incidenceForm, this.incidenceForm.statuManagementDefectId);
     }
 
     if (this.incidenceForm.value.observations == null) {
@@ -490,7 +496,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }
 
     let object = this.incidenceForm.value;
-    console.log("object", object);
     if (!this.requireContact) {
       delete object.contact;
     }
@@ -535,13 +540,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   async sendToIncidents(object) {
 
     let This = this;
-
     This.incidentsService.addRegistry(object).subscribe(
       resp => {
         if (this.ticketEmit == true) {
-          this.print();
+          this.printTicketService.printTicket(resp.result, resp.statusType);
         }
-        this.readed = false
+        this.readed = false;
         this.clearVariables();
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
@@ -579,7 +583,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       console.log(res.requirePhoto);
       this.ticketEmit = res.ticketEmit;
       this.passHistory = res.passHistory;
-      this.requirePhoto = res.requirePhoto
+      this.requirePhoto = res.requirePhoto;
       this.requireContact = res.requireContact;
       this.requireOk = res.requireOk;
       this.managementId = res.id;
@@ -694,7 +698,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         const response: any = JSON.parse(result.response)
         console.log('response: ', response);
         console.log(response.data);
-        
+
         response.data.pathMedium = `${environment.apiBasePhoto}${response.data.pathMedium}`
         response.data.pathIcon = `${environment.apiBasePhoto}${response.data.pathIcon}`
         this.img = response.data;
