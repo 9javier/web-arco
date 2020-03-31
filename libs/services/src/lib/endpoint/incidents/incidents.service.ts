@@ -15,11 +15,16 @@ export class IncidentsService {
   private getAllIncidentProductUrl: string = this.incidentsUrl + '/all'
   private getByIdIncidentProductUrl: string = environment.apiBase + '/defects/registry/get-last-historial-product'
   private getDataUrl: string = environment.apiBase + '/defects/registry/get-data'
+  private defectZonesChildUrl: string = environment.apiBase + '/defects/zones/child'
 
   constructor(private http: HttpClient) { }
 
   getDefectTypesChild() {
     return this.http.get<HttpRequestModel.Response>(this.defectTypesChildUrl).pipe(map(resp => resp.data));
+  }
+
+  getDefectZonesChild() {
+    return this.http.get<HttpRequestModel.Response>(this.defectZonesChildUrl).pipe(map(resp => resp.data));
   }
 
   getDtatusManagamentDefect() {

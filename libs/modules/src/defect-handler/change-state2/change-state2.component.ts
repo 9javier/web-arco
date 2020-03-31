@@ -54,6 +54,7 @@ export class ChangeState2Component implements OnInit {
   defectChildId;
   defectParentId;
   ParentAndChild;
+  ZoneAndChild;
   showChangeState;
   status;
   managementId;
@@ -205,8 +206,10 @@ export class ChangeState2Component implements OnInit {
     this.txtEmail = this.registry.data.contact.email;
     this.txtTel = this.registry.data.contact.phone;
 
-    this.ParentAndChild = this.registry.data.defectTypeChild.name + " - "
-      + this.registry.data.defectTypeParent.name;
+    this.ParentAndChild = this.registry.data.defectTypeParent.name + " - "
+      + this.registry.data.defectTypeChild.name;
+    this.ZoneAndChild = this.registry.data.defectZoneParent.name + " - "
+      + this.registry.data.defectZoneChild.name;
 
   }
 

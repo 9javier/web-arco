@@ -70,6 +70,11 @@
           Defecto: {{registry.defectTypeParent.name}} - {{registry.defectTypeChild.name}}
         </ion-label>
       </ion-item>
+      <ion-item *ngIf="registry.defectZoneParent && registry.defectZoneChild">
+        <ion-label>
+          Zona: {{registry.defectZoneParent.name}} - {{registry.defectZoneChild.name}}
+        </ion-label>
+      </ion-item>
       <ion-item class="observations">
         <ion-label>Observaciones:</ion-label>
         <ion-textarea class="text-observations" type="text" rows="4" value="{{registry?.observations}}" readonly="true">

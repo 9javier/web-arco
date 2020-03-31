@@ -31,6 +31,13 @@
     </ion-item>
 
     <ion-item>
+      <ion-label class="ion-text-capitalize label-text">Zona</ion-label>
+      <ion-select (ionChange)="defectZoneChange($event)" formControlName="defectZone" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
+        <ion-select-option *ngFor="let zone of zones" [value]="zone.id">{{zone.name +" - "+ zone.defectZoneParent.name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
       <ion-label position="floating" class="label-text">Observaciones</ion-label>
       <ion-textarea  formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-textarea>
     </ion-item>

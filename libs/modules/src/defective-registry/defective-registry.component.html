@@ -133,6 +133,28 @@
         <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element.defectTypeChild.name}}  </mat-cell>
       </ng-container>
 
+      <ng-container matColumnDef="defectZoneParent">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Zona
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectZoneParent [title]="'Zonas'"
+                               [listItems]="entities.defectZoneParent"
+                               [isFiltering]="isFilteringDefectZoneParent != entities.defectZoneParent.length"
+                               (applyFilters)="applyFilters($event, 'defectZoneParent')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.defectZoneParent.name}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="defectZoneChild">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Subzona
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectZoneChild [title]="'Subzonas'"
+                               [listItems]="entities.defectZoneChild"
+                               [isFiltering]="isFilteringDefectZoneChild != entities.defectZoneChild.length"
+                               (applyFilters)="applyFilters($event, 'defectZoneChild')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element.defectZoneChild.name}}  </mat-cell>
+      </ng-container>
+
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
       <mat-row (click)="goDetails(row)" *matRowDef="let row; columns: displayedColumns;" class="incidence-row">
       </mat-row>

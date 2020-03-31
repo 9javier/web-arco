@@ -63,6 +63,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   phone;
   managementId;
   defectChildId;
+  defectZoneChildId;
   slideOpts = {
     speed: 400
   };
@@ -74,6 +75,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   readed: boolean
   barcode: string = ''
   defects: any = [];
+  zones: any = [];
   statusManagament: any;
   public barcodeRoute = null;
   public types: any;
@@ -210,6 +212,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       factoryReturn: [false],
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
+      defectZoneChildId: [0],
       signFileId: [0],
       gestionState: 0,
       contact: this.fb.group({
@@ -226,6 +229,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.incidentsService.getDefectTypesChild().subscribe(resp => {
       this.defects = resp;
 
+    })
+    this.incidentsService.getDefectZonesChild().subscribe(resp => {
+      this.zones = resp;
+      console.log("TEST::zones", this.zones);
     })
     this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
       this.statusManagament = resp
@@ -440,6 +447,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
+      defectZoneChildId: this.defectZoneChildId,
     })
     if (this.requireContact == true) {
       if (this.validate()) {
@@ -464,6 +472,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
+      defectZoneChildId: this.defectZoneChildId,
       defectTypeParentId: 1,
       photosFileIds: photos,
       signFileId: this.signatures.id,
@@ -604,6 +613,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.select2 = true;
     console.log(e);
     this.defectChildId = e.detail.value;
+  }
+
+  defectZoneChange(e) {
+    this.select2 = true;
+    console.log(e);
+    this.defectZoneChildId = e.detail.value;
   }
 
   ngAfterViewInit() {
