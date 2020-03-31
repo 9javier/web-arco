@@ -235,7 +235,8 @@ export class ReceptionssAvelonComponent implements OnInit {
        modelId: item.modelId,
        warehouseId: item.warehouseId,
        sizeId: item.sizeId,
-       userId: 0
+       avelonOrderId: item.avelonOrderId,
+       userId: 0,
      };
 
    });
@@ -350,14 +351,14 @@ export class ReceptionssAvelonComponent implements OnInit {
     this.pauseListenFormChange = true;
     let dataValue = this.form.get(entityName).value;
 
-    resultEntity = dataEntity.map(entity => {
+    resultEntity = dataEntity ? dataEntity.map(entity => {
       entity.id = <number>(<unknown>entity.id);
       entity.name = entity.name;
       entity.value = entity.name;
       entity.checked = true;
       entity.hide = false;
       return entity;
-    });
+    }) : [];
 
     if (dataValue && dataValue.length) {
       this.form.get(entityName).patchValue(dataValue, { emitEvent: false });

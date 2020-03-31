@@ -129,13 +129,13 @@ export class SendEmptyPackingComponent implements OnInit {
       () => {
         this.intermediaryService.dismissLoading();
         this.intermediaryService.presentToastSuccess(
-          'Jaula eliminada con exito'
+          'Embalaje eliminado con éxito'
         );
         this.getCarriers();
       },
       () => {
         this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastSuccess('Error eliminando jaula');
+        this.intermediaryService.presentToastSuccess('Error eliminando el embalaje');
       }
     );
   }
@@ -207,7 +207,7 @@ export class SendEmptyPackingComponent implements OnInit {
       this.intermediaryService.dismissLoading();
       this.getCarriers();
     }, () => {
-      this.intermediaryService.presentToastError("Error al actualizar destino");
+      this.intermediaryService.presentToastError("Error al actualizar el destino");
       this.intermediaryService.dismissLoading();
     });
   }
@@ -219,7 +219,7 @@ export class SendEmptyPackingComponent implements OnInit {
       this.intermediaryService.dismissLoading();
       this.getCarriers();
     }, () => {
-      this.intermediaryService.presentToastError("Error al actualizar destino");
+      this.intermediaryService.presentToastError("Error al actualizar el destino");
       this.intermediaryService.dismissLoading();
     });
   }

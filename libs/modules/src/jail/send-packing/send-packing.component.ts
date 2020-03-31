@@ -28,7 +28,7 @@ export class SendPackingComponent implements OnInit {
     .name;
 
   redirectTo = '/jails/list';
-  jail;
+  public jail: CarrierModel.SearchInContainer;
   warehouses:Array<WarehouseModel.Warehouse> = [];
   warehouse: WarehouseModel.Warehouse;
   selectedWarehouse;
@@ -39,11 +39,11 @@ export class SendPackingComponent implements OnInit {
     private intermediaryService:IntermediaryService,
     private modalController:ModalController,
     private warehousesService:WarehousesService
-    ) {
+  ) {
     this.jail = this.navParams.get("jail");
-    if(this.jail.carrierWarehousesDestiny.length  == 1) {
-      this.selectedWarehouse = this.jail.carrierWarehousesDestiny[0].warehouse.id;
-      this.warehouse = this.jail.carrierWarehousesDestiny[0].warehouse;
+    if(this.jail.destiny.length  == 1) {
+      this.selectedWarehouse = this.jail.destiny[0].destinyWarehouse.id;
+      this.warehouse = this.jail.destiny[0].destinyWarehouse;
     }
   }
 

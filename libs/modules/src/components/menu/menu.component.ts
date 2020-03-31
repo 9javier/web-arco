@@ -367,7 +367,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Expediciones',
+      title: 'Recepción de fábrica',
       open: true,
       type: 'wrapper',
       icon: 'archive',
@@ -482,6 +482,13 @@ export class MenuComponent implements OnInit {
           url: '/print/product/received',
           icon: 'archive',
           tooltip: 'Listado de todos los productos recibidos'
+        },
+        {
+          title: 'Productos solicitados',
+          id: 'received-products-requested',
+          url: '/requested-products',
+          icon: 'archive',
+          tooltip: 'Listado de todos los productos solicitados que se han recibido'
         },
         {
           title: 'Reetiquetado productos',
@@ -753,7 +760,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Expediciones',
+      title: 'Recepción de fábrica',
       open: false,
       type: 'wrapper',
       icon: 'archive',
