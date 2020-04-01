@@ -17,6 +17,7 @@ import { HttpRequestModel } from "../../models/endpoints/HttpRequest";
 import { TimesToastType } from '../../models/timesToastType';
 import {DefectiveRegistryModel} from "../../models/endpoints/DefectiveRegistry";
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
+import * as moment from 'moment';
 
 declare let cordova: any;
 
@@ -34,19 +35,22 @@ export class PrintTicketService {
     const productReference = defective && defective.product ? defective.product.reference : '';
     const defectType = defective && defective.defectTypeParent && defective.defectTypeChild ? defective.defectTypeParent.name + ' - ' + defective.defectTypeChild.name : '';
     const observations = defective ? defective.observations : '';
-    const updatedAt = defective ? defective.updatedAt : '';
-    const incidenceDate = defective ? defective.dateDetection : '';
+    const updatedAt = defective ? moment(defective.updatedAt).format('DD/MM/YYYY') : '';
+    const incidenceDate = defective ? moment(defective.dateDetection).format('DD/MM/YYYY') : '';
     const incidenceId = defective ? defective.id.toString() : '';
     const warehouseName = defective && defective.warehouse ? defective.warehouse.name : '';
+    const warehouseDirection = defective && defective.warehouse ? defective.warehouse.direction : '';
+    const warehousePhone = defective && defective.warehouse ? defective.warehouse.phone : '';
     const statusName = defective && defective.statusManagementDefect ? defective.statusManagementDefect.name : '';
+
     try {
       fetch('assets/templates/print-defect.html').then(res => res.text()).then(data => {
 
         let htmlToPrintA = data.replace('{{incidenceId}}', incidenceId);
         let htmlToPrintB = htmlToPrintA.replace('{{incidenceDate}}', incidenceDate);
         let htmlToPrintC = htmlToPrintB.replace('{{warehouse}}', warehouseName);
-        let htmlToPrintD = htmlToPrintC.replace('{{warehouseDirection}}', "");
-        let htmlToPrintE = htmlToPrintD.replace('{{warehouseTlf}}', "");
+        let htmlToPrintD = htmlToPrintC.replace('{{warehouseDirection}}', warehouseDirection);
+        let htmlToPrintE = htmlToPrintD.replace('{{warehousePhone}}', warehousePhone);
         let htmlToPrintF = htmlToPrintE.replace('{{Razón social}}', warehouseName);
         let htmlToPrintG = htmlToPrintF.replace('{{status}}', statusName);
         let htmlToPrintH = htmlToPrintG.replace('{{updatedAt}}', updatedAt);

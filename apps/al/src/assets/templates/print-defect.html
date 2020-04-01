@@ -4,7 +4,7 @@
   <style id="styleToCssFromAjax"></style>
 </head>
 <body>
-<div class="contentTicket" style="border:solid 1px #000;max-width: 400px">
+<div class="contentTicket" style="border:solid 1px #000">
   <div class="divTitleTicket" style="text-align: center;">
     <h3><u>GESTION INCIDENCIA</u></h3>
   </div>
@@ -13,7 +13,7 @@
       <b>-&nbsp;&nbsp;&nbsp;&nbsp;Nº incidencia: {{incidenceId}}</b><br/>
       <b>-&nbsp;&nbsp;&nbsp;&nbsp;Fecha inicio de incidencia: {{incidenceDate}}</b><br/>
       <b>-&nbsp;&nbsp;&nbsp;&nbsp;TIENDA: {{warehouse}}</b><br/>
-      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Dirección tienda + telefono tienda: {{warehouseDirection}} {{warehouseTlf}}</b><br/>
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Dirección: {{warehouseDirection}} + {{warehouseTlf}}</b><br/>
       <b>-&nbsp;&nbsp;&nbsp;&nbsp;Razón social: {{Razón social}}</b><br/><br/>
     </div>
   </div>
@@ -32,7 +32,6 @@
     </div>
   </div>
   <div class="divMessagesFinalTicket" style="border-top-style:dashed;border-width: 1px;">
-    <br/>-&nbsp;&nbsp;&nbsp;&nbsp;Texto:<br/>
     <p style="text-align: center;">
       "Este recibo es un justificante de depósito<br/>
       para el estudio de la incidencia<br/>
