@@ -10,7 +10,6 @@ import {FormControl, FormGroup} from "@angular/forms";
 })
 export class AddDamagedShoesComponent implements OnInit {
   tAction: DamagedModel.Action[];
-  tStatus: DamagedModel.Status[];
 
   formGroup: FormGroup;
 
@@ -26,15 +25,12 @@ export class AddDamagedShoesComponent implements OnInit {
     actions: []
   };
 
-  selectedDefectType: number;
-
   constructor(
     private modalController: ModalController
   ) {}
 
   async ngOnInit() {
     this.formGroup = new FormGroup({name: new FormControl()});
-    this.selectedDefectType = this.tStatus[0].id;
     const actions = this.tAction.map((x) => {
       return { id: x.id, name: x.name, isChecked: false}
     });
