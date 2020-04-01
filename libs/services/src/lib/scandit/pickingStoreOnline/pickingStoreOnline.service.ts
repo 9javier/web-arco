@@ -328,7 +328,7 @@ export class PickingStoreOnlineScanditService {
                 case 'request_cancel':
                   ScanditMatrixSimple.showLoadingDialog('Cancelando pedido online...');
                   const reference = response.requestReference;
-                  this.pickingStoreService.postCancelRequest(parseInt(reference)).then((res: Response) => {
+                  this.pickingStoreService.postCancelRequest({reference: parseInt(reference)}).then((res: Response) => {
                     if(res.code == 200){
                       //delete rejected request from pending requests and save it
                       let canceledRequest: ListItem;
