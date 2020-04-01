@@ -29,6 +29,8 @@ export class CatalogComponent implements OnInit {
   private searchDiscount;
   private searchStock;
 
+  private refresher;
+
   constructor(
     private route: ActivatedRoute,
     private modalController: ModalController,
@@ -64,7 +66,18 @@ export class CatalogComponent implements OnInit {
 
       this.getProducts();
 
+      this.refresher = setInterval(() => {
+        this.getProducts();
+      }, 60000);
+
     });
+
+  }
+
+  ngOnDestroy() {
+    if (this.refresher) {
+      clearInterval(this.refresher);
+    }
   }
 
   changeSelectedFilters() {

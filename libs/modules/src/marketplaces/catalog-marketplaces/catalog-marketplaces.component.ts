@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import * as XLSX from 'xlsx';
 import { MarketplacesService } from 'libs/services/src/lib/endpoint/marketplaces/marketplaces.service';
+import {interval} from "rxjs";
 
 @Component({
   selector: 'suite-catalog-marketplaces',
@@ -35,6 +36,7 @@ export class CatalogMarketplacesComponent implements OnInit {
   private searchSpartoo;
   private searchZalando;
   private searchCDiscount;
+  private refresher;
 
   constructor(
     private marketplacesService: MarketplacesService
@@ -103,6 +105,39 @@ export class CatalogMarketplacesComponent implements OnInit {
 
     });
 
+    this.refresher = setInterval(() => {
+      this.marketplacesService.getProductCatalog().subscribe(data => {
+        this.products = data;
+        this.products.sort((a, b) => (a.reference.length > b.reference.length) ? 1 : ((b.reference.length > a.reference.length) ? -1 : ((parseInt(a.reference) > parseInt(b.reference)) ? 1 : ((parseInt(b.reference) > parseInt(a.reference)) ? -1 : 0))));
+        this.unFilteredProducts = this.products.slice();
+
+        this.catalogTableData = new MatTableDataSource(this.products);
+
+        for (let product of this.products) {
+          for (let productMarket of product.productsMarkets) {
+            if (!this.marketplaces.some(e => e.id == productMarket.market.id)) {
+              this.marketplaces.push({id: productMarket.market.id, name: productMarket.market.name});
+            }
+          }
+
+          if (!this.descriptions.some(e => e == product.description)) {
+            this.descriptions.push(product.description);
+          }
+
+          if (!this.families.some(e => e == product.family)) {
+            this.families.push(product.family);
+          }
+        }
+
+      });
+    }, 60000);
+
+  }
+
+  ngOnDestroy() {
+    if (this.refresher) {
+      clearInterval(this.refresher);
+    }
   }
 
   selectProductRow(row) {
