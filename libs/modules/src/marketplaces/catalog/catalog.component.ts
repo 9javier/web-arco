@@ -55,13 +55,8 @@ export class CatalogComponent implements OnInit {
       this.market = null;
       if (data && data.length) {
         for (let market of data) {
-          switch (this.route.snapshot.data['name']) {
-            case "Miniprecios":
-              this.market = market.id;
-              break;
-          }
-
-          if (this.market) {
+          if (this.route.snapshot.data['name'] == market.name) {
+            this.market = market.id;
             break;
           }
         }
@@ -179,10 +174,9 @@ export class CatalogComponent implements OnInit {
 
   getProducts() {
     this.marketplacesService.getProductCatalog().subscribe(data => {
-      let serverData = data.data;
-      for (let product of serverData) {
+      for (let product of data) {
         for (let productMarket of product.productsMarkets) {
-          if (productMarket.market.id == this.market && productMarket.onboardStatus == '1') {
+          if (productMarket.market.id == this.market && productMarket.valid) {
             this.catalogData.push({
               ref: product.reference,
               model: product.model,
@@ -190,10 +184,10 @@ export class CatalogComponent implements OnInit {
               color: product.color ? product.color : '-',
               family: product.family ? product.family : '-',
               description: product.description ? product.description : '-',
-              pvp: productMarket.price ? productMarket.price : '-',
-              discount: productMarket.discount ? productMarket.discount : '-',
+              pvp: productMarket.originalPrice ? parseFloat(productMarket.originalPrice).toFixed(2) : '-',
+              discount: productMarket.discountedPrice ? parseFloat(productMarket.discountedPrice).toFixed(2) : '-',
               units: productMarket.stock,
-              active: productMarket.available
+              active: (!productMarket.notSalable && !productMarket.notPublishable)
             });
           }
         }

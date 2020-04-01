@@ -22,7 +22,7 @@ export class MarketplacesService {
   private postRulesFilterUrl = this.apiBase + "/api/RuleFilter";
   private updateRulesFilterUrl = this.apiBase + "/api/RuleFilter/{{id}}";
   private getRulesFilterByTypeUrl = this.apiBase + "/api/RuleFilter/{{type}}";
-  private getMarketsUrl = this.apiBase + "/api/Markets";
+  private getMarketsUrl = this.apiMiddleware + "/api/v1/market";
   private getRulesConfigurationsUrl = this.apiBase + "/rc/bymarket/";
   private postRulesConfigurationsUrl = this.apiBase + "/api/RuleConfiguration";
   private updateRulesConfigurationsUrl = this.apiBase + "/api/RuleConfiguration/{{id}}";
@@ -36,6 +36,36 @@ export class MarketplacesService {
   private getProductCatalogUrl = this.apiMiddleware + "/api/v1/product";
   private getCategories = this.apiBase + "/api/ProductCategory";
 
+
+  /*
+  private getMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap";
+  private postMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap";
+  private updateMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap/";
+  private getMarketsUrl = this.apiMiddleware + "/api/v1/market";
+  private getRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration";
+  private getRulesConfigurationsByMarketUrl = this.apiMiddleware + "/api/v1/ruleConfiguration/byMarket/{{id}}";
+  private postRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration";
+  private updateRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration/{{id}}";
+  private getRulesConfigurationsByIdUrl = this.apiMiddleware + "/api/v1/ruleConfiguration/{{id}}";
+  private getProductCatalogUrl = this.apiMiddleware + "/api/v1/product";
+
+  private getBrandsRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/5";
+  private getColorsRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/3";
+  private getFeaturesRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/2";
+  private getSizesRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/4";
+
+  private postProductCategoryUrl = this.apiMiddleware + "/api/v1/productCategory";
+  private getCategoriesUrl = this.apiMiddleware + "/api/v1/productCategory/byMarket/{{id}}";
+
+  private getRulesFilterTypesUrl = this.apiBase + "/api/EnumMetadata/get/rulefiltertype";
+  private getRulesFilterUrl = this.apiBase + "/api/RuleFilter";
+  private postRulesFilterUrl = this.apiBase + "/api/RuleFilter";
+  private updateRulesFilterUrl = this.apiBase + "/api/RuleFilter/{{id}}";
+  private getRulesFilterByTypeUrl = this.apiBase + "/api/RuleFilter/{{type}}";
+
+  private deleteMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
+  private getMapEntitiesUrl = this.apiBase + "/api/EnumMetadata/get/mapentity";
+  */
   constructor(
     private http: HttpClient
   ) {
@@ -65,6 +95,12 @@ export class MarketplacesService {
       return response;
     }));
   }
+
+  /*updateMapDataRules(mapDataId: number, data) {
+    return this.http.put(this.updateMapDataRulesUrl + mapDataId.toString(), data).pipe(map(response => {
+      return response;
+    }));
+  }*/
 
   deleteMapDataRules(mapDataId: number): Observable<any> {
     return this.http.delete<any>(this.deleteMapDataRulesUrl + mapDataId.toString(), {}).pipe(map(response => {
@@ -132,6 +168,20 @@ export class MarketplacesService {
     }));
   }
 
+  /*
+  getRulesConfigurations(): Observable<any> {
+    return this.http.get<any>(this.getRulesConfigurationsUrl, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getRulesConfigurationsByMarket(marketId: number): Observable<any> {
+    return this.http.get<any>(this.getRulesConfigurationsByMarketUrl.replace('{{id}}', marketId.toString()), {}).pipe(map(response => {
+      return response;
+    }));
+  }
+  */
+
   getRulesConfigurationsById(ruleConfigurationId: number): Observable<any> {
     return this.http.get<any>(this.getRulesConfigurationsByIdUrl.replace('{{id}}', ruleConfigurationId.toString()), {}).pipe(map(response => {
       return response;
@@ -155,6 +205,14 @@ export class MarketplacesService {
       return response;
     }));
   }
+
+  /*
+  getMarketCategories(marketId: number): Observable<any> {
+    return this.http.get<any>(this.getCategoriesUrl.replace('{{id}}', marketId.toString()), {}).pipe(map(response => {
+      return response;
+    }));
+  }
+  */
 
   postProductCategory(data): Observable<any> {
     return this.http.post<any>(this.postProductCategoryUrl, data, {}).pipe(map(response => {

@@ -65,12 +65,33 @@
 
       }
 
-      .symbolNoSellable {
-        font-size: 24px;
-        color: #d8682f;
+      .symbolNotUpdated {
+        &:before {
+          content: "●";
+          font-size: 24px;
+          color: #355dd8;
+        }
+
+        .hidden-value {
+          visibility: hidden;
+          position: absolute;
+        }
       }
 
-      .symbolDisabled {
+      .symbolDisabledInMarket {
+        &:before {
+          content: "●";
+          font-size: 24px;
+          color: #d8682f;
+        }
+
+        .hidden-value {
+          visibility: hidden;
+          position: absolute;
+        }
+      }
+
+      .symbolInvalid {
         &:before {
           content: "●";
           font-size: 24px;

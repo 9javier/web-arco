@@ -41,12 +41,7 @@ export class CatalogMarketplacesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    
-    this.marketplacesService.getProductCatalog().subscribe(data => {
-        console.log(data.data)
-        this.products = data.data;
-        this.catalogTableData = new MatTableDataSource(this.products);
-    });
+
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'KO', 'Mini', 'Amazon', 'Spartoo', 'Zalando', 'CDiscount'];
 
     this.products = [];
@@ -67,11 +62,11 @@ export class CatalogMarketplacesComponent implements OnInit {
     this.marketplaces = [{id: 0, name: 'Marketplaces'}];
     this.marketSelected = this.marketplaces[0].id;
 
-    this.descriptions = [{id: 0, name: 'Descripción'}];
-    this.descriptionSelected = this.descriptions[0].id;
+    this.descriptions = ['Descripción'];
+    this.descriptionSelected = this.descriptions[0];
 
-    this.families = [{id: 0, name: 'Familia'}];
-    this.familySelected = this.families[0].id;
+    this.families = ['Familia'];
+    this.familySelected = this.families[0];
 
     this.searchReference = "";
     this.searchModel = "";
@@ -84,7 +79,7 @@ export class CatalogMarketplacesComponent implements OnInit {
     this.searchCDiscount = "";
 
     this.marketplacesService.getProductCatalog().subscribe(data => {
-      this.products = data.data;
+      this.products = data;
       this.products.sort((a, b) => (a.reference.length > b.reference.length) ? 1 : ((b.reference.length > a.reference.length) ? -1 : ((parseInt(a.reference) > parseInt(b.reference)) ? 1 : ((parseInt(b.reference) > parseInt(a.reference)) ? -1 : 0))));
       this.unFilteredProducts = this.products.slice();
 
@@ -95,6 +90,14 @@ export class CatalogMarketplacesComponent implements OnInit {
           if (!this.marketplaces.some(e => e.id == productMarket.market.id)) {
             this.marketplaces.push({id: productMarket.market.id, name: productMarket.market.name});
           }
+        }
+
+        if (!this.descriptions.some(e => e == product.description)) {
+          this.descriptions.push(product.description);
+        }
+
+        if (!this.families.some(e => e == product.family)) {
+          this.families.push(product.family);
         }
       }
 
@@ -136,7 +139,7 @@ export class CatalogMarketplacesComponent implements OnInit {
       this.products = filteredProducts.slice();
     }
 
-    if (this.descriptionSelected != 0) {
+    if (this.descriptionSelected != 'Descripción') {
       let filteredProducts = [];
 
       for (let product of this.products) {
@@ -147,7 +150,7 @@ export class CatalogMarketplacesComponent implements OnInit {
       this.products = filteredProducts.slice();
     }
 
-    if (this.familySelected != 0) {
+    if (this.familySelected != 'Familia') {
       let filteredProducts = [];
 
       for (let product of this.products) {
@@ -320,8 +323,8 @@ export class CatalogMarketplacesComponent implements OnInit {
     }
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'catalog-marketplaces');
-    
+
     XLSX.writeFile(wb, 'catalog-marketplaces.xlsx');
   }
-  
+
 }

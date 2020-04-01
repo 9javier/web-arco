@@ -7,13 +7,13 @@
         </mat-option>
       </mat-select>
       <mat-select [(ngModel)]="descriptionSelected" (selectionChange)="changeSelectedFilters()">
-        <mat-option *ngFor="let item of descriptions" [value]="item.id">
-          {{item.name}}
+        <mat-option *ngFor="let item of descriptions" [value]="item">
+          {{item}}
         </mat-option>
       </mat-select>
       <mat-select [(ngModel)]="familySelected" (selectionChange)="changeSelectedFilters()">
-        <mat-option *ngFor="let item of families" [value]="item.id">
-          {{item.name}}
+        <mat-option *ngFor="let item of families" [value]="item">
+          {{item}}
         </mat-option>
       </mat-select>
     </div>
@@ -92,11 +92,17 @@
         <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'Miniprecios'">
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
-                <span class="hidden-value">✓</span>
+              <span *ngIf="actionSelected == 1 && market.valid && !market.notSalable && !market.notPublishable && market.updated" class="symbol symbolActivate">
+                <span class="hidden-value">ACTIVO</span>
               </span>
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
-                <span class="hidden-value">✗</span>
+              <span *ngIf="actionSelected == 1 && market.valid && !market.updated" class="symbol symbolNotUpdated">
+                <span class="hidden-value">DESACTUALIZADO</span>
+              </span>
+              <span *ngIf="actionSelected == 1 && market.valid && (market.notSalable || market.notPublishable) && market.updated" class="symbol symbolDisabledInMarket">
+                <span class="hidden-value">DESACTIVADO</span>
+              </span>
+              <span *ngIf="actionSelected == 1 && !market.valid" class="symbol symbolInvalid">
+                <span class="hidden-value">INVÁLIDO</span>
               </span>
               <span *ngIf="actionSelected == 2">
                 {{market.stock}}
