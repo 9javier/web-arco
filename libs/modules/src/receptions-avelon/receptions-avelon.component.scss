@@ -132,6 +132,18 @@ div.grid {
       ion-item {
         height: 50px;
         max-height: 50px;
+        mat-form-field.model-selector {
+          cursor: pointer;
+          font-size: 11px;
+          width: 100px;
+          margin-left: 16px;
+          height: 30px;
+          mat-icon {
+            font-size: 15px;
+            width: 15px;
+            height: 15px;
+          }
+        }
       }
     }
   }
@@ -166,13 +178,18 @@ div.grid {
           padding: 0 4px;
           background: var(--ion-color-primary-contrast);
         }
-        div {
+        div.default {
           display: flex;
           flex-wrap: wrap;
           place-content: center;
           border: 1px solid var(--ion-color-primary);
           padding: 8px;
           width: 100%;
+          div.default-content {
+            display: flex;
+            flex-wrap: wrap;
+            place-content: center;
+          }
         }
         div.sizes-empty {
           text-align: center;
@@ -221,4 +238,7 @@ div.grid {
 
 #eanCode{
   height: 50px;
+  button.remove-icon {
+    cursor: pointer;
+  }
 }

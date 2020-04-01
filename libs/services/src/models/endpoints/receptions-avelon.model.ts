@@ -105,6 +105,24 @@ export namespace ReceptionAvelonModel {
   }
   //endregion
 
+  //region
+  export interface ParamsReloadModelsList {
+    typeVisualization: number,
+    providerId: number
+  }
+  export interface ReloadModelsList {
+    id: number;
+    name: string;
+    selected: boolean;
+    color: string;
+    photos_models: any;
+    available_ids: number[];
+  }
+  export interface ResponseReloadModelsList extends HttpRequestModel.Response {
+    data: ReloadModelsList[]
+  }
+  //endregion
+
   export interface Expedition {
     reference: string,
     providerName: string,
