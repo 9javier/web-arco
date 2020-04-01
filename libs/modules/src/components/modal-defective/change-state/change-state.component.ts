@@ -150,6 +150,7 @@ export class ChangeStateComponent implements OnInit {
       factoryReturn: [false],
       statusManagementDefectId: [this.registry.data.statusManagementDefect.id],
       defectTypeChildId: [this.registry.data.defectTypeChild.id],
+      defectTypeZoneChildId: [this.registry.data.defectZoneChild.id],
       signFileId: [0],
       contact: this.fb.group({
         name: [this.registry.data.contact.name],
@@ -313,6 +314,7 @@ export class ChangeStateComponent implements OnInit {
           factoryReturn: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectZoneChildId: 0,
           photosFileIds: [],
           signFileId: 0,
           contact: {
@@ -359,6 +361,7 @@ export class ChangeStateComponent implements OnInit {
           factoryReturn: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectZoneChildId: 0,
           signFileId: 0
         })
         This.intermediary.dismissLoading()
@@ -561,6 +564,7 @@ export class ChangeStateComponent implements OnInit {
         factoryReturn: false,
         statusManagementDefectId: 0,
         defectTypeChildId: 0,
+        defectZoneChildId: 0,
         photosFileIds: [],
         signFileId: 0,
         contact: {

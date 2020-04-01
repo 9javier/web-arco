@@ -192,6 +192,7 @@ export class ChangeState2Component implements OnInit {
       factoryReturn: [false],
       statusManagementDefectId: [this.registry.data.statusManagementDefect.id],
       defectTypeChildId: [this.registry.data.defectTypeChild.id],
+      defectZoneChildId: [this.registry.data.defectZoneChild.id],
       signFileId: [0],
       contact: this.fb.group({
         name: [this.registry.data.contact.name],
@@ -627,6 +628,7 @@ export class ChangeState2Component implements OnInit {
         factoryReturn: false,
         statusManagementDefectId: 0,
         defectTypeChildId: 0,
+        defectZoneChildId: 0,
         photosFileIds: [],
         signFileId: 0,
         contact: {

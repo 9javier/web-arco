@@ -281,6 +281,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           isHistory: resp.isHistory,
           statusManagementDefectId: resp.statusManagementDefect.id,
           defectTypeChildId: resp.defectTypeChild.id,
+          defectZoneChildId: resp.defectZoneChild.id,
           dateDetection: moment().format(),
           // photosFileIds: [ [{ "id": 1 }]],
           // signFileId: [1],
@@ -522,6 +523,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           factoryReturn: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectZoneChildId: 0,
           gestionState: 0,
           photosFileIds: 0,
           signFileId: 0,
@@ -907,6 +909,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         factoryReturn: false,
         statusManagementDefectId: 0,
         defectTypeChildId: 0,
+        defectZoneChildId: 0,
         photosFileIds: [],
         signFileId: 0,
         contact: {
