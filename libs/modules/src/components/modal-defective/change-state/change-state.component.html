@@ -115,13 +115,6 @@
     </div>
     <!--<ion-label>{{imgUrl}}</ion-label>-->
 
-    <div *ngIf="selectGestionState == true">
-      <ion-item lines="none">
-        <ion-label class="ion-text-capitalize label-text">devolución a fabrica</ion-label>
-        <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
-      </ion-item>
-    </div>
-
 
     <ion-button [disabled]="selectGestionState == false" (click)="send()" expand="block" shape="round">
       actualizar
