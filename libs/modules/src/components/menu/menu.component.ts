@@ -518,11 +518,12 @@ export class MenuComponent implements OnInit {
           icon: 'basket',
           tooltip: 'Imprimir etiquetas de contenedores'
         },
+      
         {
-          title: 'Manifiesto transportista',
+          title: 'Alertas de expediciones',
           id: 'order-preparation',
           url: '/transport-manifest',
-          icon: 'barcode',
+          icon: 'warning',
           tooltip: 'Albaran'
         },
         {

@@ -20,10 +20,12 @@ export class LabelsService {
 
   /**urls of the service */
   private getIndexUrl = environment.apiBase+"/labels";
-  private getStatusLabelsUrl = environment.apiBase+"/labels/status";
-  private postPrintLabelStoreUrl = environment.apiBase+"/labels/code";
-  private getListAlertsUrl = environment.apiBase+"/labels/alerts";
-  private getPrintLabelByIdsUrl = environment.apiBase+"/labels/";
+  private getStatusLabelsUrl = environment.apiBase+"/opl-expedition/";
+  private postPrintLabelStoreUrl = environment.apiBase+"/opl-expedition/tracking-package/code";
+  private getExpeditionListAlertsUrl = environment.apiBase+"/opl-expedition/alerts";
+  private getPrintLabelByIdsUrl = environment.apiBase+"/opl-expedition/container/";
+  private getTransportStatusUrl = environment.apiBase+"/opl-expedition/generate-tag/";
+
 
 
   constructor(private http:HttpClient) { }
@@ -43,14 +45,20 @@ export class LabelsService {
       return response.data
     }));
   }
-  getLabelsPrintById(id,body):Observable<any>{
-    return this.http.post(this.getPrintLabelByIdsUrl+id,body).pipe(map((response:any)=>{
+  getExpeditionByBarcode(body):Observable<any>{
+    return this.http.post(this.getPrintLabelByIdsUrl,body).pipe(map((response:any)=>{
       return response.data
     }));
   }
 
-  getListAlerts():Observable<any>{
-    return this.http.get(this.getListAlertsUrl).pipe(map((response:any)=>{
+  getTransportStatus(body):Observable<any>{
+    return this.http.post(this.getTransportStatusUrl,body).pipe(map((response:any)=>{
+      return response.data
+    }));
+  }
+
+  getListAlertsExpedition():Observable<any>{
+    return this.http.get(this.getExpeditionListAlertsUrl).pipe(map((response:any)=>{
       return response.data
     }));
   }
@@ -82,8 +90,8 @@ export class LabelsService {
     return this.getNumAllScanner$;
   }
 
-  setScannerAlert(body){
-    this.emitScannerAlert.next(body);
+  setScannerAlert(id){
+    this.emitScannerAlert.next(id);
   }
 
   getScannerAlert() {

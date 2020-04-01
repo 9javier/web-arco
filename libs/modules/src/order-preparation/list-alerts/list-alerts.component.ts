@@ -13,57 +13,7 @@ import { Router } from '@angular/router';
 export class ListAlertsComponent implements OnInit {
  
 
-  displayedColumns: string[]=['id','name','barcode','scanner']
- alert=[ 
-   {
-    id:1,
-    name: "FEDEX",
-    code:"7545646456",
-    type:1
-  },
-  {
-    id:2,
-    name: "DHL",
-    code:"96545646456",
-    type:2
-  },
-  {
-    id:3,
-    name: "UPS",
-    code:"6545646456",
-    type:1
-  },
-  {
-    id:4,
-    name: "FEDEX",
-    code:"6545646456",
-    type:2
-  },
-  {
-    id:5,
-    name: "DHL",
-    code:"1545646456",
-    type:2
-  },
-  {
-    id:6,
-    name: "DHL",
-    code:"6547846456",
-    type:1
-  },
-  {
-    id:7,
-    name: "FEDEX",
-    code:"6537646456",
-    type:1
-  },
-  {
-    id:8,
-    name: "DHL",
-    code:"6544564645",
-    type:2
-  }
-  ]
+  displayedColumns: string[]=['id','date','barcode','scanner'];
   dataSource
   constructor(
     private toolbarProvider: ToolbarProvider,
@@ -79,7 +29,7 @@ export class ListAlertsComponent implements OnInit {
   
   async getListAlerts(){
     await this.intermediaryService.presentLoading("Cargando alertas");
-    this.labelsService.getListAlerts().subscribe(result =>{
+    this.labelsService.getListAlertsExpedition().subscribe(result =>{
       console.log(result);
       this.dataSource = new MatTableDataSource<PrintLabelsModel.AlertsTable>(result); 
       this.intermediaryService.dismissLoading();
@@ -91,11 +41,16 @@ export class ListAlertsComponent implements OnInit {
   }
 
   goScanner(row){
-    console.log(row);
-    if(row.typeError == 2){
-      this.labelsService.setScannerAlert({ id: row.id, status:true});
+    console.log(row.barcode);
+    if(row.status == 6){
+      this.labelsService.setScannerAlert(row.id);
       this.router.navigate(['/order-preparation']);
     }
   }
+
+  refresh(){
+    this.getListAlerts();
+  }
+ 
   
 }

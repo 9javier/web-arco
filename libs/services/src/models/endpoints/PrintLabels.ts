@@ -5,7 +5,8 @@ export namespace PrintLabelsModel {
    export interface AlertsTable{
     id?: number;
     name?:string,
-    referernce:string,
+    barcode:string,
+    invoiceDateTime:string,
     typeError:number
   }
 }

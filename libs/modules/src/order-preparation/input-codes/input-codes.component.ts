@@ -94,13 +94,8 @@ export class InputCodesComponent implements OnInit {
       this.inputProduct = null;
       switch (this.itemReferencesProvider.checkCodeValue(dataWrote)) {
         case this.itemReferencesProvider.codeValue.PRODUCT:
-          if (this.isStoreUser) {
-            this.postRelabelProduct(dataWrote);
-          } else {
-            this.audioProvider.playDefaultOk();
-            this.printerService.printTagBarcode([dataWrote]);
-            this.focusToInput();
-          }
+          this.printLabels(dataWrote);
+
           break;
         case this.itemReferencesProvider.codeValue.PRODUCT_MODEL:
           //this.getSizeListByReference(dataWrote);
@@ -326,27 +321,28 @@ export class InputCodesComponent implements OnInit {
 
   async printLabelStore(reference_){
     let body ={
-      reference : reference_
+      uniqueCode : reference_
     }
     this.intermediaryService.presentLoading();
     this.labelService.postPrintLabels(body).subscribe( result =>{
       this.intermediaryService.dismissLoading();
-      console.log(result[0]);
-      if(result[0].status == true){
+      console.log(result);
+      if(result.status == 2){
         this.labelService.numScanner(this.numScanner= (this.numScanner-1));
         this.router.navigate(['/order-preparation']);
-      }else{
-        this.PrintError =true;
       }
       
     }, error => {
+      this.audioProvider.playDefaultError();
+          this.intermediaryService.presentToastError('El código escaneado del contenedor no es valido.', PositionsToast.BOTTOM).then(() => {
+            this.focusInputTa();
+          });
       console.log(error);
       this.intermediaryService.dismissLoading();
     });
   }
 
   return(){
-    this.PrintError = false;
     this.router.navigate(['/order-preparation']);
   }
 
