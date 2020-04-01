@@ -71,8 +71,8 @@ export class PickingStoreService {
     return this.requestsProvider.post(this.postRejectRequestUrl, params);
   }
 
-  postCancelRequest(reference: number) : Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.post(this.postCancelRequestUrl, reference);
+  postCancelRequest(parameters: {reference: number}) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postCancelRequestUrl, parameters);
   }
 
   postLineRequestDisassociate(params: PickingStoreModel.ParamsLineRequestDisassociate) : Promise<HttpRequestModel.Response> {
