@@ -67,6 +67,33 @@ const routes: Routes = [
     }
   },
   {
+    path: 'order-preparation',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/order-preparation/order-preparation.module#OrderPreparationModule',
+    data: {
+      name: 'Preparacion de pedidos'
+    }
+
+  },
+  {
+    path: 'transport-manifest',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/transport-manifest/transport-manifest.module#TransportManifestModule',
+    data: {
+      name: 'Manifiesto transportista'
+    }
+
+  },
+  {
+    path: 'labels-manual',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/labels-manual/labels-manual.module#LabelsManualModule',
+    data: {
+      name: 'Etiquetas manuales'
+    }
+
+  },
+  {
     path: 'ventilation-no-sorter',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/ventilation-no-sorter/ventilation-no-sorter.module#VentilationNoSorterModule',
