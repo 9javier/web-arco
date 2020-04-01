@@ -14,6 +14,8 @@ import ParamsFiltered = PickingStoreModel.ParamsFiltered;
 import SendProcess = PickingStoreModel.SendProcess;
 import ResponseSendProcess = PickingStoreModel.ResponseSendProcess;
 import ResponseRejectRequest = PickingStoreModel.ResponseRejectRequest;
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import Response = HttpRequestModel.Response;
 
 declare let ScanditMatrixSimple;
 
@@ -65,7 +67,7 @@ export class PickingStoreOnlineScanditService {
               break;
             case 'setNotProductPending':
               let typePacking = params[0];
-              this.setText('No hay más productos pendientes de añadir al traspaso.', this.scanditProvider.colorsMessage.info.color, 16);
+              this.setText('No hay más productos pendientes.', this.scanditProvider.colorsMessage.info.color, 16);
               ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].press_scan_packings_to_continue);
               break;
             case 'loadProducts':
@@ -138,7 +140,7 @@ export class PickingStoreOnlineScanditService {
                   ScanditMatrixSimple.setTimeout("loadProducts", 1000, JSON.stringify([listProductsToStorePickings, listProductsProcessed, filtersPicking, listRejectionReasons]));
                   if (listProductsToStorePickings.length < 1) {
                     ScanditMatrixSimple.setText(
-                      `No hay más productos pendientes de añadir al traspaso.`,
+                      `No hay más productos pendientes.`,
                       this.scanditProvider.colorsMessage.info.color,
                       this.scanditProvider.colorText.color,
                       16);
@@ -311,16 +313,52 @@ export class PickingStoreOnlineScanditService {
                     }else{
                       console.error(res);
                       ScanditMatrixSimple.hideLoadingDialog();
-                      this.setText('Ha ocurrido un error al intentar rechazar el artículo en el traspaso actual.', this.scanditProvider.colorsMessage.error.color, 16);
+                      this.setText('Ha ocurrido un error al intentar rechazar la petición de tienda.', this.scanditProvider.colorsMessage.error.color, 16);
                     }
                   }, error => {
                     console.error(error);
                     ScanditMatrixSimple.hideLoadingDialog();
-                    this.setText('Ha ocurrido un error al intentar rechazar el artículo en el traspaso actual.', this.scanditProvider.colorsMessage.error.color, 16);
+                    this.setText('Ha ocurrido un error al intentar rechazar la petición de tienda.', this.scanditProvider.colorsMessage.error.color, 16);
                   }).catch(error => {
                     console.error(error);
                     ScanditMatrixSimple.hideLoadingDialog();
-                    this.setText('Ha ocurrido un error al intentar rechazar el artículo en el traspaso actual.', this.scanditProvider.colorsMessage.error.color, 16);
+                    this.setText('Ha ocurrido un error al intentar rechazar la petición de tienda.', this.scanditProvider.colorsMessage.error.color, 16);
+                  });
+                  break;
+                case 'request_cancel':
+                  ScanditMatrixSimple.showLoadingDialog('Cancelando pedido online...');
+                  const reference = response.requestReference;
+                  this.pickingStoreService.postCancelRequest(parseInt(reference)).then((res: Response) => {
+                    if(res.code == 200){
+                      //delete rejected request from pending requests and save it
+                      let canceledRequest: ListItem;
+                      for (let index = 0; index < listProductsToStorePickings.length; index++) {
+                        if (listProductsToStorePickings[index].reference == reference && listProductsToStorePickings[index].hasOwnProperty('shippingMode')) {
+                          canceledRequest = listProductsToStorePickings.splice(index, 1)[0];
+                          break;
+                        }
+                      }
+                      //add rejected request to processed requests
+                      listProductsProcessed.push(canceledRequest);
+                      //other stuff
+                      ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+                      this.events.publish('picking-stores:refresh');
+                      ScanditMatrixSimple.hideLoadingDialog();
+                      this.setText('El pedido online ha sido cancelado.', this.scanditProvider.colorsMessage.success.color, 16);
+                      ScanditMatrixSimple.hideInfoProductDialog();
+                    }else{
+                      console.error(res);
+                      ScanditMatrixSimple.hideLoadingDialog();
+                      this.setText('Ha ocurrido un error al intentar cancelar el pedido.', this.scanditProvider.colorsMessage.error.color, 16);
+                    }
+                  }, error => {
+                    console.error(error);
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.setText('Ha ocurrido un error al intentar cancelar el pedido.', this.scanditProvider.colorsMessage.error.color, 16);
+                  }).catch(error => {
+                    console.error(error);
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.setText('Ha ocurrido un error al intentar cancelar el pedido.', this.scanditProvider.colorsMessage.error.color, 16);
                   });
                   break;
               }
