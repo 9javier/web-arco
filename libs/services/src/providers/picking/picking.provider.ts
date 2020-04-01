@@ -3,6 +3,11 @@ import {ShoesPickingModel} from "../../models/endpoints/ShoesPicking";
 import {PickingModel} from "../../models/endpoints/Picking";
 import {StoresLineRequestsModel} from "../../models/endpoints/StoresLineRequests";
 import {PickingStoreModel} from "../../models/endpoints/PickingStore";
+import {DeliveryRequestModel} from "../../models/endpoints/DeliveryRequest";
+import DeliveryRequest = DeliveryRequestModel.DeliveryRequest;
+import {LineRequestModel} from "../../models/endpoints/LineRequest";
+import LineRequest = LineRequestModel.LineRequest;
+import Filters = PickingStoreModel.Filters;
 
 @Injectable({
   providedIn: 'root'
@@ -164,6 +169,30 @@ export class PickingProvider {
   }
   set listProductsToStorePickings(value: StoresLineRequestsModel.LineRequests[]) {
     this._listProductsToStorePickings = value;
+  }
+
+  private _selectedPendingRequests: Array<LineRequest | DeliveryRequest> = null;
+  get selectedPendingRequests(): Array<LineRequest | DeliveryRequest> {
+    return this._selectedPendingRequests;
+  }
+  set selectedPendingRequests(value: Array<LineRequest | DeliveryRequest>) {
+    this._selectedPendingRequests = value;
+  }
+
+  private _selectedProcessedRequests: Array<LineRequest | DeliveryRequest> = null;
+  get selectedProcessedRequests(): Array<LineRequest | DeliveryRequest> {
+    return this._selectedProcessedRequests;
+  }
+  set selectedProcessedRequests(value: Array<LineRequest | DeliveryRequest>) {
+    this._selectedProcessedRequests = value;
+  }
+
+  private _requestFilters: Filters = null;
+  get requestFilters(): Filters {
+    return this._requestFilters;
+  }
+  set requestFilters(value: Filters) {
+    this._requestFilters = value;
   }
 
   private _listProductsProcessedToStorePickings: StoresLineRequestsModel.LineRequests[] = null;

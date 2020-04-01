@@ -128,6 +128,11 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/picking-tasks/picking-tasks.module#PickingTasksModule'
   },
   {
+    path: 'picking-tasks-stores',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/picking-tasks-stores/picking-tasks-stores.module#PickingTasksStoresModule'
+  },
+  {
     path: 'warehouses',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/warehouses/warehouses.module#WarehousesModule',

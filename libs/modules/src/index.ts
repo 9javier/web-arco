@@ -148,6 +148,10 @@ export * from './user-assignment-picking/user-assignment-picking.module';
 export * from './picking-tasks/picking-tasks.component';
 export * from './picking-tasks/picking-tasks.module';
 
+// Picking Tasks Stores
+export * from './picking-tasks-stores/picking-tasks-stores.component';
+export * from './picking-tasks-stores/picking-tasks-stores.module';
+
 /**Permissions */
 export * from './permissions/permissions.module';
 export * from './permissions/permissions.page';

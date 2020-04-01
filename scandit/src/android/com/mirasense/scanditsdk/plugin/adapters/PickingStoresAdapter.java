@@ -44,19 +44,23 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
     TextView tvModelValue = itemView.findViewById(resources.getIdentifier("tvModelValue", "id", packageName));
     TextView tvSizeValue = itemView.findViewById(resources.getIdentifier("tvSizeValue", "id", packageName));
     TextView tvBrandValue = itemView.findViewById(resources.getIdentifier("tvBrandValue", "id", packageName));
+    TextView tvTypeValue = itemView.findViewById(resources.getIdentifier("tvTypeValue", "id", packageName));
 
     LinearLayout sizeLayout = itemView.findViewById(resources.getIdentifier("sizeLayout", "id", packageName));
     LinearLayout brandLayout = itemView.findViewById(resources.getIdentifier("brandLayout", "id", packageName));
+    LinearLayout typeLayout = itemView.findViewById(resources.getIdentifier("typeLayout", "id", packageName));
 
     try {
       if (products.get(position).isNull("id")) {
         sizeLayout.setVisibility(View.INVISIBLE);
         brandLayout.setVisibility(View.INVISIBLE);
+        typeLayout.setVisibility(View.INVISIBLE);
 
         tvModelValue.setText(products.get(position).getString("reference"));
       }else{
         sizeLayout.setVisibility(View.VISIBLE);
         brandLayout.setVisibility(View.VISIBLE);
+        typeLayout.setVisibility(View.VISIBLE);
 
         if (!products.get(position).isNull("model")) {
           tvModelValue.setText(products.get(position).getJSONObject("model").getString("reference"));
@@ -64,12 +68,22 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
             tvBrandValue.setText(products.get(position).getJSONObject("model").getJSONObject("brand").getString("name"));
           }
         }
+
         if (!products.get(position).isNull("size")) {
           tvSizeValue.setText(products.get(position).getJSONObject("size").getString("name"));
         }
 
-        itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForProduct(new LineRequestsProduct(products.get(position)), resources, packageName, false));
-      }
+        if (!products.get(position).isNull("shippingMode")) {
+          tvTypeValue.setText("PO");
+        }else{
+          tvTypeValue.setText("PT");
+        }
+
+        if(tvTypeValue.getText().equals("PO")){
+          itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForDeliveryRequest(new LineRequestsProduct(products.get(position)), resources, packageName, false));
+        }else{
+          itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForProduct(new LineRequestsProduct(products.get(position)), resources, packageName, false));
+        }      }
     } catch (JSONException e) {
       e.printStackTrace();
     }

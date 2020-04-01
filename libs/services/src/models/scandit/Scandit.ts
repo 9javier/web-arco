@@ -16,7 +16,8 @@ export namespace ScanditModel {
       model: Filters[],
       brand: Filters[],
       size: Filters[],
-      color: Filters[]
+      color: Filters[],
+      type?: Filters[]
     },
     reasonId: number,
     requestReference: string,
@@ -69,7 +70,8 @@ export namespace ScanditModel {
     filters = 'filters',
     request_reject = 'request_reject',
     products_out_of_packing = 'products_out_of_packing',
-    finish = 'matrix_simple_finish'
+    finish = 'matrix_simple_finish',
+    request_cancel = 'request_cancel'
   }
 
   enum ActionsPrintTags {

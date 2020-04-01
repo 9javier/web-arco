@@ -13,6 +13,7 @@ public class FiltersPickingStores {
   private ArrayList<SingleFilterPickingStores> models;
   private ArrayList<SingleFilterPickingStores> orderTypes;
   private ArrayList<SingleFilterPickingStores> sizes;
+  private ArrayList<SingleFilterPickingStores> types;
 
   public FiltersPickingStores() {
     this.brands = new ArrayList<>();
@@ -20,6 +21,7 @@ public class FiltersPickingStores {
     this.models = new ArrayList<>();
     this.orderTypes = new ArrayList<>();
     this.sizes = new ArrayList<>();
+    this.types = new ArrayList<>();
   }
 
   public void fromJsonObject(JSONObject filters) throws JSONException {
@@ -63,6 +65,14 @@ public class FiltersPickingStores {
         this.sizes.add(size);
       }
     }
+    if (!filters.isNull("types")) {
+      JSONArray types = filters.getJSONArray("types");
+      for (int iType = 0; iType < types.length(); iType++) {
+        SingleFilterPickingStores type = new SingleFilterPickingStores();
+        type.fromJsonObject(types.getJSONObject(iType));
+        this.types.add(type);
+      }
+    }
   }
 
   public ArrayList<SingleFilterPickingStores> getBrands() {
@@ -98,5 +108,12 @@ public class FiltersPickingStores {
   }
   public void setSizes(ArrayList<SingleFilterPickingStores> sizes) {
     this.sizes = sizes;
+  }
+
+  public ArrayList<SingleFilterPickingStores> getTypes() {
+    return types;
+  }
+  public void setTypes(ArrayList<SingleFilterPickingStores> types) {
+    this.types = types;
   }
 }

@@ -1,6 +1,12 @@
 import {StoresLineRequestsModel} from "./StoresLineRequests";
-import {WarehouseModel} from "@suite/services";
+import {ModelModel, SizeModel, WarehouseModel} from "@suite/services";
 import {HttpRequestModel} from "./HttpRequest";
+import {DeliveryRequestModel} from "./DeliveryRequest";
+import Model = ModelModel.Model;
+import Size = SizeModel.Size;
+import DeliveryRequest = DeliveryRequestModel.DeliveryRequest;
+import {LineRequestModel} from "./LineRequest";
+import LineRequest = LineRequestModel.LineRequest;
 
 export namespace PickingStoreModel {
 
@@ -18,7 +24,19 @@ export namespace PickingStoreModel {
 
   export interface SendProcess {
     productReference: string,
-    filters: ParamsFiltered
+    storeOnline?: boolean
+  }
+
+  export interface ListItem {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    reference: string,
+    status: number,
+    model: Model,
+    size: Size,
+    selected: boolean,
+    shippingMode?: number
   }
 
   export interface ChangeStatus {
@@ -54,6 +72,13 @@ export namespace PickingStoreModel {
     errors: any;
   }
 
+  export interface StoreOnlineRequestsResponse extends HttpRequestModel.Response {
+    data: Array<LineRequest | DeliveryRequest>;
+    message: string;
+    code: number;
+    errors: any;
+  }
+
   export interface Pagination {
     page: number;
     limit: number;
@@ -84,7 +109,8 @@ export namespace PickingStoreModel {
     colors?: FilterObj[],
     models?: FilterObj[],
     ordertypes?: FilterObj[],
-    sizes?: FilterObj[]
+    sizes?: FilterObj[],
+    types?: FilterObj[]
   }
 
   export interface ResponseDataLineRequestsPending {
@@ -140,7 +166,8 @@ export namespace PickingStoreModel {
   export interface ParamsRejectRequest {
     reference: string,
     reasonRejectionId: number,
-    filters: ParamsFiltered
+    filters: ParamsFiltered,
+    storeOnline?: boolean
   }
 
   export interface RejectRequest {
@@ -162,10 +189,7 @@ export namespace PickingStoreModel {
   }
 
   export interface ResponseSendProcess extends HttpRequestModel.Response {
-    data: {
-      inventory: any,
-      linesRequestFiltered: ResponseDataLineRequestsFiltered
-    };
+    data: (DeliveryRequest | LineRequest);
     message: string;
     code: number;
     errors: any;
