@@ -79,8 +79,11 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
           tvTypeValue.setText("PT");
         }
 
-        itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForProduct(new LineRequestsProduct(products.get(position)), resources, packageName, false));
-      }
+        if(tvTypeValue.getText().equals("PO")){
+          itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForDeliveryRequest(new LineRequestsProduct(products.get(position)), resources, packageName, false));
+        }else{
+          itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForProduct(new LineRequestsProduct(products.get(position)), resources, packageName, false));
+        }      }
     } catch (JSONException e) {
       e.printStackTrace();
     }

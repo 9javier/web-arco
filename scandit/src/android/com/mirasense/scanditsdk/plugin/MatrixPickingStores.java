@@ -771,6 +771,73 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     dialogInfoForProduct = dialogProductInfoLocal;
   }
 
+  public static void showInfoForDeliveryRequest(LineRequestsProduct lineRequestsProduct, Resources resources, String package_name, boolean isProcessed) {
+    final PickingStoreRejectionReason[] pickingStoreRejectionReasonSelected = { listRejectionReasons.get(0) };
+
+    View customView = LayoutInflater.from(matrixPickingStores).inflate(resources.getIdentifier("product_info_picking_store", "layout", package_name), viewGroup, false);
+    ImageView ivProductPickingStore = customView.findViewById(resources.getIdentifier("ivProductPickingStore", "id", package_name));
+    TextView tvReferencePickingStore = customView.findViewById(resources.getIdentifier("tvReferencePickingStore", "id", package_name));
+    TextView tvNamePickingStore = customView.findViewById(resources.getIdentifier("tvNamePickingStore", "id", package_name));
+    TextView tvSizePickingStore = customView.findViewById(resources.getIdentifier("tvSizePickingStore", "id", package_name));
+    TextView tvBrandPickingStore = customView.findViewById(resources.getIdentifier("tvBrandPickingStore", "id", package_name));
+    TextView tvColorPickingStore = customView.findViewById(resources.getIdentifier("tvColorPickingStore", "id", package_name));
+    Spinner sRejectionReasonPickingStore = customView.findViewById(resources.getIdentifier("sRejectionReasonPickingStore", "id", package_name));
+    LinearLayout llRejectionPickingStore = customView.findViewById(resources.getIdentifier("llRejectionPickingStore", "id", package_name));
+    Button btnRejectionPickingStore = customView.findViewById(resources.getIdentifier("btnRejectionPickingStore", "id", package_name));
+    btnRejectionPickingStore.setText("Cancelar");
+    View vRejectionReasonDividerPickingStore = customView.findViewById(resources.getIdentifier("vRejectionReasonDividerPickingStore", "id", package_name));
+    View vRejectionReasonNoDividerPickingStore = customView.findViewById(resources.getIdentifier("vRejectionReasonNoDividerPickingStore", "id", package_name));
+
+    if (!urlBase.isEmpty()) {
+      String url = urlBase + lineRequestsProduct.getModel().getImageUrl();
+      Glide.with(matrixPickingStores).load(url).fitCenter().into(ivProductPickingStore);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        ivProductPickingStore.setClipToOutline(true);
+      }
+    }
+
+    tvReferencePickingStore.setText(lineRequestsProduct.getModel().getReference());
+    tvNamePickingStore.setText(lineRequestsProduct.getModel().getName());
+    tvSizePickingStore.setText(lineRequestsProduct.getSize().getName());
+    tvBrandPickingStore.setText(lineRequestsProduct.getModel().getBrand().getName());
+    tvColorPickingStore.setText(lineRequestsProduct.getModel().getColor().getName());
+
+    vRejectionReasonDividerPickingStore.setVisibility(View.GONE);
+    vRejectionReasonNoDividerPickingStore.setVisibility(View.VISIBLE);
+    llRejectionPickingStore.setVisibility(View.GONE);
+    sRejectionReasonPickingStore.setVisibility(View.GONE);
+
+    if (!isProcessed) {
+      vRejectionReasonDividerPickingStore.setVisibility(View.VISIBLE);
+      vRejectionReasonNoDividerPickingStore.setVisibility(View.GONE);
+      sRejectionReasonPickingStore.setVisibility(View.GONE);
+      llRejectionPickingStore.setVisibility(View.VISIBLE);
+
+      btnRejectionPickingStore.setOnClickListener(view -> {
+        JSONObject jsonObject = new JSONObject();
+        try {
+          jsonObject.put("result", true);
+          jsonObject.put("action", "request_cancel");
+          jsonObject.put("requestReference", lineRequestsProduct.getReference());
+        } catch (JSONException e) {
+
+        }
+        PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+        pResult.setKeepCallback(true);
+        ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+      });
+    }
+
+    Dialog dialogProductInfoLocal = new Dialog(matrixPickingStores);
+    dialogProductInfoLocal.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    dialogProductInfoLocal.setContentView(customView);
+    dialogProductInfoLocal.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    dialogProductInfoLocal.setCancelable(true);
+    dialogProductInfoLocal.show();
+
+    dialogInfoForProduct = dialogProductInfoLocal;
+  }
+
   public static void hideInfoForProduct() {
     if (dialogInfoForProduct != null) {
       dialogInfoForProduct.hide();
