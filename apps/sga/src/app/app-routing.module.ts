@@ -453,7 +453,31 @@ const routes: Routes = [
     data: {
       name: 'Drop-Files'
     }
-  }
+  },
+  {
+    path:'expedition-manual',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/expedition-manual/expedition-manual.module#ExpeditionManualModule',
+    data: {
+      name: 'Expedition-Manual'
+    }
+  },
+  {
+    path:'expedition-collected',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/expedition-collected/expedition-collected.module#ExpeditionCollectedModule',
+    data: {
+      name: 'Expedition-Collected'
+    }
+  },
+  // {
+  //   path:'package-collected',
+  //   canActivate:[AuthGuard],
+  //   loadChildren: '../../../../libs/modules/src/expedition-collected/package-collected/package-collected.module#PackageCollectedModule',
+  //   data: {
+  //     name: 'Expedition-Collected'
+  //   }
+  // }
 ];
 
 @NgModule({

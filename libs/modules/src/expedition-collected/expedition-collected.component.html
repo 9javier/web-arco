@@ -1,0 +1,34 @@
+<ion-content>
+  <mat-tab-group [(selectedIndex)]='selectedIndex' mat-align-tabs="center">
+      <mat-tab label="DHL">
+        <ng-template matTabContent> 
+          <suite-package-collected [id]="1"></suite-package-collected>
+        </ng-template>
+      </mat-tab>
+      <mat-tab label="EXPRESS">
+        <ng-template matTabContent> 
+          <suite-package-collected [id]="2"></suite-package-collected>
+        </ng-template>
+      </mat-tab>
+      <mat-tab label="CASTORES">
+        <ng-template matTabContent> 
+          <suite-package-collected [id]="3"></suite-package-collected>
+        </ng-template>
+      </mat-tab>
+      <mat-tab label="ESTAFETA">
+        <ng-template matTabContent> 
+          <suite-package-collected [id]="4"></suite-package-collected>
+        </ng-template>
+      </mat-tab>
+  </mat-tab-group>
+
+  <!-- <ion-fab  vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-button (click)="update()" matTooltip="Agregar Incidencia" matTooltipClass="tooltip">
+      <ion-icon name="md-add"></ion-icon>
+      Enviar
+    </ion-button>
+  </ion-fab>
+</ion-content> -->
+
+
+

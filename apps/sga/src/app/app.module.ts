@@ -35,7 +35,8 @@ import { ModalReviewModule } from '../../../../libs/modules/src/components/modal
 import {SignatureModule} from '../../../../libs/modules/src/signature/signature.module';
 import { ReviewImagesModule } from '../../../../libs/modules/src/incidents/components/review-images/review-images.module';
 import { RegistryDetailsModule } from 'libs/modules/src/components/modal-defective/registry-details/registry-details.module';
-
+import { LogisticOperatorModule } from '../../../../libs/modules/src/expedition-manual/logistic-operator/logistic-operator.module';
+ 
 registerLocaleData(localeEs);
 @NgModule({
   declarations: [AppComponent, ErrordialogComponent],
@@ -62,7 +63,7 @@ registerLocaleData(localeEs);
     ModalReviewModule,
     SignatureModule,
     ReviewImagesModule, 
-    RegistryDetailsModule
+    RegistryDetailsModule,
   ],
   providers: [
     StatusBar,

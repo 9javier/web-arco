@@ -1,0 +1,95 @@
+
+<mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
+  
+  <mat-row  *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  <ng-container matColumnDef="select">
+    <mat-header-cell class="my-sticky-col info  checkbox header-checkbox" *matHeaderCellDef>
+      <div class="content-checkbox">
+        <ng-container *ngIf="dataSource !== undefined" >
+          <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                        [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()"
+                        [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </ng-container>
+      </div>
+      <div>Todas</div>
+    </mat-header-cell>
+    <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
+      <ng-container *ngIf="dataSource !== undefined" >
+        <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                      [matRippleColor]="'black'" (click)="$event.stopPropagation()"
+                      (change)="$event ? selection.toggle(row) : null"
+                      [checked]="selection.isSelected(row)"
+                      [aria-label]="checkboxLabel(row)">
+        </mat-checkbox>
+      </ng-container>
+    </mat-cell>
+  </ng-container>
+  
+   
+   <ng-container matColumnDef="expedition">
+    <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Expedition
+      <!-- <suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'UNIQUECODE'"
+                            [listItems]="entities.uniquecode
+                            [isFiltering]="isFilteringUniqueCode != entities.uniquecode.length"
+                            (applyFilters)="applyFilters($event, 'uniquecode')">
+      </suite-filter-button> -->
+    </mat-header-cell>
+    <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.expedition}} </mat-cell>
+  </ng-container>
+   <ng-container matColumnDef="uniquecode">
+    <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>UniqueCode
+      <!-- <suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'UNIQUECODE'"
+                            [listItems]="entities.uniquecode
+                            [isFiltering]="isFilteringUniqueCode != entities.uniquecode.length"
+                            (applyFilters)="applyFilters($event, 'uniquecode')">
+      </suite-filter-button> -->
+    </mat-header-cell>
+    <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.trackingPackage.uniqueCode}} </mat-cell>
+  </ng-container>
+   <ng-container matColumnDef="warehouse">
+    <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Warehouse
+      <!-- <suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'UNIQUECODE'"
+                            [listItems]="entities.uniquecode
+                            [isFiltering]="isFilteringUniqueCode != entities.uniquecode.length"
+                            (applyFilters)="applyFilters($event, 'uniquecode')">
+      </suite-filter-button> -->
+    </mat-header-cell>
+    <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.warehouse.name}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="products">
+    <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Productos
+    </mat-header-cell>
+    <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.products}} </mat-cell>
+  </ng-container>
+  
+  <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+</mat-table>
+<ion-grid>
+<ion-row>
+  <ion-col size='8'>
+    <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+  </ion-col>
+  <ion-col>
+  </ion-col>
+</ion-row>
+</ion-grid>
+
+
+  <ion-fab  vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-button (click)="update()" matTooltip="Agregar Incidencia" matTooltipClass="tooltip">
+      <!-- <ion-icon name="md-add"></ion-icon> -->
+      Enviar
+    </ion-button>
+  </ion-fab>
+
+
+
+<!-- <ion-footer no-shadow>
+	<ion-toolbar position="bottom">
+		<button ion-button full>Button</button>
+	</ion-toolbar>
+</ion-footer> -->

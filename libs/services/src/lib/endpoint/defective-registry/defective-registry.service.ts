@@ -2,7 +2,7 @@ import { HttpRequestModel } from 'libs/services/src/models/endpoints/HttpRequest
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DefectiveRegistryModel } from '../../../models/endpoints/DefectiveRegistry';
 import { BehaviorSubject } from "rxjs";
@@ -179,4 +179,203 @@ export class DefectiveRegistryService {
     this.refreshListRegistry.next(refresh);
   }
 
+  expeditions(form): Observable<any>{
+    const body = {
+      id:1
+    };
+    return this.http.post(this.getBrandsByProvidersUrl, body).pipe(map((response: any) => {
+      let  data = {
+        listIncidencesWithFormat: [
+          {
+            id:1,
+            name:"operators"
+          },
+          {
+            id:2,
+            name:"name"
+          },
+          {
+            id:3,
+            name:"lastname"
+          },
+          {
+            id:4,
+            name:"dni"
+          },
+          {
+            id:5,
+            name:"phone"
+          },
+          {
+            id:6,
+            name:"direction"
+          },
+          {
+            id:7,
+            name:"province"
+          },
+          {
+            id:8,
+            name:"country"
+          },
+        ], 
+        results:[
+          {
+            operator:'DHL',
+            name:"fulanito",
+            lastname:"fulanito",
+            dni:"dni",
+            phone:"32221321",
+            direction:"mexico",
+            province:"guadalajara",
+            country:"mexico",
+            postalcode:"23452",
+            packages:"2"
+          },
+          {
+            operator:'DHL',
+            name:"fulanito",
+            lastname:"fulanito",
+            dni:"dni",
+            phone:"32221321",
+            direction:"mexico",
+            province:"guadalajara",
+            country:"mexico",
+            postalcode:"23452",
+            packages:"2"
+          },
+          {
+            operator:'DHL',
+            name:"fulanito",
+            lastname:"fulanito",
+            dni:"dni",
+            phone:"32221321",
+            direction:"mexico",
+            province:"guadalajara",
+            country:"mexico",
+            postalcode:"23452",
+            packages:"2"
+          },
+          {
+            operator:'DHL',
+            name:"fulanito",
+            lastname:"fulanito",
+            dni:"dni",
+            phone:"32221321",
+            direction:"mexico",
+            province:"guadalajara",
+            country:"mexico",
+            postalcode:"23452",
+            packages:"2"
+          },
+        ], 
+        pagination:{
+          selectPage: 1,
+          firstPage: 1,
+          lastPage: 1,
+          limit: 10,
+          totalResults: 4
+        }, 
+        listAvailableStatus:[
+          {id: 1, name: "Pendiente Decisión"},
+          {id: 2, name: "Pendiente Reparación"},
+          {id: 3, name: "Reparado"},
+          {id: 4, name: "En Stock"},
+          {id: 5, name: "En Transito"},
+        ],
+      };
+      return data;
+    }));
+    
+
+  }
+   
+  getFilters(){
+    const body = {
+      id: [],
+      user: [],
+      product: [],
+      model: [],
+      size: [],
+      brand: [],
+      color: [],
+      storeDetection: [],
+      dateDetection: [],
+      statusManagementDefect: [],
+      defectTypeParent: [],
+      defectTypeChild: [],
+      barCode: [],
+      warehouse: [],
+      factoryReturn: []
+    };
+
+    return this.http.post<HttpRequestModel.Response>(this.entitiesFiltersFalseUrlAl, body).pipe(
+      map(resp =>{
+        let filters = {
+          operator:[
+            {
+              id:1,
+              name:'DHL'
+            }
+          ],
+          name:[
+            {
+              id:1,
+              name:'fulanito'
+            }
+          ],
+          lastname:[
+            {
+              id:1,
+              name:'fulanito'
+            }
+          ],
+          dni:[
+            {
+              id:1,
+              name:'dni'
+            }
+          ],
+          phone:[
+            {
+              id:1,
+              name:'32221321'
+            }
+          ],
+          direction:[
+            {
+              id:1,
+              name:'mexico'
+            }
+          ],
+          province:[
+            {
+              id:1,
+              name:'guadalajara'
+            }
+          ],
+          country:[
+            {
+              id:1,
+              name:'mexico'
+            }
+          ],
+          postalcode:[
+            {
+              id:1,
+              name:'23452'
+            }
+          ],
+          packages:[
+            {
+              id:1,
+              name:'2'
+            }
+          ],
+        }
+
+        return filters;
+      })
+    )
+  }
 }

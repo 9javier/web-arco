@@ -1,0 +1,119 @@
+    <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
+      
+
+      <ng-container matColumnDef="operator">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Operador
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonOperator [title]="'OPERATORS'"
+                                [listItems]="entities.operator"
+                                [isFiltering]="isFilteringOperator != entities.operator.length"
+                                (applyFilters)="applyFilters($event, 'operator')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.operator}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Nombre
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonName [title]="'NAME'"
+                                [listItems]="entities.name"
+                                [isFiltering]="isFilteringOperator != entities.name.length"
+                                (applyFilters)="applyFilters($event, 'name')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.name}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="lastname">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Apellidos
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonLastName [title]="'LASTNAMES'"
+                                [listItems]="entities.lastname"
+                                [isFiltering]="isFilteringOperator != entities.lastname.length"
+                                (applyFilters)="applyFilters($event, 'lastname')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.lastname}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="dni">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>DNI
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDni [title]="'DNI'"
+                                [listItems]="entities.dni"
+                                [isFiltering]="isFilteringOperator != entities.dni.length"
+                                (applyFilters)="applyFilters($event, 'dni')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.dni}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="phone">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Telefono
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonPhone [title]="'PHONE'"
+                                [listItems]="entities.phone"
+                                [isFiltering]="isFilteringOperator != entities.phone.length"
+                                (applyFilters)="applyFilters($event, 'phone')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.phone}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="direction">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Direccion
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDirection [title]="'DIRECTION'"
+                                [listItems]="entities.direction"
+                                [isFiltering]="isFilteringOperator != entities.direction.length"
+                                (applyFilters)="applyFilters($event, 'direction')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.direction}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="province">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Provincia
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProvince [title]="'PROVINCE'"
+                                [listItems]="entities.province"
+                                [isFiltering]="isFilteringOperator != entities.province.length"
+                                (applyFilters)="applyFilters($event, 'province')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.province}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="country">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Pais
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonCountry [title]="'COUNTRY'"
+                                [listItems]="entities.country"
+                                [isFiltering]="isFilteringOperator != entities.country.length"
+                                (applyFilters)="applyFilters($event, 'country')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.country}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="postalcode">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Codigo Postal
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonPostal [title]="'POSTAL CODE'" 
+                                [listItems]="entities.postalcode"
+                                [isFiltering]="isFilteringOperator != entities.postalcode.length"
+                                (applyFilters)="applyFilters($event, 'postalcode')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.postalcode}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="packages">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Numero de Cajas
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonPackages [title]="'PACKAGES'" 
+                                [listItems]="entities.packages"
+                                [isFiltering]="isFilteringOperator != entities.packages.length"
+                                (applyFilters)="applyFilters($event, 'packages')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.packages}} </mat-cell>
+      </ng-container>
+
+     
+      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+      <mat-row (click)="goDetails(row)" *matRowDef="let row; columns: displayedColumns;" class="incidence-row">
+      </mat-row>
+    </mat-table>
+  <ion-grid>
+    <ion-row>
+      <ion-col size='8'>
+        <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+      </ion-col>
+      <ion-col>
+      </ion-col>
+    </ion-row>
+  </ion-grid>

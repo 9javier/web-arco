@@ -428,6 +428,28 @@ export class MenuComponent implements OnInit {
       url: '/drop-files',
       icon: 'folder'
     },
+    {
+      title: 'Expedition Manual',
+      open: false,
+      type: 'wrapper',
+      icon: 'build',
+      children: [
+        {
+          title: 'Lista',
+          id: 'expedition-manual',
+          url: '/expedition-manual',
+          icon: 'cog',
+          tooltip: 'Lista de expediciones manuales'
+        },
+        {
+          title: 'Recogidas',
+          id: 'expedition-collected',
+          url: '/expedition-collected',
+          icon: 'cog',
+          tooltip: 'Lista de expediciones recogidas'
+        }
+      ]
+    }
   ];
 
   alPages: MenuItemList = [
@@ -776,7 +798,8 @@ export class MenuComponent implements OnInit {
           tooltip: 'Ajustes de configuración de la aplicación. Ej: Mac de la impresora'
         }
       ]
-    }
+    },
+    
 
 
   ];
