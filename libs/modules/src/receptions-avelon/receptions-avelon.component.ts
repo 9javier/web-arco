@@ -19,6 +19,7 @@ import {type} from '../../../services/src/lib/endpoint/web-socket/enums/typeData
 import {StateExpeditionAvelonService} from "../../../services/src/lib/endpoint/state-expedition-avelon/state-expedition-avelon.service";
 import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
 import {ActivatedRoute} from "@angular/router";
+import {TypeModelVisualization} from "./enums/model_visualization.enum";
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -60,7 +61,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }[];
   response: ReceptionAvelonModel.Reception;
   oldBrands: ReceptionAvelonModel.Data[] = [];
-  subscriptions: Subscription;
+  subscriptions: Subscription[] = [];
   providers: Array<any>;
   isReceptionStarted: boolean;
   expedition: string;
@@ -96,6 +97,10 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   isReceptionWithoutOrder: boolean = false;
 
+  public TypesModel = TypeModelVisualization;
+  public typeModelVisualization: number = TypeModelVisualization.MODEL_NAME;
+  public lastTypeModelVisualization: number = TypeModelVisualization.MODEL_NAME;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private reception: ReceptionsAvelonService,
@@ -110,6 +115,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   ) {}
 
   ngOnInit() {
+    this.typeModelVisualization = TypeModelVisualization.MODEL_NAME;
     this.isReceptionWithoutOrder = !!(this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path && this.activatedRoute.snapshot.routeConfig.path == 'free');
 
     this.intermediaryService.presentLoading('Cargando');
@@ -120,7 +126,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.isReceptionStarted = false;
     this.deliveryNote = null;
     this.expeditionStarted = null;
-    this.subscriptions = this.reception.getAllProviders().subscribe(
+    this.subscriptions.push(this.reception.getAllProviders().subscribe(
       (data: Array<ReceptionAvelonModel.Providers>) => {
         this.providers = data;
         this.providersAux = data;
@@ -137,14 +143,20 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           );
         this.intermediaryService.dismissLoading();
       }
-    );
+    ));
     this.stateExpeditionAvelonService.getIndex().subscribe(response=>{
       this.stateExpeditionAvelonProvider.states = response;
     });
   }
 
   ngOnDestroy() {
-    this.subscriptions.unsubscribe();
+    for (let subscription of this.subscriptions) {
+      try {
+        subscription.unsubscribe();
+      } catch (error) {
+        console.error('Error to try unsubscribe of some observable');
+      }
+    }
     clearInterval(this.interval);
   }
 
@@ -160,6 +172,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   resetReceptionProcess(){
     this.eanInput.nativeElement.value = "";
+    this.result.ean = null;
     this.listSizes = [];
 
     this.stateAnimationForm = 'in';
@@ -169,6 +182,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.infoHeaderReceptionComponent.loadInfoExpedition({packingsPallets: null, provider: null, expeditionReference: null, date: null, shipper: null, states: null});
     this.deliveryNote = null;
     this.expeditionStarted = null;
+
+    this.typeModelVisualization = TypeModelVisualization.MODEL_NAME;
 
     this.ngOnInit();
   }
@@ -217,6 +232,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             case Type.EAN_CODE:
               this.eanInput.nativeElement.value = data.selected.id;
               this.result.ean = this.eanInput.nativeElement.value;
+              this.sizeSelectedInSelector(null);
               break;
             case undefined:
               this.expedition = data.selected.id;
@@ -386,25 +402,29 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   resetAll() {
-    this.intermediaryService.presentLoading('Cargando');
-    this.response.models = this.filterData.models;
-    this.response.models.map(elem => elem.selected = false);
-    this.response.colors = this.filterData.colors;
-    this.response.colors.map(elem => elem.selected = false);
-    this.response.brands = this.filterData.brands;
-    this.response.brands.map(elem => elem.selected = false);
-    this.result.modelId = undefined;
-    this.result.brandId = undefined;
-    this.result.sizeId = undefined;
-    this.result.colorId = undefined ;
-    this.modelSelected = null;
-    this.reception.setModelsList(this.response.models);
-    this.reception.setBrandsList(this.response.brands);
-    this.reception.setColorsList(this.response.colors);
-    this.intermediaryService.dismissLoading();
-    this.expedit =this.expedition;
-    this.result.ean="";
-    this.listSizes = [];
+    this.intermediaryService.presentLoading('Recargando', () => {
+      this.response.models = this.filterData.models;
+      this.response.models.map(elem => elem.selected = false);
+      this.response.colors = this.filterData.colors;
+      this.response.colors.map(elem => elem.selected = false);
+      this.response.brands = this.filterData.brands;
+      this.response.brands.map(elem => elem.selected = false);
+
+      this.result.modelId = undefined;
+      this.result.brandId = undefined;
+      this.result.sizeId = undefined;
+      this.result.colorId = undefined;
+      this.modelSelected = null;
+
+      this.reception.setModelsList(this.response.models);
+      this.reception.setBrandsList(this.response.brands);
+      this.reception.setColorsList(this.response.colors);
+
+      this.expedit = this.expedition;
+      this.result.ean="";
+      this.listSizes = [];
+      this.intermediaryService.dismissLoading();
+    });
   }
 
   resetSizes(){
@@ -485,8 +505,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   listSelected() {
-    this.reception.getEmitList().subscribe((event: any) => {
-
+    this.subscriptions.push(this.reception.getEmitList().subscribe((event: any) => {
       switch (event.type) {
         case 'brands':
           if (event.dato.selected) {
@@ -549,7 +568,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           break;
       }
 
-    });
+    }));
   }
 
   getModelAndColorColors(brandId: number){
@@ -631,6 +650,20 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       }
     }
     this.reception.setColorsList(this.response.colors);
+  }
+
+  public sizeSelectedInSelector(item: ReceptionAvelonModel.LoadSizesList) {
+    for (let size of this.listSizes) {
+      if ((item && size.id != item.id) || !item) {
+        size.quantity = 0;
+      }
+    }
+  }
+
+  public removeEanCode(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.result.ean = null;
   }
 
   public printProductsLoading() {
@@ -1073,4 +1106,20 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       }
     });
   }
+
+  //region Selection of data visualization for model
+  public changeValue() {
+    this.reception
+      .postReloadModelsList({typeVisualization: this.typeModelVisualization, providerId: this.providerId})
+      .subscribe((res) => {
+        this.filterData.models = res.data;
+        this.resetAll();
+        this.lastTypeModelVisualization = this.typeModelVisualization;
+      }, error => {
+        console.error('Error reloading models: ', error);
+        this.typeModelVisualization = this.lastTypeModelVisualization;
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los modelos por el valor seleccionado.');
+      });
+  }
+  //endregion
 }

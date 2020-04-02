@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
+import {PlatformLocation} from "@angular/common";
 
 @Component({
   selector: 'scanner-manual',
@@ -13,13 +14,19 @@ export class ScannerManualComponent implements OnInit {
   @Input() height: string = null;
   @Output() newValue = new EventEmitter();
   @Output() currentValue = new EventEmitter();
+  @Input() inputId: string = 'input-ta';
+  @Input() showKeyboard: boolean = false;
 
   public isScanBlocked: boolean = false;
 
   constructor(
-    public keyboardService: KeyboardService
+    public keyboardService: KeyboardService,
+    private location: PlatformLocation
   ) {
     this.focusToInput();
+    location.onPopState(() => {
+      this.focusToInput();
+    });
   }
 
   ngOnInit() {

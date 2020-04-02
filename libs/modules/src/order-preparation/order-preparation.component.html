@@ -1,0 +1,139 @@
+<ion-content *ngIf="initPage == true">
+    <ion-grid class="max-height">
+
+       <ion-row justify-content-center align-items-center class="max-height">
+            <ion-col>
+                <div class="container-label-print">
+                    <h2 id="title-label">Generar etiquetas de envío</h2>
+                    <ion-button (click)="printLabels()">Imprimir</ion-button> 
+                </div>   
+            </ion-col>
+      </ion-row>
+    
+    </ion-grid>        
+</ion-content>
+
+<suite-input-codes  *ngIf="scann == true" [nScanner]="nScanner"></suite-input-codes>
+
+<!--print error-->
+<ion-content *ngIf="PrintError == true">
+    <ion-grid>
+        <ion-row justufy-content-center align-items-center class="max-height">
+            <ion-col>
+                <div class="wrapp-center">
+                    <div *ngFor="let expediton of dataSource">
+                    <ion-icon  class="close-icon" name="close" color="danger" style="margin-top: 5%;"></ion-icon>
+                    <div style="margin-top: 5%;">
+                        <ion-label class="text-title">Pedido MARKET </ion-label>
+                        <ion-label class="text-title">Nº {{expediton.expedition.barcode }}</ion-label>
+                    </div>
+                   
+                <div class="item">
+                    <ion-label color="dark" >Error al generar etiqueta</ion-label>
+                </div>
+                
+                <div class="error-mesage">
+                    <p  class="text-error">Vuelve a intentarlo cuando el pedido no tenga alerta.
+                        Si al final del día no se pudo generar la etiqueta, envía
+                        un email a cliente@kraclonline.com con el asunto.
+                    </p>
+                    <ion-label class="text-title">Etiqueta: {{expediton.incidenceCode}}</ion-label>
+                </div>
+                     </div>
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>    
+</ion-content>
+
+<ion-footer class="footer-label-print" *ngIf="PrintError == true">
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+        <ion-fab-button  matTooltip="Ver alertas" matTooltipClass="tooltip" (click)="showAlerts()"><i class="material-icons">notification_important</i></ion-fab-button>
+        <ion-fab-button  matTooltip="Regresar" matTooltipClass="tooltip" (click)="return()" ><ion-icon name="arrow-back"></ion-icon></ion-fab-button>
+    </ion-fab>
+</ion-footer>
+
+
+<!--Get expediton-->
+<ion-content *ngIf="StatusPrint == true" class="expediton">
+    <ion-grid class="max-height">
+        <ion-row justify-content-center align-items-center class="max-height">
+            <ion-col>
+                <div class="container-label-print-sucess">
+                    <div *ngFor="let expediton of dataSource">
+                        <ion-icon class="close-icon" name="checkmark" color="success"></ion-icon>
+                        <div class="item-expedition">
+                            <ion-label class="text-title">Pedido MARKET </ion-label>
+                            <ion-label class="text-title"> Nº {{ expediton.expedition.barcode }}</ion-label>
+                        </div>
+                           <div class="wrapp-description" style="margin-top: 10%">
+                                <ion-label class="description" color="dark" >{{expediton.expedition.packages[0].shippingNote}}</ion-label>
+                            </div> 
+                        <div class="item">
+                            <ion-label color="dark" class="text-item" >Nº Bultos {{ numPackages }}</ion-label>
+                            <br>
+                            <ion-label color="dark" class="text-send-by">Enviado por {{expediton.expedition.infoTransport.transport.name}} </ion-label>
+                        </div>
+            
+                        <div class="item">
+                            <ion-button *ngIf="expeditButton == false" color="danger" (click)="scanner()">Escanear etiqueta de envio {{ statusScanner() }}</ion-button>
+                            <ion-button *ngIf="expeditButton == true" (click)="return()">Consultar nueva expedición</ion-button>
+                        </div>
+                     </div>
+                </div>
+            </ion-col>
+        </ion-row>
+
+    </ion-grid>
+
+  
+</ion-content>
+
+
+<!--Blocked Order-->
+<ion-content *ngIf="blockedOrder == true">
+    <ion-grid class="max-height">
+        <ion-row justify-content-center align-items-center class="max-height">
+            <ion-col>
+                <div class="wrapp-center">
+                    <div class="blocked">
+                        <ion-label class="text-blocked">PEDIDO BLOQUEADO</ion-label><br>
+                    </div>
+                    <ion-label class="text-title" >No puedes Imprimir etiquetas.</ion-label><br>
+                    <ion-label class="text-title" >Por favor llama a central.</ion-label>
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    
+</ion-content>
+<ion-footer class="footer-label-print" *ngIf="blockedOrder == true">
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+       <!-- <ion-fab-button  matTooltip="Ver alertas" matTooltipClass="tooltip" (click)="showAlerts()"><i class="material-icons">notification_important</i></ion-fab-button>-->
+        <ion-fab-button  matTooltip="Refrescar" matTooltipClass="tooltip" (click)="printLabels()"><i class="material-icons">refresh</i></ion-fab-button>
+    </ion-fab>
+</ion-footer>
+
+
+<!--Expedition null-->
+<ion-content *ngIf="expeditionNull == true">
+    <ion-grid class="max-height">
+        <ion-row justify-content-center align-items-center class="max-height">
+            <ion-col>
+                <div class="wrapp-center">
+                    <div class="blocked">
+                        <ion-label class="text-blocked">SIN EXPEDICIONES</ion-label><br>
+                    </div>
+                    <ion-label class="text-title" >No puedes Imprimir etiquetas.</ion-label><br>
+                    <ion-label class="text-title" >Por favor llama a central.</ion-label>
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    
+</ion-content>
+<ion-footer class="footer-label-print" *ngIf="expeditionNull == true">
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+        <ion-fab-button  matTooltip="Refrescar" matTooltipClass="tooltip" (click)="printLabels()"><i class="material-icons">refresh</i></ion-fab-button>
+    </ion-fab>
+</ion-footer>

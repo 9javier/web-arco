@@ -22,6 +22,11 @@ export * from './jail/jail.module';
 export * from './state-expedition-avelon/state-expedition-avelon.component';
 export * from './state-expedition-avelon/state-expedition-avelon.module';
 
+export * from './commercial-fields/commercial-fields.component';
+export * from './commercial-fields/commercial-fields.module';
+
+export * from './brands-enabled-reception/brands-enabled-reception.component';
+export * from './brands-enabled-reception/brands-enabled-reception.module';
 
 export * from './pallets/pallets.component';
 export * from './pallets/pallets.module';
@@ -61,6 +66,10 @@ export * from './incidences-list/incidences-list.module';
 // Incidences Popover
 export * from './incidences-popover/incidences-popover.component';
 export * from './incidences-popover/incidences-popover.module';
+
+// Incidences Reception List
+export * from './incidences-reception-list/incidences-reception-list.component';
+export * from './incidences-reception-list/incidences-reception-list.module';
 
 // Picking Scan Packing
 export * from './picking-scan-packing/picking-scan-packing.component';
@@ -110,6 +119,9 @@ export * from './damaged-shoes/damaged-shoes.module';
 export * from './defective-management/defective-management.component';
 export * from './defective-management/defective-management.module';
 
+export * from './defective-zones/defective-zones.component';
+export * from './defective-zones/defective-zones.module';
+
 export * from './defective-registry/defective-registry.component';
 export * from './defective-registry/defective-registry.module';
 
@@ -135,6 +147,10 @@ export * from './user-assignment-picking/user-assignment-picking.module';
 // Picking Tasks
 export * from './picking-tasks/picking-tasks.component';
 export * from './picking-tasks/picking-tasks.module';
+
+// Picking Tasks Stores
+export * from './picking-tasks-stores/picking-tasks-stores.component';
+export * from './picking-tasks-stores/picking-tasks-stores.module';
 
 /**Permissions */
 export * from './permissions/permissions.module';
@@ -308,6 +324,19 @@ export * from './workwave-template-online-store/workwave-template-online-store.m
 export * from './picking-online-store-verify/picking-online-store-verify.component';
 export * from './picking-online-store-verify/picking-online-store-verify.module';
 
+// Orders preparations
+export * from './order-preparation/order-preparation.component';
+export * from './order-preparation/order-preparation.module';
+
+
+// Transport manifest
+export * from './transport-manifest/transport-manifest.component';
+export * from './transport-manifest/transport-manifest.module';
+
+// Labels Manual
+export * from './labels-manual/labels-manual.component';
+export * from './labels-manual/labels-manual.module';
+
 // Scanner item for manual input or laser scanners
 export * from './components/scanner-manual/scanner-manual.component';
 export * from './components/scanner-manual/scanner-manual.module';
@@ -382,3 +411,10 @@ export * from './expedition-collected/expedition-collected.module'
 //Drop Files
 export * from './expedition-collected/package-collected/package-collected.component'
 export * from './expedition-collected/package-collected/package-collected.module'
+//requested-products
+export * from './requested-products/requested-products.component'
+export * from './requested-products/requested-products.module'
+
+//Unlock Expeditions
+export * from './unlock-expeditions/unlock-expeditions.component'
+export * from './unlock-expeditions/unlock-expeditions.module'

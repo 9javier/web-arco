@@ -46,6 +46,7 @@ export class DefectsSgaComponent implements OnInit, AfterViewInit, OnChanges, On
   phone;
   managementId;
   defectChildId;
+  defectZoneChildId;
   slideOpts = {
     speed: 400
   };
@@ -57,6 +58,7 @@ export class DefectsSgaComponent implements OnInit, AfterViewInit, OnChanges, On
   readed: boolean
   barcode: string = ''
   defects: any = [];
+  zones: any = [];
   statusManagament: any;
   public barcodeRoute = null;
   public types:any;
@@ -133,17 +135,8 @@ export class DefectsSgaComponent implements OnInit, AfterViewInit, OnChanges, On
     
   }
 
-  defectType(defecType_){
-
-      let defecType =[];
-      defecType_['classifications'].forEach(element => {
-        let res = defecType_['statuses'].find( x => x.id == element.defectType);
-        if(res != undefined){
-          defecType.push(res);
-        }
-      });
-      this.allDefectType = defecType;
-
+  defectType(defecType){
+    this.allDefectType = defecType ? defecType.classifications : [];
   }
 
   initForm() {
@@ -159,7 +152,8 @@ export class DefectsSgaComponent implements OnInit, AfterViewInit, OnChanges, On
       isHistory: [false],
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
-      defectType: [0],  
+      defectZoneChildId: [0],
+      defectType: [0],
       gestionState: [0],
       photosFileIds: [ [{ "id": 1 }]],
       signFileId: [1], 
@@ -176,6 +170,13 @@ export class DefectsSgaComponent implements OnInit, AfterViewInit, OnChanges, On
     this.incidentsService.getDefectTypesChild().subscribe(resp => {
       this.defects = resp;
       
+    })
+    this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
+      this.statusManagament = resp
+      this.defectType(resp);
+    })
+    this.incidentsService.getDefectZonesChild().subscribe(resp => {
+      this.zones = resp;
     })
     this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
       this.statusManagament = resp
@@ -333,7 +334,9 @@ export class DefectsSgaComponent implements OnInit, AfterViewInit, OnChanges, On
     else{
       this.incidenceForm.patchValue({
         statusManagementDefectId: this.managementId,
-        defectTypeChildId: this.defectChildId,});
+        defectTypeChildId: this.defectChildId,
+        defectZoneChildId: this.defectZoneChildId,
+      });
       let object = this.incidenceForm.value;
       delete object.contact;
       this.sendToDefectsWithoutContact(object);
@@ -366,6 +369,7 @@ async enviaryarn() {
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
+      defectZoneChildId: this.defectZoneChildId,
       defectTypeParentId: 1,
       photosFileIds: photos,
       signFileId: this.signatures[0].id,
@@ -396,6 +400,7 @@ async enviaryarn() {
           isHistory: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectZoneChildId: 0,
           defectType: 0,
           gestionState: 0,
           photosFileIds: 0,
@@ -428,6 +433,7 @@ async enviaryarn() {
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
+      defectZoneChildId: this.defectZoneChildId,
       photosFileIds: photos,
       signFileId: this.signatures[0].id,
       // contact:{
@@ -447,6 +453,7 @@ async enviaryarn() {
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
+      defectZoneChildId: this.defectZoneChildId,
 
     })
    
@@ -472,6 +479,8 @@ async enviaryarn() {
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
           defectTypeParentId: 1,
+          defectZoneChildId: 0,
+          defectZoneParentId: 1,
           defectType: 0,  
           gestionState: 0,
           photosFileIds: [],
@@ -542,6 +551,8 @@ async enviaryarn() {
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
           defectTypeParentId: 1,
+          defectZoneChildId: 0,
+          defectZoneParentId: 1,
           defectType: 0,
           gestionState: 0,
           photosFileIds: [{ "id": 1 }],
@@ -648,6 +659,16 @@ async enviaryarn() {
     })
 
     this.defectChildId = e.detail.value;
+  }
+
+  defectZoneChange(e) {
+    this.select2 = true;
+    console.log(e);
+    this.incidenceForm.patchValue({
+      defectZone: parseInt(e.detail.value)
+    })
+
+    this.defectZoneChildId = e.detail.value;
   }
 
   ngAfterViewInit() {

@@ -50,6 +50,7 @@ export class ChangeStateComponent implements OnInit {
   defectChildId;
   defectParentId;
   ParentAndChild;
+  ZoneAndChild;
   showChangeState;
   status;
   managementId;
@@ -141,13 +142,15 @@ export class ChangeStateComponent implements OnInit {
 
   initForm() {
     this.incidenceForm = this.fb.group({
-      productId: 1,
+      id: [this.registry.data.id],
+      productId: [this.registry.data.product.id],
       productReference: [this.registry.data.product.reference],
       dateDetection: [moment().format("YYYY-MM-DD")],
       observations: [this.registry.data.observations],
       factoryReturn: [false],
       statusManagementDefectId: [this.registry.data.statusManagementDefect.id],
       defectTypeChildId: [this.registry.data.defectTypeChild.id],
+      defectTypeZoneChildId: [this.registry.data.defectZoneChild.id],
       signFileId: [0],
       contact: this.fb.group({
         name: [this.registry.data.contact.name],
@@ -160,9 +163,11 @@ export class ChangeStateComponent implements OnInit {
     this.txtName = this.registry.data.contact.name;
     this.txtEmail = this.registry.data.contact.email;
     this.txtTel = this.registry.data.contact.phone;
-
-    this.ParentAndChild = this.registry.data.defectTypeChild.name + " - "
-      + this.registry.data.defectTypeParent.name;
+    console.log("TEST::this.registry.data", this.registry.data)
+    this.ParentAndChild = this.registry.data.defectTypeParent.name + " - "
+      + this.registry.data.defectTypeChild.name;
+    this.ZoneAndChild = this.registry.data.defectZoneParent.name + " - "
+      + this.registry.data.defectZoneParent.name;
 
   }
 
@@ -260,6 +265,7 @@ export class ChangeStateComponent implements OnInit {
       const modal = await this.modalController.create({
         component: RegistryDetailsComponent,
         componentProps: {
+          id: this.registry.data.id,
           productId: this.registry.data.product.id,
           showChangeState: true
         },
@@ -300,13 +306,15 @@ export class ChangeStateComponent implements OnInit {
 
         this.readed = false
         this.incidenceForm.patchValue({
-          productId: 1,
+          id: This.registry.data.id,
+          productId: This.registry.data.product.id,
           productReference: '',
           dateDetection: this.dateNow,
           observations: '',
           factoryReturn: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectZoneChildId: 0,
           photosFileIds: [],
           signFileId: 0,
           contact: {
@@ -345,6 +353,7 @@ export class ChangeStateComponent implements OnInit {
 
         this.readed = false
         this.incidenceForm.patchValue({
+          id: This.registry.data.id,
           productId: 1,
           productReference: '',
           dateDetection: this.dateNow,
@@ -352,6 +361,7 @@ export class ChangeStateComponent implements OnInit {
           factoryReturn: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectZoneChildId: 0,
           signFileId: 0
         })
         This.intermediary.dismissLoading()
@@ -377,7 +387,6 @@ export class ChangeStateComponent implements OnInit {
   initGestionState() {
 
     let res;
-
     res = this.registry.data.statusManagementDefect;
 
 
@@ -428,7 +437,7 @@ export class ChangeStateComponent implements OnInit {
     console.log("this.statusManagament", this.statusManagement);
     let res;
 
-    res = this.statusManagement['classifications'].find(x => x.defectType == id);
+    res = this.statusManagement['classifications'].find(x => x.id == id);
 
 
 
@@ -464,45 +473,8 @@ export class ChangeStateComponent implements OnInit {
     this.defectChildId = e.detail.value;
   }
 
-  defectType_(defecType_) {
-
-    let defecType = [];
-    defecType_['status'].forEach(element => {
-      let res = defecType_.data.statusManagementDefect.defectType == element.id;
-
-      if (res == true) {
-
-      } else {
-        defecType.push(
-          {
-            id: element.id,
-            name: element.name
-          });
-      }
-    });
-
-    this.allDefectType = defecType;
-    console.log(this.allDefectType);
-  }
-
-
-  defectType(defecType_) {
-    console.log(defecType_);
-    let defecType = [];
-    defecType_['classifications'].forEach(element => {
-      let res = defecType_['statuses'].find(x => x.id == element.defectType);
-      if (res != undefined) {
-
-        if (res.id == this.registry.data.statusManagementDefect.defectType) {
-
-        } else {
-          defecType.push(res);
-        }
-
-      }
-    });
-    this.allDefectType = defecType;
-
+  defectType(defecType) {
+    this.allDefectType = defecType ? defecType.classifications : [];
   }
 
   getStatusManagement() {
@@ -592,6 +564,7 @@ export class ChangeStateComponent implements OnInit {
         factoryReturn: false,
         statusManagementDefectId: 0,
         defectTypeChildId: 0,
+        defectZoneChildId: 0,
         photosFileIds: [],
         signFileId: 0,
         contact: {

@@ -111,6 +111,22 @@ const routes: Routes = [
     }
   },
   {
+    path: 'commercial-fields',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/commercial-fields/commercial-fields.module#CommercialFieldsModule',
+    data: {
+      name: 'Campos Comerciales'
+    }
+  },
+  {
+    path: 'brands-enabled-reception',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/brands-enabled-reception/brands-enabled-reception.module#BrandsEnabledReceptionModule',
+    data: {
+      name: 'Marcas habilitadas recepción sin pedido'
+    }
+  },
+  {
     path: 'pallets',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
@@ -171,6 +187,13 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/defective-management/defective-management.module#DefectiveManagementModule',
     data: {
       name: 'Tipos de defectos'
+    }
+  },{
+    path: 'defective-zones',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-zones/defective-zones.module#DefectiveZonesModule',
+    data: {
+      name: 'Zonas'
     }
   },
   {
@@ -352,6 +375,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'incidences-reception',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/incidences-reception-list/incidences-reception-list.module#IncidencesReceptionListModule',
+    data: {
+      name: 'Incidencias'
+    }
+  },
+  {
     path: 'prices',
     redirectTo: 'products',
     data: {
@@ -427,7 +458,7 @@ const routes: Routes = [
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/receptionss-avelon/receptionss-avelon.module#ReceptionssAvelonModule',
     data: {
-      name: 'Recepciones2'
+      name: 'Recepciones'
     }
   },
   {
@@ -470,14 +501,14 @@ const routes: Routes = [
       name: 'Expedition-Collected'
     }
   },
-  // {
-  //   path:'package-collected',
-  //   canActivate:[AuthGuard],
-  //   loadChildren: '../../../../libs/modules/src/expedition-collected/package-collected/package-collected.module#PackageCollectedModule',
-  //   data: {
-  //     name: 'Expedition-Collected'
-  //   }
-  // }
+  {
+    path:'unlock-expeditions',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/unlock-expeditions/unlock-expeditions.module#UnlockExpeditionsModule',
+    data: {
+      name: 'Desbloquear'
+    }
+  }
 ];
 
 @NgModule({

@@ -9,8 +9,8 @@ import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-ke
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ScreenResultComponent } from './components/screen-result/screen-result.component';
 import {
-  MatAutocompleteModule,
-  MatFormFieldModule,
+  MatAutocompleteModule, MatButtonModule,
+  MatFormFieldModule, MatIconModule,
   MatInputModule,
   MatRippleModule,
   MatSelectModule,
@@ -21,6 +21,7 @@ import {SizeInputModule} from "../components/size-input/size-input.module";
 import {FormHeaderReceptionComponent} from "./components/form-header-reception/form-header-reception.component";
 import {LoadingButtonModule} from "../components/button/loading-button/loading-button.module";
 import {InfoHeaderReceptionComponent} from "./components/info-header-reception/info-header-reception.component";
+import {SizeSelectModule} from "../components/size-select/size-select.module";
 
 const routes: Routes = [
   {
@@ -52,7 +53,10 @@ const routes: Routes = [
     SizeInputModule,
     MatTooltipModule,
     LoadingButtonModule,
-    MatRippleModule
+    MatRippleModule,
+    SizeSelectModule,
+    MatIconModule,
+    MatButtonModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

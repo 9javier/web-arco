@@ -71,10 +71,12 @@ export class FormHeaderReceptionComponent implements OnInit {
             case Type.EXPEDITION_NUMBER:
               this.expeditionInput.nativeElement.value = data.selected.id;
               this.loadingButtonExpedition.isDisabled = !data.selected.id;
+              this.clickCheckExpedition();
               break;
             case Type.PROVIDER:
               this.providerInput.nativeElement.value = data.selected.id;
               this.loadingButtonProvider.isDisabled = !data.selected.id;
+              this.clickCheckByProvider();
               break;
           }
         }

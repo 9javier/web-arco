@@ -5,6 +5,7 @@ export const environment = {
   apiSorter: 'http://conexion1.globalretail.es:57354/api',
   urlBase: 'http://conexion1.globalretail.es:57354',
   uploadFiles: 'http://conexion1.globalretail.es:57354/api/upload-files',
+  urlDownloadApp: 'https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o',
   sga: {
     client_id: "krack-client-sga",
     client_secret: "fGx4=yU-j4^jAAjZtV+YTDsm-@R$HAK3"

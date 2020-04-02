@@ -3,7 +3,7 @@ table {
 }
 
 .title {
-    margin: 16px 16px;
+    margin-right: 8px;
 }
 
 .no-warehouse {
@@ -129,6 +129,7 @@ i.warning-icon {
    position: fixed;
    width: 100%;
    bottom: 0;
+  margin-bottom: 40px;
    .horizontal-fab {
      display: flex;
      flex: 1;

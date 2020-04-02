@@ -16,6 +16,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { FileUploadOptions, FileTransferObject, FileUploadResult, FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { Router } from '@angular/router';
 import { DefectiveRegistryService } from '../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
+import { PrintTicketService } from '../../../../services/src/lib/print-ticket/print-ticket.service';
 
 @Component({
   selector: 'suite-change-state2',
@@ -53,6 +54,7 @@ export class ChangeState2Component implements OnInit {
   defectChildId;
   defectParentId;
   ParentAndChild;
+  ZoneAndChild;
   showChangeState;
   status;
   managementId;
@@ -96,6 +98,7 @@ export class ChangeState2Component implements OnInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private defectiveRegistryService: DefectiveRegistryService,
+    private printTicketService: PrintTicketService,
 
   ) {
     this.registry = this.navParams.get("registry");
@@ -181,12 +184,15 @@ export class ChangeState2Component implements OnInit {
     });
 
     this.incidenceForm = this.fb.group({
+      id: [this.registry.data.id],
+      productId: [this.registry.data.product.id],
       productReference: [this.registry.data.product.reference],
       dateDetection: [this.date],
       observations: [this.registry.data.observations],
       factoryReturn: [false],
       statusManagementDefectId: [this.registry.data.statusManagementDefect.id],
       defectTypeChildId: [this.registry.data.defectTypeChild.id],
+      defectZoneChildId: [this.registry.data.defectZoneChild.id],
       signFileId: [0],
       contact: this.fb.group({
         name: [this.registry.data.contact.name],
@@ -201,8 +207,10 @@ export class ChangeState2Component implements OnInit {
     this.txtEmail = this.registry.data.contact.email;
     this.txtTel = this.registry.data.contact.phone;
 
-    this.ParentAndChild = this.registry.data.defectTypeChild.name + " - "
-      + this.registry.data.defectTypeParent.name;
+    this.ParentAndChild = this.registry.data.defectTypeParent.name + " - "
+      + this.registry.data.defectTypeChild.name;
+    this.ZoneAndChild = this.registry.data.defectZoneParent.name + " - "
+      + this.registry.data.defectZoneChild.name;
 
   }
 
@@ -325,10 +333,10 @@ export class ChangeState2Component implements OnInit {
       resp => {
 
         if (this.ticketEmit == true) {
-          this.print();
+          this.print(resp.result);
         }
 
-        this.readed = false
+        this.readed = false;
         this.clearVariables();
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente');
@@ -349,8 +357,8 @@ export class ChangeState2Component implements OnInit {
 
 
 
-  print() {
-    console.log("imprimir...")
+  print(defective) {
+    this.printTicketService.printTicket(defective);
   }
 
   initGestionState() {
@@ -491,7 +499,7 @@ export class ChangeState2Component implements OnInit {
     console.log("this.statusManagament", this.statusManagement);
     let res;
 
-    res = this.statusManagement['classifications'].find(x => x.defectType == id);
+    res = this.statusManagement['classifications'].find(x => x.id == id);
 
 
 
@@ -527,44 +535,8 @@ export class ChangeState2Component implements OnInit {
     this.defectChildId = e.detail.value;
   }
 
-  defectType_(defecType_) {
-
-    let defecType = [];
-    defecType_['status'].forEach(element => {
-      let res = defecType_.data.statusManagementDefect.defectType == element.id;
-
-      if (res == true) {
-
-      } else {
-        defecType.push(
-          {
-            id: element.id,
-            name: element.name
-          });
-      }
-    });
-
-    this.allDefectType = defecType;
-    console.log(this.allDefectType);
-  }
-
-
-  defectType(defecType_) {
-    console.log(defecType_);
-    let defecType = [];
-    defecType_['classifications'].forEach(element => {
-      let res = defecType_['statuses'].find(x => x.id == element.defectType);
-      if (res != undefined) {
-
-        if (res.id == this.registry.data.statusManagementDefect.defectType) {
-
-        } else {
-          defecType.push(res);
-        }
-
-      }
-    });
-    this.allDefectType = defecType;
+  defectType(defecType) {
+    this.allDefectType = defecType ? defecType.classifications : [];
 
   }
 
@@ -649,12 +621,14 @@ export class ChangeState2Component implements OnInit {
   clearVariables(type?: number) {
     if (!type) {
       this.incidenceForm.patchValue({
-        productReference: '',
+        id: this.registry.data.id,
+        productReference: this.registry.data.product.id,
         dateDetection: moment().format("YYYY-MM-DD"),
         observations: '',
         factoryReturn: false,
         statusManagementDefectId: 0,
         defectTypeChildId: 0,
+        defectZoneChildId: 0,
         photosFileIds: [],
         signFileId: 0,
         contact: {

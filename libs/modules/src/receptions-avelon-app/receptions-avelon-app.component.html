@@ -13,7 +13,7 @@
     <mat-divider></mat-divider>
 
     <div class="scanner-delivery-note">
-      <scanner-manual placeholder="Nº ALBARÁN" (currentValue)="newDeliveryNote($event)" height="72px"></scanner-manual>
+      <scanner-manual inputId="inputAlbaran" [showKeyboard]="true" placeholder="Nº ALBARÁN" (currentValue)="newDeliveryNote($event)" height="72px"></scanner-manual>
       <i class="material-icons" matRipple (click)="removeDeliveryNote()">close</i>
     </div>
 

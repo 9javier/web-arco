@@ -22,10 +22,9 @@ import { RegistryDetailsComponent } from '../components/modal-defective/registry
 export class DefectiveHistoricComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select','id','user','statusManagementDefect','warehouse','product','model','size','brand','color','dateDetection','defectTypeParent','defectTypeChild'];
+  displayedColumns: string[] = ['id','user','statusManagementDefect','warehouse','product','model','size','brand','color','dateDetection','defectTypeParent','defectTypeChild', 'defectZoneParent','defectZoneChild'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
-  originalTableStatus: DamagedModel.Status[];
   columns = {};
 
   @ViewChild('filterButtonId') filterButtonId: FilterButtonComponent;
@@ -39,6 +38,8 @@ export class DefectiveHistoricComponent implements OnInit {
   @ViewChild('filterButtonStatusManagementDefect') filterButtonStatusManagementDefect: FilterButtonComponent;
   @ViewChild('filterButtonDefectTypeParent') filterButtonDefectTypeParent: FilterButtonComponent;
   @ViewChild('filterButtonDefectTypeChild') filterButtonDefectTypeChild: FilterButtonComponent;
+  @ViewChild('filterButtonDefectZoneParent') filterButtonDefectZoneParent: FilterButtonComponent;
+  @ViewChild('filterButtonDefectZoneChild') filterButtonDefectZoneChild: FilterButtonComponent;
   @ViewChild('filterButtonWarehouse') filterButtonWarehouse: FilterButtonComponent;
 
   isFilteringId: number = 0;
@@ -52,6 +53,8 @@ export class DefectiveHistoricComponent implements OnInit {
   isFilteringStatusManagementDefect: number = 0;
   isFilteringDefectTypeParent: number = 0;
   isFilteringDefectTypeChild: number = 0;
+  isFilteringDefectZoneParent: number = 0;
+  isFilteringDefectZoneChild: number = 0;
   isFilteringWarehouse: number = 0;
 
   /**Filters */
@@ -66,6 +69,8 @@ export class DefectiveHistoricComponent implements OnInit {
   statusManagementDefect: Array<TagsInputOption> = [];
   defectTypeParent: Array<TagsInputOption> = [];
   defectTypeChild: Array<TagsInputOption> = [];
+  defectZoneParent: Array<TagsInputOption> = [];
+  defectZoneChild: Array<TagsInputOption> = [];
   warehouse: Array<TagsInputOption> = [];
 
   entities;
@@ -85,6 +90,8 @@ export class DefectiveHistoricComponent implements OnInit {
     statusManagementDefect: [],
     defectTypeParent: [],
     defectTypeChild: [],
+    defectZoneParent: [],
+    defectZoneChild: [],
     warehouse: [],
     pagination: this.formBuilder.group({
       page: 1,
@@ -108,7 +115,6 @@ export class DefectiveHistoricComponent implements OnInit {
     this.initEntity();
     this.initForm();
     this.getFilters();
-    this.getColumns(this.form);
     this.getList(this.form);
     this.listenChanges();
   }
@@ -126,6 +132,8 @@ export class DefectiveHistoricComponent implements OnInit {
       statusManagementDefect: [],
       defectTypeParent: [],
       defectTypeChild: [],
+      defectZoneParent: [],
+      defectZoneChild: [],
       warehouse: [],
       orderby: this.formBuilder.group({
         type: 1,
@@ -147,6 +155,8 @@ export class DefectiveHistoricComponent implements OnInit {
       statusManagementDefect: [],
       defectTypeParent: [],
       defectTypeChild: [],
+      defectZoneParent: [],
+      defectZoneChild: [],
       warehouse: [],
       orderby: this.formBuilder.group({
         type: 1,
@@ -187,6 +197,8 @@ export class DefectiveHistoricComponent implements OnInit {
       this.statusManagementDefect = this.updateFilterSource(entities.statusManagementDefect, 'statusManagementDefect');
       this.defectTypeParent = this.updateFilterSource(entities.defectTypeParent, 'defectTypeParent');
       this.defectTypeChild = this.updateFilterSource(entities.defectTypeChild, 'defectTypeChild');
+      this.defectZoneParent = this.updateFilterSource(entities.defectZoneParent, 'defectZoneParent');
+      this.defectZoneChild = this.updateFilterSource(entities.defectZoneChild, 'defectZoneChild');
       this.warehouse = this.updateFilterSource(entities.warehouse, 'warehouse');
 
       this.reduceFilters(entities);
@@ -195,22 +207,6 @@ export class DefectiveHistoricComponent implements OnInit {
         this.pauseListenFormChange = true;
       }, 0);
     })
-  }
-
-  async getColumns(form?: FormGroup){
-    this.defectiveRegistryService.indexHistoricTrue(form.value).subscribe(
-      (resp:any) => {
-        resp.filters.forEach(element => {
-          this.columns[element.name] = element.id;
-        });
-      },
-      async err => {
-        await this.intermediaryService.dismissLoading()
-      },
-      async () => {
-        await this.intermediaryService.dismissLoading()
-      }
-    )
   }
 
   private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
@@ -249,6 +245,8 @@ export class DefectiveHistoricComponent implements OnInit {
     this.filterButtonStatusManagementDefect.listItems = this.reduceFilterEntities(this.statusManagementDefect, entities,'statusManagementDefect');
     this.filterButtonDefectTypeParent.listItems = this.reduceFilterEntities(this.defectTypeParent, entities,'defectTypeParent');
     this.filterButtonDefectTypeChild.listItems = this.reduceFilterEntities(this.defectTypeChild, entities,'defectTypeChild');
+    this.filterButtonDefectZoneParent.listItems = this.reduceFilterEntities(this.defectZoneParent, entities,'defectZoneParent');
+    this.filterButtonDefectZoneChild.listItems = this.reduceFilterEntities(this.defectZoneChild, entities,'defectZoneChild');
     this.filterButtonWarehouse.listItems = this.reduceFilterEntities(this.warehouse, entities,'warehouse');
   }
 
@@ -277,7 +275,6 @@ export class DefectiveHistoricComponent implements OnInit {
     this.defectiveRegistryService.indexHistoricTrue(form.value).subscribe((resp:any) => {
         if (resp.results) {
           this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
-          this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
           const paginator = resp.pagination;
 
           this.paginator.length = paginator.totalResults;
@@ -535,6 +532,46 @@ export class DefectiveHistoricComponent implements OnInit {
           }
         }
         break;
+      case 'defectZoneParent':
+        let defectZoneParentFiltered: string[] = [];
+        for (let defectZoneParent of filters) {
+
+          if (defectZoneParent.checked) defectZoneParentFiltered.push(defectZoneParent.id);
+        }
+
+        if (defectZoneParentFiltered.length >= this.defectZoneParent.length) {
+          this.form.value.defectZoneParent = [];
+          this.isFilteringDefectZoneParent = this.defectZoneParent.length;
+        } else {
+          if (defectZoneParentFiltered.length > 0) {
+            this.form.value.defectZoneParent = defectZoneParentFiltered;
+            this.isFilteringDefectZoneParent = defectZoneParentFiltered.length;
+          } else {
+            this.form.value.defectZoneParent = ['99999'];
+            this.isFilteringDefectZoneParent = this.defectZoneParent.length;
+          }
+        }
+        break;
+      case 'defectZoneChild':
+        let defectZoneChildFiltered: string[] = [];
+        for (let defectZoneChild of filters) {
+
+          if (defectZoneChild.checked) defectZoneChildFiltered.push(defectZoneChild.id);
+        }
+
+        if (defectZoneChildFiltered.length >= this.defectZoneChild.length) {
+          this.form.value.defectZoneChild = [];
+          this.isFilteringDefectZoneChild = this.defectZoneChild.length;
+        } else {
+          if (defectZoneChildFiltered.length > 0) {
+            this.form.value.defectZoneChild = defectZoneChildFiltered;
+            this.isFilteringDefectZoneChild = defectZoneChildFiltered.length;
+          } else {
+            this.form.value.defectZoneChild = ['99999'];
+            this.isFilteringDefectZoneChild = this.defectZoneChild.length;
+          }
+        }
+        break;
       case 'warehouse':
         let warehouseFiltered: string[] = [];
         for (let warehouse of filters) {
@@ -565,14 +602,11 @@ export class DefectiveHistoricComponent implements OnInit {
     return (await this.modalController.create({
       component: RegistryDetailsComponent,
       componentProps: {
-        productId: registry.product.id
+        id: registry.id,
+        productId: registry.product.id,
+        history: true
       }
     })).present();
-  }
-
-  getStatusName(defectType: number) {
-    const status = this.originalTableStatus.find((x) => x.id === defectType);
-    return status.name;
   }
 
   async showImageModal(reference: string, photo: any[]) {

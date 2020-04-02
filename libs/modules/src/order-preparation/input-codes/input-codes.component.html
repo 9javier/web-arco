@@ -1,0 +1,4 @@
+<div class="content-ta"  *ngIf="PrintError == false">
+  <input id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)"
+    (focus)="onFocus($event)" [(ngModel)]="inputProduct">
+</div>

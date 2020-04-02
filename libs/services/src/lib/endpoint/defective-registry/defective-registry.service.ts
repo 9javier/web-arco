@@ -23,6 +23,7 @@ export class DefectiveRegistryService {
   private getLastHistoricalUrl: string;
   private getProvidersUrl: string;
   private getBrandsByProvidersUrl: string;
+  private getDataUrl: string;
   private emitData = new BehaviorSubject({});
   private getData$ = this.emitData.asObservable();
   private refreshListRegistry = new BehaviorSubject<boolean>(false);
@@ -39,6 +40,7 @@ export class DefectiveRegistryService {
     this.getHistoricalAlUrl = `${this.baseUrl}/defects/registry/product-historial/al`;
     this.getDefectList = `${this.baseUrl}/defects/registry/listDefects/la`;
     this.getLastHistoricalUrl = `${this.baseUrl}/defects/registry/get-last-historial-product`;
+    this.getDataUrl = `${this.baseUrl}/defects/registry/get-data`;
     this.getProvidersUrl = `${this.baseUrl}/defects/registry/providers`;
     this.getBrandsByProvidersUrl = `${this.baseUrl}/defects/registry/providers/brands`;
   }
@@ -157,6 +159,12 @@ export class DefectiveRegistryService {
 
   getLastHistorical(body): Observable<any> {
     return this.http.post(this.getLastHistoricalUrl, body).pipe(map((response: any) => {
+      return response.data;
+    }));
+  }
+
+  getDataDefect(body): Observable<any> {
+    return this.http.post(this.getDataUrl, body).pipe(map((response: any) => {
       return response.data;
     }));
   }

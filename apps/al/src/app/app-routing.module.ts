@@ -67,6 +67,33 @@ const routes: Routes = [
     }
   },
   {
+    path: 'order-preparation',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/order-preparation/order-preparation.module#OrderPreparationModule',
+    data: {
+      name: 'Preparacion de pedidos'
+    }
+
+  },
+  {
+    path: 'list-alerts',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/transport-manifest/transport-manifest.module#TransportManifestModule',
+    data: {
+      name: 'Manifiesto transportista'
+    }
+
+  },
+  {
+    path: 'labels-manual',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/labels-manual/labels-manual.module#LabelsManualModule',
+    data: {
+      name: 'Etiquetas manuales'
+    }
+
+  },
+  {
     path: 'ventilation-no-sorter',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/ventilation-no-sorter/ventilation-no-sorter.module#VentilationNoSorterModule',
@@ -80,6 +107,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/new-products/new-products.module#NewProductsModule',
     data: {
       name: 'Nuevos Productos'
+    }
+  },
+  {
+    path: 'requested-products',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/requested-products/requested-products.module#RequestedProductsModule',
+    data: {
+      name: 'Productos solicitados'
     }
   },
   {
@@ -118,6 +153,11 @@ const routes: Routes = [
     path: 'picking-tasks',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/picking-tasks/picking-tasks.module#PickingTasksModule'
+  },
+  {
+    path: 'picking-tasks-stores',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/picking-tasks-stores/picking-tasks-stores.module#PickingTasksStoresModule'
   },
   {
     path: 'warehouses',

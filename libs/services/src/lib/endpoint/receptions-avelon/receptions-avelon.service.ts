@@ -19,6 +19,7 @@ export class ReceptionsAvelonService {
   private checkExpeditionByReferenceUrl: string = `${environment.apiBase}/avelonProviders/check/expedition/`;
   private checkExpeditionsByProviderUrl: string = `${environment.apiBase}/avelonProviders/check/provider/`;
   postLoadSizesUrl: string = `${environment.apiBase}/reception/sizes/list`;
+  private postReloadModelsListUrl: string = `${environment.apiBase}/reception/models/list`;
   makeReceptionFreeUrl: string = `${this.receptionsUrl}/free`;
 
   private models = new BehaviorSubject([]); 
@@ -82,7 +83,11 @@ export class ReceptionsAvelonService {
   }
 
   postLoadSizesList(params: ReceptionAvelonModel.ParamsLoadSizesList): Observable<ReceptionAvelonModel.ResponseLoadSizesList> {
-    return this.http.post<ReceptionAvelonModel.ResponseLoadSizesList>(this.postLoadSizesUrl, params)
+    return this.http.post<ReceptionAvelonModel.ResponseLoadSizesList>(this.postLoadSizesUrl, params);
+  }
+
+  postReloadModelsList(params: ReceptionAvelonModel.ParamsReloadModelsList): Observable<ReceptionAvelonModel.ResponseReloadModelsList> {
+    return this.http.post<ReceptionAvelonModel.ResponseReloadModelsList>(this.postReloadModelsListUrl, params);
   }
   //endregion
 

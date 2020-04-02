@@ -14,10 +14,10 @@ import { PrinterService } from '../../../../services/src/lib/printer/printer.ser
   styleUrls: ['./details-register.component.scss']
 })
 export class DetailsRegisterComponent implements OnInit {
+  id: number;
   private baseUrlPhoto = environment.apiBasePhoto;
   section = 'information';
   title = 'Ubicación ';
-  originalTableStatus: DamagedModel.Status[];
   productId: string;
   registry: any = {};
   registry_data: any ={};
@@ -55,6 +55,7 @@ export class DetailsRegisterComponent implements OnInit {
     private loadingController: LoadingController,
     private incidentsService: IncidentsService,
   ) {
+    this.id = this.navParams.get("id");
     this.productId = this.navParams.get("productId");
     this.showChangeState = this.navParams.get("showChangeState");
   }
@@ -91,18 +92,17 @@ export class DetailsRegisterComponent implements OnInit {
 
   getRegistryHistorical(): void {
     console.log("Actualice la información.......");
-    this.defectiveRegistryService.getHistoricalAl({ productId: this.productId, productReference: '' }).subscribe(historical => {
+    this.defectiveRegistryService.getHistoricalAl({ id: this.id }).subscribe(historical => {
       this.registryHistorical = historical;
     });
   }
 
   getRegistryDetail(): void {
-    this.defectiveRegistryService.getLastHistorical({ productId: this.productId }).subscribe(lastHistorical => {
+    this.defectiveRegistryService.getDataDefect({ id: this.id }).subscribe(lastHistorical => {
       this.registry_data = {
         data: lastHistorical.data,
         status: lastHistorical.statuses};
       this.registry = lastHistorical.data;
-      this.originalTableStatus = lastHistorical.statuses;
     });
   }
 
@@ -127,29 +127,21 @@ export class DetailsRegisterComponent implements OnInit {
     await alert.present();
   }
 
-  getStatusName(defectType: number) {
-    const tableStatus = this.originalTableStatus.find((x) => x.id === defectType);
-    return tableStatus.name ? tableStatus.name : '-';
-  }
-
-  getRequireStatus(defectType: number, statusName: string) {
-    if(this.statusManagement && this.statusManagement.classifications){
-      const status = this.statusManagement.classifications.find((x) => defectType && x.defectType === defectType);
-      if(status){
-        switch (statusName) {
-          case 'contact':
-            return status.requireContact;
-          case 'history':
-            return status.passHistory;
-          case 'photo':
-            return status.requirePhoto;
-          case 'signature':
-            return status.requireOk;
-          case 'ticket':
-            return status.ticketEmit;
-          case 'orders':
-            return status.allowOrders;
-        }
+  getRequireStatus(defectStatus, statusName: string) {
+    if (defectStatus && statusName) {
+      switch (statusName) {
+        case 'contact':
+          return defectStatus.requireContact;
+        case 'history':
+          return defectStatus.passHistory;
+        case 'photo':
+          return defectStatus.requirePhoto;
+        case 'signature':
+          return defectStatus.requireOk;
+        case 'ticket':
+          return defectStatus.ticketEmit;
+        case 'orders':
+          return defectStatus.allowOrders;
       }
     }
   }

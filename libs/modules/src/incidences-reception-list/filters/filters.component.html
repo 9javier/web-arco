@@ -1,0 +1,34 @@
+<ion-row class="row-filters">
+  <ion-col size="4">
+    <ion-item lines="none">
+      <ion-label>
+        Datos
+      </ion-label>
+      <ion-input [(ngModel)]="textToSearch" (ngModelChange)="filterByText()"></ion-input>
+    </ion-item>
+  </ion-col>
+  <ion-col size="4">
+    <ion-item lines="none">
+      <ion-label>
+        Filtrar por Tipo
+      </ion-label>
+      <ion-select interface="popover" [(ngModel)]="typeSelected" (ngModelChange)="filterByType()">
+        <ion-select-option *ngFor="let type of listIncidencesTypes" [value]="type">
+          {{type.name}}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-col>
+  <ion-col size="4">
+    <ion-item lines="none">
+      <ion-label>
+        Filtrar por Estado
+      </ion-label>
+      <ion-select interface="popover" [(ngModel)]="attendedSelected" (ngModelChange)="filterByStatus()">
+        <ion-select-option *ngFor="let attended of listAttendedOptions" [value]="attended">
+          {{attended.value}}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-col>
+</ion-row>

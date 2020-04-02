@@ -6,7 +6,7 @@ import {ReceptionAvelonModel} from "@suite/services";
 import Expedition = ReceptionAvelonModel.Expedition;
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
-import {ScannerManualComponent} from "@suite/common-modules";
+import {ScannerManualComponent} from "../components/scanner-manual/scanner-manual.component";
 
 @Component({
   selector: 'suite-receptions-avelon-app',
