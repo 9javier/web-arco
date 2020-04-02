@@ -68,6 +68,7 @@ export class CatalogComponent implements OnInit {
 
       this.refresher = setInterval(() => {
         this.getProducts();
+        this.changeSelectedFilters()
       }, 60000);
 
     });

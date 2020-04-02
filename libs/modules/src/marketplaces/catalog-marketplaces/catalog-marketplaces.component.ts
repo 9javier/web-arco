@@ -129,6 +129,8 @@ export class CatalogMarketplacesComponent implements OnInit {
           }
         }
 
+        this.changeSelectedFilters();
+
       });
     }, 60000);
 
