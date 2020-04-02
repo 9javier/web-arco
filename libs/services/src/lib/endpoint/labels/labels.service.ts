@@ -25,6 +25,7 @@ export class LabelsService {
   private getExpeditionListAlertsUrl = environment.apiBase+"/opl-expedition/alerts";
   private getPrintLabelByIdsUrl = environment.apiBase+"/opl-expedition/container/";
   private getTransportStatusUrl = environment.apiBase+"/opl-expedition/generate-tag/";
+  private postServicePrintPackUrl = environment.apiBase+"/opl-expedition/service-print-pack/";
 
 
 
@@ -68,6 +69,13 @@ export class LabelsService {
       return response.data;
     }));
   }
+
+  postServicePrintPack(body):Observable<any>{
+    return this.http.post(this.postServicePrintPackUrl,body).pipe(map((response:any)=>{
+      return response.data
+    }));
+  }
+
    refreshScanner() {
     this.emitData.next(this.numScan);
   }
@@ -94,7 +102,7 @@ export class LabelsService {
     this.emitScannerAlert.next(id);
   }
 
-  getScannerAlert() {
+  getScannerAlert(): Observable<any>{
     return this.getScannerAlert$;
   }
 }

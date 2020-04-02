@@ -13,6 +13,8 @@
     </ion-grid>        
 </ion-content>
 
+<suite-input-codes  *ngIf="scann == true" [nScanner]="nScanner"></suite-input-codes>
+
 <!--print error-->
 <ion-content *ngIf="PrintError == true">
     <ion-grid>
@@ -22,8 +24,8 @@
                     <div *ngFor="let expediton of dataSource">
                     <ion-icon  class="close-icon" name="close" color="danger" style="margin-top: 5%;"></ion-icon>
                     <div style="margin-top: 5%;">
-                        <ion-label class="text-title">Pedido MARKET {{expediton.order}} </ion-label>
-                        <ion-label class="text-title">Nº {{expediton.id}}</ion-label>
+                        <ion-label class="text-title">Pedido MARKET </ion-label>
+                        <ion-label class="text-title">Nº {{expediton.expedition.barcode }}</ion-label>
                     </div>
                    
                 <div class="item">
@@ -33,9 +35,9 @@
                 <div class="error-mesage">
                     <p  class="text-error">Vuelve a intentarlo cuando el pedido no tenga alerta.
                         Si al final del día no se pudo generar la etiqueta, envía
-                        un email a cliente@kraclonline.com con el asunto
+                        un email a cliente@kraclonline.com con el asunto.
                     </p>
-                    <ion-label class="text-title">Etiqueta: {{incidenceCode}}</ion-label>
+                    <ion-label class="text-title">Etiqueta: {{expediton.incidenceCode}}</ion-label>
                 </div>
                      </div>
                 </div>

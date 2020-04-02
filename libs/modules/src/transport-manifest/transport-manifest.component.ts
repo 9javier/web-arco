@@ -5,6 +5,8 @@ import { PrintLabelsModel } from '../../../services/src/models/endpoints/PrintLa
 import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
 import { IntermediaryService } from '@suite/services';
 import { Router } from '@angular/router';
+import {OpExpeditionType} from "./enums/OplExpeditionStatusEnums";
+
 @Component({
   selector: 'transport-manifest',
   templateUrl: './transport-manifest.component.html',
@@ -31,12 +33,9 @@ export class TransportManifestComponent implements OnInit {
     this.labelsService.getListAlertsExpedition().subscribe(result =>{
       console.log(result);
       let data=[];
-      for(let i =0;i < result.length;i++){
-
-      }
       let c=0;
       result.forEach(element => {
-        if(element.status == 5 || element.status == 6  ) {
+        if(element.status == OpExpeditionType.LABEL_GENERATION_ERROR || element.status == OpExpeditionType.LABEL_ERROR_RESOLVED  ) {
           data.push(result[c])
         }
         c++;
@@ -51,9 +50,9 @@ export class TransportManifestComponent implements OnInit {
   }
 
   goScanner(row){
-    if(row.status == 6){
-      this.labelsService.setScannerAlert(row.id);
-      this.router.navigate(['/order-preparation']);
+    if(row.status == OpExpeditionType.LABEL_ERROR_RESOLVED){
+      this.router.navigateByUrl('/order-preparation/id/'+row.id);
+      //this.labelsService.setScannerAlert(row.id);
     }
   }
 
