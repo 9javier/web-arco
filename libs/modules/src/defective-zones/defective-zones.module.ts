@@ -10,7 +10,7 @@ import {
   MatInputModule
 } from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from "@angular/material";
@@ -42,7 +42,8 @@ const routes: Routes = [
     MatSlideToggleModule,
     MatTooltipModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    FormsModule
   ]
 })
 export class DefectiveZonesModule { }
