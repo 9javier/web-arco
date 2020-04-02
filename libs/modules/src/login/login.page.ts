@@ -19,6 +19,7 @@ import { AppVersionService } from '../../../services/src/lib/endpoint/app-versio
 import { AppVersionModel } from '../../../services/src/models/endpoints/appVersion.model';
 import { ToolbarProvider } from 'libs/services/src/providers/toolbar/toolbar.provider';
 import {config} from "../../../services/src/config/config";
+import { environment } from '../../../services/src/environments/environment';
 
 const interUpdateVersion = interval(300000);
 declare let window: any;
@@ -211,6 +212,6 @@ export class LoginComponent implements OnInit {
   }
 
   loadUpdate() {
-    window.open('https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o', '_blank')
+    window.open(environment.urlDownloadApp, '_blank')
   }
 }
