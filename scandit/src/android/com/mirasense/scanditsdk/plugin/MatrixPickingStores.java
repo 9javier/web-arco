@@ -772,7 +772,6 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
   }
 
   public static void showInfoForDeliveryRequest(LineRequestsProduct lineRequestsProduct, Resources resources, String package_name, boolean isProcessed) {
-    final PickingStoreRejectionReason[] pickingStoreRejectionReasonSelected = { listRejectionReasons.get(0) };
 
     View customView = LayoutInflater.from(matrixPickingStores).inflate(resources.getIdentifier("product_info_picking_store", "layout", package_name), viewGroup, false);
     ImageView ivProductPickingStore = customView.findViewById(resources.getIdentifier("ivProductPickingStore", "id", package_name));
@@ -813,19 +812,23 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       sRejectionReasonPickingStore.setVisibility(View.GONE);
       llRejectionPickingStore.setVisibility(View.VISIBLE);
 
-      btnRejectionPickingStore.setOnClickListener(view -> {
-        JSONObject jsonObject = new JSONObject();
-        try {
-          jsonObject.put("result", true);
-          jsonObject.put("action", "request_cancel");
-          jsonObject.put("requestReference", lineRequestsProduct.getReference());
-        } catch (JSONException e) {
-
-        }
-        PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
-        pResult.setKeepCallback(true);
-        ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
-      });
+      btnRejectionPickingStore.setOnClickListener(view -> new AlertDialog.Builder(view.getContext())
+        .setMessage("¿Seguro que desea cancelar este pedido?")
+        .setPositiveButton("Aceptar", (dialogInterface, i) -> {
+          JSONObject jsonObject = new JSONObject();
+          try {
+            jsonObject.put("result", true);
+            jsonObject.put("action", "request_cancel");
+            jsonObject.put("requestReference", lineRequestsProduct.getReference());
+          } catch (JSONException e) {}
+          PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+          pResult.setKeepCallback(true);
+          ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+          dialogInfoForProduct.dismiss();
+        })
+        .setNegativeButton("Cancelar", (dialogInterface, i) -> {})
+        .show()
+      );
     }
 
     Dialog dialogProductInfoLocal = new Dialog(matrixPickingStores);
