@@ -3,6 +3,8 @@ import { IntermediaryService, ProductsService } from '@suite/services';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
 import { AddDamagedShoesComponent } from './add-damaged-shoes/add-damaged-shoes.component';
+import Classifications = DamagedModel.Classifications;
+import ModalResponse = DamagedModel.ModalResponse;
 
 @Component({
   selector: 'suite-damaged-shoes',
@@ -58,6 +60,38 @@ export class DamagedShoesComponent implements OnInit {
         await this.intermediaryService.presentLoading('Cargando...');
         const modalResponse: DamagedModel.ModalResponse = response.data;
         await this.postNewPermission(modalResponse);
+        await this.getData();
+        await this.intermediaryService.dismissLoading();
+      }
+    });
+
+    await modal.present();
+  }
+
+  async editAction(element: Classifications) {
+    const modal = await this.modalController.create({
+      component: AddDamagedShoesComponent,
+      componentProps: {
+        tAction: this.tableAction,
+        element: element
+      }
+    });
+
+    modal.onDidDismiss().then(async response => {
+      if (response.data) {
+        await this.intermediaryService.presentLoading('Cargando...');
+        const modalData: ModalResponse = response.data;
+        const classification: Classifications = {
+          id: element.id,
+          name: modalData.name,
+          ticketEmit: modalData.actions[0].isChecked,
+          passHistory: modalData.actions[1].isChecked,
+          requirePhoto: modalData.actions[2].isChecked,
+          requireContact: modalData.actions[3].isChecked,
+          requireOk: modalData.actions[4].isChecked,
+          allowOrders: modalData.actions[5].isChecked
+        };
+        await this.productsService.postDamagedUpdate([classification]);
         await this.getData();
         await this.intermediaryService.dismissLoading();
       }

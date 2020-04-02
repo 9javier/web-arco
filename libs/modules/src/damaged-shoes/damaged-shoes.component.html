@@ -5,13 +5,13 @@
         <mat-header-cell *matHeaderCellDef>
           <span class="title">Estado Id</span>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.id}}</mat-cell>
+        <mat-cell class="pointer" (click)="editAction(element)" *matCellDef="let element">{{element.id}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef>
           <span class="title">Estado</span>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+        <mat-cell class="pointer" (click)="editAction(element)" *matCellDef="let element">{{element.name}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="ticketEmit">
         <mat-header-cell *matHeaderCellDef class="center">
