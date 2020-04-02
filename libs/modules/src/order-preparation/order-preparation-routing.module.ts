@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { OrderPreparationComponent } from "./order-preparation.component";
 import { InputCodesComponent } from "./input-codes/input-codes.component";
-import { ListAlertsComponent } from "./list-alerts/list-alerts.component";
 
 const routes: Routes = [
   {
@@ -10,12 +9,12 @@ const routes: Routes = [
     component: OrderPreparationComponent
   },
   {
-    path: 'code',
-    component: InputCodesComponent
+    path: 'id/:id',
+    component: OrderPreparationComponent
   },
   {
-    path: 'alerts',
-    component: ListAlertsComponent
+    path: 'code',
+    component: InputCodesComponent
   },
  
 ];

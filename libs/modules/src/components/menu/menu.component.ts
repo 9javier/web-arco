@@ -522,9 +522,9 @@ export class MenuComponent implements OnInit {
         {
           title: 'Alertas de expediciones',
           id: 'order-preparation',
-          url: '/transport-manifest',
+          url: '/list-alerts',
           icon: 'warning',
-          tooltip: 'Albaran'
+          tooltip: 'listado de alertas de contenedores'
         },
         {
           title: 'Etiquetas manuales',

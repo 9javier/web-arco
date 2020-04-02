@@ -17,7 +17,7 @@ import { PositionsToast } from '../../../../services/src/models/positionsToast.t
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { LabelsService } from '@suite/services';
-
+import { ActivatedRoute, Params } from '@angular/router';
 @Component({
   selector: 'suite-input-codes',
   templateUrl: './input-codes.component.html',
@@ -39,6 +39,8 @@ export class InputCodesComponent implements OnInit {
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
 
+
+
   constructor(
     private intermediaryService: IntermediaryService,
     private alertController: AlertController,
@@ -51,19 +53,20 @@ export class InputCodesComponent implements OnInit {
     private keyboardService: KeyboardService,
     private router: Router,
     private location: Location,
-    private labelService: LabelsService
+    private labelService: LabelsService,
+    private routeParams: ActivatedRoute
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.focusToInput();
   }
 
   async ngOnInit() {
-
+    console.log(this.routeParams.snapshot.params.code);
     this.isStoreUser = await this.authService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authService.getStoreCurrentUser();
     }
-
+    
     this.getNumScann();
     this.getNumAllScann();
   }
@@ -329,7 +332,10 @@ export class InputCodesComponent implements OnInit {
       console.log(result);
       if(result.status == 2){
         this.labelService.numScanner(this.numScanner= (this.numScanner-1));
-        this.router.navigate(['/order-preparation']);
+        let nScanned = 1;
+        //this.numScanner= (this.numScanner-1); 
+        this.router.navigateByUrl('/order-preparation'); 
+        //this.router.navigateByUrl('/order-preparation/scanned/'+nScanned);
       }
       
     }, error => {

@@ -3,6 +3,10 @@ import { Component, OnInit, ViewChild,
 import { Router } from '@angular/router';
 import { LabelsService } from '@suite/services';
 import { IntermediaryService } from '@suite/services';
+import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
+import {Subscription} from "rxjs";
+import { Observable } from 'rxjs';
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'order-preparation',
@@ -26,21 +30,50 @@ export class OrderPreparationComponent implements OnInit {
   numPackages:number = 0; 
   expeditionNull: boolean = false;
   incidenceCode: string;
+  barcodeError:string;
+  nScanner = "hola";
+  scann: boolean = false;
+  nScanned:number;
   constructor(
     private labelsService: LabelsService,
     private router: Router,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private toolbarProvider: ToolbarProvider,
+    private routeParams: ActivatedRoute
   ) { }
 
+//   ionViewWillEnter() {
+//     //this._someListener = this.labelsService.getScannerAlert().subscribe();
+//     console.log("view enter");
+//     }
+
+//   ionViewWillLeave(){
+    
+//     console.log("sali");
+//     //this.labelsService.getScannerAlert().subscribe().unsubscribe();
+
+//     /*console.log("ujuuuu!");
+//     //this.labelsService.getScannerAlert().subscribe().unsubscribe();
+//     this._someListener.unsubscribe();*/
+// //    this.labelsService.getScannerAlert().subscribe().closed;
+
+//   }
+
   ngOnInit() {
-    this.init =true;
-    console.log("entre");
+    if(this.routeParams.snapshot.params.id != undefined){
+      this.nScanned = this.routeParams.snapshot.params.id;
+      console.log(this.nScanned);
+      let data ={expeditionId:this.nScanned, update:true };
+      this.getExpeditionStatus(data);
+    }
+    this.toolbarProvider.currentPage.next("Generar etiquetas de envio"); 
     this.initNumsScanner();  
   }
+
 initNumsScanner(){
-  this.getNumScann();
-  this.getAllNumScann();
-  this.getScannerAlert();
+    this.getNumScann();
+    this.getAllNumScann();
+    //this.getScannerAlert(); 
 }
   
 
@@ -59,11 +92,6 @@ initNumsScanner(){
     this.labelsService.getIndexLabels().subscribe(result =>{
       let result1 = [];
      let expedition = result[0];
-      /*let status = expedition.status;
-      this.dataSource= result
-      this.numPackages = expedition.packages.length;
-      this.numAllScanner = this.numPackages;
-      this.numScanner = this.numPackages;*/
         if(result.length >0){
             this.intermediaryService.dismissLoading();
             let data = { expeditionId: expedition.id, update: true}; 
@@ -83,19 +111,23 @@ initNumsScanner(){
     });
   }
 
-  showErrorExpedition(incidenceCode){
+  showErrorExpedition(){
     this.close();
     this.PrintError =true;
-    this.incidenceCode = incidenceCode;
+    
   }
 
   scanner(){
+    //this.close();
+    //this.router.navigate(['/order-preparation/code/'+this.numAllScanner]);
+    //this.scann == true;
     if(this.numScanner != 0){
       this.labelsService.numScanner(this.numScanner);
       this.router.navigate(['/order-preparation/code']);
     }else{
       //finish scanner process
     }
+    
   }
 
 
@@ -125,47 +157,18 @@ initNumsScanner(){
   }
 
   async getScannerAlert() {
-    //console.log("alert");
-    //if(this.init == true){
-      this.init =false;
-      this.labelsService.getScannerAlert().subscribe((id: any) => {
-        console.log(id);
-        let data ={ expeditionId: id,
-        update: true
-        };
-        this.getExpeditionStatus(data);
-      })
-    //}
-    this.init =false;
+      console.log("entre al scanner");
+      await this.labelsService.getScannerAlert().subscribe((id: any) => {
+          console.log(id);
+          let data ={ expeditionId: id,
+          update: true
+          };
+          this.getExpeditionStatus(data);
+        });
     
   }
 
-  async printById(id){
-    let body ={expeditionId: id, update: true};
-    await this.intermediaryService.presentLoading("cargando expedición...");
-    this.labelsService.getExpeditionByBarcode(body).subscribe(result =>{
-      console.log(result);
-      result
-      let expedition = result;
-      let status = expedition.status;
-      this.dataSource=[result]
-      this.numPackages = expedition.packages.length;
-      this.numAllScanner = this.numPackages;
-      this.numScanner = this.numPackages;
-      this.labelsService.setNumAllScanner(this.numAllScanner);
-      this.intermediaryService.dismissLoading();
-      this.showExpedition();
-      
-         
-      
-      this.intermediaryService.dismissLoading();
-    },
-    async (err) => {
-      await this.intermediaryService.dismissLoading();
-      this.showBlockedOrder();
-      console.log(err);
-    });
-  }
+  
   async getTransportStatus(body){
     this.labelsService.getTransportStatus(body).subscribe(result =>{
       let expedition = result;
@@ -176,10 +179,11 @@ initNumsScanner(){
       this.numScanner = this.numPackages;
       this.labelsService.setNumAllScanner(this.numAllScanner);
       if(result.incidence == true){
-        this.showErrorExpedition(result.incidenceCode);
+        this.showErrorExpedition();
       }else{
         this.showExpedition();
       }
+      this.sendServicePrintPack(expedition.expedition.id);
     },
     async (err) => {
       console.log(err);
@@ -187,23 +191,37 @@ initNumsScanner(){
   }
   
   async getExpeditionStatus(body){
-    this.labelsService.getTransportStatus(body).subscribe(result =>{
+   await this.labelsService.getTransportStatus(body).subscribe(result =>{
       let expedition = result;
       let status = expedition.status;
       this.dataSource=[result]
       this.numPackages = expedition.expedition.packages.length;
       this.numAllScanner = this.numPackages;
       this.numScanner = this.numPackages;
-      //this.labelsService.setNumAllScanner(this.numAllScanner);
+      this.labelsService.setNumAllScanner(this.numAllScanner);
       this.intermediaryService.dismissLoading();
       this.showExpedition();
-        //call endpoint to send expeditionId   
+    //call endpoint to send expeditionId
+    this.sendServicePrintPack(expedition.expedition.id); 
     },
     async (err) => {
       console.log(err);
     });
+    
   }
   
+ async sendServicePrintPack(id){
+   let body = {expeditionId:id }
+  this.labelsService.postServicePrintPack(body).subscribe(result =>{
+   
+  },
+  async (err) => {
+    console.log(err);
+  });
+  }
+
+
+
   statusScanner(){
     let numScanned = (this.numAllScanner - this.numScanner)
     let status =numScanned +" de "+this.numAllScanner
@@ -218,8 +236,8 @@ initNumsScanner(){
   }
 
   showAlerts(){
-    this.init = false;
-    this.router.navigate(['/transport-manifest']);
+    
+    this.router.navigateByUrl('/list-alerts');
   }
 
   close(){
@@ -234,6 +252,12 @@ initNumsScanner(){
   return(){
     this.close();
     this.initPage = true;
+  }
+
+  ngOnDestroy() {
+   // this.labelsService.getScannerAlert().subscribe().unsubscribe();
+   //this.labelsService.getScannerAlert().subscribe().closed;
+
   }
 
 }

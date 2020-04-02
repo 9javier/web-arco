@@ -3,7 +3,6 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule, Routes } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { InputCodesComponent } from "./input-codes/input-codes.component";
-import { ListAlertsComponent } from "./list-alerts/list-alerts.component";
 import { HideKeyboardModule } from 'hide-keyboard';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrderPreparationComponent } from './order-preparation.component';
@@ -22,7 +21,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [OrderPreparationComponent,InputCodesComponent,ListAlertsComponent],
+  declarations: [OrderPreparationComponent,InputCodesComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -37,6 +36,6 @@ const routes: Routes = [
     MatTooltipModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  entryComponents: [InputCodesComponent,ListAlertsComponent]
+  entryComponents: [InputCodesComponent]
 })
 export class OrderPreparationModule { }

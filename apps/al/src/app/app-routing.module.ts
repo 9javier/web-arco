@@ -76,7 +76,7 @@ const routes: Routes = [
 
   },
   {
-    path: 'transport-manifest',
+    path: 'list-alerts',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/transport-manifest/transport-manifest.module#TransportManifestModule',
     data: {
