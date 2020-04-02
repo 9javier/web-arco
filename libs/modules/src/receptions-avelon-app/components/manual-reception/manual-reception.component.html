@@ -11,6 +11,17 @@
     </div>
 
     <mat-list>
+      <mat-list-item matRipple (click)="listItems(1)" class="model-selector">
+        <h4 mat-line>Ver modelos por</h4>
+        <mat-form-field class="model-selector" (click)="$event.preventDefault();$event.stopPropagation()">
+          <mat-select [(value)]="typeModelVisualization" (valueChange)="changeValue()">
+            <mat-option [value]="TypesModel.MODEL_NAME">NOMBRE</mat-option>
+            <mat-option [value]="TypesModel.MODEL_REFERENCE">REFERENCIA</mat-option>
+            <mat-option [value]="TypesModel.PROVIDER_REFERENCE">REF. PROVEEDOR</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-list-item>
+
       <mat-list-item matRipple (click)="listItems(1)">
         <mat-icon mat-list-icon>list</mat-icon>
         <h4 mat-line>Marca</h4>
@@ -44,16 +55,22 @@
 
     <div class="sizes">
       <span>Tallas</span>
-      <div *ngIf="modelSelected && colorSelected && listSizes && listSizes.length > 0">
-        <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
-        <ion-button (click)="resetSizes()" matTooltipClass="tooltip" matTooltip="Reiniciar tallas">
+      <div *ngIf="modelSelected && colorSelected && listSizes && listSizes.length > 0" class="default">
+        <div *ngIf="!eanCode" class="default-content">
+          <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
+        </div>
+        <ion-button *ngIf="!eanCode" (click)="resetSizes()" matTooltipClass="tooltip" matTooltip="Reiniciar tallas">
           <ion-icon name="refresh"></ion-icon>
         </ion-button>
+
+        <div *ngIf="!!eanCode" class="default-content">
+          <size-select *ngFor="let size of listSizes" [item]="size" (sizeSelected)="sizeSelectedInSelector($event)"></size-select>
+        </div>
       </div>
-      <div *ngIf="modelSelected && colorSelected && (!listSizes || listSizes.length <= 0)" class="sizes-empty">
+      <div *ngIf="modelSelected && colorSelected && (!listSizes || listSizes.length <= 0)" class="default sizes-empty">
         <p>No se han podido cargar tallas para la marca, el modelo y el color seleccionados.</p>
       </div>
-      <div *ngIf="!modelSelected || !colorSelected" class="sizes-select">
+      <div *ngIf="!modelSelected || !colorSelected" class="default sizes-select">
         <p><span *ngIf="!modelSelected">Seleccione un modelo.</span>
           <span *ngIf="!colorSelected">Seleccione un color.</span></p>
       </div>

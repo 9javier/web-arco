@@ -5,20 +5,20 @@
         <mat-header-cell *matHeaderCellDef>
           <span class="title">Estado Id</span>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.defectType}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element.id}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef>
           <span class="title">Estado</span>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{getStatusName(element.defectType)}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="ticketEmit">
         <mat-header-cell *matHeaderCellDef class="center">
           <span class="title">Emite Ticket</span>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="center">
-          <mat-checkbox [checked]="element.ticketEmit" (change)="changeAction($event, element.defectType, 'ticketEmit')"></mat-checkbox>
+          <mat-checkbox [checked]="element.ticketEmit" (change)="changeAction($event, element, 'ticketEmit')"></mat-checkbox>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="passHistory">
@@ -26,7 +26,7 @@
           <span class="title">Pasa Histórico</span>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="center">
-          <mat-checkbox [checked]="element.passHistory" (change)="changeAction($event, element.defectType,'passHistory')"></mat-checkbox>
+          <mat-checkbox [checked]="element.passHistory" (change)="changeAction($event, element,'passHistory')"></mat-checkbox>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="requirePhoto">
@@ -34,7 +34,7 @@
           <span class="title">Requiere Foto</span>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="center">
-          <mat-checkbox [checked]="element.requirePhoto" (change)="changeAction($event, element.defectType,'requirePhoto')"></mat-checkbox>
+          <mat-checkbox [checked]="element.requirePhoto" (change)="changeAction($event, element,'requirePhoto')"></mat-checkbox>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="requireContact">
@@ -42,7 +42,7 @@
           <span class="title">Requiere Contacto</span>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="center">
-          <mat-checkbox [checked]="element.requireContact" (change)="changeAction($event, element.defectType, 'requireContact')"></mat-checkbox>
+          <mat-checkbox [checked]="element.requireContact" (change)="changeAction($event, element, 'requireContact')"></mat-checkbox>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="requireOk">
@@ -50,7 +50,7 @@
           <span class="title">Requiere Ok</span>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="center">
-          <mat-checkbox [checked]="element.requireOk" (change)="changeAction($event, element.defectType,'requireOk')"></mat-checkbox>
+          <mat-checkbox [checked]="element.requireOk" (change)="changeAction($event, element,'requireOk')"></mat-checkbox>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="allowOrders">
@@ -58,7 +58,7 @@
           <span class="title">No apto para pedidos</span>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="center">
-          <mat-checkbox [checked]="element.allowOrders" (change)="changeAction($event, element.defectType,'allowOrders')"></mat-checkbox>
+          <mat-checkbox [checked]="element.allowOrders" (change)="changeAction($event, element,'allowOrders')"></mat-checkbox>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></mat-header-row>

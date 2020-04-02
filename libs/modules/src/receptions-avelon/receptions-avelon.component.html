@@ -18,7 +18,16 @@
 
         <div class="col">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
-            <ion-title> Modelos </ion-title>
+            <ion-title>
+              Modelos
+              <mat-form-field class="model-selector" (click)="$event.preventDefault();$event.stopPropagation()">
+                <mat-select [(value)]="typeModelVisualization" (valueChange)="changeValue()">
+                  <mat-option [value]="TypesModel.MODEL_NAME">NOMBRE</mat-option>
+                  <mat-option [value]="TypesModel.MODEL_REFERENCE">REFERENCIA</mat-option>
+                  <mat-option [value]="TypesModel.PROVIDER_REFERENCE">REF. PROVEEDOR</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
           <suite-lists type="models" ></suite-lists>
@@ -52,16 +61,22 @@
 
           <div class="row sizes">
             <span>Tallas</span>
-            <div *ngIf="result.modelId && result.colorId && listSizes.length > 0">
-              <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
-              <ion-button (click)="resetSizes()" matTooltipClass="tooltip" matTooltip="Reiniciar tallas">
+            <div *ngIf="result.modelId && result.colorId && listSizes.length > 0" class="default">
+              <div *ngIf="!result.ean" class="default-content">
+                <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
+              </div>
+              <ion-button *ngIf="!result.ean" (click)="resetSizes()" matTooltipClass="tooltip" matTooltip="Reiniciar tallas">
                 <ion-icon name="refresh"></ion-icon>
               </ion-button>
+
+              <div *ngIf="!!result.ean" class="default-content">
+                <size-select *ngFor="let size of listSizes" [item]="size" (sizeSelected)="sizeSelectedInSelector($event)"></size-select>
+              </div>
             </div>
-            <div *ngIf="result.modelId && result.colorId && (!listSizes || listSizes.length <= 0)" class="sizes-empty">
+            <div *ngIf="result.modelId && result.colorId && (!listSizes || listSizes.length <= 0)" class="default sizes-empty">
               <p>No se han podido cargar tallas para la marca, el modelo y el color seleccionados.</p>
             </div>
-            <div *ngIf="!result.modelId || !result.colorId" class="sizes-select">
+            <div *ngIf="!result.modelId || !result.colorId" class="default sizes-select">
               <p><span *ngIf="!result.modelId">Seleccione un modelo.</span>
                 <span *ngIf="!result.colorId">Seleccione un color.</span></p>
             </div>
@@ -69,12 +84,14 @@
 
           <div class="row ean">
             <div class="col ean">
-              <div>
+              <div (click)="openVirtualKeyboard(null, objectType.EAN_CODE)">
                 <mat-form-field id="eanCode">
                   <mat-label>EAN</mat-label>
                   <input #ean [value]="result.ean" type="text" matInput>
+                  <button *ngIf="!!result.ean" mat-icon-button matSuffix (click)="removeEanCode($event)" class="remove-icon">
+                    <mat-icon>close</mat-icon>
+                  </button>
                 </mat-form-field>
-                <i slot="end" class="material-icons" (click)="openVirtualKeyboard(null, objectType.EAN_CODE)" id="eanKeyboard">keyboard</i>
               </div>
             </div>
             <div class="col">

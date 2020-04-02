@@ -31,7 +31,7 @@
                                (applyFilters)="applyFilters($event, 'statusManagementDefect')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{getStatusName(element.statusManagementDefect.defectType)}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.statusManagementDefect.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="warehouse">
@@ -131,6 +131,28 @@
           </suite-filter-button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element.defectTypeChild.name}}  </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="defectZoneParent">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Tipo defecto
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectZoneParent [title]="'Zonas'"
+                               [listItems]="entities.defectZoneParent"
+                               [isFiltering]="isFilteringDefectZoneParent != entities.defectZoneParent.length"
+                               (applyFilters)="applyFilters($event, 'defectZoneParent')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.defectZoneParent.name}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="defectZoneChild">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Subtipo defecto
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDefectZoneChild [title]="'Subzona'"
+                               [listItems]="entities.defectZoneChild"
+                               [isFiltering]="isFilteringDefectZoneChild != entities.defectZoneChild.length"
+                               (applyFilters)="applyFilters($event, 'defectZoneChild')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element.defectZoneChild.name}}  </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>

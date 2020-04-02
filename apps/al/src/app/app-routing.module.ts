@@ -110,6 +110,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'requested-products',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/requested-products/requested-products.module#RequestedProductsModule',
+    data: {
+      name: 'Productos solicitados'
+    }
+  },
+  {
     path: 'building',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/building/building.module#BuildingModule',
@@ -145,6 +153,11 @@ const routes: Routes = [
     path: 'picking-tasks',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/picking-tasks/picking-tasks.module#PickingTasksModule'
+  },
+  {
+    path: 'picking-tasks-stores',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/picking-tasks-stores/picking-tasks-stores.module#PickingTasksStoresModule'
   },
   {
     path: 'warehouses',

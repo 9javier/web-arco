@@ -33,6 +33,16 @@ div.fields-to-search {
   mat-list {
     mat-list-item {
       height: 56px;
+      mat-form-field.model-selector {
+        font-size: 14px;
+        width: 100px;
+        margin-left: 16px;
+        height: 50px;
+      }
+    }
+    mat-list-item.model-selector {
+      border-bottom: 1px solid black;
+      border-top: 1px solid black;
     }
     mat-icon.right {
       right: 16px;
@@ -52,12 +62,17 @@ div.fields-to-search {
       padding: 0 4px;
       background: var(--ion-color-primary-contrast);
     }
-    div {
+    div.default {
       display: flex;
       flex-wrap: wrap;
       place-content: center;
       border: 1px solid var(--ion-color-primary);
       padding: 8px;
+      div.default-content {
+        display: flex;
+        flex-wrap: wrap;
+        place-content: center;
+      }
     }
 
     div.sizes-empty {

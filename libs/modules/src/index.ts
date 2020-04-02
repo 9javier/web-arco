@@ -119,6 +119,9 @@ export * from './damaged-shoes/damaged-shoes.module';
 export * from './defective-management/defective-management.component';
 export * from './defective-management/defective-management.module';
 
+export * from './defective-zones/defective-zones.component';
+export * from './defective-zones/defective-zones.module';
+
 export * from './defective-registry/defective-registry.component';
 export * from './defective-registry/defective-registry.module';
 
@@ -144,6 +147,10 @@ export * from './user-assignment-picking/user-assignment-picking.module';
 // Picking Tasks
 export * from './picking-tasks/picking-tasks.component';
 export * from './picking-tasks/picking-tasks.module';
+
+// Picking Tasks Stores
+export * from './picking-tasks-stores/picking-tasks-stores.component';
+export * from './picking-tasks-stores/picking-tasks-stores.module';
 
 /**Permissions */
 export * from './permissions/permissions.module';
@@ -391,6 +398,10 @@ export  * from './seasons-enabled/seasons-enabled.module';
 //Drop Files
 export * from './drop-files/drop-files.component'
 export * from './drop-files/drop-files.module'
+
+//requested-products
+export * from './requested-products/requested-products.component'
+export * from './requested-products/requested-products.module'
 
 //Unlock Expeditions
 export * from './unlock-expeditions/unlock-expeditions.component'

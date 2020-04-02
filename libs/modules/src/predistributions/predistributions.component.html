@@ -14,25 +14,14 @@
       </ng-container>
 
       <ng-container matColumnDef="references">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Articulo
+        <mat-header-cell class="my-sticky-col info type-120" *matHeaderCellDef mat-sort-header>Articulo
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonReferences [title]="'Artículos'"
                                [listItems]="entities.references"
                                [isFiltering]="isFilteringReferences != entities.references.length"
                                (applyFilters)="applyFilters($event, 'references')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.article}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="sizes">
-        <mat-header-cell class="my-sticky-col info type-120" *matHeaderCellDef mat-sort-header>Tallas
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonSizes [title]="'Tallas'"
-                             [listItems]="entities.sizes"
-                             [isFiltering]="isFilteringSizes != entities.sizes.length"
-                             (applyFilters)="applyFilters($event, 'sizes')">
-        </suite-filter-button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info type-120">{{element.size.name}}</mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-120"> {{element.article}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="warehouses">

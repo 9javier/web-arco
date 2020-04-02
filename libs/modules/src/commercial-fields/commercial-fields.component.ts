@@ -124,6 +124,7 @@ export class CommercialFieldsComponent implements OnInit {
     this.sort.sortChange.subscribe((sort: Sort) => {
       this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
         this.saveFilters();
+        this.form.value.pagination.page = 1;
         if (sort.direction == '') {
           this.form.get("orderby").patchValue({
             type: '2',

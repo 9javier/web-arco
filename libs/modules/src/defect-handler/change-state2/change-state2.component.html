@@ -27,10 +27,15 @@
 
   <ion-item>
     <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
-    <ion-input style="margin-left: 10%;" disabled>{{ ParentAndChild }}</ion-input>
+    <ion-input style="margin-left: 5%;" disabled>{{ ParentAndChild }}</ion-input>
     <!--<ion-select (ionChange)="defectChange($event)" placeholder="Selecciona" disabled>
       <ion-select-option >{{ ParentAndChild }}</ion-select-option>
     </ion-select> -->
+  </ion-item>
+
+  <ion-item>
+    <ion-label class="ion-text-capitalize label-text">Zona</ion-label>
+    <ion-input style="margin-left: 10%;" disabled>{{ ZoneAndChild }}</ion-input>
   </ion-item>
 
  
@@ -107,13 +112,6 @@
   </ion-list>
   </div>
   <!--<ion-label>{{imgUrl}}</ion-label>-->
-
-  <div *ngIf="selectGestionState == true">
-  <ion-item lines="none">
-    <ion-label class="ion-text-capitalize label-text">devolución a fabrica</ion-label>
-    <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
-  </ion-item>
-  </div>
 
 
   <ion-button  [disabled]="selectGestionState == false" (click)="send()" expand="block" shape="round">

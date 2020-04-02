@@ -221,6 +221,13 @@ export class MenuComponent implements OnInit {
           icon: 'flag',
           tooltip: 'Tipos de daños'
         },
+        {
+          title: 'Zonas',
+          id: 'defective-zones',
+          url: '/defective-zones',
+          icon: 'flag',
+          tooltip: 'Zonas'
+        },
       ]
     },
     {
@@ -367,7 +374,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Expediciones',
+      title: 'Recepción de fábrica',
       open: true,
       type: 'wrapper',
       icon: 'archive',
@@ -490,6 +497,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Listado de todos los productos recibidos'
         },
         {
+          title: 'Productos solicitados',
+          id: 'received-products-requested',
+          url: '/requested-products',
+          icon: 'archive',
+          tooltip: 'Listado de todos los productos solicitados que se han recibido'
+        },
+        {
           title: 'Reetiquetado productos',
           id: 'print-product',
           url: 'print/product/relabel',
@@ -608,6 +622,13 @@ export class MenuComponent implements OnInit {
           icon: 'qr-scanner',
           url: '/picking-tasks',
           tooltip: 'Traspasos pendientes de realizar'
+        },
+        {
+          title: 'Listado de peticiones',
+          id: 'picking-tasks-stores',
+          icon: 'qr-scanner',
+          url: '/picking-tasks-stores',
+          tooltip: 'Listado de peticiones pendientes de realizar'
         },
         {
           title: 'Asociar pares a embalajes',
@@ -790,7 +811,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Expediciones',
+      title: 'Recepción de fábrica',
       open: false,
       type: 'wrapper',
       icon: 'archive',

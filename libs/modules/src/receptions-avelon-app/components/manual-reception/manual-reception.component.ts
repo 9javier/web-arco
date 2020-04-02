@@ -17,6 +17,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import { LocalStorageProvider } from "../../../../../services/src/providers/local-storage/local-storage.provider";
 import {ScreenResult} from "../../../receptions-avelon/enums/screen_result.enum";
 import {ModalDestinyReceptionComponent} from "../../modals/modal-model-images/destiny-reception.component";
+import {TypeModelVisualization} from "../../../receptions-avelon/enums/model_visualization.enum";
 
 @Component({
   selector: 'suite-manual-reception',
@@ -49,6 +50,10 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   lastPrint;
   isReceptionWithoutOrder: boolean = false;
+
+  public TypesModel = TypeModelVisualization;
+  public typeModelVisualization = TypeModelVisualization.MODEL_NAME;
+  public lastTypeModelVisualization = TypeModelVisualization.MODEL_NAME;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -439,6 +444,14 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     this.eanCode = null;
   }
 
+  public sizeSelectedInSelector(item: ReceptionAvelonModel.LoadSizesList) {
+    for (let size of this.listSizes) {
+      if (size.id != item.id) {
+        size.quantity = 0;
+      }
+    }
+  }
+
   private checksEanAndPrint(eanCode: string) {
     if (this.checkOnlyOneSizeAndOneQuantity()) {
       this.checksNotifyReceptionAndPrint(eanCode);
@@ -549,6 +562,25 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       this.intermediaryService.presentWarning('Indique qué talla(s) desea imprimir y qué cantidad de etiquetas quiere imprimir por cada talla.', null);
     }
   }
+
+  //region Selection of data visualization for model
+  public changeValue() {
+    this.receptionsAvelonService
+      .postReloadModelsList({typeVisualization: this.typeModelVisualization, providerId: this.receptionAvelonProvider.expeditionData.providerId})
+      .subscribe((res) => {
+        this.listModels = res.data;
+        this.brandSelected = null;
+        this.modelSelected = null;
+        this.modelIdSelected = null;
+        this.colorSelected = null;
+        this.lastTypeModelVisualization = this.typeModelVisualization;
+      }, error => {
+        console.error('Error reloading models: ', error);
+        this.typeModelVisualization = this.lastTypeModelVisualization;
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los modelos por el valor seleccionado.');
+      });
+  }
+  //endregion
 
   // check that user only has selected one size and one unity for that size to associate to EAN code
   private checkOnlyOneSizeAndOneQuantity(): boolean {

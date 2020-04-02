@@ -4,10 +4,10 @@ import { CommonModule } from '@angular/common';
 import { ManualReceptionComponent } from './manual-reception.component';
 import {
   MatButtonModule,
-  MatCardModule,
+  MatCardModule, MatFormFieldModule,
   MatIconModule,
   MatListModule,
-  MatRippleModule,
+  MatRippleModule, MatSelectModule,
   MatTooltipModule
 } from "@angular/material";
 import {FilterItemsListModule} from "../filter-items-list/filter-items-list.module";
@@ -16,6 +16,7 @@ import {FabExtendedModule} from "../../../components/button/fab/fab-extended/fab
 import {SizeInputModule} from "../../../components/size-input/size-input.module";
 import {ModalModelImagesModule} from "../modal-model-images/modal-model-images.module";
 import {ModalDestinyReceptionModule} from "../../modals/modal-model-images/destiny-reception.module";
+import {SizeSelectModule} from "../../../components/size-select/size-select.module";
 
 @NgModule({
   declarations: [ManualReceptionComponent],
@@ -34,7 +35,10 @@ import {ModalDestinyReceptionModule} from "../../modals/modal-model-images/desti
     ModalModelImagesModule,
     MatTooltipModule,
     MatCardModule,
-    ModalDestinyReceptionModule
+    ModalDestinyReceptionModule,
+    SizeSelectModule,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   exports: [ManualReceptionComponent]
 })

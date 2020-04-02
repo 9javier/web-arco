@@ -29,7 +29,14 @@
         <ion-select-option *ngFor="let defect of defects" [value]="defect.id">{{defect.name +" - "+ defect.defectTypeParent.name}}</ion-select-option>
       </ion-select>
     </ion-item>
- 
+
+    <ion-item>
+      <ion-label class="ion-text-capitalize label-text">Zona</ion-label>
+      <ion-select (ionChange)="defectZoneChange($event)" formControlName="defectZone" placeholder="Selecciona" [disabled]="barcodeRoute!=null">
+        <ion-select-option *ngFor="let zone of zones" [value]="zone.id">{{zone.name +" - "+ zone.defectZoneParent.name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
     <ion-item>
       <ion-label position="floating" class="label-text">Observaciones</ion-label>
       <ion-textarea  formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-textarea>
@@ -51,7 +58,7 @@
        </ion-item>
       </div>
     </div>
-  
+
       <ion-item lines="none" *ngIf="requirePhoto == true" lines="none">
         <ion-label class="ion-text-capitalize label-text">capturar / buscar fotos</ion-label>
         <ion-button (click)="takePhoto()">
@@ -74,8 +81,8 @@
             </ion-button>
         </ion-item>
       </ion-list>
-     
-  
+
+
       <ion-item lines="none" *ngIf="requireOk == true">
         <ion-label lines="none" class="ion-text-capitalize label-text">generar firma</ion-label>
         <ion-button (click)="signModal()">
@@ -96,19 +103,16 @@
         </ion-item>
       </ion-list>
       <ion-label>{{imgUrl}}</ion-label>
-      <ion-item lines="none">
-        <ion-label class="ion-text-capitalize label-text">devolución a fabrica</ion-label>
-        <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
-      </ion-item>
-    
+
+
     <ion-button *ngIf="barcodeRoute==null"  [attr.disabled]="!select1 || !select2" (click)="send()" expand="block" shape="round">
       enviar
     </ion-button>
-    
+
     <ion-button *ngIf="barcodeRoute!=null" [disabled]="differentState" (click)="enviaryarn()" expand="block" shape="round" >
       actualizar
     </ion-button>
- 
+
   </ng-template>
 </form>
 </ion-content>

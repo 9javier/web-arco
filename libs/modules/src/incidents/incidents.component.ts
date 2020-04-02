@@ -22,6 +22,10 @@ import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar
 import { Subscription } from 'rxjs';
 import { KeyboardService } from '../../../services/src/lib/keyboard/keyboard.service';
 import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
+import { PrintTicketService } from '../../../services/src/lib/print-ticket/print-ticket.service';
+import {DefectiveRegistryModel} from "../../../services/src/models/endpoints/DefectiveRegistry";
+import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
+import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
 
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 
@@ -59,6 +63,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   phone;
   managementId;
   defectChildId;
+  defectZoneChildId;
   slideOpts = {
     speed: 400
   };
@@ -70,6 +75,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   readed: boolean
   barcode: string = ''
   defects: any = [];
+  zones: any = [];
   statusManagament: any;
   public barcodeRoute = null;
   public types: any;
@@ -109,6 +115,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     private toolbarProvider: ToolbarProvider,
     private dropService: DropFilesService,
     private itemReferencesProvider: ItemReferencesProvider,
+    private printTicketService: PrintTicketService,
 
   ) {
 
@@ -189,16 +196,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.signaturesSubscription.unsubscribe();
   }
 
-  defectType(defecType_) {
-
-    let defecType = [];
-    defecType_['classifications'].forEach(element => {
-      let res = defecType_['statuses'].find(x => x.id == element.defectType);
-      if (res != undefined) {
-        defecType.push(res);
-      }
-    });
-    this.allDefectType = defecType;
+  defectType(defecType) {
+    this.allDefectType = defecType ? defecType.classifications : [];
   }
 
   initForm() {
@@ -213,6 +212,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       factoryReturn: [false],
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
+      defectZoneChildId: [0],
       signFileId: [0],
       gestionState: 0,
       contact: this.fb.group({
@@ -229,6 +229,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.incidentsService.getDefectTypesChild().subscribe(resp => {
       this.defects = resp;
 
+    })
+    this.incidentsService.getDefectZonesChild().subscribe(resp => {
+      this.zones = resp;
+      console.log("TEST::zones", this.zones);
     })
     this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
       this.statusManagament = resp
@@ -277,6 +281,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           isHistory: resp.isHistory,
           statusManagementDefectId: resp.statusManagementDefect.id,
           defectTypeChildId: resp.defectTypeChild.id,
+          defectZoneChildId: resp.defectZoneChild.id,
           dateDetection: moment().format(),
           // photosFileIds: [ [{ "id": 1 }]],
           // signFileId: [1],
@@ -284,7 +289,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           //   name: contact.name,
           //   email: contact.email,
           //   phone: contact.phone
-          // })            
+          // })
         });
         this.typeIdBC = resp.statusManagementDefect.id;
         this.onChange(resp.defectTypeChild.id);
@@ -356,8 +361,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }, 'Registrar defectuoso', HEADER_BACKGROUND, HEADER_COLOR);
   }
 
-  print() {
-    console.log("imprimir...")
+  print(defective, status) {
+    this.printTicketService.printTicket(defective);
   }
 
   validate() {
@@ -443,6 +448,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
+      defectZoneChildId: this.defectZoneChildId,
     })
     if (this.requireContact == true) {
       if (this.validate()) {
@@ -467,6 +473,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
+      defectZoneChildId: this.defectZoneChildId,
       defectTypeParentId: 1,
       photosFileIds: photos,
       signFileId: this.signatures.id,
@@ -475,12 +482,13 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       //   email: this.txtEmail,
       //   phone: this.txtTel,
       // },
-    })
+    });
+    //let defective = ;
     // console.log("hello world", this.incidenceForm);
     let This = this;
     await This.intermediary.presentLoading('Enviando...')
     if (this.ticketEmit == true) {
-      this.print();
+      //this.printTicketService.printTicket(this.incidenceForm, this.incidenceForm.statuManagementDefectId);
     }
 
     if (this.incidenceForm.value.observations == null) {
@@ -498,7 +506,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }
 
     let object = this.incidenceForm.value;
-    console.log("object", object);
     if (!this.requireContact) {
       delete object.contact;
     }
@@ -516,6 +523,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           factoryReturn: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectZoneChildId: 0,
           gestionState: 0,
           photosFileIds: 0,
           signFileId: 0,
@@ -543,13 +551,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   async sendToIncidents(object) {
 
     let This = this;
-
     This.incidentsService.addRegistry(object).subscribe(
       resp => {
         if (this.ticketEmit == true) {
-          this.print();
+          this.printTicketService.printTicket(resp.result);
         }
-        this.readed = false
+        this.readed = false;
         this.clearVariables();
         This.intermediary.dismissLoading()
         This.intermediary.presentToastSuccess('El defecto fue enviado exitosamente')
@@ -571,10 +578,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     let id = e.detail.value;
     let res;
     if (this.barcodeRoute == null || this.barcodeRoute == undefined) {
-      res = this.statusManagament['classifications'].find(x => x.defectType == id);
+      res = this.statusManagament['classifications'].find(x => x.id == id);
 
     } else {
-      res = this.statusManagament.classifications != undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find(x => x.defectType == id);
+      res = this.statusManagament.classifications != undefined ? this.statusManagament.classifications : this.statusManagament['classifications'].find(x => x.id == id);
 
     }
 
@@ -587,7 +594,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       console.log(res.requirePhoto);
       this.ticketEmit = res.ticketEmit;
       this.passHistory = res.passHistory;
-      this.requirePhoto = res.requirePhoto
+      this.requirePhoto = res.requirePhoto;
       this.requireContact = res.requireContact;
       this.requireOk = res.requireOk;
       this.managementId = res.id;
@@ -608,6 +615,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.select2 = true;
     console.log(e);
     this.defectChildId = e.detail.value;
+  }
+
+  defectZoneChange(e) {
+    this.select2 = true;
+    console.log(e);
+    this.defectZoneChildId = e.detail.value;
   }
 
   ngAfterViewInit() {
@@ -702,7 +715,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         const response: any = JSON.parse(result.response)
         console.log('response: ', response);
         console.log(response.data);
-        
+
         response.data.pathMedium = `${environment.apiBasePhoto}${response.data.pathMedium}`
         response.data.pathIcon = `${environment.apiBasePhoto}${response.data.pathIcon}`
         this.img = response.data;
@@ -896,6 +909,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         factoryReturn: false,
         statusManagementDefectId: 0,
         defectTypeChildId: 0,
+        defectZoneChildId: 0,
         photosFileIds: [],
         signFileId: 0,
         contact: {

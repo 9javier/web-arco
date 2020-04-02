@@ -42,6 +42,14 @@
             {{defect.name +" - "+ defect.defectTypeParent.name}}</ion-select-option>
         </ion-select>
       </ion-item>
+      <ion-item>
+        <ion-label class="ion-text-capitalize label-text">Zona</ion-label>
+        <ion-select (ionChange)="defectZoneChange($event)" placeholder="Selecciona" formControlName="defectZoneChildId"
+                    [disabled]="barcodeRoute!=null">
+          <ion-select-option *ngFor="let zone of zones" [value]="zone.id">
+            {{zone.name +" - "+ zone.defectZoneParent.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
 
       <ion-item>
         <ion-label position="floating" class="label-text">Observaciones</ion-label>
@@ -112,10 +120,6 @@
         </ion-item>
       </ion-list>
       <!-- <ion-label>{{imgUrl}}</ion-label> -->
-      <ion-item lines="none">
-        <ion-label class="ion-text-capitalize label-text">devolución a fabrica</ion-label>
-        <ion-checkbox formControlName="factoryReturn" slot="end" [readonly]="barcodeRoute!=null"></ion-checkbox>
-      </ion-item>
     
     <ion-button *ngIf="barcodeRoute==null"  [attr.disabled]="!select1 || !select2" (click)="send()" expand="block" shape="round">
       enviar

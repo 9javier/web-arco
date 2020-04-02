@@ -24,7 +24,6 @@ export class DefectHandlerComponent implements OnInit {
   displayedColumns: string[] = ['id', 'barcode', 'registerDate', 'state'];
   OrderSelect;
   dataSource;
-  originalTableStatus: DamagedModel.Status[];
   columns = {};
   entities;
   pagerValues = [10, 20, 80];
@@ -162,7 +161,6 @@ export class DefectHandlerComponent implements OnInit {
     this.defectiveRegistryService.getData().subscribe((resp: any) => {
       if (resp.results) {
         this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
-        this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
         const paginator = resp.pagination;
         this.groups = resp.ordertypes;
         this.paginator.length = paginator.totalResults;
@@ -184,7 +182,6 @@ export class DefectHandlerComponent implements OnInit {
     this.defectiveRegistryService.getListDefect(form.value).subscribe((resp: any) => {
       if (resp.results) {
         this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
-        this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
         const paginator = resp.pagination;
         this.groups = resp.ordertypes;
         this.paginator.length = paginator.totalResults;
@@ -310,11 +307,6 @@ export class DefectHandlerComponent implements OnInit {
   initSelectForm(items): void {
     this.selectedForm.removeControl("toSelect");
     this.selectedForm.addControl("toSelect", this.formBuilder.array(items.map(prices => new FormControl(false))));
-  }
-
-  getStatusName(defectType: number) {
-    const status = this.originalTableStatus.find((x) => x.id === defectType);
-    return status.name;
   }
 
   async sortData(event: Sort) {

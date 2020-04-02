@@ -29,6 +29,7 @@ export namespace FiltersModel{
     export interface Brand extends Enum {
       id:number;
       reference:string;
+      provider:string;
       value:string;
       checked:boolean;
       hide:boolean;
