@@ -106,7 +106,7 @@
               </span>
               <span *ngIf="actionSelected == 2">
                 {{market.stock}}
-              </span> 
+              </span>
             </span>
           </span>
         </td>
@@ -117,7 +117,7 @@
           <span>Amazon</span>
           <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchAmazon"/>
         </th>
-        <td mat-cell *matCellDef="let product"> 
+        <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'Amazon'">
               <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
@@ -139,7 +139,7 @@
           <span>Spartoo</span>
           <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchSpartoo"/>
         </th>
-        <td mat-cell *matCellDef="let product"> 
+        <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'Spartoo'">
               <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
@@ -150,7 +150,7 @@
               </span>
               <span *ngIf="actionSelected == 2">
                 {{market.stock}}
-              </span> 
+              </span>
             </span>
           </span>
         </td>
@@ -161,7 +161,7 @@
           <span>Zalando</span>
           <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchZalando"/>
         </th>
-        <td mat-cell *matCellDef="let product"> 
+        <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'Zalando'">
               <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
@@ -172,7 +172,7 @@
               </span>
               <span *ngIf="actionSelected == 2">
                 {{market.stock}}
-              </span> 
+              </span>
             </span>
           </span>
         </td>
@@ -183,7 +183,7 @@
           <span>CDiscount</span>
           <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchCDiscount"/>
         </th>
-        <td mat-cell *matCellDef="let product"> 
+        <td mat-cell *matCellDef="let product">
           <span *ngFor="let market of product.productsMarkets">
             <span *ngIf="market.market.name == 'CDiscount'">
               <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
@@ -195,11 +195,26 @@
               <span *ngIf="actionSelected == 2">
                 {{market.stock}}
               </span>
-            </span> 
+            </span>
           </span>
         </td>
       </ng-container>
     </table>
+  </div>
+  <div class="mp-catalog-legend">
+    <div>
+      <span class="symbol symbolActivate"></span>
+      <span>Sincronizado y activo</span>
+    </div>
+    <div>
+      <span class="symbol symbolDisabledInMarket"></span> Sincronizado y no activo
+    </div>
+    <div>
+      <span class="symbol symbolInvalid"></span> Error de sincronización
+    </div>
+    <div>
+      <span class="symbol symbolNotUpdated"></span> No actualizado
+    </div>
   </div>
   <div class="mp-catalog-table-footer-wrapper">
     <div class="mp-catalog-first-footer-section">
