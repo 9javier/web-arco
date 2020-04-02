@@ -8,19 +8,24 @@ import { HttpRequestModel } from '../../../models/endpoints/HttpRequest';
   providedIn: 'root'
 })
 export class IncidentsService {
-  private defectTypesChildUrl: string = environment.apiBase + '/defects/child'
+  private defectTypesChildUrl: string = environment.apiBase + '/defects/child';
+  private defectTypesParentUrl: string = environment.apiBase + '/defects/parent';
   private incidentsUrl: string = environment.apiBase + '/incidents';
   private addRegistryUrl: string = environment.apiBase + '/defects/registry/add';
-  private statusManagamentDefectUrl: string = environment.apiBase + '/classification'
-  private getAllIncidentProductUrl: string = this.incidentsUrl + '/all'
-  private getByIdIncidentProductUrl: string = environment.apiBase + '/defects/registry/get-last-historial-product'
-  private getDataUrl: string = environment.apiBase + '/defects/registry/get-data'
-  private defectZonesChildUrl: string = environment.apiBase + '/defects/zones/child'
+  private statusManagamentDefectUrl: string = environment.apiBase + '/classification';
+  private getAllIncidentProductUrl: string = this.incidentsUrl + '/all';
+  private getByIdIncidentProductUrl: string = environment.apiBase + '/defects/registry/get-last-historial-product';
+  private getDataUrl: string = environment.apiBase + '/defects/registry/get-data';
+  private defectZonesChildUrl: string = environment.apiBase + '/defects/zones/child';
 
   constructor(private http: HttpClient) { }
 
   getDefectTypesChild() {
     return this.http.get<HttpRequestModel.Response>(this.defectTypesChildUrl).pipe(map(resp => resp.data));
+  }
+
+  getDefectTypesParent() {
+    return this.http.get<HttpRequestModel.Response>(this.defectTypesParentUrl).pipe(map(resp => resp.data));
   }
 
   getDefectZonesChild() {
@@ -50,9 +55,5 @@ export class IncidentsService {
   getData(data) {
     return this.http.post<HttpRequestModel.Response>(this.getDataUrl, data).pipe(map(resp => resp.data));
   }
-
-  
-
-
 
 }

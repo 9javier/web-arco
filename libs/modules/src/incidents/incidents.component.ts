@@ -62,6 +62,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   email;
   phone;
   managementId;
+  defectParentId;
   defectChildId;
   defectZoneChildId;
   slideOpts = {
@@ -75,6 +76,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   readed: boolean
   barcode: string = ''
   defects: any = [];
+  defectsSubtypes: any = [];
+  defectChildsOfParent: any = [];
   zones: any = [];
   statusManagament: any;
   public barcodeRoute = null;
@@ -212,6 +215,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       factoryReturn: [false],
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
+      defectTypeParentId: [0],
       defectZoneChildId: [0],
       signFileId: [0],
       gestionState: 0,
@@ -227,8 +231,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   async initDinamicFields() {
     this.incidentsService.getDefectTypesChild().subscribe(resp => {
+      this.defectsSubtypes = resp;
+    })
+    this.incidentsService.getDefectTypesParent().subscribe(resp => {
       this.defects = resp;
-
     })
     this.incidentsService.getDefectZonesChild().subscribe(resp => {
       this.zones = resp;
@@ -281,6 +287,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           isHistory: resp.isHistory,
           statusManagementDefectId: resp.statusManagementDefect.id,
           defectTypeChildId: resp.defectTypeChild.id,
+          defectTypeParentId: resp.defectTypeParent.id,
           defectZoneChildId: resp.defectZoneChild.id,
           dateDetection: moment().format(),
           // photosFileIds: [ [{ "id": 1 }]],
@@ -447,6 +454,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
+      defectTypeParentId: this.defectParentId,
       defectTypeChildId: this.defectChildId,
       defectZoneChildId: this.defectZoneChildId,
     })
@@ -472,9 +480,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     });
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
-      defectTypeChildId: this.defectChildId,
+      defectTypeParentId: this.defectParentId,
+      defectTypeChildId: this.defectChildId ? this.defectChildId : 0,
       defectZoneChildId: this.defectZoneChildId,
-      defectTypeParentId: 1,
+      //defectTypeParentId: 1,
       photosFileIds: photos,
       signFileId: this.signatures.id,
       // contact:{
@@ -523,6 +532,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           factoryReturn: false,
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
+          defectTypeParentId: 0,
           defectZoneChildId: 0,
           gestionState: 0,
           photosFileIds: 0,
@@ -612,6 +622,14 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   }
   defectChange(e) {
+    this.select2 = true;
+    console.log(e);
+    this.defectParentId = e.detail.value.id;
+    this.defectChildsOfParent = e.detail.value.defectTypeChild ? e.detail.value.defectTypeChild : [];
+    this.defectChildId = 0;
+  }
+
+  defectParentChange(e) {
     this.select2 = true;
     console.log(e);
     this.defectChildId = e.detail.value;
@@ -909,6 +927,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         factoryReturn: false,
         statusManagementDefectId: 0,
         defectTypeChildId: 0,
+        defectTypeParentId: 0,
         defectZoneChildId: 0,
         photosFileIds: [],
         signFileId: 0,
