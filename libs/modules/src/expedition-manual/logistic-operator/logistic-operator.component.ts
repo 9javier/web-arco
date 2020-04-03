@@ -57,7 +57,7 @@ export class LogisticOperatorComponent implements OnInit {
     this.getIncidence(this.id);
     this.getTransports();
     this.form = this.formBuilder.group({
-      id:this.id,
+      expeditionId:this.id,
       operator: new FormControl(''),
       name: new FormControl(''),
       lastname: new FormControl(''),
