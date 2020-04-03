@@ -64,6 +64,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   managementId;
   defectChildId;
   defectZoneChildId;
+  defectZoneParentId;
   slideOpts = {
     speed: 400
   };
@@ -76,6 +77,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   barcode: string = ''
   defects: any = [];
   zones: any = [];
+  zonesChilds: any = [];
+  defectZonesChildsOfParent: any = [];
   statusManagament: any;
   public barcodeRoute = null;
   public types: any;
@@ -213,6 +216,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       statusManagementDefectId: [0],
       defectTypeChildId: [0],
       defectZoneChildId: [0],
+      defectZoneParentId: [0],
       signFileId: [0],
       gestionState: 0,
       contact: this.fb.group({
@@ -231,6 +235,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
     })
     this.incidentsService.getDefectZonesChild().subscribe(resp => {
+      this.zonesChilds = resp;
+      console.log("TEST::zones", this.zones);
+    })
+    this.incidentsService.getDefectZonesParent().subscribe(resp => {
       this.zones = resp;
       console.log("TEST::zones", this.zones);
     })
@@ -282,6 +290,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           statusManagementDefectId: resp.statusManagementDefect.id,
           defectTypeChildId: resp.defectTypeChild.id,
           defectZoneChildId: resp.defectZoneChild.id,
+          defectZoneParentId: resp.defectZoneParent.id,
           dateDetection: moment().format(),
           // photosFileIds: [ [{ "id": 1 }]],
           // signFileId: [1],
@@ -449,6 +458,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
       defectZoneChildId: this.defectZoneChildId,
+      defectZoneParentId: this.defectZoneParentId,
     })
     if (this.requireContact == true) {
       if (this.validate()) {
@@ -474,6 +484,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
       defectZoneChildId: this.defectZoneChildId,
+      defectZoneParentId: this.defectZoneParentId,
       defectTypeParentId: 1,
       photosFileIds: photos,
       signFileId: this.signatures.id,
@@ -524,6 +535,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           statusManagementDefectId: 0,
           defectTypeChildId: 0,
           defectZoneChildId: 0,
+          defectZoneParentId: 0,
           gestionState: 0,
           photosFileIds: 0,
           signFileId: 0,
@@ -618,6 +630,14 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   defectZoneChange(e) {
+    this.select2 = true;
+    console.log(e);
+    this.defectZoneParentId = e.detail.value.id;
+    this.defectZonesChildsOfParent = e.detail.value.defectZoneChild ? e.detail.value.defectZoneChild : [];
+    this.defectZoneChildId = 0;
+  }
+
+  defectZoneChangeParent(e) {
     this.select2 = true;
     console.log(e);
     this.defectZoneChildId = e.detail.value;
@@ -910,6 +930,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         statusManagementDefectId: 0,
         defectTypeChildId: 0,
         defectZoneChildId: 0,
+        defectZoneParentId: 0,
         photosFileIds: [],
         signFileId: 0,
         contact: {
