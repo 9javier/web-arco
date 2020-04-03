@@ -18,6 +18,8 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { LabelsService } from '@suite/services';
 import { ActivatedRoute, Params } from '@angular/router';
+import {OpExpeditionType} from "../enums/OplExpeditionStatusEnums";
+
 @Component({
   selector: 'suite-input-codes',
   templateUrl: './input-codes.component.html',
@@ -29,6 +31,7 @@ export class InputCodesComponent implements OnInit {
   inputProduct: string = null;
   lastCodeScanned: string = 'start';
   PrintError:boolean = false;
+  expeditionId=0;
   private lastProductReferenceScanned: string = 'start';
   numScanner:number = 0;
   private isStoreUser: boolean = false;
@@ -61,7 +64,7 @@ export class InputCodesComponent implements OnInit {
   }
 
   async ngOnInit() {
-    console.log(this.routeParams.snapshot.params.code);
+    this.expeditionId = this.routeParams.snapshot.params.id;
     this.isStoreUser = await this.authService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authService.getStoreCurrentUser();
@@ -324,19 +327,17 @@ export class InputCodesComponent implements OnInit {
 
   async printLabelStore(reference_){
     let body ={
-      uniqueCode : reference_
+      uniqueCode : reference_,
+      expeditionId: this.expeditionId
     }
     this.intermediaryService.presentLoading();
     this.labelService.postPrintLabels(body).subscribe( result =>{
       this.intermediaryService.dismissLoading();
       console.log(result);
-      if(result.status == 2){
+      
         this.labelService.numScanner(this.numScanner= (this.numScanner-1));
-        let nScanned = 1;
-        //this.numScanner= (this.numScanner-1); 
         this.router.navigateByUrl('/order-preparation'); 
-        //this.router.navigateByUrl('/order-preparation/scanned/'+nScanned);
-      }
+      
       
     }, error => {
       this.audioProvider.playDefaultError();
