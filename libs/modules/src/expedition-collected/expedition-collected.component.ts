@@ -22,7 +22,6 @@ import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { parseDate } from '@ionic/core/dist/types/components/datetime/datetime-util';
 import { ExpeditionCollectedService } from '../../../services/src/lib/endpoint/expedition-collected/expedition-collected.service';
 import { PackageCollectedComponent } from './package-collected/package-collected.component';
-
 @Component({
   selector: 'suite-expedition-collected',
   templateUrl: './expedition-collected.component.html',
@@ -30,7 +29,10 @@ import { PackageCollectedComponent } from './package-collected/package-collected
 })
 
 export class ExpeditionCollectedComponent {
-  selectedIndex;
+  selectedIndex = 0;
+  indexTab;
+  @ViewChild('#tabGroup') private tabGroup: MatTabsModule;
+  @ViewChild('#selected') private tabSelected: PackageCollectedComponent;
   constructor(
     private defectiveRegistryService: DefectiveRegistryService,
     private formBuilder: FormBuilder,
@@ -43,6 +45,18 @@ export class ExpeditionCollectedComponent {
       
   }
   ngOnInit(){
-    this.selectedIndex = 0;
+  }
+
+  refresh(){
+    // await this.intermediaryService.presentLoading();
+    // await this.tabSelected.ngOnInit();
+    // this.intermediaryService.dismissLoading();
+    console.log(this.indexTab);
+  }
+
+  tabChanged(tabChangeEvent: MatTabChangeEvent): void {
+    // console.log('tabChangeEvent => ', tabChangeEvent);
+    // console.log('index => ', tabChangeEvent.index);
+    this.indexTab = tabChangeEvent.index;
   }
 }

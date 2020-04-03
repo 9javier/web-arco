@@ -20,6 +20,7 @@ import { DefectiveRegistryService } from '../../../services/src/lib/endpoint/def
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { NewIncidenceComponent } from './new-incidence/new-incidence.component';
+import { IncidencesManualComponent } from './incidences-manual/incidences-manual.component';
 
 
 
@@ -29,7 +30,9 @@ import { NewIncidenceComponent } from './new-incidence/new-incidence.component';
   styleUrls: ['./expedition-manual.component.scss']
 })
 
-export class ExpeditionManualComponent {
+export class ExpeditionManualComponent implements OnInit {
+  selectedIndex;
+  @ViewChild('expeditionManual') private IncidencesManualComponent: IncidencesManualComponent;
   constructor(
     private defectiveRegistryService: DefectiveRegistryService,
     private formBuilder: FormBuilder,
@@ -38,7 +41,9 @@ export class ExpeditionManualComponent {
     private intermediary: IntermediaryService,
     ) {
   }
+  ngOnInit(){
 
+  }
   async openForm(){
     let modal = this.modalController.create({
       component: NewIncidenceComponent,
@@ -48,5 +53,11 @@ export class ExpeditionManualComponent {
     });
      (await modal).present()
 
+  }
+
+  async update(){
+    await this.intermediaryService.presentLoading()
+    await this.IncidencesManualComponent.ngOnInit();
+    this.intermediaryService.dismissLoading();
   }
 }

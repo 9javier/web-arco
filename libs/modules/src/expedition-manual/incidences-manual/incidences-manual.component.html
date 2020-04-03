@@ -1,3 +1,5 @@
+  
+    
   <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
         
     <mat-row  *matRowDef="let row; columns: displayedColumns;" (click)="getRecord(row)"></mat-row>

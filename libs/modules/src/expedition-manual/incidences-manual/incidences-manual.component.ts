@@ -91,6 +91,7 @@ export class IncidencesManualComponent {
   });
   length: any;
   ngOnInit() {
+    // await this.intermediaryService.presentLoading();
     this.initEntity();
     this.initForm();
     this.getFilters(this.form);
@@ -109,6 +110,7 @@ export class IncidencesManualComponent {
         });
       }
     });
+    // this.intermediaryService.dismissLoading();
   }
 
   initEntity() {
@@ -242,6 +244,7 @@ export class IncidencesManualComponent {
   }
 
   async getList(form?: FormGroup) {
+    await this.intermediaryService.presentLoading();
     this.expeditionManualService.getIncidence(form.value).subscribe((resp: any) => {
       if (resp.results) {
         console.log(resp.results);
@@ -252,6 +255,7 @@ export class IncidencesManualComponent {
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
         this.paginator.lastPage = paginator.lastPage;
+        this.intermediaryService.dismissLoading()
       }
     },
       async err => {
