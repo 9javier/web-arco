@@ -13,7 +13,7 @@ const routes: Routes = [
     component: OrderPreparationComponent
   },
   {
-    path: 'code',
+    path: 'code/:id',
     component: InputCodesComponent
   },
  

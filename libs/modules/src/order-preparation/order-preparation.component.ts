@@ -34,6 +34,7 @@ export class OrderPreparationComponent implements OnInit {
   nScanner = "hola";
   scann: boolean = false;
   nScanned:number;
+  expeditionId:number = 0;
   constructor(
     private labelsService: LabelsService,
     private router: Router,
@@ -42,38 +43,20 @@ export class OrderPreparationComponent implements OnInit {
     private routeParams: ActivatedRoute
   ) { }
 
-//   ionViewWillEnter() {
-//     //this._someListener = this.labelsService.getScannerAlert().subscribe();
-//     console.log("view enter");
-//     }
-
-//   ionViewWillLeave(){
-    
-//     console.log("sali");
-//     //this.labelsService.getScannerAlert().subscribe().unsubscribe();
-
-//     /*console.log("ujuuuu!");
-//     //this.labelsService.getScannerAlert().subscribe().unsubscribe();
-//     this._someListener.unsubscribe();*/
-// //    this.labelsService.getScannerAlert().subscribe().closed;
-
-//   }
-
   ngOnInit() {
+    this.toolbarProvider.currentPage.next("Generar etiquetas de envio"); 
     if(this.routeParams.snapshot.params.id != undefined){
       this.nScanned = this.routeParams.snapshot.params.id;
       console.log(this.nScanned);
       let data ={expeditionId:this.nScanned, update:true };
       this.getExpeditionStatus(data);
     }
-    this.toolbarProvider.currentPage.next("Generar etiquetas de envio"); 
     this.initNumsScanner();  
   }
 
 initNumsScanner(){
     this.getNumScann();
     this.getAllNumScann();
-    //this.getScannerAlert(); 
 }
   
 
@@ -90,7 +73,7 @@ initNumsScanner(){
   async print(){
     await this.intermediaryService.presentLoading("cargando expedición...");
     this.labelsService.getIndexLabels().subscribe(result =>{
-      let result1 = [];
+    
      let expedition = result[0];
         if(result.length >0){
             this.intermediaryService.dismissLoading();
@@ -118,12 +101,10 @@ initNumsScanner(){
   }
 
   scanner(){
-    //this.close();
-    //this.router.navigate(['/order-preparation/code/'+this.numAllScanner]);
-    //this.scann == true;
+   
     if(this.numScanner != 0){
       this.labelsService.numScanner(this.numScanner);
-      this.router.navigate(['/order-preparation/code']);
+      this.router.navigateByUrl('/order-preparation/code/'+this.expeditionId);
     }else{
       //finish scanner process
     }
@@ -156,17 +137,7 @@ initNumsScanner(){
     
   }
 
-  async getScannerAlert() {
-      console.log("entre al scanner");
-      await this.labelsService.getScannerAlert().subscribe((id: any) => {
-          console.log(id);
-          let data ={ expeditionId: id,
-          update: true
-          };
-          this.getExpeditionStatus(data);
-        });
-    
-  }
+  
 
   
   async getTransportStatus(body){
@@ -177,6 +148,7 @@ initNumsScanner(){
       this.numPackages = expedition.expedition.packages.length;
       this.numAllScanner = this.numPackages;
       this.numScanner = this.numPackages;
+      this.expeditionId = expedition.expedition.id;
       this.labelsService.setNumAllScanner(this.numAllScanner);
       if(result.incidence == true){
         this.showErrorExpedition();
@@ -198,10 +170,10 @@ initNumsScanner(){
       this.numPackages = expedition.expedition.packages.length;
       this.numAllScanner = this.numPackages;
       this.numScanner = this.numPackages;
+      this.expeditionId = expedition.expedition.id;
       this.labelsService.setNumAllScanner(this.numAllScanner);
       this.intermediaryService.dismissLoading();
       this.showExpedition();
-    //call endpoint to send expeditionId
     this.sendServicePrintPack(expedition.expedition.id); 
     },
     async (err) => {
@@ -254,10 +226,5 @@ initNumsScanner(){
     this.initPage = true;
   }
 
-  ngOnDestroy() {
-   // this.labelsService.getScannerAlert().subscribe().unsubscribe();
-   //this.labelsService.getScannerAlert().subscribe().closed;
-
-  }
 
 }

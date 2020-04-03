@@ -52,7 +52,6 @@ export class TransportManifestComponent implements OnInit {
   goScanner(row){
     if(row.status == OpExpeditionType.LABEL_ERROR_RESOLVED){
       this.router.navigateByUrl('/order-preparation/id/'+row.id);
-      //this.labelsService.setScannerAlert(row.id);
     }
   }
 
