@@ -320,10 +320,16 @@ export class PackageCollectedComponent {
   // }
 
   async update(){
-    // console.log(this.selection.selected);
+    const data = this.selection.selected.map(function(obj){ 
+      var rObj = {};
+      rObj['warehouse'] = obj.warehouse.id;
+      rObj['expedition'] = obj.expedition;
+      rObj['transport'] = obj.transport.id;
+      rObj['package'] = obj.package.id;
+      return rObj;
+   });
     await this.intermediaryService.presentLoading();
-    this.expeditionCollectedService.updatePackage(this.selection.selected).subscribe(data=>{
-        console.log('exito');
+    this.expeditionCollectedService.updatePackage(data).subscribe(data=>{
          this.ngOnInit();
          this.intermediaryService.dismissLoading();
         this.intermediaryService.presentToastSuccess('Los paquetes seleccionados fueron actualizados con exito');
