@@ -439,12 +439,7 @@ export class MenuComponent implements OnInit {
           url: '/incidences-reception',
           icon: 'notifications'
         },
-        {
-          title: 'Desbloquear',
-          id: 'unlock-expeditions',
-          url: '/unlock-expeditions',
-          icon: 'unlock'
-        }
+        
       ]
     },
     {
@@ -460,24 +455,31 @@ export class MenuComponent implements OnInit {
       icon: 'folder'
     },
     {
-      title: 'Expedition Manual',
+      title: 'Pedidos Online',
       open: false,
       type: 'wrapper',
       icon: 'build',
       children: [
         {
-          title: 'Lista',
+          title: 'Incidencias',
           id: 'expedition-manual',
           url: '/expedition-manual',
           icon: 'cog',
-          tooltip: 'Lista de expediciones manuales'
+          tooltip: 'Lista de incidencias'
         },
         {
-          title: 'Recogidas',
+          title: 'Expediciones por recoger',
           id: 'expedition-collected',
           url: '/expedition-collected',
           icon: 'cog',
-          tooltip: 'Lista de expediciones recogidas'
+          tooltip: 'Lista de expediciones por recoger'
+        },
+        {
+          title: 'Desbloquear expediciones',
+          id: 'unlock-expeditions',
+          url: '/unlock-expeditions',
+          icon: 'unlock',
+          tooltip: 'Desbloquear expediciones'
         }
       ]
     }
@@ -542,7 +544,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Preparación de pedidos',
+      title: 'Pedidos online',
       icon:'basket',
       type: 'wrapper',
       open: true,
@@ -554,22 +556,14 @@ export class MenuComponent implements OnInit {
           icon: 'basket',
           tooltip: 'Imprimir etiquetas de contenedores'
         },
-      
         {
-          title: 'Alertas de expediciones',
+          title: 'Incidencias',
           id: 'order-preparation',
           url: '/list-alerts',
-          icon: 'warning',
-          tooltip: 'listado de alertas de contenedores'
+          icon: 'notifications',
+          tooltip: 'listado de incidencias'
         },
-        {
-          title: 'Etiquetas manuales',
-          id: 'order-preparation',
-          url: '/labels-manual',
-          icon: 'barcode',
-          tooltip: 'Imprimir etiquetas manuales'
-        },
-       
+        
       ]
     },
     {
