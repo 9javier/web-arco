@@ -51,13 +51,12 @@ export class LogisticOperatorComponent implements OnInit {
     private navParams :NavParams
     ) {
   }
-  ngOnInit(){
-    
+   ngOnInit(){
     this.id = this.navParams.get('id');
     this.getIncidence(this.id);
     this.getTransports();
     this.form = this.formBuilder.group({
-      id:this.id,
+      expeditionId:this.id,
       operator: new FormControl(''),
       name: new FormControl(''),
       lastname: new FormControl(''),
@@ -88,20 +87,24 @@ export class LogisticOperatorComponent implements OnInit {
   }
 
   getTransports(){
+    
     this.expeManSrv.getTrasnport().subscribe(data => {
       console.log(data);
       this.operators = data;
     });
   }
 
-  save(){
+  async save(){
+      await this.intermediaryServiceL.presentLoading();
       this.expeManSrv.store(this.form.value).subscribe(data => {
         console.log(data);
         this.intermediaryServiceL.presentToastSuccess('Expedicion guardad con exito');
         this.close();
+        this.intermediaryServiceL.dismissLoading();
       },error=>{
         console.log(error);
         this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos por favor de revisar');
+        this.intermediaryServiceL.dismissLoading();
       });
       console.log(this.data);
   }
