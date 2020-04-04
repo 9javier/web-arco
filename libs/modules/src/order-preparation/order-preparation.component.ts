@@ -63,19 +63,20 @@ export class OrderPreparationComponent implements OnInit {
 
   async print(){
     await this.intermediaryService.presentLoading("cargando expedición...");
-    this.labelsService.getIndexLabels().subscribe(result =>{
+     this.labelsService.getIndexLabels().subscribe(result =>{
      let expedition = result[0];
         if(result.length >0){
-            this.intermediaryService.dismissLoading();
+           // this.intermediaryService.dismissLoading();
             let data = { expeditionId: expedition.id, update: true}; 
             this.getTransportStatus(data);
         }else{
             this.showExpeditionNull();
         }
-      this.intermediaryService.dismissLoading();
+      
+      //  this.intermediaryService.dismissLoading();
     },
     async (err) => {
-      await this.intermediaryService.dismissLoading();
+      this.intermediaryService.dismissLoading();
       this.showBlockedOrder();
       console.log(err);
     });
@@ -120,27 +121,29 @@ export class OrderPreparationComponent implements OnInit {
     
   }
 
-  async   getTransportStatus(body){
-    this.labelsService.getTransportStatus(body).subscribe(result =>{
+  async getTransportStatus(body){
+    let This = this;
+    //This.intermediaryService.presentLoading("cargando expedición...");
+    await this.labelsService.getTransportStatus(body).subscribe(result =>{
       let expedition = result;
       this.dataSource=[result];
       this.numPackages = expedition.expedition.packages.length;
       this.numAllScanner = this.numPackages;
       this.numScanner = this.numPackages;
       this.expeditionId = expedition.expedition.id;
-      this.intermediaryService.dismissLoading();
+      This.intermediaryService.dismissLoading();
       this.labelsService.setNumAllScanner(this.numAllScanner);
       if(result.incidence == true){
         this.showErrorExpedition();
       }else{
         this.showExpedition();
       }
-      this.intermediaryService.dismissLoading();
+      This.intermediaryService.dismissLoading();
       this.sendServicePrintPack(expedition.expedition.id);
     },
     async (err) => {
       console.log(err);
-      this.intermediaryService.dismissLoading();
+      This.intermediaryService.dismissLoading();
     });
   }
   
