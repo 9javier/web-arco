@@ -17,22 +17,15 @@ export class OrderPreparationComponent implements OnInit {
 
   StatusPrint: boolean = false;
   initPage: boolean = true;
-  init:boolean = false;
   dataSource;
   PrintError: boolean = false;
-  numLabels:number=2;
   blockedOrder: boolean = false;
-  statusLabels: number = 2;
   numScanner:number = 0;
   numAllScanner: number =0;
   goScanner:boolean = false;
   expeditButton:boolean = false;
   numPackages:number = 0; 
   expeditionNull: boolean = false;
-  incidenceCode: string;
-  barcodeError:string;
-  nScanner = "hola";
-  scann: boolean = false;
   nScanned:number;
   expeditionId:number = 0;
   constructor(
@@ -54,12 +47,11 @@ export class OrderPreparationComponent implements OnInit {
     this.initNumsScanner();  
   }
 
-initNumsScanner(){
-    this.getNumScann();
-    this.getAllNumScann();
-}
+  initNumsScanner(){
+      this.getNumScann();
+      this.getAllNumScann();
+  }
   
-
   printLabels(){
     this.print();
   }
@@ -69,22 +61,17 @@ initNumsScanner(){
     this.StatusPrint=true;
   }
 
-
   async print(){
     await this.intermediaryService.presentLoading("cargando expedición...");
     this.labelsService.getIndexLabels().subscribe(result =>{
-    
      let expedition = result[0];
         if(result.length >0){
             this.intermediaryService.dismissLoading();
             let data = { expeditionId: expedition.id, update: true}; 
             this.getTransportStatus(data);
-          
         }else{
             this.showExpeditionNull();
         }
-        
-      
       this.intermediaryService.dismissLoading();
     },
     async (err) => {
@@ -101,14 +88,10 @@ initNumsScanner(){
   }
 
   scanner(){
-   
     if(this.numScanner != 0){
       this.labelsService.numScanner(this.numScanner);
       this.router.navigateByUrl('/order-preparation/code/'+this.expeditionId);
-    }else{
-      //finish scanner process
     }
-    
   }
 
 
@@ -137,35 +120,33 @@ initNumsScanner(){
     
   }
 
-  
-
-  
-  async getTransportStatus(body){
+  async   getTransportStatus(body){
     this.labelsService.getTransportStatus(body).subscribe(result =>{
       let expedition = result;
-      let status = expedition.status;
-      this.dataSource=[result]
+      this.dataSource=[result];
       this.numPackages = expedition.expedition.packages.length;
       this.numAllScanner = this.numPackages;
       this.numScanner = this.numPackages;
       this.expeditionId = expedition.expedition.id;
+      this.intermediaryService.dismissLoading();
       this.labelsService.setNumAllScanner(this.numAllScanner);
       if(result.incidence == true){
         this.showErrorExpedition();
       }else{
         this.showExpedition();
       }
+      this.intermediaryService.dismissLoading();
       this.sendServicePrintPack(expedition.expedition.id);
     },
     async (err) => {
       console.log(err);
+      this.intermediaryService.dismissLoading();
     });
   }
   
   async getExpeditionStatus(body){
    await this.labelsService.getTransportStatus(body).subscribe(result =>{
       let expedition = result;
-      let status = expedition.status;
       this.dataSource=[result]
       this.numPackages = expedition.expedition.packages.length;
       this.numAllScanner = this.numPackages;
@@ -185,21 +166,17 @@ initNumsScanner(){
  async sendServicePrintPack(id){
    let body = {expeditionId:id }
   this.labelsService.postServicePrintPack(body).subscribe(result =>{
-   
   },
   async (err) => {
     console.log(err);
   });
   }
 
-
-
   statusScanner(){
     let numScanned = (this.numAllScanner - this.numScanner)
     let status =numScanned +" de "+this.numAllScanner
     
     return status ;
-
   }
 
   showExpeditionNull(){
@@ -208,7 +185,6 @@ initNumsScanner(){
   }
 
   showAlerts(){
-    
     this.router.navigateByUrl('/list-alerts');
   }
 
