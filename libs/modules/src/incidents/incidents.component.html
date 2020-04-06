@@ -66,12 +66,8 @@
               maxlength="50"></ion-input><br>
           </ion-item>
           <ion-item lines="none">
-            <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo"
+            <ion-input type="text" formControlName="info" (keyup)="onKeyInfo($event)" placeholder="Tlf/Email"
               maxlength="50"></ion-input><br>
-          </ion-item>
-          <ion-item lines="none">
-            <ion-input type="number" formControlName="phone" (keyup)="onKeyTel($event)" placeholder="Teléfono"
-              maxlength="25"></ion-input>
           </ion-item>
         </div>
       </div>
@@ -120,15 +116,15 @@
         </ion-item>
       </ion-list>
       <!-- <ion-label>{{imgUrl}}</ion-label> -->
-    
+
     <ion-button *ngIf="barcodeRoute==null"  [attr.disabled]="!select1 || !select2" (click)="send()" expand="block" shape="round">
       enviar
     </ion-button>
-    
+
     <ion-button *ngIf="barcodeRoute!=null" [disabled]="differentState" (click)="enviaryarn()" expand="block" shape="round" >
       actualizar
     </ion-button>
- 
+
   </ng-template>
 </form>
 </ion-content>

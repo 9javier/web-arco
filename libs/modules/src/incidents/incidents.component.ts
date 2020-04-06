@@ -55,12 +55,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   requireContact: boolean = false;
   requireOk: boolean;
   checkHistory: boolean;
-  txtName = ""
-  txtEmail = "";
-  txtTel = "";
+  txtName = "";
+  txtInfo = "";
   name;
-  email;
-  phone;
+  info;
   managementId;
   defectChildId;
   defectZoneChildId;
@@ -217,8 +215,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       gestionState: 0,
       contact: this.fb.group({
         name: '',
-        email: '',
-        phone: ['']
+        info: ''
       })
 
     })
@@ -377,21 +374,16 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       console.log("name false");
       msg = "Nombre debe tener minimo 4 digítos...";
       validation = false;
-    } if (this.txtEmail.length < 1) {
-      msg = "Campo email vacío";
+    } if (this.txtInfo.length < 1) {
+      msg = "Campo info vacío";
       validation = false;
     }
-    if (this.txtTel.length < 6) {
-      console.log("telefono false");
-      msg = "Teléfono debe tener minimo 6 digítos...";
-      validation = false;
-    }
-    if (!regex.test(this.txtEmail)) {
+/*    if (!regex.test(this.txtEmail)) {
       console.log("email validation true");
       msg = "Email invalido...";
       validation = false;
       console.log("email false");
-    }
+    }*/
 
     if (msg == undefined) {
 
@@ -406,11 +398,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   onKeyName(event) {
     this.txtName = event.target.value;
   }
-  onKeyEmail(event) {
-    this.txtEmail = event.target.value;
-  }
-  onKeyTel(event) {
-    this.txtTel = event.target.value;
+  onKeyInfo(event) {
+    this.txtInfo = event.target.value;
   }
 
 
@@ -449,10 +438,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       statusManagementDefectId: this.managementId,
       defectTypeChildId: this.defectChildId,
       defectZoneChildId: this.defectZoneChildId,
-    })
+    });
     if (this.requireContact == true) {
       if (this.validate()) {
-        this.incidenceForm.value.contact.phone = this.txtTel + "";
+        this.incidenceForm.value.contact.info = this.txtInfo + "";
         let object = this.incidenceForm.value;
         this.sendToIncidents(object);
       }
@@ -529,8 +518,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
           signFileId: 0,
           contact: {
             name: this.txtName,
-            email: this.txtEmail,
-            phone: this.txtTel
+            info: this.txtInfo,
           }
         })
         This.intermediary.dismissLoading()
@@ -914,8 +902,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         signFileId: 0,
         contact: {
           name: '',
-          email: '',
-          phone: ''
+          info: ''
         }
       });
       this.signatures = null;
