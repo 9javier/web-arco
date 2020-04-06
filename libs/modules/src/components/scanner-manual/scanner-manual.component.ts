@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
 import {PlatformLocation} from "@angular/common";
+import {Platform} from "@ionic/angular";
+import {NavigationEnd, Router} from "@angular/router";
 
 @Component({
   selector: 'scanner-manual',
@@ -21,11 +23,21 @@ export class ScannerManualComponent implements OnInit {
 
   constructor(
     public keyboardService: KeyboardService,
-    private location: PlatformLocation
+    private location: PlatformLocation,
+    private platform: Platform,
+    private router: Router,
   ) {
     this.focusToInput();
     location.onPopState(() => {
       this.focusToInput();
+    });
+    this.platform.backButton.subscribe(() => {
+      this.focusToInput();
+    });
+    this.router.events.subscribe((val) => {
+      if(val instanceof NavigationEnd && val && val.url == '/receptions-avelon/app'){
+        this.focusToInput();
+      }
     });
   }
 
