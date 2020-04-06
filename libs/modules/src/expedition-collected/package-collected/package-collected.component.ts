@@ -4,11 +4,11 @@ import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange, Sort } fr
 import * as Filesave from 'file-saver';
 import * as _ from 'lodash';
 import { parse } from 'querystring';
-import { NgxFileDropModule } from  'ngx-file-drop' ;
+import { NgxFileDropModule } from 'ngx-file-drop';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { Platform, ModalController, NavController } from '@ionic/angular';
 import { IntermediaryService } from '../../../../services/src';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { PaginatorComponent } from '../../components/paginator/paginator.component';
 import { DefectiveRegistryModel } from '../../../../services/src/models/endpoints/DefectiveRegistry';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -28,7 +28,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./package-collected.component.scss']
 })
 
-export class PackageCollectedComponent { 
+export class PackageCollectedComponent {
   constructor(
     private defectiveRegistryService: DefectiveRegistryService,
     private formBuilder: FormBuilder,
@@ -38,12 +38,12 @@ export class PackageCollectedComponent {
     private expeditionCollectedService: ExpeditionCollectedService,
     private navCtrl: NavController,
     private activateRoute: ActivatedRoute
-    ) {
+  ) {
   }
   @Input() id: any;
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select','expedition' ,'uniquecode', 'warehouse' , 'products' ];
+  displayedColumns: string[] = ['select', 'expedition', 'uniquecode', 'warehouse', 'products'];
   dataSource;
   selection = new SelectionModel<any>(true, []);
   originalTableStatus: DamagedModel.Status[];
@@ -63,8 +63,6 @@ export class PackageCollectedComponent {
 
   /**Filters */
   uniquecode: Array<TagsInputOption> = [];
- 
-
 
 
   entities;
@@ -73,7 +71,7 @@ export class PackageCollectedComponent {
   pagerValues = [10, 20, 80];
 
   form: FormGroup = this.formBuilder.group({
-    id:[],
+    id: [],
     idTransport: new FormControl(''),
     pagination: this.formBuilder.group({
       page: 1,
@@ -88,30 +86,14 @@ export class PackageCollectedComponent {
   ngOnInit() {
     this.form.get('idTransport').setValue(this.id);
     console.log(this.form.value);
-    // this.initEntity();
-    // this.initForm();
-    // this.getFilters(this.id);
-    // this.getColumns(this.form);
-    // this.listenChanges();
+
     this.getList(this.form);
 
-    
-    //   this.defectiveRegistryService.refreshListRegistry$.subscribe(async (refresh) => {
-    //     if (refresh) {
-    //       await this.intermediaryService.presentLoading();
-
-    //       this.getList(this.form).then(async () => {
-    //         await this.intermediaryService.dismissLoading();
-    //       }, async () => {
-    //         await this.intermediaryService.dismissLoading();
-    //       });
-    //     }
-    //   });
   }
 
   initEntity() {
     this.entities = {
-      id:[],
+      id: [],
       orderby: this.formBuilder.group({
         type: 1,
         order: "asc"
@@ -163,21 +145,7 @@ export class PackageCollectedComponent {
     })
   }
 
-  // async getColumns(form?: FormGroup) {
-  //   this.expeditionManualService.getIncidence(form.value).subscribe(
-  //     (resp: any) => {
-  //       resp.filters.forEach(element => {
-  //         this.columns[element.name] = element.id;
-  //       });
-  //     },
-  //     async err => {
-  //       await this.intermediaryService.dismissLoading()
-  //     },
-  //     async () => {
-  //       await this.intermediaryService.dismissLoading()
-  //     }
-  //   )
-  // }
+
 
   private updateFilterSource(dataEntity, entityName: string) {
     let resultEntity;
@@ -266,7 +234,7 @@ export class PackageCollectedComponent {
   }
 
   masterToggle() {
-      this.isAllSelected() ?
+    this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row));
   }
@@ -299,7 +267,7 @@ export class PackageCollectedComponent {
     this.lastUsedFilter = filterType;
     this.getList(this.form);
   }
-  
+
   getStatusName(defectType: number) {
     const status = this.originalTableStatus.find((x) => x.id === defectType);
     return status.name;
@@ -319,21 +287,25 @@ export class PackageCollectedComponent {
   //   (await modal).present();
   // }
 
-  async update(){
-    const data = this.selection.selected.map(function(obj){ 
+  async update() {
+    const data = this.selection.selected.map(function (obj) {
       var rObj = {};
       rObj['warehouse'] = obj.warehouse.id;
       rObj['expedition'] = obj.expedition;
       rObj['transport'] = obj.transport.id;
       rObj['package'] = obj.package.id;
       return rObj;
-   });
-    await this.intermediaryService.presentLoading();
-    this.expeditionCollectedService.updatePackage(data).subscribe(data=>{
-         this.ngOnInit();
-         this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastSuccess('Los paquetes seleccionados fueron actualizados con exito');
-
     });
+    await this.intermediaryService.presentLoading();
+    this.expeditionCollectedService.updatePackage(data).subscribe(data => {
+      this.ngOnInit();
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastSuccess('Los paquetes seleccionados fueron actualizados con exito');
+
+    }, error => {
+      this.intermediaryService.presentToastError('Debe Seleccionar Todos los paquetes de las expediciones');
+      this.intermediaryService.dismissLoading();
+    });
+
   }
 }
