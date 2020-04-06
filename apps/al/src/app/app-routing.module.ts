@@ -153,7 +153,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/settings/settings.module#SettingsModule',
     data: {
-      name: 'Ajustes'
+      name: 'Código impresora'
     }
   },
   {
@@ -347,7 +347,7 @@ const routes: Routes = [
       name: 'Manejo de defectos'
     }
   },
- 
+
 ];
 
 @NgModule({
