@@ -21,7 +21,7 @@ import { DetailsRegisterComponent } from './details-register/details-register.co
 export class DefectHandlerComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['id', 'barcode', 'registerDate', 'state'];
+  displayedColumns: string[] = ['id', 'product', 'registerDate', 'state', 'contact'];
   OrderSelect;
   dataSource;
   columns = {};
@@ -43,6 +43,7 @@ export class DefectHandlerComponent implements OnInit {
   size: Array<TagsInputOption> = [];
   color: Array<TagsInputOption> = [];
   brand: Array<TagsInputOption> = [];
+  contact: Array<TagsInputOption> = [];
   statusManagementDefect: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
 
@@ -59,6 +60,7 @@ export class DefectHandlerComponent implements OnInit {
     size: [],
     color: [],
     brand: [],
+    contact: [],
     dateDetection: [],
     statusManagementDefect: [],
     defectTypeParent: [],
@@ -106,6 +108,7 @@ export class DefectHandlerComponent implements OnInit {
       size: [],
       color: [],
       brand: [],
+      contact: [],
       dateDetection: [],
       statusManagementDefect: [],
       defectTypeParent: [],
@@ -125,6 +128,7 @@ export class DefectHandlerComponent implements OnInit {
       size: [],
       color: [],
       brand: [],
+      contact: [],
       dateDetection: [],
       statusManagementDefect: [],
       defectTypeParent: [],
@@ -236,6 +240,7 @@ export class DefectHandlerComponent implements OnInit {
       this.size = filters.size;
       this.color = filters.color;
       this.brand = filters.brand;
+      this.contact = filters.contact;
       this.statusManagementDefect = filters.statusManagementDefect;
       this.applyFilters();
     }, (err) => {
