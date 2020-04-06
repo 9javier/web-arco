@@ -48,7 +48,6 @@ export class PackageCollectedComponent {
   selection = new SelectionModel<any>(true, []);
   originalTableStatus: DamagedModel.Status[];
   columns = {};
-
   toDelete: FormGroup = this.formBuilder.group({
     jails: this.formBuilder.array([])
   });
@@ -94,8 +93,8 @@ export class PackageCollectedComponent {
     // this.getColumns(this.form);
     // this.listenChanges();
     this.getList(this.form);
-
     
+    //console.log("entre al nginit");
     //   this.defectiveRegistryService.refreshListRegistry$.subscribe(async (refresh) => {
     //     if (refresh) {
     //       await this.intermediaryService.presentLoading();
@@ -107,6 +106,8 @@ export class PackageCollectedComponent {
     //       });
     //     }
     //   });
+    
+
   }
 
   initEntity() {
@@ -147,6 +148,8 @@ export class PackageCollectedComponent {
     //   this.getList(this.form);
     // });
   }
+
+ 
 
   getFilters(id) {
     this.expeditionCollectedService.getFiltersPackage(id).subscribe((entities) => {
@@ -231,8 +234,10 @@ export class PackageCollectedComponent {
 
   // async getList(form?: FormGroup) {
   async getList(form) {
-    this.expeditionCollectedService.getPackages(form.value).subscribe((resp: any) => {
+    this.intermediaryService.presentLoading("Cargando paquetes recogidos..");
+   await this.expeditionCollectedService.getPackages(form.value).subscribe((resp: any) => {
       console.log(resp)
+      this.intermediaryService.dismissLoading();
       if (resp.results) {
         console.log(resp.results);
         this.dataSource = new MatTableDataSource<any>(resp.results);
@@ -335,5 +340,17 @@ export class PackageCollectedComponent {
         this.intermediaryService.presentToastSuccess('Los paquetes seleccionados fueron actualizados con exito');
 
     });
+  }
+
+  refresh(){
+    this.selection.clear();
+    this.getList(this.form);
+  }
+
+  stateUpdate(){
+    if(this.selection.selected.length > 0 ){
+      return true
+    }
+    return false;
   }
 }

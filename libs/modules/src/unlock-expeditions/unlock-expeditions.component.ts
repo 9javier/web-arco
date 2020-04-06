@@ -188,8 +188,10 @@ export class UnlockExpeditionsComponent implements OnInit {
   }
 
   async getList(form?: FormGroup) {
-    this.oplExpeditionsService.getListOplExpedition(form.value).subscribe((resp: any) => {
+   this.intermediaryService.presentLoading("Cargando expediciones bloqueadas...");
+  await  this.oplExpeditionsService.getListOplExpedition(form.value).subscribe((resp: any) => {
         if (resp.results) {
+          this.intermediaryService.dismissLoading()
           this.dataSource = new MatTableDataSource<any>(resp.results);
           this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
           const paginator = resp.pagination;
@@ -345,6 +347,10 @@ export class UnlockExpeditionsComponent implements OnInit {
         await this.intermediaryService.presentToastSuccess("¡Expedición desbloqueada con exito!");
         await this.intermediaryService.dismissLoading()
       })
+  }
+
+  update(){
+    this.ngOnInit();
   }
 
 }
