@@ -48,7 +48,6 @@ export class PackageCollectedComponent {
   selection = new SelectionModel<any>(true, []);
   originalTableStatus: DamagedModel.Status[];
   columns = {};
-
   toDelete: FormGroup = this.formBuilder.group({
     jails: this.formBuilder.array([])
   });
@@ -125,10 +124,9 @@ export class PackageCollectedComponent {
       this.getList(this.form)
     });
 
-    // this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
-    //   this.getList(this.form);
-    // });
   }
+
+ 
 
   getFilters(id) {
     this.expeditionCollectedService.getFiltersPackage(id).subscribe((entities) => {
@@ -191,16 +189,15 @@ export class PackageCollectedComponent {
     this.form.value.orderby.type = this.columns[event.active];
     this.form.value.orderby.order = event.direction !== '' ? event.direction : 'asc';
 
-    // this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
-    //   this.getList(this.form);
-    // });
     this.getList(this.form);
   }
 
   // async getList(form?: FormGroup) {
   async getList(form) {
-    this.expeditionCollectedService.getPackages(form.value).subscribe((resp: any) => {
+    this.intermediaryService.presentLoading("Cargando paquetes recogidos..");
+   await this.expeditionCollectedService.getPackages(form.value).subscribe((resp: any) => {
       console.log(resp)
+      this.intermediaryService.dismissLoading();
       if (resp.results) {
         console.log(resp.results);
         this.dataSource = new MatTableDataSource<any>(resp.results);
@@ -273,20 +270,6 @@ export class PackageCollectedComponent {
     return status.name;
   }
 
-  // async getRecord(record){
-  //   console.log(record.expedition);
-  //   let modal = this.modalController.create({
-  //     component:LogisticOperatorComponent,
-  //     componentProps: {
-  //       id:record.expedition
-  //     }  
-  //   });
-  //   (await modal).onDidDismiss().then(()=>{
-  //     this.ngOnInit();
-  //   });
-  //   (await modal).present();
-  // }
-
   async update() {
     const data = this.selection.selected.map(function (obj) {
       var rObj = {};
@@ -307,5 +290,17 @@ export class PackageCollectedComponent {
       this.intermediaryService.dismissLoading();
     });
 
+  }
+
+  refresh(){
+    this.selection.clear();
+    this.getList(this.form);
+  }
+
+  stateUpdate(){
+    if(this.selection.selected.length > 0 ){
+      return true
+    }
+    return false;
   }
 }

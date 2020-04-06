@@ -20,14 +20,20 @@
           <suite-package-collected #selected [id]="4"></suite-package-collected>
         </ng-template>
       </mat-tab>
+      <mat-tab label="SEUR">
+        <ng-template matTabContent> 
+          <suite-package-collected #selected [id]="8"></suite-package-collected>
+        </ng-template>
+      </mat-tab>
   </mat-tab-group>
 
-  <ion-fab  vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-button (click)="refresh()" matTooltip="Refrescar" matTooltipClass="tooltip">
-      <ion-icon name="refresh"></ion-icon>
-    </ion-button>
-  </ion-fab>
 </ion-content>
-
+<!--<ion-footer>
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button (click)="refresh()" matTooltip="Actualizar" matTooltipClass="tooltip">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>-->
 
 
