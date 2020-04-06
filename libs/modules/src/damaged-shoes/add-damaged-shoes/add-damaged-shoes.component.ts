@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { DamagedModel } from '../../../../services/src/models/endpoints/Damaged';
 import {FormControl, FormGroup} from "@angular/forms";
+import Action = DamagedModel.Action;
 
 @Component({
   selector: 'suite-add-damaged-shoes',
@@ -9,10 +10,9 @@ import {FormControl, FormGroup} from "@angular/forms";
   styleUrls: ['./add-damaged-shoes.component.scss'],
 })
 export class AddDamagedShoesComponent implements OnInit {
-  tAction: DamagedModel.Action[];
 
+  tAction: Action[];
   formGroup: FormGroup;
-
   form: {
     name: string,
     actions: {
