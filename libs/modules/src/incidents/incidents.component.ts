@@ -374,9 +374,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       console.log("name false");
       msg = "Nombre debe tener minimo 4 digítos...";
       validation = false;
-    } if (this.txtInfo.length < 1) {
-      msg = "Campo info vacío";
-      validation = false;
     }
 /*    if (!regex.test(this.txtEmail)) {
       console.log("email validation true");
