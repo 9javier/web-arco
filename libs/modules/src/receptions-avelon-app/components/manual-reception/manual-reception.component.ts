@@ -86,13 +86,16 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     if (!this.eanCode) {
       try {
         const lastPrint = await this.localStorageProvider.get('lastPrint');
-        if(lastPrint){
-          this.lastPrint = JSON.parse(String(lastPrint));
-          this.brandSelected = this.lastPrint.brand;
-          this.modelSelected = this.lastPrint.model;
-          this.modelIdSelected = this.modelSelected.id;
-          this.colorSelected = this.lastPrint.color;
-          this.listSizes = this.lastPrint.sizes;
+        if (lastPrint) {
+          const lastPrintParsed = JSON.parse(String(lastPrint));
+          if (lastPrintParsed) {
+            this.lastPrint = lastPrintParsed;
+            this.brandSelected = this.lastPrint.brand;
+            this.modelSelected = this.lastPrint.model;
+            this.modelIdSelected = this.modelSelected.id;
+            this.colorSelected = this.lastPrint.color;
+            this.listSizes = this.lastPrint.sizes;
+          }
         }
       } catch (error) {
         console.log(error)

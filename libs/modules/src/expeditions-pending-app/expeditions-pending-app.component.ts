@@ -61,18 +61,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
             modal.onDidDismiss().then(response => {
               if (response.data && response.data.reception && response.data.expedition) {
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
-                this.lastExepeditionQueried = {
-                  reference: expedition.reference,
-                  providerId: expedition.providerId
-                };
-
-                this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
-                this.receptionAvelonProvider.expedition = expedition;
-                const routeSections = ['receptions-avelon', 'app'];
-                if (this.isReceptionWithoutOrder) {
-                  routeSections.push('free');
-                }
-                this.router.navigate(routeSections);
+                this.startReception(expedition);
               }
             });
             modal.present();
@@ -119,18 +108,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
             modal.onDidDismiss().then(response => {
               if (response.data && response.data.reception && response.data.expedition) {
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
-                this.lastExepeditionQueried = {
-                  reference: expedition.reference,
-                  providerId: expedition.providerId
-                };
-
-                this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
-                this.receptionAvelonProvider.expedition = expedition;
-                const routeSections = ['receptions-avelon', 'app'];
-                if (this.isReceptionWithoutOrder) {
-                  routeSections.push('free');
-                }
-                this.router.navigate(routeSections);
+                this.startReception(expedition);
               }
             });
             modal.present();
@@ -156,5 +134,20 @@ export class ExpeditionsPendingAppComponent implements OnInit {
         this.intermediaryService.presentToastError(errorMessage);
         this.formExpeditionProvider.checkingExpeditionInProcess = false;
       });
+  }
+
+  private startReception(expedition) {
+    this.lastExepeditionQueried = {
+      reference: expedition.reference,
+      providerId: expedition.providerId
+    };
+
+    this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
+    this.receptionAvelonProvider.expedition = expedition;
+    const routeSections = ['receptions-avelon', 'app'];
+    if (this.isReceptionWithoutOrder) {
+      routeSections.push('free');
+    }
+    this.router.navigate(routeSections);
   }
 }
