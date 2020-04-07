@@ -167,7 +167,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.initForm();
     this.readed = false;
     const navigation = this.router.getCurrentNavigation();
-    if (navigation.extras.state != undefined) {
+    if (navigation && navigation.extras && navigation.extras.state != undefined) {
       this.readed = true;
       this.barcodeRoute = navigation.extras.state['reference'];
     }
