@@ -50,10 +50,18 @@
       </ion-item>
       <ion-item>
         <ion-label class="ion-text-capitalize label-text">Zona</ion-label>
-        <ion-select (ionChange)="defectZoneChange($event)" placeholder="Selecciona" formControlName="defectZoneChildId"
+        <ion-select (ionChange)="defectZoneChange($event)" placeholder="Selecciona" formControlName="defectZoneParentId"
                     [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let zone of zones" [value]="zone.id">
-            {{zone.name +" - "+ zone.defectZoneParent.name}}</ion-select-option>
+          <ion-select-option *ngFor="let zone of zones" [value]="zone">
+            {{zone.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label class="ion-text-capitalize label-text">Subzona</ion-label>
+        <ion-select *ngIf="defectZonesChildsOfParent.length > 0" (ionChange)="defectZoneChangeParent($event)" placeholder="Selecciona" formControlName="defectZoneChildId"
+                    [disabled]="barcodeRoute!=null">
+          <ion-select-option *ngFor="let zoneChild of defectZonesChildsOfParent" [value]="zoneChild.id">
+            {{zoneChild.name}}</ion-select-option>
         </ion-select>
       </ion-item>
 
