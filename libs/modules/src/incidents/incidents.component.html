@@ -44,7 +44,7 @@
       <ion-item>
         <ion-label class="ion-text-capitalize label-text">Subdefecto</ion-label>
         <ion-select *ngIf="defectChildsOfParent.length > 0" (ionChange)="defectParentChange($event)" placeholder="Selecciona" formControlName="defectTypeChildId" [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let defectSubtype of defectChildsOfParent" [value]="defectSubtype">
+          <ion-select-option *ngFor="let defectSubtype of defectChildsOfParent" [value]="defectSubtype.id">
             {{defectSubtype.name}}</ion-select-option>
         </ion-select>
       </ion-item>

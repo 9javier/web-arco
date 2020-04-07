@@ -239,11 +239,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     })
     this.incidentsService.getDefectZonesChild().subscribe(resp => {
       this.zonesChilds = resp;
-      console.log("TEST::zones", this.zones);
     })
     this.incidentsService.getDefectZonesParent().subscribe(resp => {
       this.zones = resp;
-      console.log("TEST::zones", this.zones);
     })
     this.incidentsService.getDtatusManagamentDefect().subscribe(resp => {
       this.statusManagament = resp

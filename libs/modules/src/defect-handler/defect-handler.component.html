@@ -108,7 +108,7 @@
       </ng-container>
       <ng-container matColumnDef="registerDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="registerDate">
-          Fecha de registro
+          Fecha
         </th>
         <td mat-cell *matCellDef="let defect">
           {{ defect?.dateDetection | date:"dd/MM/yyyy"}}
@@ -127,7 +127,7 @@
           Contacto
         </th>
         <td mat-cell *matCellDef="let defect">
-          {{ defect?.contact.name }}
+          {{ defect?.contact?.name }}
         </td>
       </ng-container>
     </table>
