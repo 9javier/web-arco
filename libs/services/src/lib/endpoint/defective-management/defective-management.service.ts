@@ -5,6 +5,9 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { DefectiveManagementModel } from '../../../models/endpoints/defective-management-model';
 import { DefectiveManagementChildModel } from '../../../models/endpoints/DefectiveManagementChild';
+import DefectiveManagementChild = DefectiveManagementChildModel.DefectiveManagementChild;
+import { HttpRequestModel } from "../../../models/endpoints/HttpRequest";
+import { RequestsProvider } from "../../../providers/requests/requests.provider";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +22,10 @@ export class DefectiveManagementService {
 
   displayedColumns: string[] = ['name'];
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private requestsProvider: RequestsProvider
+  ) { }
 
   /**
    * Get all group Defective Management
@@ -84,6 +90,10 @@ export class DefectiveManagementService {
       .replace("{{id}}", String(id)), singleDefectiveManagement).pipe(map(response => {
       return response.data;
     }));
+  }
+
+  newUpdateChild(child: DefectiveManagementChild): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.put(this.singleDefectiveChildManagementUrl.replace("{{id}}", String(child.id)), child);
   }
 
   /**

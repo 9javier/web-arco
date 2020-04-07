@@ -5,6 +5,8 @@ export namespace DefectiveManagementChildModel {
     id?: number;
     name?: string;
     defectTypeParent?: number;
+    includeInIncidenceTicket?: boolean;
+    includeInDeliveryNote?: boolean;
   }
 
   export interface ResponseSingle extends Request.Success{

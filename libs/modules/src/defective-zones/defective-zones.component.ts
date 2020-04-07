@@ -21,6 +21,8 @@ export class DefectiveZonesComponent implements OnInit {
   groupsToSelect: DefectiveZonesModel.DefectiveZonesParent[] = [];
   groupsChildrenToSelect: DefectiveZonesChildModel.DefectiveZonesChild[] = [];
   groupsDefectiveZones: DefectiveZonesModel.DefectiveZonesParent[];
+  thereAreChanges: boolean;
+  groupsDefectiveZonesOriginal: DefectiveZonesModel.DefectiveZonesParent[];
 
   constructor(
     private defectiveZonesService: DefectiveZonesService,
@@ -30,6 +32,7 @@ export class DefectiveZonesComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    this.thereAreChanges = false;
     await this.getData();
   }
 
@@ -46,6 +49,9 @@ export class DefectiveZonesComponent implements OnInit {
         item.addedChild = true;
         item.open = item.id === this.openParentId;
       });
+
+      this.groupsDefectiveZonesOriginal = JSON.parse(JSON.stringify(this.groupsDefectiveZones));
+      this.thereAreChanges = false;
 
       this.intermediaryService.dismissLoading();
     }, (e) => { }, () => {
@@ -256,4 +262,40 @@ export class DefectiveZonesComponent implements OnInit {
   openGroup(parentId: number) {
     this.openParentId = parentId;
   }
+
+  storeChanges(){
+    if(!this.thereAreChanges){
+      if(JSON.stringify(this.groupsDefectiveZones) !== JSON.stringify(this.groupsDefectiveZonesOriginal)){
+        this.thereAreChanges = true;
+      }
+    }else{
+      if(JSON.stringify(this.groupsDefectiveZones) === JSON.stringify(this.groupsDefectiveZonesOriginal)){
+        this.thereAreChanges = false;
+      }
+    }
+  }
+
+  async saveChanges() {
+    let atLeastOneChangeDetected: boolean = false;
+    //save
+    for (let i = 0; i < this.groupsDefectiveZones.length; i++) {
+      for (let j = 0; j < this.groupsDefectiveZones[i].defectZoneChild.length; j++) {
+        const nChild: any = this.groupsDefectiveZones[i].defectZoneChild[j];
+        const oChild: any = this.groupsDefectiveZonesOriginal[i].defectZoneChild[j];
+        if (JSON.stringify(nChild) !== JSON.stringify(oChild)) {
+          nChild['defectZoneParent'] = this.groupsDefectiveZones[i].id;
+          await this.defectiveZonesService.newUpdateChild(nChild);
+          atLeastOneChangeDetected = true;
+        }
+      }
+    }
+    //get data
+    await this.getData();
+    if(atLeastOneChangeDetected){
+      await this.intermediaryService.presentToastSuccess('Cambios guardados con éxito');
+    }else{
+      await this.intermediaryService.presentToastError('Error: no se han encontrado cambios que guardar.')
+    }
+  }
+
 }

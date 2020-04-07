@@ -5,6 +5,8 @@ export namespace DefectiveZonesChildModel {
     id?: number;
     name?: string;
     defectZoneParent?: number;
+    includeInIncidenceTicket?: boolean;
+    includeInDeliveryNote?: boolean;
   }
 
   export interface ResponseSingle extends Request.Success{
