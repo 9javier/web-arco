@@ -187,7 +187,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         listItemsForFilter = this.listBrands;
         break;
       case 2:
-        filterType = 'Modelos';
+        filterType = this.typeModelVisualization == this.TypesModel.MODEL_NAME ? 'Modelos' : (this.typeModelVisualization == this.TypesModel.MODEL_REFERENCE ? 'Referencias' : 'Detalles-Artículos');
         listItemsForFilter = this.listModels;
         break;
       case 3:
@@ -209,7 +209,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         if (data.data.filterListType == 'Marcas') {
           this.brandSelected = data.data.itemSelected;
           this.getModelAndColorColors(this.brandSelected.id);
-        } else if (data.data.filterListType == 'Modelos') {
+        } else if (data.data.filterListType == 'Modelos' || data.data.filterListType == 'Referencias' || data.data.filterListType == 'Detalles-Artículos') {
           this.modelSelected = data.data.itemSelected;
           this.getColorColors(this.modelSelected.id);
         } else if (data.data.filterListType == 'Colores') {
