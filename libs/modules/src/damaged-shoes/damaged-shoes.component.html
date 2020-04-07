@@ -61,6 +61,14 @@
           <mat-checkbox [checked]="element.allowOrders" (change)="changeAction($event, element,'allowOrders')"></mat-checkbox>
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="shippedFallback">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">Cambiar a este estado tras enviar a almacén defectuosos</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.shippedFallback" (change)="changeAction($event, element,'shippedFallback')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
       <mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></mat-header-row>
       <mat-row *matRowDef="let element; columns: tableColumns;"></mat-row>
     </mat-table>

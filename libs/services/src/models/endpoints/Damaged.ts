@@ -17,7 +17,8 @@ export namespace DamagedModel {
     requirePhoto: boolean,
     requireContact: boolean,
     requireOk: boolean,
-    allowOrders: boolean
+    allowOrders: boolean,
+    shippedFallback: boolean
   }
 
   export interface Status {
