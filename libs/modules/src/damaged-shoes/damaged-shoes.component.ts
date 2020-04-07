@@ -92,7 +92,8 @@ export class DamagedShoesComponent implements OnInit {
           requirePhoto: modalData.actions[2].isChecked,
           requireContact: modalData.actions[3].isChecked,
           requireOk: modalData.actions[4].isChecked,
-          allowOrders: modalData.actions[5].isChecked
+          allowOrders: modalData.actions[5].isChecked,
+          shippedFallback: modalData.actions[6].isChecked
         };
         await this.productsService.postDamagedUpdate([classification]);
         await this.getData();
