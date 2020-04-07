@@ -1,71 +1,109 @@
-<ion-content [ngClass]="{'ion-padding': typeScreen == undefined}" >
+<ion-content [ngClass]="{'ion-padding': typeScreen == undefined, 'without-order': isReceptionWithoutOrder}" >
 
   <ng-container *ngIf="typeScreen == undefined; else screen">
-    <ion-grid fixed>
-      <ion-row>
-        <ion-col size="4">
-          <ion-item lines="none">
-            <ion-label>Nro Expedicion</ion-label>
-            <ion-input [(ngModel)]="expedition" type="text"></ion-input>
-          </ion-item>
-        </ion-col>
-        <ion-col size="4">
-          <ion-item lines="none">
-            <ion-label>Proveedor</ion-label>
-            <ion-select (ionChange)="proveedorSelected($event)">
-              <ion-select-option  *ngFor="let item of providers" [value]="item.id">
-                 {{item.name}}
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-      <ion-row *ngIf="isProviderAviable"  class="ion-margin-top">
-        <ion-col size="4">
-          <ion-item (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
+    <div class="grid">
+      <div class="row headers">
+        <suite-form-header-reception [@fadein]="stateAnimationForm" class="row form" (checkExpedition)="checkExpedition($event)" (listByProvider)="listByProvider($event)" [isReceptionWithoutOrder]="isReceptionWithoutOrder"></suite-form-header-reception>
+        <suite-info-header-reception [@fadein]="stateAnimationInfo" (resetReception)="resetReceptionProcess()" (changeDeliveryNote)="changeDeliveryNote($event)" [isReceptionWithoutOrder]="isReceptionWithoutOrder"></suite-info-header-reception>
+      </div>
+
+      <div class="row selectors" *ngIf="isReceptionStarted">
+        <div class="col">
+          <ion-item lines="none" (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
             <ion-title> Marcas </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
-          <suite-lists type="brands" (seleccionado)="listSelected($event)" [data]="response.brands"></suite-lists>
-        </ion-col>
-        <ion-col size="4">
-          <ion-item (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
-            <ion-title> Modelos </ion-title>
+          <suite-lists type="brands"></suite-lists>
+        </div>
+
+        <div class="col">
+          <ion-item lines="none" (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
+            <ion-title>
+              Modelos
+              <mat-form-field class="model-selector" (click)="$event.preventDefault();$event.stopPropagation()">
+                <mat-select [(value)]="typeModelVisualization" (valueChange)="changeValue()">
+                  <mat-option [value]="TypesModel.MODEL_NAME">NOMBRE</mat-option>
+                  <mat-option [value]="TypesModel.MODEL_REFERENCE">REFERENCIA</mat-option>
+                  <mat-option [value]="TypesModel.PROVIDER_REFERENCE">REF. PROVEEDOR</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
+          <suite-lists type="models" ></suite-lists>
+        </div>
 
-          <suite-lists type="models" (seleccionado)="listSelected($event)" [data]="response.models"></suite-lists>
-        </ion-col>
-        <ion-col size="4">
-          <ion-item (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
+        <div class="col">
+          <ion-item lines="none" (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
             <ion-title> Colores </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
+          <suite-lists type="colors"></suite-lists>
+        </div>
+      </div>
 
-          <suite-lists type="colors" (seleccionado)="listSelected($event)" [data]="response.colors"></suite-lists>
-        </ion-col>
-        <ion-col class="ion-margin-top" size="4">
-          <ion-button (click)="buscarMas()" > buscar mas </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row *ngIf="isProviderAviable">
-        <ion-col size="12">
-          <ion-title>Talla</ion-title>
-          <suite-sizes (seleccionado)="sizeSelected($event)" [data]="response.sizes"></suite-sizes>
-        </ion-col>
-        <ion-col size="12">
-          <ion-item lines="none">
-            <ion-label>EAN:</ion-label>
-            <ion-input [(ngModel)]="result.ean" type="text" (keyup)="onKey($event)"></ion-input>
-            <ion-button slot="end" (click)="enviar()"> imprimir </ion-button>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+      <div class="row sizes-image-ean" *ngIf="isReceptionStarted">
+        <div class="col images">
+          <div class="row">
+            <ion-img *ngIf="result && getPhotoUrl(result.modelId)" [src]="getPhotoUrl(result.modelId)"></ion-img>
+          </div>
+          <div class="row">
+            <ion-img [src]="'../assets/img/placeholder-product.jpg'"></ion-img>
+          </div>
+        </div>
 
+        <div class="col sizes-ean">
+          <div class="row actions">
+            <ion-button (click)="resetAll()" id="refresh" matTooltipClass="tooltip" matTooltip="Refrescar datos">
+              <ion-icon name="refresh"></ion-icon>
+            </ion-button>
+          </div>
+
+          <div class="row sizes">
+            <span>Tallas</span>
+            <div *ngIf="result.modelId && result.colorId && listSizes.length > 0" class="default">
+              <div *ngIf="!result.ean" class="default-content">
+                <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
+              </div>
+              <ion-button *ngIf="!result.ean" (click)="resetSizes()" matTooltipClass="tooltip" matTooltip="Reiniciar tallas">
+                <ion-icon name="refresh"></ion-icon>
+              </ion-button>
+
+              <div *ngIf="!!result.ean" class="default-content">
+                <size-select *ngFor="let size of listSizes" [item]="size" (sizeSelected)="sizeSelectedInSelector($event)"></size-select>
+              </div>
+            </div>
+            <div *ngIf="result.modelId && result.colorId && (!listSizes || listSizes.length <= 0)" class="default sizes-empty">
+              <p>No se han podido cargar tallas para la marca, el modelo y el color seleccionados.</p>
+            </div>
+            <div *ngIf="!result.modelId || !result.colorId" class="default sizes-select">
+              <p><span *ngIf="!result.modelId">Seleccione un modelo.</span>
+                <span *ngIf="!result.colorId">Seleccione un color.</span></p>
+            </div>
+          </div>
+
+          <div class="row ean">
+            <div class="col ean">
+              <div (click)="openVirtualKeyboard(null, objectType.EAN_CODE)">
+                <mat-form-field id="eanCode">
+                  <mat-label>EAN</mat-label>
+                  <input #ean [value]="result.ean" type="text" matInput>
+                  <button *ngIf="!!result.ean" mat-icon-button matSuffix (click)="removeEanCode($event)" class="remove-icon">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col">
+              <ion-button (click)="printProductsLoading()" id="print"> imprimir </ion-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </ng-container>
-  <ng-template #screen>
-    <suite-screen-result [type]="typeScreen" (screenExit)="screenExit($event)"></suite-screen-result>
-  </ng-template>
 
+  <ng-template #screen>
+    <suite-screen-result [type]="typeScreen" [references]="referencesToPrint" (screenExit)="screenExit($event)"></suite-screen-result>
+  </ng-template>
 </ion-content>

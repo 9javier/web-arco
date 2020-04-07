@@ -5,13 +5,16 @@ import {AuthenticationService} from "../../endpoint/authentication/authenticatio
 import {AlertController, Events} from "@ionic/angular";
 import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {ReceptionService} from "../../endpoint/process/reception/reception.service";
-import {WarehouseModel} from "@suite/services";
+import {ProductModel, WarehouseModel} from "@suite/services";
 import {ReceptionModel} from "../../../models/endpoints/Reception";
 import {ReceptionProvider} from "../../../providers/reception/reception.provider";
 import {Router} from "@angular/router";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 import {PrinterService} from "../../printer/printer.service";
+import {LocalStorageProvider} from "../../../providers/local-storage/local-storage.provider";
+import {PickingNewProductsService} from "../../endpoint/picking-new-products/picking-new-products.service";
+import {PickingNewProductsModel} from "../../../models/endpoints/PickingNewProducts";
 
 declare let ScanditMatrixSimple;
 
@@ -31,6 +34,7 @@ export class ReceptionScanditService {
   private readonly timeMillisToResetScannedCode: number = 1000;
 
   private refenceProductToPrint: string = null;
+  private requestedProductId: number = null;
 
   constructor(
     private router: Router,
@@ -42,10 +46,12 @@ export class ReceptionScanditService {
     private authenticationService: AuthenticationService,
     private receptionService: ReceptionService,
     private printerService: PrinterService,
+    private pickingNewProductsService: PickingNewProductsService,
     private scanditProvider: ScanditProvider,
     private receptionProvider: ReceptionProvider,
+    private localStorageProvider: LocalStorageProvider,
     private itemReferencesProvider: ItemReferencesProvider
-  ) {
+) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
 
@@ -136,6 +142,14 @@ export class ReceptionScanditService {
                 this.refenceProductToPrint = null;
               }
               break;
+            case 'requested_attended':
+              this.scannerPaused = false;
+              if (response.response) {
+                this.attendProductReceived(this.requestedProductId);
+              } else {
+                this.requestedProductId = null;
+              }
+              break;
             default:
               break;
           }
@@ -162,17 +176,22 @@ export class ReceptionScanditService {
       ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje a recepcionar...');
       this.receptionService
         .getCheckPacking(code)
-        .then((res: ReceptionModel.ResponseCheckPacking) => {
+        .then(async (res: ReceptionModel.ResponseCheckPacking) => {
           ScanditMatrixSimple.hideLoadingDialog();
           if (res.code == 200) {
             ScanditMatrixSimple.setText(
-              `${this.receptionProvider.literalsJailPallet.packing_emptied}`,
+              `Embalaje ${code} vaciado`,
               this.scanditProvider.colorsMessage.success.color,
               this.scanditProvider.colorText.color,
               16);
             this.hideTextMessage(1500);
             setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
             ScanditMatrixSimple.showFixedTextBottom(false, '');
+            const hideAlerts: boolean = Boolean(await this.localStorageProvider.get('hideAlerts'));
+            if(hideAlerts){
+              ScanditMatrixSimple.finish();
+              this.router.navigate(['new-products']);
+            }
           } else if (res.code == 428) {
             // Process custom status-code response to check packing
             ScanditMatrixSimple.showWarning(true, `¿Quedan productos sin recepcionar en ${code}?`, 'reception_incomplete', 'Sí', 'No');
@@ -244,6 +263,15 @@ export class ReceptionScanditService {
       .then((res: ReceptionModel.ResponseReceive) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200 || res.code == 201) {
+
+          // Update the stock of all the products form this packing in this warehouse.
+          this.receptionService.getCheckProductsPacking(packingReference).subscribe(response=>{
+            const packingProducts: ProductModel.Product[] = response.data.products;
+            for(let product of packingProducts){
+              this.receptionService.postUpdateStock({productReference: product.reference});
+            }
+          });
+
           if (this.typeReception == 1) {
             ScanditMatrixSimple.showFixedTextBottom(false, '');
 
@@ -262,7 +290,11 @@ export class ReceptionScanditService {
               if (res.data.quantity > 0) {
                 // Close Scandit and navigate to list of products received
                 ScanditMatrixSimple.finish();
-                this.router.navigate(['print', 'product', 'received', 'scandit', res.data.hasNewProducts]);
+                const routeFragments = ['print', 'product', 'received', 'scandit', res.data.hasNewProducts];
+                if (res.data.hasRequestedProducts) {
+                  routeFragments.push(true);
+                }
+                this.router.navigate(routeFragments);
               }
             }, 1.5 * 1000);
           } else if (this.typeReception == 2) {
@@ -314,7 +346,7 @@ export class ReceptionScanditService {
     ScanditMatrixSimple.showLoadingDialog('Recepcionando producto...');
     this.receptionService
       .postReceiveProduct(params)
-      .then((response: ReceptionModel.ResponseReceptionProduct) => {
+      .then(async (response: ReceptionModel.ResponseReceptionProduct) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (response.code == 201) {
           ScanditMatrixSimple.setText(
@@ -324,7 +356,14 @@ export class ReceptionScanditService {
             18);
           this.hideTextMessage(1500);
 
-          if (response.data.hasNewProducts) {
+          // Update the stock of this product in this warehouse.
+          this.receptionService.postUpdateStock({productReference: referenceProduct});
+
+          const hideAlerts: boolean = Boolean(await this.localStorageProvider.get('hideAlerts'));
+          if (response.data.hasRequestedProducts) {
+            this.requestedProductId = response.data.productRequestedId;
+            ScanditMatrixSimple.showWarning(true, 'El producto escaneado corresponde a un producto solicitado a otra tienda.', 'requested_attended', 'Atendido', 'No atender');
+          } else if (response.data.hasNewProducts && !hideAlerts) {
             ScanditMatrixSimple.showWarning(true, `El producto escaneado es nuevo en la tienda. ¿Quiere imprimir su código de exposición ahora?`, 'new_product_expo', 'Sí', 'No');
           } else {
             this.refenceProductToPrint = null;
@@ -416,6 +455,37 @@ export class ReceptionScanditService {
     }, error => {
       console.log('error', error);
     });
+  }
+
+  private attendProductReceived(requestedProductId: number) {
+    if (requestedProductId) {
+      this.pickingNewProductsService
+        .promisePutAttendReceivedProductsRequested({receivedProductsRequestedIds: [requestedProductId]})
+        .then((result: PickingNewProductsModel.ResponseListReceivedProductsRequested) => {
+          if (result.code == 201) {
+            ScanditMatrixSimple.setText(
+              'Producto atendido correctamente',
+              this.scanditProvider.colorsMessage.success.color,
+              this.scanditProvider.colorText.color,
+              16);
+            this.hideTextMessage(1500);
+          } else {
+            ScanditMatrixSimple.setText(
+              'Ha ocurrido un error al intentar marcar como atendido el producto.',
+              this.scanditProvider.colorsMessage.error.color,
+              this.scanditProvider.colorText.color,
+              16);
+            this.hideTextMessage(4000);
+          }
+        }, error => {
+          ScanditMatrixSimple.setText(
+            'Ha ocurrido un error al intentar marcar como atendido el producto.',
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(4000);
+        });
+    }
   }
 
   private hideTextMessage(delay: number) {

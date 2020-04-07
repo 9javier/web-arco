@@ -2,7 +2,7 @@
   <h2 class="workwave-title">
     <span (click)="goPreviousPage()" class="return-workwaves">Listado ></span> {{template.name}}
     <div id="top" class="buttons-action">
-      <ion-icon [name]="enlarged ? 'contract' : 'expand'" (click)="enlarge()"></ion-icon>
+      <ion-icon matTooltip="{{enlarged ? 'Contraer' : 'Expandir'}}" matTooltipClass="tooltip" [name]="enlarged ? 'contract' : 'expand'" (click)="enlarge()"></ion-icon>
     </div>
   </h2>
 </div>
@@ -20,16 +20,16 @@
     </ion-row>
   </div>
   <div class="requests-orders">
-    <table-requests-orders (changeRequestOrder)="requestOrderChanged($event)"></table-requests-orders>
+    <table-requests-orders (changeRequestOrder)="requestOrderChanged($event)" (loadTeamAssignations)="loadTeamAssignationsEmitted($event)"></table-requests-orders>
   </div>
   <div class="team-assignation">
-    <table-team-assignation [responseQuantities]="responseQuantities"></table-team-assignation>
+    <table-team-assignation [responseQuantities]="responseQuantities" (loadTeamAssignations)="loadTeamAssignationsEmitted($event)"></table-team-assignation>
   </div>
 </div>
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button (click)="saveWorkWave()" [disabled]="disableEdition">
+    <ion-fab-button matTooltip="Lanzar Ola de Trabajo" matTooltipClass="tooltip" (click)="saveWorkWave()" [disabled]="disableEdition">
       <i class="material-icons">play_arrow</i>
     </ion-fab-button>
   </ion-fab>

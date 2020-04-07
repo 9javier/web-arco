@@ -2,20 +2,24 @@
   <div class="my-row">
     <div class="my-col sorter">
       <sorter-matrix-emptying
-        [height]="'50vh'"
+        [height]="'40vh'"
         [width]="'100%'"
+        (listOfIdsWays)="listOfIdsWays = $event"
         (columnSelected)="columnSelected($event)">
       </sorter-matrix-emptying>
 
       <suite-sorter-actions-emptying
-        [height]="'40vh'"
+        [height]="'30vh'"
         [width]="'100%'"
+        [disableAllSelect]="disableFullSelect"
         [disableAuto]="disableAuto"
         [disableManual]="disableManual"
         [disableMixed]="disableMixed"
+        [disableEmptying]="disableEmptying"
         (autoEmptying)="autoEmptying()"
         (manualEmptying)="manualEmptying()"
-        (mixedEmptying)="mixedEmptying()">
+        (mixedEmptying)="mixedEmptying()"
+        (allEmptying)="creatAler()">
       </suite-sorter-actions-emptying>
     </div>
 
@@ -26,3 +30,10 @@
     </div>
   </div>
 </ion-content>
+
+<ion-footer class="footer-ways-emptying">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="loadActiveSorter()"><i
+      class="material-icons">refresh</i></ion-fab-button>
+  </ion-fab>
+</ion-footer>

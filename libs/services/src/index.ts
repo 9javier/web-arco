@@ -152,3 +152,10 @@ export * from './models/endpoints/country.model';
 /**Reception avelon */
   export * from './lib/endpoint/receptions-avelon/receptions-avelon.service';
   export * from './models/endpoints/receptions-avelon.model';
+
+//incidents
+export * from './models/endpoints/incidents.model'
+export * from './lib/endpoint/incidents/incidents.service';
+
+// uploas file
+export * from './lib/endpoint/ulpload-files/upload-files.service';

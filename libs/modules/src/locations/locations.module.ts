@@ -14,7 +14,7 @@ import { EnableLockContainerModule } from './modals/enable-lock-container/enable
 import { PipesModule } from "../../../pipes/src";
 import {MoveProductsComponent} from "./modals/move-products/move-products.component";
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
-
+import { MatTooltipModule } from "@angular/material";
 
 
 @NgModule({
@@ -34,7 +34,8 @@ import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
     HallsModule,
     EnableLockContainerModule,
     PipesModule,
-    BreadcrumbModule
+    BreadcrumbModule,
+    MatTooltipModule
   ],
   entryComponents: [
     ListComponent,

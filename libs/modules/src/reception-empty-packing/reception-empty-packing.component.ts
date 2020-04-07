@@ -29,24 +29,25 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
   async ionViewWillEnter(){
     await this.intermediaryService.presentLoading('Cargando')
     this.empty$ = this.carrierService.getCarriesEmptyPacking().subscribe(list => {
-      this.items = list 
+      this.items = list
     },
     async e => {
       await this.intermediaryService.dismissLoading()
-      this.intermediaryService.presentToastError('Ocurrio un error al cargar listado')
+      this.intermediaryService.presentToastError('Ocurrió un error al cargar el listado.')
     },
     async () => {
       await this.intermediaryService.dismissLoading()
     }
   )
   }
+
   ngOnDestroy() {
     if (this.empty$) {
         this.empty$.unsubscribe();
     }
     if (this.reception$) {
       this.reception$.unsubscribe();
-  }
+    }
   }
 
   onClick(item , index) {
@@ -56,7 +57,7 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
   async presentAlertConfirm(item, index) {
     const alert = await this.alertController.create({
       header: 'Confirmar',
-      message: `Desea recibir la jaula  vacia con la referencia ${item.reference}?`,
+      message: `Desea recibir el embalaje vacío con la referencia ${item.reference}?`,
       buttons: [
         {
           text: 'No',
@@ -70,7 +71,7 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
         }
       ]
     });
-  
+
     await alert.present();
   }
 
@@ -80,10 +81,10 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
      }
     this.reception$ = this.carrierService.getReceptions(body).subscribe(
       receptions => {
-        this.intermediaryService.presentToastSuccess('Paquqete recepcionado exitosmente'),
+        this.intermediaryService.presentToastSuccess('Embalaje recepcionado exitosamente'),
         this.items.splice(index,1)
     },
-      e => this.intermediaryService.presentToastError('Paquete enviado no encontrado')
+      e => this.intermediaryService.presentToastError('Embalaje no encontrado')
     )
   }
 

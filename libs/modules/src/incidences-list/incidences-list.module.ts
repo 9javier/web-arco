@@ -4,10 +4,18 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import {IncidencesListComponent} from "./incidences-list.component";
 import {IncidenceComplexModule} from "../incidence-complex/incidence-complex.module";
-import {MatListModule, MatPaginatorModule, MatTableModule} from "@angular/material";
+import {
+  MatListModule, MatOptionModule,
+  MatPaginatorModule,
+  MatSelectModule,
+  MatSortModule,
+  MatTableModule,
+  MatTooltipModule
+} from "@angular/material";
 import {RouterModule, Routes} from "@angular/router";
 import {FiltersIncidencesComponent} from "./filters/filters.component";
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
+import {FilterButtonModule} from "../components/filter-button/filter-button.module";
 
 const routes: Routes = [
   {
@@ -26,9 +34,14 @@ const routes: Routes = [
     MatTableModule,
     MatPaginatorModule,
     MatListModule,
+    MatSortModule,
     RouterModule.forChild(routes),
     FormsModule,
-    PaginatorComponentModule
+    PaginatorComponentModule,
+    MatTooltipModule,
+    FilterButtonModule,
+    MatSelectModule,
+    MatOptionModule
   ], entryComponents: [IncidencesListComponent, FiltersIncidencesComponent]
 })
 export class IncidencesListModule { }

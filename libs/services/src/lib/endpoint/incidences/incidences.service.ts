@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import {switchMap} from "rxjs/operators";
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import {ExcellModell} from "../../../models/endpoints/Excell";
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,9 @@ export class IncidencesService {
   private getIndexUrl:string = environment.apiBase+"/incidences";
   private putUpdateUrl:string = environment.apiBase+"/incidences/{{id}}";
   private postSearchUrl: string = environment.apiBase+"/incidences";
+  private postGetFiltersUrl: string = environment.apiBase+"/incidences/filters";
+  private postChangeStatusUrl: string = environment.apiBase+"/incidences/change/status/";
+  private sendexcell = environment.apiBase + "/incidences/export-to-excel";
 
   private _incidencesList: IncidenceModel.Incidence[];
   private _incidencesPreviewList: IncidenceModel.Incidence[];
@@ -56,12 +60,18 @@ export class IncidencesService {
     {id: 13, name: 'Sorter - producto eliminado sin jaula'}
   ];
   private _defaultFiltersPreview: IncidenceModel.SearchParameters = {
-    order: 'DESC',
+    order: {
+      field: 'id',
+      direction: 'DESC'
+    },
     page: 0,
     size: this._quantityIncidencesToShow
   };
   private _defaultFilters: IncidenceModel.SearchParameters = {
-    order: 'ASC',
+    order: {
+      field: 'id',
+      direction: 'ASC'
+    },
     page: 0,
     size: 10
   };
@@ -77,7 +87,7 @@ export class IncidencesService {
       .then((res: IncidenceModel.ResponseSearch) => {
         if (res.code == 200) {
           this._incidencesPreviewList = res.data.incidences;
-          this._incidencesUnattendedQuantity = res.data.count;
+          this._incidencesUnattendedQuantity = res.data.count_search;
           this._incidencesQuantityPopover = res.data.count_search;
         } else {
           console.error('Error to try search Incidences with Filters', res);
@@ -94,7 +104,7 @@ export class IncidencesService {
       .then((res: IncidenceModel.ResponseSearch) => {
         if (res.code == 200) {
           this._incidencesList = res.data.incidences;
-          this._incidencesUnattendedQuantity = res.data.count;
+          this._incidencesUnattendedQuantity = res.data.count_search;
           this._incidencesQuantityList = res.data.count_search;
         } else {
           console.error('Error to try search Incidences with Filters', res);
@@ -102,6 +112,15 @@ export class IncidencesService {
       }, (error) => {
         console.error('Error to try search Incidences with Filters', error);
       });
+  }
+
+  getFileExcell(parameters: ExcellModell.fileExcell) {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post(this.sendexcell, parameters, { headers, responseType: 'blob' });
+    }));
   }
 
   // IncidencesList: Getter and Setter
@@ -186,4 +205,11 @@ export class IncidencesService {
     return this.requestsProvider.post(this.postSearchUrl, parameters);
   }
 
+  public postGetFilters(params: IncidenceModel.ParamsGetFilters) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postGetFiltersUrl, params);
+  }
+
+  public postChangeStatus(incidenceId: number, params: IncidenceModel.ParamsChangeStatus) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postChangeStatusUrl + incidenceId, params);
+  }
 }

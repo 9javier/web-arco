@@ -8,6 +8,7 @@ import {AlertController, LoadingController } from "@ionic/angular";
 import { IntermediaryService, UserTimeModel, UserTimeService } from '@suite/services';
 import { TimesToastType } from '../../../services/src/models/timesToastType';
 
+
 @Component({
   selector: 'list-picking-rebuild',
   templateUrl: './list-picking-rebuild.component.html',
@@ -57,7 +58,7 @@ export class ListPickingRebuildComponent implements OnInit {
     this.loadEmployees();
   }
 
-  private loadPickingsList() {
+  public loadPickingsList() {
     this.isLoadingPickings = true;
 
     let subscribeResponseListPickings = (res: Array<PickingModel.PendingPickings>) => {

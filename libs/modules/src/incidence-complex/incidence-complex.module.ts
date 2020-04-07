@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { IncidenceComplexComponent } from "./incidence-complex.component";
+import { MatTooltipModule } from '@angular/material';
 
 @NgModule({
   declarations: [IncidenceComplexComponent],
@@ -10,7 +11,8 @@ import { IncidenceComplexComponent } from "./incidence-complex.component";
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    IonicModule
+    IonicModule,
+    MatTooltipModule
   ], entryComponents: [IncidenceComplexComponent]
 })
 export class IncidenceComplexModule { }

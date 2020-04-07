@@ -1,0 +1,84 @@
+<ion-content [ngClass]="{'without-order': isReceptionWithoutOrder}">
+  <div class="fields-to-search">
+    <loading-message></loading-message>
+    <div class="ean" *ngIf="eanCode">
+      <mat-card>
+        <mat-card-content>
+          <p>EAN: <span>{{eanCode}}</span></p>
+          <mat-icon matRipple class="right" (click)="removeEanCode()">close</mat-icon>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-list>
+      <mat-list-item matRipple (click)="listItems(1)" class="model-selector">
+        <h4 mat-line>Ver modelos por</h4>
+        <mat-form-field class="model-selector" (click)="$event.preventDefault();$event.stopPropagation()">
+          <mat-select [(value)]="typeModelVisualization" (valueChange)="changeValue()">
+            <mat-option [value]="TypesModel.MODEL_NAME">NOMBRE</mat-option>
+            <mat-option [value]="TypesModel.MODEL_REFERENCE">REFERENCIA</mat-option>
+            <mat-option [value]="TypesModel.PROVIDER_REFERENCE">REF. PROVEEDOR</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-list-item>
+
+      <mat-list-item matRipple (click)="listItems(1)">
+        <mat-icon mat-list-icon>list</mat-icon>
+        <h4 mat-line>Marca</h4>
+        <p mat-line [ngClass]="{
+          'green': brandSelected && brandSelected.color == 'green',
+          'orange': brandSelected && brandSelected.color == 'orange',
+          'red': brandSelected && brandSelected.color == 'red'}"> {{brandSelected ? brandSelected.name : 'seleccionar marca'}} </p>
+        <mat-icon mat-list-icon class="right">keyboard_arrow_right</mat-icon>
+      </mat-list-item>
+
+      <mat-list-item matRipple (click)="listItems(2)">
+        <mat-icon mat-list-icon>list</mat-icon>
+        <h4 mat-line>Modelo</h4>
+        <p mat-line [ngClass]="{
+          'green': modelSelected && modelSelected.color == 'green',
+          'orange': modelSelected && modelSelected.color == 'orange',
+          'red': modelSelected && modelSelected.color == 'red'}"> {{modelSelected ? modelSelected.name : 'seleccionar modelo'}} </p>
+        <mat-icon mat-list-icon class="right">keyboard_arrow_right</mat-icon>
+      </mat-list-item>
+
+      <mat-list-item matRipple (click)="listItems(3)">
+        <mat-icon mat-list-icon>list</mat-icon>
+        <h4 mat-line>Color</h4>
+        <p mat-line [ngClass]="{
+          'green': colorSelected && colorSelected.color == 'green',
+          'orange': colorSelected && colorSelected.color == 'orange',
+          'red': colorSelected && colorSelected.color == 'red'}"> {{colorSelected ? colorSelected.name : 'seleccionar color'}} </p>
+        <mat-icon mat-list-icon class="right">keyboard_arrow_right</mat-icon>
+      </mat-list-item>
+    </mat-list>
+
+    <div class="sizes">
+      <span>Tallas</span>
+      <div *ngIf="modelSelected && colorSelected && listSizes && listSizes.length > 0" class="default">
+        <div *ngIf="!eanCode" class="default-content">
+          <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
+        </div>
+        <ion-button *ngIf="!eanCode" (click)="resetSizes()" matTooltipClass="tooltip" matTooltip="Reiniciar tallas">
+          <ion-icon name="refresh"></ion-icon>
+        </ion-button>
+
+        <div *ngIf="!!eanCode" class="default-content">
+          <size-select *ngFor="let size of listSizes" [item]="size" (sizeSelected)="sizeSelectedInSelector($event)"></size-select>
+        </div>
+      </div>
+      <div *ngIf="modelSelected && colorSelected && (!listSizes || listSizes.length <= 0)" class="default sizes-empty">
+        <p>No se han podido cargar tallas para la marca, el modelo y el color seleccionados.</p>
+      </div>
+      <div *ngIf="!modelSelected || !colorSelected" class="default sizes-select">
+        <p><span *ngIf="!modelSelected">Seleccione un modelo.</span>
+          <span *ngIf="!colorSelected">Seleccione un color.</span></p>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<button *ngIf="getPhotoUrl(modelIdSelected)" mat-fab aria-label="Ver foto del modelo" class="fab simple" (click)="showImages($event)">
+  <mat-icon>image</mat-icon>
+</button>
+<fab-extended *ngIf="brandSelected && modelSelected && colorSelected && listSizes && listSizes.length > 0" tooltip="Imprimir los códigos de productos correspondientes" icon="print" label="IMPRIMIR" (clickButton)="printCodes()"></fab-extended>

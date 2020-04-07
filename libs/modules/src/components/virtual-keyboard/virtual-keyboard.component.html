@@ -1,12 +1,12 @@
 <div class="content-keyboard">
   <div class="content-input">
-    <ion-searchbar [(ngModel)]="searchTerm" (ionChange)="setFilteredItems()" clearIcon="false" searchIcon="false" placeholder="Ingrese el texto"></ion-searchbar>
+    <ion-searchbar [(ngModel)]="searchTerm" (ionChange)="setFilteredItems()" clearIcon="false" searchIcon="false" [placeholder]="placeholder"></ion-searchbar>
   </div>
   <div class="container-key-list">
     <div class="simple-keyboard"></div>
-    <div class="list-content-keyboard">
+    <div class="list-content-keyboard" *ngIf="type">
       <ion-list>
-        <ion-item *ngFor="let item of items" (click)="selectItem(item.id)">
+        <ion-item *ngFor="let item of items" (click)="itemClick(item)" [ngClass]="{'green': item.color == 'green', 'orange': item.color == 'orange', 'red': item.color == 'red'}">
           {{ item.value }}
         </ion-item>
       </ion-list>

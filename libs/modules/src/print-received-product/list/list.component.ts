@@ -78,6 +78,16 @@ export class ListReceivedProductTemplateComponent implements OnInit, AfterViewIn
     this.clearFilters();
   }
 
+  async refresh() {
+    await this.intermediaryService.presentLoading('Cargando productos...');
+    this.getFilters();
+    this.selectedForm = this.formBuilder.group({
+      selector: false
+    },{
+      validators: validators.haveItems("toSelect")
+    });
+  }
+
   ngAfterViewInit() : void {
     this.listenChangesPaginator();
   }

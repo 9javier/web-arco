@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Seleccione usuario para picking</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="scroll-list">
+  <ion-radio-group>
+    <mat-grid-list
+      *ngFor="let user of users"
+      class="team-assignations-line"
+      [cols]="getCols() > 0 ? getCols()*10 : 10"
+      rowHeight="48px">
+
+      <mat-grid-tile class="employee" [colspan]="getCols() > 0 ? getCols()*3 : 3">
+        <ion-radio slot="start" (click)="selectedUserId = user.id"></ion-radio>
+        <div class="tile-value">{{user.name}}</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile
+        class="assignation"
+        *ngFor="let picking of user.pickings"
+        [ngClass]="picking.temporary ? 'temporal' : 'fixed'"
+        [colspan]="picking.quantityShoes > 0 ? picking.quantityShoes*7 : 7">
+
+        <div class="tile-value">{{picking.quantityShoes}}</div>
+
+      </mat-grid-tile>
+
+    </mat-grid-list>
+  </ion-radio-group>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button [disabled]="!selectedUserId" slot="end" (click)="send()" type="button" color="dark">Lanzar</ion-button>
+  </ion-toolbar>
+</ion-footer>

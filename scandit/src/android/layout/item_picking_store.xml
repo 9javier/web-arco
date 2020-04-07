@@ -10,61 +10,102 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp"
     android:paddingStart="10dp"
-    android:paddingEnd="10dp">
+    android:paddingTop="5dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="5dp">
+
     <LinearLayout
+      android:id="@+id/referenceLayout"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_weight="1">
+
       <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Referencia: "/>
+        android:text="Referencia: " />
+
       <TextView
         android:id="@+id/tvModelValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:textStyle="bold"
-        android:text="Referencia"/>
+        android:text="Referencia"
+        android:textStyle="bold" />
     </LinearLayout>
+
     <LinearLayout
+      android:id="@+id/sizeLayout"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_weight="1">
+
       <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Talla: "/>
+        android:text="Talla: " />
+
       <TextView
         android:id="@+id/tvSizeValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:textStyle="bold"
-        android:text="Talla"/>
+        android:text="Talla"
+        android:textStyle="bold" />
     </LinearLayout>
   </LinearLayout>
 
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="5dp"
     android:paddingBottom="5dp"
     android:paddingStart="10dp"
     android:paddingEnd="10dp">
-    <TextView
-      android:layout_width="wrap_content"
+
+    <LinearLayout
+      android:id="@+id/brandLayout"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:text="Marca: "/>
-    <TextView
-      android:id="@+id/tvBrandValue"
-      android:layout_width="wrap_content"
+      android:layout_weight="1">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Marca: " />
+
+      <TextView
+        android:id="@+id/tvBrandValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Marca"
+        android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/typeLayout"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_marginStart="10dp"
-      android:textStyle="bold"
-      android:text="Marca"/>
+      android:layout_weight="1">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tipo: " />
+
+      <TextView
+        android:id="@+id/tvTypeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Tipo"
+        android:textStyle="bold" />
+    </LinearLayout>
+
   </LinearLayout>
 
 </LinearLayout>

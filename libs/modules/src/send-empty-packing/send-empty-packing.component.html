@@ -29,7 +29,7 @@
             </ng-container>
 
           <ng-container matColumnDef="products-status">
-            <th mat-header-cell *matHeaderCellDef>Productos</th>
+             <th mat-header-cell *matHeaderCellDef>Productos</th>
             <td mat-cell *matCellDef="let element"> {{ element.packingInventorys && element.packingInventorys.length > 0 ? element.packingInventorys.length : 'vacía' }} </td>
           </ng-container>
             <ng-container matColumnDef="isSend">
@@ -37,7 +37,7 @@
                 <td mat-cell *matCellDef="let element" class="right-content left-border">
                     <i *ngIf="isAvailableSend(element)" (click)="toSend($event,element)" class="material-icons action-icon">send</i>
                 </td>
-            </ng-container>            
+            </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row" [class.incidence-expanded-row]="expandedElement === row" (click)="expandedElement = expandedElement === row ? null : row">
@@ -48,8 +48,10 @@
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button (click)="sendAll($event)" *ngIf="hasToDelete()"><i class="material-icons">send</i></ion-fab-button>
-    <ion-fab-button (click)="toScanner($event)">
+    <ion-fab-button id="sendAll" (click)="sendAll($event); btnOnClick('sendAll'); " [matTooltipDisabled]="showTooltip" matTooltip="Enviar todo" matTooltipClass="tooltip" *ngIf="hasToDelete()"><i class="material-icons">
+      send
+    </i></ion-fab-button>
+    <ion-fab-button id="btntoScanner" (click)="toScanner($event); btnOnClick('btntoScanner'); " [matTooltipDisabled]="showTooltip" matTooltip="Escanear" matTooltipClass="tooltip">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="s-ion-icon" style="fill:white;width:2em;">
             <path d="M88 128h48v256H88zM232 128h48v256h-48zM160 144h48v224h-48zM304 144h48v224h-48zM376 128h48v256h-48z"></path>
             <path d="M104 104V56H16v400h88v-48H64V104zM408 56v48h40v304h-40v48h88V56z"></path>

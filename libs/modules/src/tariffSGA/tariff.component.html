@@ -3,7 +3,7 @@
         <suite-breadcrumb></suite-breadcrumb>
     </ion-text>
     <ion-row *ngIf="!processing" style="float: right; padding: 5px;">
-        <ion-button [disabled]="processing" (click)="startSync()">Actualizar Tarifas</ion-button>
+        <ion-button [disabled]="processing"  matTooltip="Forzar actualización de tarifas ahora" matTooltipClass="tooltip"(click)="startSync()">Actualizar Tarifas</ion-button>
     </ion-row>
 
     <div class="processing" *ngIf="processing">
@@ -32,8 +32,11 @@
             </th>
             <td mat-cell *matCellDef="let tariff">
               <mat-form-field>
-                <mat-icon matPrefix *ngIf="tariff?.activeFromChange" matTooltip="{{getTooltipFromChange(tariff)}}" class="icon-date">shuffle</mat-icon>
-                <input matInput [disabled]="processing" matTooltip="{{getTooltipFromChange(tariff)}}" [matDatepicker]="pickerStart" placeholder="Fecha SGA" [value]="getDateISO(tariff?.activeFrom)" (dateChange)="changeDateStart($event, tariff)">
+
+
+                <mat-icon matPrefix *ngIf="tariff?.activeFromChange" class="icon-date" matTooltip="{{getTooltipFromChange(tariff)}}" >shuffle</mat-icon>
+                <input matInput [matDatepicker]="pickerStart" (focus)="pickerStart.open()" [disabled]="processing" matTooltip="{{getTooltipFromChange(tariff)}}" [matDatepicker]="pickerStart" placeholder="Fecha SGA" [value]="getDateISO(tariff?.activeFrom)" (dateChange)="changeDateStart($event, tariff)">
+
                 <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
                 <mat-datepicker #pickerStart [disabled]="processing"></mat-datepicker>
               </mat-form-field>
@@ -47,7 +50,8 @@
             <td mat-cell *matCellDef="let tariff">
               <mat-form-field>
                 <mat-icon matPrefix  *ngIf="tariff?.activeTillChange" matTooltip="{{getTooltipFromChange(tariff)}}" class="icon-date">shuffle</mat-icon>
-                <input matInput [disabled]="processing" matTooltip="{{getTooltipTillChange(tariff)}}" [matDatepicker]="pickerEnd" placeholder="Fecha SGA" [value]="getDateISO(tariff?.activeTill)" (dateChange)="changeDateEnd($event, tariff)">
+                <input matInput [matDatepicker]="pickerEnd" (focus)="pickerEnd.open()" [disabled]="processing" matTooltip="{{getTooltipTillChange(tariff)}}" [matDatepicker]="pickerEnd" placeholder="Fecha SGA" [value]="getDateISO(tariff?.activeTill)" (dateChange)="changeDateEnd($event, tariff)">
+
                 <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
                 <mat-datepicker #pickerEnd [disabled]="processing"></mat-datepicker>
               </mat-form-field>
@@ -72,7 +76,7 @@
 </ion-content>
 
 <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="updateEnabled()" *ngIf="existTariffsToUpdate && !processing">
+    <ion-fab-button matTooltip="Guardar Tarifas" matTooltipClass="tooltip" (click)="updateEnabled()" *ngIf="existTariffsToUpdate && !processing">
         <ion-icon name="save"></ion-icon>
     </ion-fab-button>
 </ion-fab>

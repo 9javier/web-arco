@@ -25,6 +25,8 @@ interface MenuItem {
   icon: string;
 }
 
+declare let window: any;
+
 @Component({
   selector: 'suite-root',
   templateUrl: 'app.component.html'
@@ -50,6 +52,11 @@ export class AppComponent implements OnInit {
       title: 'Ubicar/Escanear Manualmente',
       icon: 'qr-scanner',
       url: '/positioning/manual'
+    },
+    {
+      title: 'Ubicar online/Pocisionamiento Manual',
+      icon: 'qr-scanner',
+      url: '/positioning/manual-online'
     },
     {
       title: 'Tareas de Picking',
@@ -179,7 +186,7 @@ export class AppComponent implements OnInit {
               .then(success => {
                 this.mainHeaderShowHide(true);
                 this.menu.enable(true, 'sidebar');
-                if (this.platform.is('android') && window.cordova) {
+                if (this.platform.is('android') && (<any>window).cordova) {
                   this.scanditService.setApiKey(environment.scandit_api_key);
                   this.printerConnectionService.taskConnection();
                 }

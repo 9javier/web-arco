@@ -6,7 +6,6 @@
     </ion-button>
   </div>
 </h2>
-
 <title-picking></title-picking>
 
 <div class="loader" *ngIf="isLoadingPickings">
@@ -26,11 +25,14 @@
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button *ngIf="deleteOptionEnabled && !usersNoSelectedToDelete" (click)="deletePickingsSelected()">
+    <ion-fab-button color="danger" matTooltip="Eliminar Pickings seleccionados" matTooltipClass="tooltip" *ngIf="deleteOptionEnabled && !usersNoSelectedToDelete" (click)="deletePickingsSelected()">
       <i class="material-icons">delete</i>
     </ion-fab-button>
-    <ion-fab-button *ngIf="listPickings && listPickings.length > 0" (click)="selectAllPickings()">
+    <ion-fab-button matTooltip="Seleccionar todo" matTooltipClass="tooltip" *ngIf="listPickings && listPickings.length > 0" (click)="selectAllPickings()">
       <i class="material-icons">select_all</i>
+    </ion-fab-button>
+    <ion-fab-button color="primary" (click)="loadPickingsList()" matTooltip="Actualizar" matTooltipClass="tooltip">
+      <ion-icon class="material-icons" name="refresh"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-footer>

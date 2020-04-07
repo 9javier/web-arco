@@ -5,6 +5,7 @@ import { ActionToolbarModel } from "../../../../services/src/models/endpoints/Ac
 import { PopoverController, Platform } from "@ionic/angular";
 import { PopoverMenuToolbarComponent } from "../popover-menu-toolbar/popover-menu-toolbar.component";
 import { KeyboardService } from '../../../../services/src/lib/keyboard/keyboard.service';
+import { Location } from "@angular/common";
 
 @Component({
   selector: 'toolbar',
@@ -14,6 +15,7 @@ import { KeyboardService } from '../../../../services/src/lib/keyboard/keyboard.
 export class ToolbarAlComponent implements OnInit {
 
   @Input() showAlMenu: boolean = false;
+  @Input() showBackArrow: boolean = false;
   @Output() windowResize = new EventEmitter();
   @Output() toggleSideMenuSga = new EventEmitter();
   @Output() toggleSideMenuAl = new EventEmitter();
@@ -29,7 +31,8 @@ export class ToolbarAlComponent implements OnInit {
     private popoverController: PopoverController,
     private toolbarProvider: ToolbarProvider,
     private keyboard: KeyboardService,
-    private plt: Platform
+    private plt: Platform,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -45,8 +48,24 @@ export class ToolbarAlComponent implements OnInit {
     this.toolbarProvider.currentPage.subscribe((page) => {
       this.currentPage = page;
       // muesta el boton del teclado en los titulos que tengan la ocurrencia "manual" en su cadena
-      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual') || this.currentPage.includes('Verificación de artículos') || this.currentPage.includes('Entrada') || this.currentPage.includes('Lista de auditorias') || this.currentPage.includes('Salida') || this.currentPage.includes('Auditorías') || this.currentPage.includes('Ventilación de traspasos') || this.currentPage.includes('Ventilación sin Sorter')) {
-        if(this.currentPage.includes('Código exposición manual') || this.currentPage.includes('Reetiquetado productos manual')){
+      if (
+        this.currentPage.includes('manual') ||
+        this.currentPage.includes('Manual') ||
+        this.currentPage.includes(' láser') ||
+        this.currentPage.includes('(láser)') ||
+        this.currentPage.includes(' laser') ||
+        this.currentPage.includes('Verificación de artículos') ||
+        this.currentPage.includes('Entrada') ||
+        this.currentPage.includes('Lista de auditorias') ||
+        this.currentPage.includes('Salida') ||
+        this.currentPage.includes('Auditorías') ||
+        this.currentPage.includes('Ventilación de traspasos') ||
+        this.currentPage.includes('Ventilación sin Sorter') ||
+        this.currentPage.includes('Traspaso embalaje') ||
+        this.currentPage.includes('Recepción de mercancía') ||
+        this.currentPage.includes('Registro defectuoso')
+      ) {
+        if (this.currentPage.includes('Código exposición manual') || this.currentPage.includes('Reetiquetado productos manual')) {
           this.showKeyboard = false;
         } else {
           this.showKeyboard = true;
@@ -58,6 +77,9 @@ export class ToolbarAlComponent implements OnInit {
     });
     this.toolbarProvider.showAlMenu.subscribe((show) => {
       this.showAlMenu = show;
+    });
+    this.toolbarProvider.showBackArrow.subscribe((show) => {
+      this.showBackArrow = show;
     });
     this.toolbarProvider.optionsActions.subscribe((options) => {
       this.optionsActions = options;
@@ -79,6 +101,10 @@ export class ToolbarAlComponent implements OnInit {
     } else {
       this.toggleSideMenuSga.next();
     }
+  }
+
+  goBackInApp() {
+    this.location.back();
   }
 
   actionFromToolbar(optionAction: ActionToolbarModel.ActionToolbar) {

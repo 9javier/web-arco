@@ -1,0 +1,4 @@
+<div [ngClass]="{'without-order': isReceptionWithoutOrder}">
+  <loading-message></loading-message>
+  <scanner-manual placeholder="CÓDIGO EAN" (newValue)="eanScanned($event)"></scanner-manual>
+</div>

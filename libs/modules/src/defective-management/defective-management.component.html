@@ -1,0 +1,47 @@
+<ion-content class="ion-padding">
+  <ion-text color="primary">
+    <suite-breadcrumb></suite-breadcrumb>
+  </ion-text>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <mat-accordion multi="false">
+          <mat-expansion-panel *ngFor="let defect of groupsDefectiveManagement; let i = index" (opened)="openGroup(defect.id)" [expanded]="defect.open">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <ion-checkbox style="margin-right: 5px" (click)="activateDelete(defect)"></ion-checkbox>
+                {{ defect.name }}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <ion-item class="no-border">
+              <ion-button slot="end" color="dark" *ngIf="defect.addedChild" (click)="addDefectiveChild(defect.id)"><ion-icon name="add"></ion-icon></ion-button>
+              <ion-button slot="end" color="dark" *ngIf="defect.updateChild" (click)="updateDefectiveChild()"><ion-icon name="create"></ion-icon></ion-button>
+              <ion-button slot="end" color="danger" *ngIf="defect.deletedChild" (click)="presentDeleteChildrenAlert(defect.id)"><ion-icon name="trash"></ion-icon></ion-button>
+              <h2>Subtipos</h2>
+            </ion-item>
+            <mat-selection-list *ngFor="let child of defect.defectTypeChild">
+              <mat-list-option (click)="onChanged(i, defect.id, child)" >
+                <p>{{ child.name }}</p>
+              </mat-list-option>
+            </mat-selection-list>
+            <p class="ion-text-center" *ngIf="defect.defectTypeChild.length === 0"> No existen datos</p>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-fab vertical="bottom" horizontal="end">
+  <ion-fab-button matTooltip="Nuevo tipo de defecto" matTooltipClass="tooltip" *ngIf="!toSelectGroup" (click)="addDefective()">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+  <div style="height: 5px"></div>
+  <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" *ngIf="groupsToSelect.length === 1" (click)="updateDefective()">
+    <ion-icon name="create"></ion-icon>
+  </ion-fab-button>
+  <div style="height: 5px"></div>
+  <ion-fab-button matTooltip="Eliminar" matTooltipClass="tooltip" *ngIf="toSelectGroup" (click)="presentDeleteAlert()" color="danger">
+    <ion-icon name="trash"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

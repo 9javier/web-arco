@@ -1,4 +1,10 @@
 import {Component, OnInit} from '@angular/core';
+import {Router  } from '@angular/router';
+import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
+
+
+
+
 
 @Component({
   selector: 'app-print-relabel-product-manual',
@@ -8,9 +14,19 @@ import {Component, OnInit} from '@angular/core';
 
 export class PrintRelabelProductManualComponent implements OnInit {
 
-  constructor() {}
+  constructor(
+    private router:Router,
+    private toolbarProvider: ToolbarProvider,
+  ) {}
 
   ngOnInit() {
+  }
+  /**
+   * return to menu products
+   */
+  returnMenuProducts(){
+    this.toolbarProvider.currentPage.next("Reetiquetado Productos");
+    this.router.navigate(['/positioning/manual']);
 
   }
 

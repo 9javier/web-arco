@@ -744,6 +744,13 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.waySelectedToEmptying = data;
   }
 
+  loadDataFirst(){
+    this.intermediaryService.presentLoading("Actualizando...");
+    const response = this.loadData();
+    this.intermediaryService.dismissLoading();
+    return response;
+  }
+
   //region Endpoints requests
   private loadActiveSorter() {
     this.sorterService
@@ -828,6 +835,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
         if (this.haveManualEmptying) {
           this.sorterTemplateMatrix = res;
           this.matrixOutput.processMatrix(this.sorterTemplateMatrix);
+        } else {
+          this.matrixOutput.processMatrix([]);
         }
         this.loadingSorterTemplateMatrix = false;
       }, async (error: HttpRequestModel.Error) => {

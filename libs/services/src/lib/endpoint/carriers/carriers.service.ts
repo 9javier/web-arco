@@ -18,6 +18,7 @@ export class CarriersService {
   private postSealUrl: string = environment.apiBase + "/packing/seal";
   private postTransferAmongPackingsUrl: string = environment.apiBase + "/packing/transfer";
   private getUpdatePackingStatusInPickingUrl: string = environment.apiBase + "/packing/update/";
+  private getByReference: string = environment.apiBase + "/packing/";
 
   // Relabel
   private postListByWarehouseUrl: string = environment.apiBase + "/packing/destiny/show";
@@ -55,6 +56,13 @@ export class CarriersService {
   getUpdatePackingStatusInPicking(pickingId: number) : Observable<any> {
     return this.http.get<CarrierModel.ResponseUpdateStatusInPicking>(`${this.getUpdatePackingStatusInPickingUrl}${pickingId}`).pipe(map(response => {
       return response.data;
+    }));
+  }
+
+  getByReferences(reference: string){
+    return this.http.get<CarrierModel.ResponseGetByReference>(`${this.getByReference}${reference}`).pipe(map(response => {
+     
+      return response.data; 
     }));
   }
 

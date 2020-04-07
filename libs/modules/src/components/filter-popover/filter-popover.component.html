@@ -35,7 +35,7 @@
     <ion-checkbox [(ngModel)]="allSelected" (ngModelChange)="selectAll()"></ion-checkbox>
     <ion-button size="small" class="reset" (click)="resetFilters()">Reiniciar</ion-button>
     <ion-button *ngIf="underTheLimit()" size="small" (click)="applyFilters()">Aplicar</ion-button>
-    <div *ngIf="!underTheLimit()" [matTooltip]="'Demasiadas opciones seleccionadas. Máximo 100.'">
+    <div *ngIf="!underTheLimit()" [matTooltip]="'Demasiadas opciones seleccionadas. Máximo 1000.'">
       <ion-button size="small" disabled="true" >Aplicar</ion-button>
     </div>
   </div>

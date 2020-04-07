@@ -5,12 +5,16 @@
 </div>
 
 <ion-footer class="footer-products">
+
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab pull-right-72">
+    <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="loadWorkWaves()"><i class="material-icons">refresh</i></ion-fab-button>
+  </ion-fab>
     <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-      <ion-fab-button><i class="material-icons">add</i></ion-fab-button>
+      <ion-fab-button  matTooltip="Nueva Ola de Trabajo" matTooltipClass="tooltip" (click)="showTooltip=!showTooltip" [matTooltipDisabled]="showTooltip" *ngIf="true"><i class="material-icons">add</i></ion-fab-button>
       <ion-fab-list side="top" class="list-fabs">
         <div class="custom-fab">
-          <ion-button>Peticiones online/tienda</ion-button>
-          <ion-fab-button size="small" (click)="addWorkWaveOnlineStore()"><i class="material-icons">add</i></ion-fab-button>
+          <ion-button >Peticiones online/tienda</ion-button>
+          <ion-fab-button #test01  size="small" (click)="addWorkWaveOnlineStore()"><i class="material-icons">add</i></ion-fab-button>
         </div>
         <div class="custom-fab">
           <ion-button>Picking directo/consolidado</ion-button>

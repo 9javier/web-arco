@@ -5,7 +5,10 @@
         <ion-icon name="close" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="ion-text-center"> {{ carrierReference }}</ion-title>
+    <ion-title class="ion-text-center">
+      {{ carrierReference }}
+      <span id="amount">Total: {{packingProducts.length}}</span>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>

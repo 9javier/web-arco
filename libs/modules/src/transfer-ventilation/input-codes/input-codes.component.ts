@@ -93,9 +93,18 @@ export class InputCodesComponent implements OnInit {
         this.isProcessStarted = true;
         this.packingReferenceOrigin = jailReference;
       }else{
+        if(data.code == 400){
           this.packingReferenceOrigin = null;
           this.audioProvider.playDefaultError();
-          this.presentToast(data.errors, 'danger');
+          this.intermediaryService.presentToastError("El código escaneado no es válido.", 'BOTTOM');
+        }else{
+          this.packingReferenceOrigin = null;
+          this.audioProvider.playDefaultError();
+          this.intermediaryService.presentToastError(data.errors, 'BOTTOM');
+        }
+        setTimeout(() => {
+          document.getElementById('input-ta').focus();
+        },500);
       }
 
     });
@@ -106,6 +115,7 @@ export class InputCodesComponent implements OnInit {
 
   reload() {
     this.packingReferenceOrigin = null;
+    this.references = [];
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },500);
@@ -130,7 +140,10 @@ export class InputCodesComponent implements OnInit {
           this.getCarriers(dataWrote);
       } else {
         this.audioProvider.playDefaultError();
-        this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+        this.intermediaryService.presentToastError('El código escaneado no es válido para la operación que se espera realizar.', 'BOTTOM' );
+        setTimeout(() => {
+          document.getElementById('input-ta').focus();
+        },500);
       }
     }
   }
@@ -148,22 +161,6 @@ export class InputCodesComponent implements OnInit {
       this.loading.dismiss();
       this.loading = null;
     }
-  }
-
-  private async presentToast(msg: string, color: string = 'primary') {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'bottom',
-      duration: 1500,
-      color: color
-    });
-
-    toast.present()
-      .then(() => {
-        setTimeout(() => {
-          document.getElementById('input-ta').focus();
-        },500);
-      });
   }
 
   public onFocus(event){

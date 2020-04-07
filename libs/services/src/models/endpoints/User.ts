@@ -1,4 +1,81 @@
 export namespace UserModel {
+
+  export interface List {
+    permissions: Permission[],
+    list_roles: Role[]
+  }
+
+  export interface Permission {
+    id: number,
+    user: {
+      id: number,
+      email: string,
+      name: string,
+      hasWarehouse: boolean
+    },
+    warehouse: {
+      id: number,
+      name: string,
+      description: string,
+      reference: string,
+      is_store: boolean,
+      is_main: boolean,
+      has_racks: boolean,
+      is_outlet: boolean,
+      prefix_container: string,
+      packingType: number
+    },
+    roles: Role[]
+  }
+
+  export interface Role {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    name: string,
+    description: string,
+    sga_enabled: boolean,
+    app_enabled: boolean,
+    status: boolean
+  }
+
+  export interface Filters {
+    users?: number[],
+    warehouses?: number[]
+  }
+
+  export interface FilterOptionsRequest {
+    type: {
+      users: boolean,
+      warehouses: boolean
+    },
+    currentFilter?: {
+      id: number,
+      value?: string
+    }[]
+  }
+
+  export interface FilterOptions {
+    users?: FilterOption[],
+    warehouses?: FilterOption[]
+  }
+
+  export interface FilterOption {
+    id: number,
+    value: string,
+    checked?: boolean
+  }
+
+  export interface ModalResponse {
+    userId: number,
+    warehouseId: number,
+    roles: {
+      id: number,
+      name: string,
+      isChecked: boolean
+    }[]
+  }
+
   export interface User {
     id?: number;
     email?: string;

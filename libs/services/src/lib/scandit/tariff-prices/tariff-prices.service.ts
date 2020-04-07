@@ -22,10 +22,12 @@ export class TariffPricesScanditService {
   tariffId: number;
   tariffName;
   lastBarcode: string = null;
+  auxLastCode: string = null;
   priceToPrint: PriceModel.PriceByModelTariff;
   priceOptions: PriceModel.PriceByModelTariff[];
   reprint: boolean;
   priceData: string[];
+  reScan: boolean = true;
   private readonly timeMillisToResetScannedCode: number = 1000;
   private timeoutStarted = null;
 
@@ -53,11 +55,13 @@ export class TariffPricesScanditService {
         } else if(response.barcode != undefined && response.barcode.data) {
           this.checkAndPrint(response.barcode.data);
         } else if(response.size_selected != undefined){
+          this.reScan = true;
           this.priceToPrint = this.priceOptions[response.size_selected];
           this.print();
         } else if(response.button != undefined) {
           this.buttonClick();
         } else if (response.action == 'print_pvp_label') {
+          this.reScan = true;
           if (response.response) {
             this.priceToPrint.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
           } else {
@@ -65,6 +69,7 @@ export class TariffPricesScanditService {
           }
           this.print();
         } else if (response.action == 'print_current_tariff') {
+          this.reScan = true;
           if (!response.response) {
             this.priceToPrint = null;
           }
@@ -80,6 +85,7 @@ export class TariffPricesScanditService {
             }
             ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona la talla:', sizeRanges);
           } else {
+            this.reScan = true;
             this.priceToPrint = null;
             this.print();
           }
@@ -94,7 +100,9 @@ export class TariffPricesScanditService {
   checkAndPrint(barcode: string) {
     if (barcode != this.lastBarcode) {
       this.lastBarcode = barcode;
+      this.auxLastCode = barcode;
       ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
+      if(!this.reScan) return;
       if (this.itemReferencesProvider.checkCodeValue(barcode) == this.itemReferencesProvider.codeValue.PRODUCT) {
         let reference: PriceModel.ProductsReferences = {
           references: [barcode],
@@ -117,10 +125,12 @@ export class TariffPricesScanditService {
               if (this.priceToPrint.tariff.id == this.tariffId) {
                 this.print();
               } else {
+                this.reScan = false;
                 ScanditMatrixSimple.showWarning(true, `No hay registrado un precio para el artículo en la tarifa ${this.tariffName}. ¿Desea imprimir el precio de su tarifa vigente (${this.priceToPrint.tariffName})?`, 'print_current_tariff', 'Sí', 'No');
               }
               break;
             default:
+              this.reScan = false;
               if (response.data[0].tariff.id == this.tariffId) {
                 let sizeRanges: PriceModel.SizeRange[] = [];
                 for(let iPrice of this.priceOptions){
@@ -143,6 +153,7 @@ export class TariffPricesScanditService {
     this.priceData = [];
     if(this.priceToPrint != null) {
       if (this.priceToPrint.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+        this.reScan = false;
         ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
       } else {
         this.priceData[1] = this.priceToPrint.model.reference;
@@ -207,7 +218,8 @@ export class TariffPricesScanditService {
         }
       }
     }else{
-      this.priceData[0] = 'Error: no hay precios asociados al modelo con referencia '+this.lastBarcode+'.';
+      const code: string = this.lastBarcode == 'start' ? this.auxLastCode : this.lastBarcode;
+      this.priceData[0] = 'Error: no hay precios asociados al modelo con referencia '+code+'.';
       ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
     }
   }

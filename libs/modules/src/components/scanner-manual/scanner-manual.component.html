@@ -1,3 +1,4 @@
 <div class="content-ta" [ngStyle]="{ 'height': height || '100%' }">
-  <input hideKeyboard id="input-ta" class="input-ta" [placeholder]="placeholder" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="value">
+  <input *ngIf="!showKeyboard" hideKeyboard [id]="inputId" class="input-ta" [placeholder]="placeholder" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="value" [disabled]="isScanBlocked">
+  <input *ngIf="showKeyboard" [id]="inputId" class="input-ta" [placeholder]="placeholder" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="value" [disabled]="isScanBlocked">
 </div>

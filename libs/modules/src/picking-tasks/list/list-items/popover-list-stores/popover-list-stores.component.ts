@@ -9,7 +9,7 @@ import {PickingModel} from "../../../../../../services/src/models/endpoints/Pick
 })
 export class PopoverListStoresComponent implements OnInit {
 
-  public listStores: Array<PickingModel.WorkwaveOrderWarehouse>;
+  public listStores: Array<{name: string, reference: string}>;
 
   constructor(
     public pickingProvider: PickingProvider

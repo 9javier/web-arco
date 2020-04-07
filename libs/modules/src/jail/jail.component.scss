@@ -3,7 +3,7 @@ table {
 }
 
 .title {
-    margin: 16px 16px;
+    margin-right: 8px;
 }
 
 .no-warehouse {
@@ -11,6 +11,7 @@ table {
 }
 
 div.table-container {
+    overflow-x: auto;
     table.table-incidences {
         width: 100%;
         tr.incidence-row:not(.incidence-expanded-row):hover {
@@ -128,6 +129,7 @@ i.warning-icon {
    position: fixed;
    width: 100%;
    bottom: 0;
+  margin-bottom: 40px;
    .horizontal-fab {
      display: flex;
      flex: 1;

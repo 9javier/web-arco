@@ -52,12 +52,46 @@ const routes: Routes = [
     }
   },
   {
+    path: 'picking-scan-packing',
+    loadChildren: '../../../../libs/modules/src/picking-scan-packing/picking-scan-packing.module#PickingScanPackingModule',
+    data: {
+      name: 'Asociar pares a embalajes'
+    }
+  },
+  {
     path: 'products',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/products-al/products-al.module#ProductsAlModule',
     data: {
       name: 'Productos'
     }
+  },
+  {
+    path: 'order-preparation',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/order-preparation/order-preparation.module#OrderPreparationModule',
+    data: {
+      name: 'Preparacion de pedidos'
+    }
+
+  },
+  {
+    path: 'list-alerts',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/transport-manifest/transport-manifest.module#TransportManifestModule',
+    data: {
+      name: 'Manifiesto transportista'
+    }
+
+  },
+  {
+    path: 'labels-manual',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/labels-manual/labels-manual.module#LabelsManualModule',
+    data: {
+      name: 'Etiquetas manuales'
+    }
+
   },
   {
     path: 'ventilation-no-sorter',
@@ -73,6 +107,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/new-products/new-products.module#NewProductsModule',
     data: {
       name: 'Nuevos Productos'
+    }
+  },
+  {
+    path: 'requested-products',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/requested-products/requested-products.module#RequestedProductsModule',
+    data: {
+      name: 'Productos solicitados'
     }
   },
   {
@@ -113,6 +155,11 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/picking-tasks/picking-tasks.module#PickingTasksModule'
   },
   {
+    path: 'picking-tasks-stores',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/picking-tasks-stores/picking-tasks-stores.module#PickingTasksStoresModule'
+  },
+  {
     path: 'warehouses',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/warehouses/warehouses.module#WarehousesModule',
@@ -140,6 +187,11 @@ const routes: Routes = [
     path: 'positioning/manual',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/positioning-manual/positioning-manual.module#PositioningManualModule'
+  },
+  {
+    path: 'positioning/manual-online',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/positioning-manual-online/positioning-manual-online.module#PositioningManualOnlineModule'
   },
   {
     path: 'picking/manual',
@@ -281,7 +333,48 @@ const routes: Routes = [
     data: {
       name: 'Verificación de artículos'
     }
-  }
+  },
+  {
+    path: 'expeditions/pending/app',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/expeditions-pending-app/expeditions-pending-app.module#ExpeditionsPendingAppModule',
+    data: {
+      name: 'Expediciones pendientes'
+    }
+  },
+  {
+    path: 'receptions-avelon/app',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/receptions-avelon-app/receptions-avelon-app.module#ReceptionsAvelonAppModule',
+    data: {
+      name: 'Recepción mercancía'
+    }
+  },
+  {
+    path: 'incidents',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/incidents/incidents.module#IncidentsModule',
+    data: {
+      name: 'Incidencias'
+    }
+  },
+  {
+    path: 'defect-handler',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defect-handler/defect-handler.module#DefectHandlerModule',
+    data: {
+      name: 'Manejo de defectos'
+    }
+  },
+  {
+    path: 'signature',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/signature/signature.module#SignatureModule',
+    data: {
+      name: 'Manejo de defectos'
+    }
+  },
+ 
 ];
 
 @NgModule({

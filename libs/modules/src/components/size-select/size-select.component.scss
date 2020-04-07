@@ -1,0 +1,38 @@
+div {
+  width: 40px;
+  height: 40px;
+  padding: 2px;
+
+  div {
+    width: 36px;
+    height: 36px;
+    background-color: var(--bg-selector-default);
+    color: var(--text-selector-default);
+    display: flex;
+    place-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  div.selected {
+    background-color: var(--bg-selector-selected);
+    color: var(--text-selector-selected);
+  }
+
+  div.selected.greenB, div.greenB {
+    color: var(--ion-color-receptions-green);
+  }
+  div.selected.orangeB, div.orangeB {
+    color: var(--ion-color-receptions-orange);
+  }
+}
+
+div.bigItems {
+  width: 64px;
+  height: 64px;
+  padding: 4px;
+  div {
+    width: 56px;
+    height: 56px;
+  }
+}

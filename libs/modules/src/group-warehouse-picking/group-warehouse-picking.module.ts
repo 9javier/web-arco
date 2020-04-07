@@ -10,6 +10,7 @@ import { UpdateModule } from './modals/update/update.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from "@angular/material";
 
 const routes:Routes = [
   {
@@ -32,6 +33,7 @@ const routes:Routes = [
     ReactiveFormsModule,
     MatExpansionModule,
     MatSlideToggleModule,
+    MatTooltipModule
   ]
 })
 export class GroupWarehousePickingModule { }

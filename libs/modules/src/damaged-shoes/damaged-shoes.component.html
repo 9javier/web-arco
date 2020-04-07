@@ -1,0 +1,87 @@
+<ion-content>
+  <div class="table-container">
+    <mat-table [dataSource]="tableClassifications">
+      <ng-container matColumnDef="statusId">
+        <mat-header-cell *matHeaderCellDef>
+          <span class="title">Estado Id</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.id}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef>
+          <span class="title">Estado</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="ticketEmit">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">Emite Ticket</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.ticketEmit" (change)="changeAction($event, element, 'ticketEmit')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="passHistory">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">Pasa Histórico</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.passHistory" (change)="changeAction($event, element,'passHistory')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="requirePhoto">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">Requiere Foto</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.requirePhoto" (change)="changeAction($event, element,'requirePhoto')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="requireContact">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">Requiere Contacto</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.requireContact" (change)="changeAction($event, element, 'requireContact')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="requireOk">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">Requiere Ok</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.requireOk" (change)="changeAction($event, element,'requireOk')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="allowOrders">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">No apto para pedidos</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.allowOrders" (change)="changeAction($event, element,'allowOrders')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let element; columns: tableColumns;"></mat-row>
+    </mat-table>
+  </div>
+</ion-content>
+<ion-fab vertical="bottom" horizontal="end">
+  <ion-row>
+    <ion-col>
+      <ion-fab-button color="dark"  matTooltip="Guardar cambios" matTooltipClass="tooltip" matTooltipPosition="above" (click)="saveChanges()" *ngIf="thereAreChanges">
+        <ion-icon name="save"></ion-icon>
+      </ion-fab-button>
+    </ion-col>
+    <ion-col>
+      <ion-fab-button color="dark"  matTooltip="Nuevo" matTooltipClass="tooltip" matTooltipPosition="above" (click)="newAction()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-col>
+    <ion-col>
+      <ion-fab-button color="dark"  matTooltip="Deshacer cambios no guardados" matTooltipClass="tooltip" matTooltipPosition="above" (click)="ngOnInit()" *ngIf="thereAreChanges">
+        <ion-icon name="undo"></ion-icon>
+      </ion-fab-button>
+    </ion-col>
+  </ion-row>
+</ion-fab>

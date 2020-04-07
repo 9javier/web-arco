@@ -18,9 +18,58 @@ export namespace FiltersModel{
       hide:boolean;
     }
 
+    export interface CommercialField extends Enum {
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
+    export interface Brand extends Enum {
+      id:number;
+      reference:string;
+      provider:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
+    export interface Season extends Enum {
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
+    export interface Enabled extends Enum {
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
     export interface Model extends Enum {
       id:number;
       reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
+    export interface Product extends Enum {
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
+    export interface User extends Enum {
+      id:number;
+      name:string;
       value:string;
       checked:boolean;
       hide:boolean;
@@ -85,12 +134,65 @@ export namespace FiltersModel{
       checked:boolean;
     }
 
+    export interface Online extends Enum {
+      id:number;
+      name:string;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
+  export interface Type extends Enum {
+    id:number;
+    reference:number;
+    name:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
+  export interface Origin extends Enum {
+    id:number;
+    reference:string;
+    name:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
+  export interface Destiny extends Enum {
+    id:number;
+    reference:number;
+    name:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
+  export interface Product extends Enum {
+    id:number;
+    reference:string;
+    name:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
     export interface ResponseModel extends Request.Success{
       data:Array<Model>;
     }
 
+    export interface ResponseProduct extends Request.Success{
+      data:Array<Product>;
+    }
+
+    export interface ResponseUser extends Request.Success{
+      data:Array<User>;
+    }
+
     export interface ResponseBrand extends Request.Success{
-        data:Array<Brand>
+      data:Array<Brand>
     }
 
     export interface ResponseColor extends Request.Success{

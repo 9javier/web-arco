@@ -3,4 +3,9 @@ export enum Type {
   COLOR = 2,
   MODEL = 3,
   SIZE  = 4,
+  PROVIDER = 5,
+  EXPEDITION_NUMBER = 6,
+  EAN_CODE = 7,
+  SIZE_INPUT = 8,
+  DELIVERY_NOTE = 9
 }

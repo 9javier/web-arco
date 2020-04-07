@@ -1,0 +1,31 @@
+<div class="container" [ngClass]="{'without-order': isReceptionWithoutOrder}">
+  <div class="row form">
+    <div class="col expedition">
+      <span>Comenzar una recepción por expedición</span>
+      <div class="row">
+        <form (click)="showKeyboard(typesKeyboard.EXPEDITION_NUMBER)">
+          <mat-form-field id="expeditionReference">
+            <mat-label>Nº Expedicion</mat-label>
+            <input #expedition type="text" matInput>
+          </mat-form-field>
+          <i slot="end" class="material-icons" id="expeditionKeyboard">keyboard</i>
+        </form>
+        <loading-button #loadingButtonExpedition id="loadingButtonExpedition" label="COMPROBAR" labelLoading="COMPROBANDO"></loading-button>
+      </div>
+    </div>
+
+    <div class="col provider">
+      <span>Consultar expediciones por proveedor</span>
+      <div class="row">
+        <form (click)="showKeyboard(typesKeyboard.PROVIDER, listProviders)">
+          <mat-form-field id="providerSelector">
+            <mat-label>Proveedor</mat-label>
+            <input #provider type="text" matInput>
+          </mat-form-field>
+          <i slot="end" class="material-icons" id="providerKeyboard">keyboard</i>
+        </form>
+        <loading-button #loadingButtonProvider id="loadingButtonProvider" label="CONSULTAR" labelLoading="CONSULTANDO"></loading-button>
+      </div>
+    </div>
+  </div>
+</div>

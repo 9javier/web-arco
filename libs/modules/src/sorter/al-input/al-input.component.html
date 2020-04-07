@@ -29,4 +29,10 @@
     [message]="getMessageForNotificationActiveProcess()"
     (actionLaunched)="actionLaunched()">
   </sorter-notification-active-process>
+  <ion-fab vertical="bottom" horizontal="end" *ngIf="!showButtonsFooter()"
+           [ngClass]="sorterProvider.colorActiveForUser ? 'float-over-notification' : ''">
+    <ion-fab-button color="primary" (click)="loadDataFirst()" matTooltip="Actualizar" matTooltipClass="tooltip">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
