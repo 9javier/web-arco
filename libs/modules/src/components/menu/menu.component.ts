@@ -808,11 +808,11 @@ export class MenuComponent implements OnInit {
       icon: 'build',
       children: [
         {
-          title: 'Ajustes',
+          title: 'Código impresora',
           id: 'settings',
           url: '/settings',
           icon: 'cog',
-          tooltip: 'Ajustes de configuración de la aplicación. Ej: Mac de la impresora'
+          tooltip: 'Mac de la impresora'
         }
       ]
     }
