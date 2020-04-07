@@ -13,6 +13,12 @@
     <ion-item lines="none">
       <h2>Datos del envio</h2>
     </ion-item>
+    <ion-item id="selected-operator">
+      <ion-label>Tienda origen</ion-label>
+      <ion-select placeholder="Selecciona" #mySelect (ionChange)="warehousesSelected(mySelect.value)">
+        <ion-select-option *ngFor="let warehouse of warehouses">{{warehouse.name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
     <ion-item lines="none">
       <ion-input type="text" formControlName="referenceExpedition"   placeholder="Referencia Expedicion"  name="name"  maxlength="50"></ion-input><br>
     </ion-item>
@@ -23,7 +29,7 @@
       <ion-input type="text" formControlName="packagesReference"   placeholder="Referencia de bultos"  name="name"  maxlength="50"></ion-input><br>
     </ion-item>
     <ion-item lines="none">
-      <ion-input type="text" formControlName="packagesWeight"   placeholder="Peso bulto"  name="name"  maxlength="50"></ion-input><br>
+      <ion-input type="text" formControlName="packagesWeight"   placeholder="Peso bulto"  name="name"></ion-input><br>
     </ion-item>
     <ion-item>
       <ion-label class="label-text">Operadores logisticos</ion-label>
@@ -32,7 +38,7 @@
           <ion-select-option (ionChange)="selectChange($event)" *ngFor="let item of operators" [value]="item.id" >{{item.name}}</ion-select-option>
         </div>
       </ion-select>
-    </ion-item> 
+    </ion-item>
     <ion-item lines="none">
       <h2>Datos de destino</h2>
     </ion-item>

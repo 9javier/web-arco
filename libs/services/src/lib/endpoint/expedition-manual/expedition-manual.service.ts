@@ -1,16 +1,23 @@
 import { HttpRequestModel } from 'libs/services/src/models/endpoints/HttpRequest';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { map, filter } from 'rxjs/operators';
+import {from, Observable} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {map, filter, switchMap} from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DefectiveRegistryModel } from '../../../models/endpoints/DefectiveRegistry';
 import { BehaviorSubject } from "rxjs";
+import {AuthenticationService} from "@suite/services";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExpeditionManualService {
+
+  private apiGeneralLogisticOperator = environment.apiLogisticOperator;
+  private createExpeditionSeurUrl = this.apiGeneralLogisticOperator + '/expedition-seur/';
+  private getWarehouseUrl = this.apiGeneralLogisticOperator + '/warehouse-logistic/index';
+  private getWarehouseLogisticUrl = this.apiGeneralLogisticOperator + '/warehouse-logistic/';
+
   private baseUrl: string;
   private getTrasnports: string;
   private epxeditionManualStore: string;
@@ -18,7 +25,7 @@ export class ExpeditionManualService {
   private getFilter: string;
   private getIncidenceById: string;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private auth: AuthenticationService,) {
     this.baseUrl = environment.apiSorter;
     this.getTrasnports = `${this.baseUrl}/expeditions-manual/get-transports`;
     this.epxeditionManualStore = `${this.baseUrl}/expeditions-manual/store`;
@@ -44,7 +51,7 @@ export class ExpeditionManualService {
     return this.http.post<HttpRequestModel.Response>(this.getIncidences, body).pipe(
       map(resp => {
         return resp.data
-      }) 
+      })
     )
   }
 
@@ -52,7 +59,7 @@ export class ExpeditionManualService {
     return this.http.post<HttpRequestModel.Response>(this.getFilter, body).pipe(
       map(resp => {
         return resp.data
-      }) 
+      })
     )
   }
 
@@ -61,5 +68,22 @@ export class ExpeditionManualService {
       map(resp => resp.data)
     )
   }
-  
+
+  createExpeditionSeur(data):Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.post<any>(this.createExpeditionSeurUrl, data, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getWarehouse():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getWarehouseUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
 }

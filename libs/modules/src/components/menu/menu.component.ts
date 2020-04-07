@@ -539,7 +539,7 @@ export class MenuComponent implements OnInit {
       icon: 'build',
       children: [
         {
-          title: 'Incidencias',
+          title: 'Incidencias/Manual',
           id: 'expedition-manual',
           url: '/expedition-manual',
           icon: 'cog',
@@ -1168,12 +1168,6 @@ export class MenuComponent implements OnInit {
   }
 
   openSubMenuItem(menuItem) {
-    if(menuItem.thirdLevel && !menuItem.open) {
-      menuItem.icon = 'add-circle';
-    } else if(menuItem.thirdLevel && menuItem.open) {
-      menuItem.icon = 'add-circle-outline';
-    }
-
     if (this.iconsDirection === 'end') {
       this.toggleSidebar();
     }

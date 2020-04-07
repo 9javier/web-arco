@@ -508,7 +508,6 @@ const routes: Routes = [
     data: {
       name: 'Desbloquear'
     }
-  }
   },
   {
     path:'marketplaces',
