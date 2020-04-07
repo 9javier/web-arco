@@ -1,0 +1,59 @@
+<mat-accordion multi="false">
+  <mat-expansion-panel [hideToggle]="!getPhotoUrl()" [disabled]="!getPhotoUrl()">
+    <mat-expansion-panel-header class="custom-panel-header">
+      <ion-grid>
+        <ion-row class="custom-panel-header">
+          <ion-col size="1" class="check-print">
+            <ion-row>
+              <ion-checkbox (click)="$event.stopPropagation();" [formControl]="selectedFormControl"></ion-checkbox>
+            </ion-row>
+            <ion-row class="impress" *ngIf="productReceived.filterPrice.impress">
+              <ion-icon name="print"></ion-icon>
+            </ion-row>
+          </ion-col>
+          <ion-col size="11" class="content-prices-header">
+            <mat-panel-title>
+              <ion-row class="row-title-prices">
+                <ion-col class="product" size="9">
+                  {{ productReceived.model.reference }} - {{ productReceived.model.brand.name }}
+                </ion-col>
+                <ion-col class="received-date" size="3">
+                  {{ processDate() }}
+                </ion-col>
+              </ion-row>
+            </mat-panel-title>
+            <mat-panel-description class="panel-description">
+              <ion-row class="row-family-lifestyle-size">
+                <ion-col class="family-lifestyle" size="9">
+                  <p>
+                    {{ getFamilyAndLifestyle() }}
+                  </p>
+                </ion-col>
+                <ion-col class="size" size="3">
+                  <p>
+                    {{ processProductSizesRange() }}
+                  </p>
+                </ion-col>
+              </ion-row>
+              <ion-row class="row-price-stock">
+                <ion-col class="price" size="6">
+                  <p class="final-price">
+                    {{ getFinalPrice() }}€
+                  </p>
+                </ion-col>
+                <ion-col class="stock" size="6">
+                  <p>
+                    {{ productReceived.numProducts }} Uds.
+                  </p>
+                </ion-col>
+              </ion-row>
+            </mat-panel-description>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </mat-expansion-panel-header>
+    <div class="my-expansion-panel-body" *ngIf="getPhotoUrl()">
+      <img class="img-product-mobile" [src]="getPhotoUrl()">
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
