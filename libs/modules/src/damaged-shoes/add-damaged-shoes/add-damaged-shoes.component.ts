@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { DamagedModel } from '../../../../services/src/models/endpoints/Damaged';
 import {FormControl, FormGroup} from "@angular/forms";
+import Classifications = DamagedModel.Classifications;
 
 @Component({
   selector: 'suite-add-damaged-shoes',
@@ -10,6 +11,7 @@ import {FormControl, FormGroup} from "@angular/forms";
 })
 export class AddDamagedShoesComponent implements OnInit {
   tAction: DamagedModel.Action[];
+  element: Classifications;
 
   formGroup: FormGroup;
 
@@ -39,6 +41,17 @@ export class AddDamagedShoesComponent implements OnInit {
       name: this.form.name,
       actions: actions
     };
+
+    if(this.element){
+      this.formGroup.setValue({name: this.element.name});
+      this.form.name = this.element.name;
+      this.form.actions[0].isChecked = this.element.ticketEmit;
+      this.form.actions[1].isChecked = this.element.passHistory;
+      this.form.actions[2].isChecked = this.element.requirePhoto;
+      this.form.actions[3].isChecked = this.element.requireContact;
+      this.form.actions[4].isChecked = this.element.requireOk;
+      this.form.actions[5].isChecked = this.element.allowOrders;
+    }
   }
 
   changeAction(actionId: number){
