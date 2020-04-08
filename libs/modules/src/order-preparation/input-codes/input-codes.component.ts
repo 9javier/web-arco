@@ -32,6 +32,7 @@ export class InputCodesComponent implements OnInit {
   lastCodeScanned: string = 'start';
   PrintError:boolean = false;
   expeditionId=0;
+  alertId=0;
   private lastProductReferenceScanned: string = 'start';
   numScanner:number = 0;
   private isStoreUser: boolean = false;
@@ -64,7 +65,12 @@ export class InputCodesComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.expeditionId = this.routeParams.snapshot.params.id;
+   
+    if(this.routeParams.snapshot.params.alert != undefined){
+      this.alertId = this.routeParams.snapshot.params.alert;
+    }else if(this.routeParams.snapshot.params.id != undefined){
+      this.expeditionId = this.routeParams.snapshot.params.id;
+    }
     this.isStoreUser = await this.authService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authService.getStoreCurrentUser();
@@ -326,17 +332,30 @@ export class InputCodesComponent implements OnInit {
   }
 
   async printLabelStore(reference_){
-    let body ={
-      uniqueCode : reference_,
-      expeditionId: this.expeditionId
+    let body;
+    if(this.expeditionId != 0){
+       body ={
+        uniqueCode : reference_,
+        expeditionId: this.expeditionId
+      }
+    }else if(this.alertId!= 0){
+       body ={
+        uniqueCode : reference_,
+        expeditionId: this.alertId
+      }
     }
+    
     this.intermediaryService.presentLoading();
     this.labelService.postPrintLabels(body).subscribe( result =>{
       this.intermediaryService.dismissLoading();
       console.log(result);
       
         this.labelService.numScanner(this.numScanner= (this.numScanner-1));
-        this.router.navigateByUrl('/order-preparation'); 
+        if(this.expeditionId != 0){
+          this.router.navigateByUrl('/order-preparation'); 
+        }else if(this.alertId !=0){
+          this.router.navigateByUrl('/order-preparation/expe-alert/'+this.alertId); 
+        }
       
       
     }, error => {
