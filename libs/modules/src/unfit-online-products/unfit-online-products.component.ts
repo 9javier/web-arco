@@ -79,16 +79,29 @@ export class UnfitOnlineProductsComponent implements OnInit, AfterViewInit {
   }
 
   getFilters(){
-    this.intermediaryService.presentLoading('Cargando filtros...').then(async () => {
-      //get filter options
-      this.filterOptions = {
-        models: [],
-        brands: [],
-        colors: [],
-        sizes: [],
-        orderTypes: []
-      };
-      await this.intermediaryService.dismissLoading();
+    this.intermediaryService.presentLoading('Cargando filtros...').then(() => {
+      this.pickingNewProductsService.getNoOnlineFilterOptions().then(async response => {
+        if (response.code == 200) {
+          const options = response.data;
+          this.filterOptions = {
+            models: options.models.map(option => {return {id: option, name: option}}),
+            brands: options.brands.map(option => {return {id: option, name: option}}),
+            colors: options.colors.map(option => {return {id: option, name: option}}),
+            sizes: options.sizes.map(option => {return {id: option, name: option}}),
+            orderTypes: options.orderTypes
+          };
+          await this.intermediaryService.dismissLoading();
+        }else{
+          console.error(response);
+          await this.intermediaryService.dismissLoading();
+        }
+      }, async error => {
+        console.error(error);
+        await this.intermediaryService.dismissLoading();
+      }).catch(async error => {
+        console.error(error);
+        await this.intermediaryService.dismissLoading();
+      });
     });
   }
 
