@@ -4,11 +4,11 @@ import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange, Sort } fr
 import * as Filesave from 'file-saver';
 import * as _ from 'lodash';
 import { parse } from 'querystring';
-import { NgxFileDropModule } from  'ngx-file-drop' ;
+import { NgxFileDropModule } from 'ngx-file-drop';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { Platform, ModalController } from '@ionic/angular';
 import { IntermediaryService } from '../../../../services/src';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { PaginatorComponent } from '../../components/paginator/paginator.component';
 import { DefectiveRegistryModel } from '../../../../services/src/models/endpoints/DefectiveRegistry';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -38,16 +38,15 @@ export class IncidencesManualComponent {
     private modalController: ModalController,
     private intermediary: IntermediaryService,
     private expeditionManualService: ExpeditionManualService
-    ) {
+  ) {
   }
 
-  
+
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = [ 'barcode','date', 'warehouse', 'transport', 'packages', 'expedition'];
+  displayedColumns: string[] = ['barcode', 'date', 'warehouse', 'transport', 'packages', 'expedition'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
-  originalTableStatus: DamagedModel.Status[];
   columns = {};
 
   @ViewChild('filterButtonBarcode') filterButtonBarcode: FilterButtonComponent;
@@ -249,7 +248,6 @@ export class IncidencesManualComponent {
       if (resp.results) {
         console.log(resp.results);
         this.dataSource = new MatTableDataSource<any>(resp.results);
-        this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
         const paginator = resp.pagination;
 
         this.paginator.length = paginator.totalResults;
@@ -280,7 +278,7 @@ export class IncidencesManualComponent {
   }
 
   masterToggle() {
-      this.isAllSelected() ?
+    this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row));
   }
@@ -373,21 +371,15 @@ export class IncidencesManualComponent {
     this.lastUsedFilter = filterType;
     this.getList(this.form);
   }
-  
-  getStatusName(defectType: number) {
-    const status = this.originalTableStatus.find((x) => x.id === defectType);
-    return status.name;
-  }
 
-  async getRecord(record){
-    console.log(record.expedition);
+  async getRecord(record) {
     let modal = this.modalController.create({
-      component:LogisticOperatorComponent,
+      component: LogisticOperatorComponent,
       componentProps: {
-        id:record.expedition
-      }  
+        id: record.expedition
+      }
     });
-    (await modal).onDidDismiss().then(()=>{
+    (await modal).onDidDismiss().then(() => {
       this.ngOnInit();
     });
     (await modal).present();

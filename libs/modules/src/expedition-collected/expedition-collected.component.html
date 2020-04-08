@@ -1,30 +1,26 @@
 <ion-content>
-  <mat-tab-group #tabGroup [(selectedIndex)]='selectedIndex' (selectedTabChange)="tabChanged($event)" mat-align-tabs="center">
-      <mat-tab label="DHL">
-        <ng-template matTabContent> 
-          <suite-package-collected #selected [id]="1"></suite-package-collected>
-        </ng-template>
-      </mat-tab>
-      <mat-tab label="EXPRESS">
-        <ng-template matTabContent> 
-          <suite-package-collected #selected [id]="2"></suite-package-collected>
-        </ng-template>
-      </mat-tab>
-      <mat-tab label="CASTORES">
-        <ng-template matTabContent> 
-          <suite-package-collected #selected [id]="3"></suite-package-collected>
-        </ng-template>
-      </mat-tab>
-      <mat-tab label="ESTAFETA">
-        <ng-template matTabContent> 
-          <suite-package-collected #selected [id]="4"></suite-package-collected>
-        </ng-template>
-      </mat-tab>
-      <mat-tab label="SEUR">
-        <ng-template matTabContent> 
-          <suite-package-collected #selected [id]="8"></suite-package-collected>
-        </ng-template>
-      </mat-tab>
+  <mat-tab-group #tabGroup [(selectedIndex)]='selectedIndex' (selectedTabChange)="tabChanged($event)"
+    mat-align-tabs="center">
+    <mat-tab label="DHL">
+      <ng-template matTabContent>
+        <suite-package-collected #selected [id]="1"></suite-package-collected>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="SEUR">
+      <ng-template matTabContent>
+        <suite-package-collected #selected [id]="2"></suite-package-collected>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="CASTORES">
+      <ng-template matTabContent>
+        <suite-package-collected #selected [id]="3"></suite-package-collected>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="ESTAFETA">
+      <ng-template matTabContent>
+        <suite-package-collected #selected [id]="4"></suite-package-collected>
+      </ng-template>
+    </mat-tab>
   </mat-tab-group>
 
 </ion-content>
@@ -35,5 +31,3 @@
     </ion-fab-button>
   </ion-fab>
 </ion-footer>-->
-
-

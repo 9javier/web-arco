@@ -46,20 +46,13 @@ export class PackageCollectedComponent {
   displayedColumns: string[] = ['select', 'expedition', 'uniquecode', 'warehouse', 'products'];
   dataSource;
   selection = new SelectionModel<any>(true, []);
-  originalTableStatus: DamagedModel.Status[];
   columns = {};
   toDelete: FormGroup = this.formBuilder.group({
     jails: this.formBuilder.array([])
   });
 
   @ViewChild('filterButtonUniqueCode') filterButtonUniqueCode: FilterButtonComponent;
-
-
-
   isFilteringUniqueCode: number = 0;
-
-
-
   /**Filters */
   uniquecode: Array<TagsInputOption> = [];
 
@@ -84,8 +77,6 @@ export class PackageCollectedComponent {
   length: any;
   ngOnInit() {
     this.form.get('idTransport').setValue(this.id);
-    console.log(this.form.value);
-
     this.getList(this.form);
 
   }
@@ -126,7 +117,7 @@ export class PackageCollectedComponent {
 
   }
 
- 
+
 
   getFilters(id) {
     this.expeditionCollectedService.getFiltersPackage(id).subscribe((entities) => {
@@ -195,13 +186,10 @@ export class PackageCollectedComponent {
   // async getList(form?: FormGroup) {
   async getList(form) {
     this.intermediaryService.presentLoading("Cargando paquetes recogidos..");
-   await this.expeditionCollectedService.getPackages(form.value).subscribe((resp: any) => {
-      console.log(resp)
+    await this.expeditionCollectedService.getPackages(form.value).subscribe((resp: any) => {
       this.intermediaryService.dismissLoading();
       if (resp.results) {
-        console.log(resp.results);
         this.dataSource = new MatTableDataSource<any>(resp.results);
-        this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
         const paginator = resp.pagination;
 
         this.paginator.length = paginator.totalResults;
@@ -265,10 +253,7 @@ export class PackageCollectedComponent {
     this.getList(this.form);
   }
 
-  getStatusName(defectType: number) {
-    const status = this.originalTableStatus.find((x) => x.id === defectType);
-    return status.name;
-  }
+
 
   async update() {
     const data = this.selection.selected.map(function (obj) {
@@ -292,13 +277,13 @@ export class PackageCollectedComponent {
 
   }
 
-  refresh(){
+  refresh() {
     this.selection.clear();
     this.getList(this.form);
   }
 
-  stateUpdate(){
-    if(this.selection.selected.length > 0 ){
+  stateUpdate() {
+    if (this.selection.selected.length > 0) {
       return true
     }
     return false;
