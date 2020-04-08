@@ -1,12 +1,13 @@
 export const environment = {
   production: false,
-  apiBasePhoto: 'http://localhost:8081',
   apiBase: 'http://192.168.254.111:8080/api',
   apiLogisticOperator: 'http://192.168.254.111:3051/api',
   apiSorter: 'http://192.168.254.111:8080/api',
   urlBase: 'http://192.168.254.111:8080',
   apiRule: "http://192.168.254.111:5000",
   apiMiddleware: "http://192.168.254.111:3002",
+  apiBasePhoto: 'http://192.168.254.111:8080',
+  uploadFiles: 'http://192.168.254.111:8080/api/upload-files',
   urlDownloadApp: 'https://drive.google.com/open?id=16DZzQ1hIArX5GF5oZtTpx3ltiPfCvw2K',
   sga:{
     client_id:"krack-client-sga",
