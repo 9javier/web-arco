@@ -21,8 +21,8 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   @Input() height: string = null;
   @Input() width: string = null;
   @Output() columnSelected = new EventEmitter();
+  @Output() loadActiveSorter = new EventEmitter();
   @Output() listOfIdsWays:EventEmitter<number[]> = new EventEmitter();
-  @Input() borrarList :boolean;
 
   private listZonesWithColors: ZoneSorterModel.ZoneColor[] = [];
   private isTemplateWithEqualZones: boolean = false;
@@ -78,7 +78,6 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
   getEmptyingType(column: MatrixSorterModel.Column) : string {
 
-
     let emptyingType = '';
     if (column.way.manual === 1) {
       emptyingType = 'VM';
@@ -130,7 +129,6 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
       this.listaWay(this.waysSelected);
     }
 
-
     this.columnSelected.next({column, iHeight, iCol});
     this.listOfIdsWays.next(this.waysSelected.map(x => x.id));
   }
@@ -145,7 +143,6 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   }
 
   private longList(list:MatrixSorterModel.Column){
-
     let xy = this.listOfIdsYWays.filter(x => x.id === list.way.templateZone.zones.id);
 
     xy = xy.map( f => f.ways.map(c => c.listas));
@@ -194,11 +191,17 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
   refresh(){
     this.waysSelected = [];
+    this.listOfIdsYWays = [];
+    this.listas = [];
   }
-  send(lista:number[]){
+  send(lista:number[], flag: boolean = false){
     let n = Array.from(new Set(lista));
     console.log(n);
-    this.listOfIdsWays.next(n);
+    if(flag) {
+      this.loadActiveSorter.next();
+    }else{
+      this.listOfIdsWays.next(n);
+    }
   }
 
   crearUniq(){
@@ -212,11 +215,9 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
   check(lista:ZoneSorterModel.ZoneColor){
     console.log(lista.checks);
-    // console.log(this.waysSelected);
     let xy = this.listOfIdsYWays.filter(x => x.id === lista.id);
     xy = xy.map(x => x.ways)[0].map(w => w.col).map(r => r.way);
     console.log(xy,`lista per ${lista.id}`); // lista per id columna
-
     if(this.waysSelected.length > 0){
       let ut = this.waysSelected.map(x => x.id);
       let w = [...xy];
@@ -225,9 +226,8 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
         w.forEach( t => {
           this.waysSelected = this.waysSelected.filter( tr => tr.id !== t.id);
         });
-        // console.log(this.waysSelected);
-        this.send(this.waysSelected.map(x => x.id));
-
+        this.listZonesWithColors.map(c => c.checks = false);
+        this.send(this.waysSelected.map(x => x.id), true);
       }else {
         this.waysSelected.forEach(f => {
           w = w.filter(t => t.id !== f.id);
@@ -241,10 +241,8 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
     }else{
       this.waysSelected = [...xy];
-      console.log(this.waysSelected);
       this.send(this.waysSelected.map(x => x.id));
     }
-
     let newList = this.sorterTemplateMatrix.map((x,i) => x.columns.map((y,is) => ({way:y.way.templateZone.zones.id,index:is,indexx:i,column:y})));
     newList.forEach(ele => {
       ele = ele.filter(x => x.column.way.templateZone.zones.color.hex === lista.color);
@@ -342,6 +340,8 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   public borrarWays(){
     this.refresh();
     this.listZonesWithColors.map(c => c.checks = false);
+    this.listZonesWithColors.map(c => c.active = false);
+    this.listZonesWithColors.map(c => c.color = '#B388FF');
   }
 
   public changeEmptyingForWay(newEmptying: number, iHeight: number, iCol: number) {
