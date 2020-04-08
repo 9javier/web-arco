@@ -235,7 +235,8 @@ export class OrderPreparationComponent implements OnInit {
   }
 
   showAlerts(){
-    this.showExpedition();
+    this.close();
+    this.initPage = true;
     this.router.navigateByUrl('/list-alerts');
   }
 
