@@ -116,7 +116,7 @@ export class NewIncidenceComponent implements OnInit {
           }
           const byteArray = new Uint8Array(byteNumbers);
           const blob = new Blob([byteArray], {type: "text/zpl"});
-          FileSaver.saveAs(blob, data[i]['tracking'][i]['uniqueCode']+'-label.zpl');
+          FileSaver.saveAs(blob, data[i]['tracking'][0]['uniqueCode']+'-label.zpl');
         }
       }else{
         const byteCharacters = atob(data['label']);
