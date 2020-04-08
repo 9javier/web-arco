@@ -29,6 +29,7 @@ export class OrderPreparationComponent implements OnInit {
   nScanned:number =0;
   expeditionId:number = 0;
   expeAlert:number = 0;
+  avelonFailed:boolean = false;
   constructor(
     private labelsService: LabelsService,
     private router: Router,
@@ -77,20 +78,28 @@ export class OrderPreparationComponent implements OnInit {
      this.labelsService.getIndexLabels().subscribe(result =>{
      let expedition = result[0];
         if(result.length >0){
-           // this.intermediaryService.dismissLoading();
             let data = { expeditionId: expedition.id, update: true}; 
             this.getTransportStatus(data);
         }else{
+            this.intermediaryService.dismissLoading();
             this.showExpeditionNull();
         }
-      
-      //  this.intermediaryService.dismissLoading();
     },
     async (err) => {
       this.intermediaryService.dismissLoading();
-      this.showBlockedOrder();
-      console.log(err);
+      console.log(err.error.errors);
+      if(err.error.errors == "Expeditions Locked"){
+        this.showBlockedOrder();
+      }else{
+        this.showAvelonFail();
+      }
     });
+  }
+
+  showAvelonFail(){
+    this.close();
+    this.avelonFailed =true;
+    
   }
 
   showErrorExpedition(){
@@ -141,7 +150,6 @@ export class OrderPreparationComponent implements OnInit {
 
   async getTransportStatus(body){
     let This = this;
-    //This.intermediaryService.presentLoading("cargando expedición...");
     await this.labelsService.getTransportStatus(body).subscribe(result =>{
       let expedition = result;
       this.dataSource=[result];
@@ -162,6 +170,7 @@ export class OrderPreparationComponent implements OnInit {
     async (err) => {
       console.log(err);
       This.intermediaryService.dismissLoading();
+      this.intermediaryService.dismissLoading();
     });
   }
   
@@ -237,6 +246,7 @@ export class OrderPreparationComponent implements OnInit {
     this.blockedOrder = false;
     this.expeditButton = false;
     this.expeditionNull = false;
+    this.avelonFailed = false;
   }
 
   return(){
