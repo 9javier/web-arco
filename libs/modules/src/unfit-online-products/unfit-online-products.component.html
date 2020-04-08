@@ -1,96 +1,73 @@
+<ion-item class="filters-button-row">
+  <ion-label>Filtros</ion-label>
+  <i class="material-icons" [ngClass]="showFilters ? 'black-background' : 'filter-icon'" (click)="showFilters = !showFilters">filter_list</i>
+</ion-item>
+<form *ngIf="showFilters" [formGroup]="filtersForm">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-label>Referencia:</ion-label>
+        <suite-tags-input placeholder="Referencia" [options]="filterOptions.models" formControlName="models" multiple="true"></suite-tags-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>Color:</ion-label>
+        <suite-tags-input placeholder="Color" [options]="filterOptions.colors" formControlName="colors" multiple="true"></suite-tags-input>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-label>Marca:</ion-label>
+        <suite-tags-input placeholder="Marca" [options]="filterOptions.brands" formControlName="brands" multiple="true"></suite-tags-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>Talla:</ion-label>
+        <suite-tags-input placeholder="Talla" [options]="filterOptions.sizes" formControlName="sizes" multiple="true"></suite-tags-input>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item formGroupName="orderBy">
+          <ion-label>Ordenar por:</ion-label>
+          <ion-select class="order-types" formControlName="type" interface="popover">
+            <ion-select-option value="{{group.id}}" *ngFor="let group of filterOptions.orderTypes">{{group.name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row class="text-align-center">
+      <ion-col>
+        <ion-button (click)="resetFilters()">Borrar</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button (click)="getProducts()">Aplicar</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
+
 <ion-content>
 
-  <div class="list-header-filters">
-    <ion-grid>
-      <ion-row class="header">
-        <ion-col [formGroup]="selectedForm" size="1" class="check-all">
-          <div class="check-all">
-            <ion-checkbox formControlName="selector" (ionChange)="selectAll($event)"></ion-checkbox>
-          </div>
-        </ion-col>
-        <ion-col size="11" class="filters" (click)="openFilters()">
-          <div class="filters" [ngClass]="showFilters ? 'filters-opened' : ''">
-            <p>Filtros</p>
-            <i class="material-icons">filter_list</i>
-          </div>
-        </ion-col>
+  <ion-grid *ngIf="products.length > 0">
+    <ion-row class="data-row" *ngFor="let product of products">
+      <ion-row>
+        <ion-col size="auto"><b>Ref:</b> {{product.model.reference}}</ion-col>
+        <ion-col size="auto"><b>Color:</b> {{product.model.color.name}}</ion-col>
       </ion-row>
-      <form *ngIf="showFilters" [formGroup]="formFilters">
-        <ion-grid>
-          <ion-row>
-            <ion-col size="6">
-              <ion-label>Referencia:</ion-label>
-              <suite-tags-input placeholder="Referencia" [options]="models" formControlName="models" multiple="true"></suite-tags-input>
-            </ion-col>
-            <ion-col size="6">
-              <ion-label>Color:</ion-label>
-              <suite-tags-input placeholder="Color" [options]="colors" formControlName="colors" multiple="true"></suite-tags-input>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="6">
-              <ion-label>Familia:</ion-label>
-              <suite-tags-input placeholder="Familia" [options]="families" formControlName="families" multiple="true"></suite-tags-input>
-            </ion-col>
-            <ion-col size="6">
-              <ion-label>Lifestyle:</ion-label>
-              <suite-tags-input placeholder="Lifestyle" [options]="lifestyles" formControlName="lifestyles" multiple="true"></suite-tags-input>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="6">
-              <ion-label>Fecha de recepción:</ion-label>
-              <suite-tags-input placeholder="Fecha de recepción" [options]="dates" formControlName="dates" multiple="true"></suite-tags-input>
-            </ion-col>
-            <ion-col size="6">
-              <ion-label>Ordenar:</ion-label>
-              <ion-item formGroupName="orderby">
-                <ion-select class="order-types" formControlName="type" interface="popover">
-                  <ion-select-option value="{{group.id}}" *ngFor="let group of ordertypes">{{group.name}}</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="12">
-              <ion-item class="hide-impress-products" no-padding>
-                <ion-checkbox formControlName="hideImpress"></ion-checkbox>
-                <ion-label>Ocultar impresos</ion-label>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col class="btn-remove" size="6">
-              <ion-button (click)="clearFilters()">
-                Borra Filtros
-              </ion-button>
-            </ion-col>
-            <ion-col class="btn-apply" size="6">
-              <ion-button (click)="applyFilters()">
-                Aplicar Filtros
-              </ion-button>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </form>
-    </ion-grid>
-  </div>
+      <ion-row>
+        <ion-col size="auto"><b>Marca:</b> {{product.model.brand.name}}</ion-col>
+        <ion-col size="auto"><b>Talla:</b> {{product.size.name}}</ion-col>
+      </ion-row>
+    </ion-row>
+  </ion-grid>
 
-  <div class="scroll-list">
-    <list-item-template *ngFor="let productReceived of productsReceived; let iProduct = index" [productReceived]="productReceived" [selectedFormControl]="selectedForm['controls']?.toSelect['controls'][iProduct]"></list-item-template>
-  </div>
-
-  <mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator>
-
-  <ion-footer class="footer-products">
-    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-      <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="refresh()">
-        <i class="material-icons">refresh</i>
-      </ion-fab-button>
-      <ion-fab-button (click)="printProductsPrices()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
-        <ion-icon name="print"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
-  </ion-footer>
+  <p *ngIf="products.length == 0" class="text-align-center">No hay productos no aptos online.</p>
 
 </ion-content>
+
+<ion-fab class="fab" vertical="bottom" horizontal="end">
+  <ion-fab-button matTooltip="Reinicializar listado" matTooltipClass="tooltip" (click)="ngOnInit()">
+    <ion-icon name="refresh"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+<mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator>

@@ -6,7 +6,7 @@ import { UnfitOnlineProductsComponent } from './unfit-online-products.component'
 import { UnfitOnlineProductsRoutingModule } from "./unfit-online-products-routing.module";
 import { CdkTableModule } from "@angular/cdk/table";
 import { ListItemComponent } from "./list-item/list-item.component";
-import { MatExpansionModule, MatGridListModule, MatPaginatorModule } from "@angular/material";
+import {MatExpansionModule, MatGridListModule, MatPaginatorModule, MatTooltipModule } from "@angular/material";
 import { TagsInputModule} from "../components/tags-input/tags-input.module";
 
 @NgModule({
@@ -21,7 +21,8 @@ import { TagsInputModule} from "../components/tags-input/tags-input.module";
     MatExpansionModule,
     MatGridListModule,
     MatPaginatorModule,
-    TagsInputModule
+    TagsInputModule,
+    MatTooltipModule
   ],
   entryComponents: [UnfitOnlineProductsComponent, ListItemComponent]
 })

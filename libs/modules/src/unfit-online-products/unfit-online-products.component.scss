@@ -1,103 +1,52 @@
-div.list-header-filters {
-  ion-grid {
-    .header {
-      padding: 0 16px 0 16px;
-      height: 56px;
+.text-align-center{
+  text-align: center;
+}
 
-      ion-col {
-        height: 56px;
-      }
-
-      ion-col.check-all, ion-col.filters {
-        padding: 0;
-        div.check-all, div.filters {
-          display: table;
-          height: 56px;
-          ion-checkbox, i, p {
-            display: table-cell;
-            vertical-align: middle;
-            margin: 0;
-          }
-        }
-        div.filters {
-          text-align: end;
-          width: 100%;
-          p {
-            padding-right: 16px;
-          }
-          i {
-            text-align: center;
-            width: 32px;
-            height: 32px;
-          }
-        }
-        div.filters.filters-opened {
-          padding: 12px 0;
-          i {
-            background-color: black;
-            color: white;
-            border-radius: 50%;
-          }
-        }
-      }
-    }
-
-    form {
-      position: absolute;
-      background: white;
-      z-index: 3;
-      width: 100vw;
-      left: 0;
-      border: 1px solid #eee;
-
-      ion-select.order-types {
-        width: 100%;
-        max-width: 100%;
-      }
-
-      ion-item.hide-impress-products {
-        --border-width: 0;
-        ion-label {
-          margin-left: 8px;
-        }
-      }
-    }
-  }
-
-  ion-col.btn-remove {
-    ion-button {
-      --background: white;
-      background: white;
-      color: var(--ion-color-primary);
-    }
-  }
-  ion-col.btn-remove, ion-col.btn-apply {
-    text-align: center;
+.filters-button-row{
+  text-align: end;
+  ion-label{
+    margin-right: 20px;
   }
 }
 
-div.scroll-list {
-  overflow: auto;
-  height: calc(100vh - 56px - 66px - 64px); // 56px form app toolbar - 56px from filters header - 64px from paginator
+.black-background{
+  background-color: black;
+  color: white;
+  border-radius: 50%;
+  padding-top: 5px;
+  height: 32px;
+  width: 32px;
+  text-align: center;
 }
-.footer-products {
-  position: fixed;
-  width: 100%;
-  bottom: 0;
+
+.filter-icon{
+  border-radius: 50%;
+  padding-top: 5px;
+  height: 32px;
+  width: 32px;
+  text-align: center;
 }
-.footer-products:before {
-  background: none;
+
+.data-row{
+  border-bottom-color: darkgray;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  padding-left: 10px;
 }
-.horizontal-fab {
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  margin-bottom: 64px;
-  ion-fab-button {
-    margin-left: 16px;
-  }
+
+.fab{
+  bottom: 60px;
 }
 
 mat-paginator {
-  height: 64px;
+  ::ng-deep{
+    div{
+      div{
+        padding: 0;
+        div{
+          margin: 0 auto;
+        }
+      }
+    }
+  }
 }

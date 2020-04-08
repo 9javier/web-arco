@@ -7,6 +7,7 @@ import {AuthenticationService} from "@suite/services";
 import {PickingNewProductsModel} from "../../../models/endpoints/PickingNewProducts";
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import NoOnlineSearchParameters = PickingNewProductsModel.NoOnlineSearchParameters;
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class PickingNewProductsService {
 
   private postGetByWarehouseIdPickingIdUrl = environment.apiBase + '/picking-new-products/warehouse/picking';
   private postSearchUrl = environment.apiBase + '/picking-new-products/search';
+  private postSearchNoOnlineUrl = environment.apiBase + '/picking-new-products/searchNoOnline';
   private getCheckReceivedInfoUrl = environment.apiBase + '/picking-new-products/${id}/products/received/check';
   private postListReceivedProductsRequestedUrl = environment.apiBase + '/picking-new-products/${id}/products/received/requested/list';
   private putAttendReceivedProductsRequestedUrl = environment.apiBase + '/picking-new-products/products/received/requested/attend';
@@ -40,6 +42,10 @@ export class PickingNewProductsService {
     return this.http.post<PickingNewProductsModel.ResponseSearch>(this.postSearchUrl, params).pipe(map(response => {
       return response.data;
     }));
+  }
+
+  postSearchNoOnline(parameters: NoOnlineSearchParameters): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postSearchNoOnlineUrl, parameters);
   }
 
   getCheckReceivedInfo(storeId: number): Observable<PickingNewProductsModel.CheckReceivedInfo> {
