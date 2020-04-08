@@ -162,7 +162,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
             this.checkingResumeExpeditionInProcess = false;
           }
         } else {
-          let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+          let errorMessage = 'Ha ocurrido un error al intentar continuar con la expedición indicada.';
           if (res.error && res.error.errors) {
             errorMessage = res.error.errors;
           }
@@ -170,7 +170,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
           this.checkingResumeExpeditionInProcess = false;
         }
       }, (e) => {
-        let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+        let errorMessage = 'Ha ocurrido un error al intentar continuar con la expedición indicada.';
         if (e.error && e.error.errors) {
           errorMessage = e.error.errors;
         }

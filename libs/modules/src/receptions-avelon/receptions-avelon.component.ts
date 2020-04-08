@@ -949,6 +949,37 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }
   }
 
+  public resumeExpedition(expeditionReference: string) {
+    this.formHeaderReceptionComponent.checkingResumeExpedition(true);
+    this.reception
+      .checkExpeditionByReference(expeditionReference)
+      .subscribe(res => {
+        if (res.code == 200) {
+          if (res.data.expedition_available && res.data.expedition) {
+            this.startReception(res.data.expedition);
+            this.formHeaderReceptionComponent.checkingResumeExpedition(false);
+          } else {
+            this.intermediaryService.presentWarning(`No hay ninguna expedición con referencia ${res.data.expedition_reference_queried} pendiente de recepción.`, null);
+            this.formHeaderReceptionComponent.checkingResumeExpedition(false);
+          }
+        } else {
+          let errorMessage = 'Ha ocurrido un error al intentar continuar con la expedición indicada.';
+          if (res.error && res.error.errors) {
+            errorMessage = res.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+          this.formHeaderReceptionComponent.checkingResumeExpedition(false);
+        }
+      }, (e) => {
+        let errorMessage = 'Ha ocurrido un error al intentar continuar con la expedición indicada.';
+        if (e.error && e.error.errors) {
+          errorMessage = e.error.errors;
+        }
+        this.intermediaryService.presentToastError(errorMessage);
+        this.formHeaderReceptionComponent.checkingResumeExpedition(false);
+      });
+  }
+
   // check if the expedition selected by reference is available and get her data
   public checkExpedition(data) {
     this.formHeaderReceptionComponent.checkingExpedition(true);
@@ -967,26 +998,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             modal.onDidDismiss().then(response => {
               if (response.data && response.data.reception && response.data.expedition) {
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
-                const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
-                  expedition: expedition.reference,
-                  providerId: expedition.providerId
-                };
-                this.checkProvider(fieldsToLoadData);
-
-                this.stateAnimationForm = 'out';
-                this.stateAnimationInfo = 'in';
-                this.isReceptionStarted = true;
-
-                this.expeditionStarted = expedition;
-                this.infoHeaderReceptionComponent.loadInfoExpedition(
-                  {
-                    expeditionReference: expedition.reference,
-                    provider: {name: expedition.providerName, id: expedition.providerId.toString()},
-                    packingsPallets: {packings: expedition.receptionPackings, pallets: expedition.receptionPallets},
-                    date: expedition.deliveryDate,
-                    shipper: expedition.shipper,
-                    states: expedition.receptionStates
-                  });
+                this.startReception(expedition);
               }
             });
             modal.present();
@@ -1040,26 +1052,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             modal.onDidDismiss().then(response => {
               if (response.data && response.data.reception && response.data.expedition) {
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
-                const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
-                  expedition: expedition.reference,
-                  providerId: expedition.providerId
-                };
-                this.checkProvider(fieldsToLoadData);
-
-                this.stateAnimationForm = 'out';
-                this.stateAnimationInfo = 'in';
-                this.isReceptionStarted = true;
-
-                this.expeditionStarted = expedition;
-                this.infoHeaderReceptionComponent.loadInfoExpedition(
-                  {
-                    expeditionReference: expedition.reference,
-                    provider: {name: expedition.providerName, id: expedition.providerId.toString()},
-                    packingsPallets: {packings: expedition.receptionPackings, pallets: expedition.receptionPallets},
-                    date: expedition.deliveryDate,
-                    shipper: expedition.shipper,
-                    states: expedition.receptionStates
-                  });
+                this.startReception(expedition);
               }
             });
             modal.present();
@@ -1122,4 +1115,28 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       });
   }
   //endregion
+
+  private startReception(expedition) {
+    const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
+      expedition: expedition.reference,
+      providerId: expedition.providerId
+    };
+    this.formHeaderReceptionComponent.saveLastExpeditionStarted({reference: fieldsToLoadData.expedition, providerId: fieldsToLoadData.providerId});
+    this.checkProvider(fieldsToLoadData);
+
+    this.stateAnimationForm = 'out';
+    this.stateAnimationInfo = 'in';
+    this.isReceptionStarted = true;
+
+    this.expeditionStarted = expedition;
+    this.infoHeaderReceptionComponent.loadInfoExpedition(
+      {
+        expeditionReference: expedition.reference,
+        provider: {name: expedition.providerName, id: expedition.providerId.toString()},
+        packingsPallets: {packings: expedition.receptionPackings, pallets: expedition.receptionPallets},
+        date: expedition.deliveryDate,
+        shipper: expedition.shipper,
+        states: expedition.receptionStates
+      });
+  }
 }
