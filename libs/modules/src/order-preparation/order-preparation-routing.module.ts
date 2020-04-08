@@ -16,6 +16,14 @@ const routes: Routes = [
     path: 'code/:id',
     component: InputCodesComponent
   },
+  {
+    path: 'code/alert/:alert',
+    component: InputCodesComponent
+  },
+  {
+    path: 'expe-alert/:id_alert',
+    component: OrderPreparationComponent
+  },
  
 ];
 

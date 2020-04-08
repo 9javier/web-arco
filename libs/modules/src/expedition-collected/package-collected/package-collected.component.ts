@@ -266,11 +266,13 @@ export class PackageCollectedComponent {
     });
     await this.intermediaryService.presentLoading();
     this.expeditionCollectedService.updatePackage(data).subscribe(data => {
+      this.selection.clear();
       this.ngOnInit();
       this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastSuccess('Los paquetes seleccionados fueron actualizados con exito');
 
     }, error => {
+      this.selection.clear();
       this.intermediaryService.presentToastError('Debe Seleccionar Todos los paquetes de las expediciones');
       this.intermediaryService.dismissLoading();
     });
