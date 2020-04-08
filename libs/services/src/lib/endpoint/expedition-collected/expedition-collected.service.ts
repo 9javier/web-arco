@@ -19,6 +19,7 @@ export class ExpeditionCollectedService {
   private getProductsPackageByIdExpedition: string;
   private getFiltersPackages: string;
   private updatePackages: string;
+  private getTransports: string;
   private $id = new BehaviorSubject({});
   private id = this.$id.asObservable();
   constructor(private http: HttpClient) {
@@ -31,6 +32,8 @@ export class ExpeditionCollectedService {
     this.getProductsPackageByIdExpedition = `${this.baseUrl}/opl-expedition/transports/get-expedition-package`;
     this.getFiltersPackages = `${this.baseUrl}/opl-expedition/transports/get-expedition-package/filters`;
     this.updatePackages = `${this.baseUrl}/opl-expedition/transports/get-expedition-package/updatePackages`;
+    this.getTransports = `${this.baseUrl}/expeditions-manual/get-transports`;
+
   }
 
   store(body): Observable<any>{
@@ -93,4 +96,11 @@ export class ExpeditionCollectedService {
       }) 
     );
   }
+
+  getTrasnport(): Observable<any>{
+    return this.http.get<HttpRequestModel.Response>(this.getTransports).pipe(
+      map(resp => resp.data)
+    )
+  }
+
 }
