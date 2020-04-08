@@ -184,6 +184,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.expeditionStarted = null;
 
     this.typeModelVisualization = TypeModelVisualization.MODEL_NAME;
+    this.lastTypeModelVisualization = this.typeModelVisualization;
 
     this.ngOnInit();
   }
@@ -256,7 +257,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.providerId = data.providerId;
 
     await this.intermediaryService.presentLoading('Cargando');
-    this.reception.getReceptions(data.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
+    this.reception.getReceptions(data.providerId, this.typeModelVisualization).subscribe((info: ReceptionAvelonModel.Reception) => {
       this.response = info;
       this.expeditionLines = info.lines;
       this.response.brands = this.clearSelected(this.response.brands);
@@ -898,7 +899,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     const subscribeResponseOk = (res) => {
       // refresh the data
       this.reception
-        .getReceptions(this.providerId)
+        .getReceptions(this.providerId, this.typeModelVisualization)
         .subscribe((info: ReceptionAvelonModel.Reception) => {
           this.response = info;
           this.response.brands = this.clearSelected(this.response.brands);

@@ -90,7 +90,7 @@ export class InfoHeaderReceptionComponent implements OnInit {
       this.date = formattedDate;
     }
     this.shipper = expedition.shipper;
-    this.states = this.stringStates(expedition.states);
+    this.states = expedition.states ? this.stringStates(expedition.states) : null;
     this.deliveryNoteInput.nativeElement.value = deliveryNote;
   }
   //endregion

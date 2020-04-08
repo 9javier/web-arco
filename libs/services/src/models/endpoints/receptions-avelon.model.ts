@@ -39,7 +39,8 @@ export namespace ReceptionAvelonModel {
   }
 
   export interface GetProvider {
-    providerId: number;
+    providerId: number,
+    typeVisualization: number
   }
 
   export interface Print {

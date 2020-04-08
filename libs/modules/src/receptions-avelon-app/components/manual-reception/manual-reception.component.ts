@@ -69,6 +69,12 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   ) { }
 
   async ngOnInit() {
+    const tmpTypeModelVisualization = await this.localStorageProvider.get('typeModelVisualization');
+    if (tmpTypeModelVisualization) {
+      this.typeModelVisualization = parseInt(tmpTypeModelVisualization.toString());
+      this.lastTypeModelVisualization = this.typeModelVisualization;
+    }
+
     if (this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path) {
       this.isReceptionWithoutOrder = /^free\//.test(this.activatedRoute.snapshot.routeConfig.path);
     }
@@ -83,12 +89,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         action: () => this.resetData()
       }
     ]);
-
-    const tmpTypeModelVisualization = await this.localStorageProvider.get('typeModelVisualization');
-    if (tmpTypeModelVisualization) {
-      this.typeModelVisualization = parseInt(tmpTypeModelVisualization.toString());
-      this.lastTypeModelVisualization = this.typeModelVisualization;
-    }
 
     if (!this.eanCode) {
       try {
@@ -136,48 +136,50 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   private loadReceptions(dataToConcat = null) {
     this.receptionsAvelonService
-      .getReceptions(this.receptionAvelonProvider.expeditionData.providerId)
+      .getReceptions(this.receptionAvelonProvider.expeditionData.providerId, this.typeModelVisualization)
       .subscribe((res) => {
-        this.expeditionLines = res.lines;
-        this.listBrands = res.brands;
-        this.listModels = res.models;
-        this.listColors = res.colors;
-        if (dataToConcat) {
-          for (let brand of dataToConcat.brands) {
-            if (!this.listBrands.find(b => b.id == brand.id)) {
-              this.listBrands.push(brand);
+        if (res) {
+          this.expeditionLines = res.lines;
+          this.listBrands = res.brands;
+          this.listModels = res.models;
+          this.listColors = res.colors;
+          if (dataToConcat) {
+            for (let brand of dataToConcat.brands) {
+              if (!this.listBrands.find(b => b.id == brand.id)) {
+                this.listBrands.push(brand);
+              }
             }
-          }
-          for (let color of dataToConcat.colors) {
-            const colorInList = this.listColors.find(c => c.id == color.id);
-            if (!!colorInList) {
-              for (let model of color.belongsModels) {
-                if (!colorInList.belongsModels.find(m => m == model)) {
-                  colorInList.belongsModels.push(model);
+            for (let color of dataToConcat.colors) {
+              const colorInList = this.listColors.find(c => c.id == color.id);
+              if (!!colorInList) {
+                for (let model of color.belongsModels) {
+                  if (!colorInList.belongsModels.find(m => m == model)) {
+                    colorInList.belongsModels.push(model);
+                  }
                 }
+              } else {
+                this.listColors.push(color);
               }
-            } else {
-              this.listColors.push(color);
             }
-          }
-          for (let model of dataToConcat.models) {
-            const modelInList = this.listModels.find(m => m.name == model.name);
-            if (!!modelInList) {
-              for (let modelId of model.available_ids) {
-                if (!modelInList.available_ids.find(i => i == modelId)) {
-                  modelInList.available_ids.push(modelId);
+            for (let model of dataToConcat.models) {
+              const modelInList = this.listModels.find(m => m.name == model.name);
+              if (!!modelInList) {
+                for (let modelId of model.available_ids) {
+                  if (!modelInList.available_ids.find(i => i == modelId)) {
+                    modelInList.available_ids.push(modelId);
+                  }
                 }
+                for (let photo in model.photos_models) {
+                  if (!modelInList.photos_models) {
+                    modelInList.photos_models = {};
+                  }
+                  if (!modelInList.photos_models[photo]) {
+                    modelInList.photos_models[photo] = model.photos_models[photo];
+                  }
+                }
+              } else {
+                this.listModels.push(model);
               }
-              for (let photo in model.photos_models) {
-                if (!modelInList.photos_models) {
-                  modelInList.photos_models = {};
-                }
-                if (!modelInList.photos_models[photo]) {
-                  modelInList.photos_models[photo] = model.photos_models[photo];
-                }
-              }
-            } else {
-              this.listModels.push(model);
             }
           }
         }
