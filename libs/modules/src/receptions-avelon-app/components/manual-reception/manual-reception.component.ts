@@ -83,6 +83,13 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         action: () => this.resetData()
       }
     ]);
+
+    const tmpTypeModelVisualization = await this.localStorageProvider.get('typeModelVisualization');
+    if (tmpTypeModelVisualization) {
+      this.typeModelVisualization = parseInt(tmpTypeModelVisualization.toString());
+      this.lastTypeModelVisualization = this.typeModelVisualization;
+    }
+
     if (!this.eanCode) {
       try {
         const lastPrint = await this.localStorageProvider.get('lastPrint');
@@ -577,6 +584,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         this.modelIdSelected = null;
         this.colorSelected = null;
         this.lastTypeModelVisualization = this.typeModelVisualization;
+        this.localStorageProvider.set('typeModelVisualization', this.typeModelVisualization);
       }, error => {
         console.error('Error reloading models: ', error);
         this.typeModelVisualization = this.lastTypeModelVisualization;
