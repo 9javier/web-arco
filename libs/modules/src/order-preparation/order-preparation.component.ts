@@ -26,8 +26,11 @@ export class OrderPreparationComponent implements OnInit {
   expeditButton:boolean = false;
   numPackages:number = 0; 
   expeditionNull: boolean = false;
-  nScanned:number;
+  nScanned:number =0;
   expeditionId:number = 0;
+  expeAlert:number = 0;
+  avelonFailed:boolean = false;
+  expeId:number =0;
   constructor(
     private labelsService: LabelsService,
     private router: Router,
@@ -37,14 +40,24 @@ export class OrderPreparationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.toolbarProvider.currentPage.next("Generar etiquetas de envio"); 
+    this.toolbarProvider.currentPage.next("Generar etiquetas de envio");
+    this.initViews();
+    this.initNumsScanner();  
+    
+  }
+
+  initViews(){
     if(this.routeParams.snapshot.params.id != undefined){
       this.nScanned = this.routeParams.snapshot.params.id;
       console.log(this.nScanned);
       let data ={expeditionId:this.nScanned, update:true };
+      this.showExpedition();
       this.getExpeditionStatus(data);
+    }else if(this.routeParams.snapshot.params.id_alert != undefined){
+        let expeId = this.routeParams.snapshot.params.id_alert;
+        let data ={expeditionId:expeId, update:true };
+        this.getExpeState(data);
     }
-    this.initNumsScanner();  
   }
 
   initNumsScanner(){
@@ -65,21 +78,30 @@ export class OrderPreparationComponent implements OnInit {
     await this.intermediaryService.presentLoading("cargando expedición...");
      this.labelsService.getIndexLabels().subscribe(result =>{
      let expedition = result[0];
+        this.expeId = expedition.id;
         if(result.length >0){
-           // this.intermediaryService.dismissLoading();
             let data = { expeditionId: expedition.id, update: true}; 
             this.getTransportStatus(data);
         }else{
+            this.intermediaryService.dismissLoading();
             this.showExpeditionNull();
         }
-      
-      //  this.intermediaryService.dismissLoading();
     },
     async (err) => {
       this.intermediaryService.dismissLoading();
-      this.showBlockedOrder();
-      console.log(err);
+      console.log(err.error.errors);
+      if(err.error.errors == "Expeditions Locked"){
+        this.showBlockedOrder();
+      }else{
+        this.showAvelonFail();
+      }
     });
+  }
+
+  showAvelonFail(){
+    this.close();
+    this.avelonFailed =true;
+    
   }
 
   showErrorExpedition(){
@@ -90,8 +112,16 @@ export class OrderPreparationComponent implements OnInit {
 
   scanner(){
     if(this.numScanner != 0){
-      this.labelsService.numScanner(this.numScanner);
-      this.router.navigateByUrl('/order-preparation/code/'+this.expeditionId);
+      if(this.nScanned != 0){
+        this.labelsService.numScanner(this.numScanner);
+        this.showExpedition();
+        this.router.navigateByUrl('/order-preparation/code/alert/'+this.expeditionId);
+      }else{
+        this.labelsService.numScanner(this.numScanner);
+        this.showExpedition();
+        this.router.navigateByUrl('/order-preparation/code/'+this.expeditionId);
+      }
+      
     }
   }
 
@@ -103,11 +133,9 @@ export class OrderPreparationComponent implements OnInit {
 
   async getNumScann() {
     this.labelsService.getData().subscribe((resp: any) => {
-      console.log(resp);
       this.numScanner = resp;
       if(resp == 0){
-        console.log("finish scanner");
-        this.expeditButton =true;
+        this.expeditButton = true;
       }
     })
     
@@ -117,13 +145,13 @@ export class OrderPreparationComponent implements OnInit {
     this.labelsService.getNumAllScanner().subscribe((resp: any) => {
       console.log(resp);
       this.numAllScanner = resp;
+     
     })
     
   }
 
   async getTransportStatus(body){
     let This = this;
-    //This.intermediaryService.presentLoading("cargando expedición...");
     await this.labelsService.getTransportStatus(body).subscribe(result =>{
       let expedition = result;
       this.dataSource=[result];
@@ -144,11 +172,15 @@ export class OrderPreparationComponent implements OnInit {
     async (err) => {
       console.log(err);
       This.intermediaryService.dismissLoading();
+      this.intermediaryService.dismissLoading();
+      this.sendServicePrintPack(this.expeId);
     });
   }
   
   async getExpeditionStatus(body){
+    this.intermediaryService.presentLoading("cargando expedición...");
    await this.labelsService.getTransportStatus(body).subscribe(result =>{
+    this.intermediaryService.dismissLoading();
       let expedition = result;
       this.dataSource=[result]
       this.numPackages = expedition.expedition.packages.length;
@@ -156,15 +188,35 @@ export class OrderPreparationComponent implements OnInit {
       this.numScanner = this.numPackages;
       this.expeditionId = expedition.expedition.id;
       this.labelsService.setNumAllScanner(this.numAllScanner);
-      this.intermediaryService.dismissLoading();
       this.showExpedition();
-    this.sendServicePrintPack(expedition.expedition.id); 
+      this.sendServicePrintPack(expedition.expedition.id); 
     },
     async (err) => {
       console.log(err);
+      this.intermediaryService.dismissLoading();
+      this.sendServicePrintPack(this.expeId);
     });
     
   }
+
+  async getExpeState(body){
+    this.intermediaryService.presentLoading("cargando expedición...");
+    await this.labelsService.getTransportStatus(body).subscribe(result =>{
+       this.intermediaryService.dismissLoading();
+       let expedition = result;
+       this.dataSource=[result];
+       console.log(this.numAllScanner);
+       this.expeditionId = expedition.expedition.id;
+       this.showExpedition();
+       this.getNumScann();
+       this.sendServicePrintPack(this.expeditionId);
+     },
+     async (err) => {
+       console.log(err);
+       this.intermediaryService.dismissLoading();
+     });
+     
+   }
   
  async sendServicePrintPack(id){
    let body = {expeditionId:id }
@@ -188,6 +240,8 @@ export class OrderPreparationComponent implements OnInit {
   }
 
   showAlerts(){
+    this.close();
+    this.initPage = true;
     this.router.navigateByUrl('/list-alerts');
   }
 
@@ -198,6 +252,7 @@ export class OrderPreparationComponent implements OnInit {
     this.blockedOrder = false;
     this.expeditButton = false;
     this.expeditionNull = false;
+    this.avelonFailed = false;
   }
 
   return(){

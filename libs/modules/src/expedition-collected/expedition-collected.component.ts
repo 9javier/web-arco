@@ -31,6 +31,7 @@ import { PackageCollectedComponent } from './package-collected/package-collected
 export class ExpeditionCollectedComponent {
   selectedIndex = 0;
   indexTab;
+  dataTransport: any;
   @ViewChild('#tabGroup') private tabGroup: MatTabsModule;
   @ViewChild('#selected') private tabSelected: PackageCollectedComponent;
   constructor(
@@ -41,10 +42,12 @@ export class ExpeditionCollectedComponent {
     private intermediary: IntermediaryService,
     private expeditionCollectedService: ExpeditionCollectedService,
     private navCtrl: NavController,
+    
     ){
       
   }
   ngOnInit(){
+    this.getTranports();
   }
 
   refresh(){
@@ -58,5 +61,15 @@ export class ExpeditionCollectedComponent {
     // console.log('tabChangeEvent => ', tabChangeEvent);
     // console.log('index => ', tabChangeEvent.index);
     this.indexTab = tabChangeEvent.index;
+  }
+
+  async getTranports(){
+     this.expeditionCollectedService.getTrasnport().subscribe((result)=>{
+      console.log(result);
+      this.dataTransport = result;
+    },
+    async (err) => {
+      console.log(err);
+    });
   }
 }
