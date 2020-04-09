@@ -482,7 +482,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Desbloquear expediciones'
         }
       ]
-    }
+    },
+    {
+      title: 'Ordenes de transportes',
+      id: 'package',
+      url: '/transport-orders',
+      icon: 'car'
+    },
   ];
 
   alPages: MenuItemList = [

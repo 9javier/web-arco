@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Paquetes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label class="ion-text-center">ID</ion-label>
+      <ion-label class="ion-text-center">Container</ion-label>
+      <ion-label class="ion-text-center">Status</ion-label>
+      <ion-label class="ion-text-center">Traking</ion-label>
+      <ion-label class="ion-text-center">Nota</ion-label>
+    </ion-item>
+    <ion-item lines="none" *ngFor="let item of packages">
+      <ion-label class="ion-text-center" >{{item.id}}</ion-label>
+      <ion-label class="ion-text-center" >{{item.containerId}}</ion-label>
+      <ion-label class="ion-text-center" >{{item.status}}</ion-label>
+      <ion-label class="ion-text-center" >{{item.trackingInfo}}</ion-label>
+      <ion-label class="ion-text-center" >{{item.note}}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
