@@ -1,9 +1,23 @@
 <mat-accordion  displayMode="flat" multi class="mat-table tables">
   <section matSort class="mat-elevation-z2 mat-header-row">
-    <span class="mat-header-cell" >Orden</span>
-    <span class="mat-header-cell" >Almacen</span>
-    <span class="mat-header-cell" >Fecha</span>
-    <span class="mat-header-cell" >Imprimir</span>
+    <span class="mat-header-cell" >
+      Orden
+      <suite-filter-button #filterButtonOrders class="filter" [title]="'Orden'" [listItems]="orders"
+        [isFiltering]="isFilteringOrder != orders.length" (applyFilters)="applyFilters($event, 'orders')">
+      </suite-filter-button>
+    </span>
+    <span class="mat-header-cell">
+      Almacen
+      <suite-filter-button #filterButtonWarehouse class="filter" [title]="'Almacen'" [listItems]="warehouses"
+        [isFiltering]="isFilteringWarehouse != warehouses.length" (applyFilters)="applyFilters($event, 'warehouses')">
+      </suite-filter-button>
+    </span>
+    <span class="mat-header-cell">
+      Fecha
+    </span>
+    <span class="mat-header-cell">
+      Imprimir
+    </span>
   </section>
 
   <mat-expansion-panel *ngFor="let item of dataSource">
