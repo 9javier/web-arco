@@ -1,0 +1,91 @@
+<mat-accordion  displayMode="flat" multi class="mat-table tables">
+  <section matSort class="mat-elevation-z2 mat-header-row">
+    <span class="mat-header-cell" >Orden</span>
+    <span class="mat-header-cell" >Almacen</span>
+    <span class="mat-header-cell" >Fecha</span>
+    <span class="mat-header-cell" >Imprimir</span>
+  </section>
+
+  <mat-expansion-panel *ngFor="let item of dataSource">
+    <mat-expansion-panel-header class="mat-row ion-margin-vertical ion-padding-vertical">
+      <span class="mat-cell">{{item.orderSend.id}}</span>
+      <span class="mat-cell">{{item.shops.reference}} - {{item.shops.name}}</span>
+      <span class="mat-cell">{{item.date | date: 'dd/MM/yyyy'}}</span>
+      <span class="mat-cell">
+        <ion-button (click)="onClick()">
+          <ion-icon slot="icon-only" name="print"></ion-icon>
+        </ion-button>
+      </span>
+    </mat-expansion-panel-header>
+    <div>
+     <ion-list>
+       <ion-list-header>
+         <ion-label class="ion-margin-start">Expedicion</ion-label>
+         <ion-label>Codigo de barras</ion-label>
+         <ion-label class="ion-margin-end">Accion</ion-label>
+       </ion-list-header>
+       <ion-item lines="none">
+         <ion-label>{{item.expedition.id}}</ion-label>
+         <ion-label>{{item.expedition.barcode}}</ion-label>
+         <ion-button (click)="presentModal(item.expedition.packages)">
+           producto
+         </ion-button>
+       </ion-item>
+     </ion-list>
+    </div>
+  </mat-expansion-panel>
+
+</mat-accordion>
+<!-- <table class="tables"  mat-table [dataSource]="dataSource" matSort>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr> 
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+  <ng-container matColumnDef="selected">
+    <th class="ion-text-center" mat-header-cell *matHeaderCellDef>
+      <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+        [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? masterToggle() : null"
+        [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"
+        [aria-label]="checkboxLabel()">
+      </mat-checkbox>
+    </th>
+    <div>
+      Todas
+    </div>
+    <td class="ion-text-center" mat-cell *matCellDef="let row">
+      <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+        [matRippleColor]="'black'" (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+        [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
+      </mat-checkbox>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="order">
+    <th class="ion-text-center" mat-header-cell *matHeaderCellDef> Ordenes </th>
+    <td class="ion-text-center" mat-cell *matCellDef="let element"> {{element.orderSend.id || 'empty'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="warehouse">
+    <th class="ion-text-center" mat-header-cell *matHeaderCellDef> Almacenes </th>
+    <td class="ion-text-center" mat-cell *matCellDef="let element"> {{element.shops.reference}} - {{element.shops.name}}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="date">
+    <th class="ion-text-center" mat-header-cell *matHeaderCellDef> Fecha </th>
+    <td class="ion-text-center" mat-cell *matCellDef="let element"> {{element.date}} </td>
+  </ng-container>
+  <ng-container matColumnDef="expedition">
+    <th class="ion-text-center" mat-header-cell *matHeaderCellDef> Expedicion </th>
+    <td class="ion-text-center" mat-cell *matCellDef="let element"> {{element.expedition.id || 'empty'}}  </td>
+  </ng-container>
+  <ng-container matColumnDef="transport">
+    <th class="ion-text-center" mat-header-cell *matHeaderCellDef> Transporte </th>
+    <td class="ion-text-center" mat-cell *matCellDef="let element"> {{element.infoTransport.shippingCompanyName || 'empty'}}</td>
+  </ng-container>
+  <ng-container matColumnDef="print">
+    <th class="ion-text-center" mat-header-cell *matHeaderCellDef> Imprimir </th>
+    <td class="ion-text-center" mat-cell *matCellDef="let element">
+      <ion-button (click)="onClick()">
+        <ion-icon slot="icon-only" name="print"></ion-icon>
+      </ion-button>
+    </td>
+  </ng-container>
+  
+</table> -->
+<suite-paginator [pagerValues]="pagerValues"></suite-paginator>

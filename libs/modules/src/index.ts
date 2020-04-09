@@ -418,3 +418,6 @@ export * from './requested-products/requested-products.module'
 //Unlock Expeditions
 export * from './unlock-expeditions/unlock-expeditions.component'
 export * from './unlock-expeditions/unlock-expeditions.module'
+
+export * from './transports-orders/transports-orders.component'
+export * from './transports-orders/transports-orders.module'

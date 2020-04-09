@@ -508,6 +508,14 @@ const routes: Routes = [
     data: {
       name: 'Desbloquear'
     }
+  },
+  {
+    path: 'transport-orders',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/transports-orders/transports-orders.module#TransportsOrdersModule',
+    data: {
+      name: 'Ordenes de Transporte Opl'
+    }
   }
 ];
 

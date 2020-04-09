@@ -1,0 +1,14 @@
+<ion-content>
+  <mat-tab-group 
+    #tabGroup 
+    [(selectedIndex)]="selectedIndex" 
+    [disableRipple]="false"
+    mat-align-tabs="center"
+  >
+  <mat-tab [label]="trans.name" *ngFor="let trans of transports">
+    <ng-template matTabContent>
+      <suite-order-package class="tables" #selected [id]="trans.id"></suite-order-package>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
+</ion-content>
