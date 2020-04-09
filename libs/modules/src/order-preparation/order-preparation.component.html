@@ -159,3 +159,6 @@
         <ion-fab-button  matTooltip="Refrescar" matTooltipClass="tooltip" (click)="printLabels()"><i class="material-icons">refresh</i></ion-fab-button>
     </ion-fab>
 </ion-footer>
+<ion-content *ngIf="viewInput == true">
+    <suite-input-codes [id]="id" (state)="showExpe($event)"></suite-input-codes>
+</ion-content>
