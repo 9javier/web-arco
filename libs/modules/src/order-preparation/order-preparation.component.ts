@@ -30,6 +30,7 @@ export class OrderPreparationComponent implements OnInit {
   expeditionId:number = 0;
   expeAlert:number = 0;
   avelonFailed:boolean = false;
+  expeId:number =0;
   constructor(
     private labelsService: LabelsService,
     private router: Router,
@@ -77,6 +78,7 @@ export class OrderPreparationComponent implements OnInit {
     await this.intermediaryService.presentLoading("cargando expedición...");
      this.labelsService.getIndexLabels().subscribe(result =>{
      let expedition = result[0];
+        this.expeId = expedition.id;
         if(result.length >0){
             let data = { expeditionId: expedition.id, update: true}; 
             this.getTransportStatus(data);
@@ -171,6 +173,7 @@ export class OrderPreparationComponent implements OnInit {
       console.log(err);
       This.intermediaryService.dismissLoading();
       this.intermediaryService.dismissLoading();
+      this.sendServicePrintPack(this.expeId);
     });
   }
   
@@ -191,6 +194,7 @@ export class OrderPreparationComponent implements OnInit {
     async (err) => {
       console.log(err);
       this.intermediaryService.dismissLoading();
+      this.sendServicePrintPack(this.expeId);
     });
     
   }
@@ -205,6 +209,7 @@ export class OrderPreparationComponent implements OnInit {
        this.expeditionId = expedition.expedition.id;
        this.showExpedition();
        this.getNumScann();
+       this.sendServicePrintPack(this.expeditionId);
      },
      async (err) => {
        console.log(err);
@@ -235,7 +240,8 @@ export class OrderPreparationComponent implements OnInit {
   }
 
   showAlerts(){
-    this.showExpedition();
+    this.close();
+    this.initPage = true;
     this.router.navigateByUrl('/list-alerts');
   }
 
