@@ -22,15 +22,14 @@ export class OrderPreparationComponent implements OnInit {
   blockedOrder: boolean = false;
   numScanner:number = 0;
   numAllScanner: number =0;
-  goScanner:boolean = false;
   expeditButton:boolean = false;
   numPackages:number = 0; 
   expeditionNull: boolean = false;
   nScanned:number =0;
   expeditionId:number = 0;
-  expeAlert:number = 0;
   avelonFailed:boolean = false;
   expeId:number =0;
+  
   constructor(
     private labelsService: LabelsService,
     private router: Router,
@@ -49,13 +48,13 @@ export class OrderPreparationComponent implements OnInit {
   initViews(){
     if(this.routeParams.snapshot.params.id != undefined){
       this.nScanned = this.routeParams.snapshot.params.id;
-      console.log(this.nScanned);
+      this.expeId =this.routeParams.snapshot.params.id;
       let data ={expeditionId:this.nScanned, update:true };
       this.showExpedition();
       this.getExpeditionStatus(data);
     }else if(this.routeParams.snapshot.params.id_alert != undefined){
-        let expeId = this.routeParams.snapshot.params.id_alert;
-        let data ={expeditionId:expeId, update:true };
+        this.expeId = this.routeParams.snapshot.params.id_alert;
+        let data ={expeditionId:this.expeId, update:true };
         this.getExpeState(data);
     }
   }
@@ -89,7 +88,6 @@ export class OrderPreparationComponent implements OnInit {
     },
     async (err) => {
       this.intermediaryService.dismissLoading();
-      console.log(err.error.errors);
       if(err.error.errors == "Expeditions Locked"){
         this.showBlockedOrder();
       }else{
@@ -143,7 +141,6 @@ export class OrderPreparationComponent implements OnInit {
   
   async getAllNumScann() {
     this.labelsService.getNumAllScanner().subscribe((resp: any) => {
-      console.log(resp);
       this.numAllScanner = resp;
      
     })
@@ -170,7 +167,6 @@ export class OrderPreparationComponent implements OnInit {
       this.sendServicePrintPack(expedition.expedition.id);
     },
     async (err) => {
-      console.log(err);
       This.intermediaryService.dismissLoading();
       this.intermediaryService.dismissLoading();
       this.sendServicePrintPack(this.expeId);
@@ -189,10 +185,9 @@ export class OrderPreparationComponent implements OnInit {
       this.expeditionId = expedition.expedition.id;
       this.labelsService.setNumAllScanner(this.numAllScanner);
       this.showExpedition();
-      this.sendServicePrintPack(expedition.expedition.id); 
+      this.sendServicePrintPack(this.expeId); 
     },
     async (err) => {
-      console.log(err);
       this.intermediaryService.dismissLoading();
       this.sendServicePrintPack(this.expeId);
     });
@@ -205,15 +200,13 @@ export class OrderPreparationComponent implements OnInit {
        this.intermediaryService.dismissLoading();
        let expedition = result;
        this.dataSource=[result];
-       console.log(this.numAllScanner);
-       this.expeditionId = expedition.expedition.id;
        this.showExpedition();
        this.getNumScann();
-       this.sendServicePrintPack(this.expeditionId);
+       this.sendServicePrintPack(this.expeId);
      },
      async (err) => {
-       console.log(err);
        this.intermediaryService.dismissLoading();
+       this.sendServicePrintPack(this.expeId);
      });
      
    }
@@ -223,7 +216,6 @@ export class OrderPreparationComponent implements OnInit {
   this.labelsService.postServicePrintPack(body).subscribe(result =>{
   },
   async (err) => {
-    console.log(err);
   });
   }
 
@@ -242,6 +234,7 @@ export class OrderPreparationComponent implements OnInit {
   showAlerts(){
     this.close();
     this.initPage = true;
+    this.cleanAll();
     this.router.navigateByUrl('/list-alerts');
   }
 
@@ -255,10 +248,24 @@ export class OrderPreparationComponent implements OnInit {
     this.avelonFailed = false;
   }
 
+  cleanAll(){
+    this.dataSource = null;
+    this.expeId=0;
+    this.numScanner= 0;
+    this.numAllScanner=0;
+    this.expeditionId = 0;
+    this.numPackages=0;
+  }
+
   return(){
     this.close();
     this.initPage = true;
+    this.cleanAll();
   }
 
+  ngOnDestroy(){
+    this.close();
+    this.cleanAll();
+  }
 
 }
