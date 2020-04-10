@@ -1,4 +1,4 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit,Input, Output,EventEmitter } from '@angular/core';
 import { AlertController } from "@ionic/angular";
 import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
 import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
@@ -42,7 +42,8 @@ export class InputCodesComponent implements OnInit {
 
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
-
+  @Input()id:number;
+  @Output()state = new EventEmitter<boolean>();
 
 
   constructor(
@@ -65,10 +66,10 @@ export class InputCodesComponent implements OnInit {
   }
 
   async ngOnInit() {
+
+  
    
-    if(this.routeParams.snapshot.params.alert != undefined){
-      this.alertId = this.routeParams.snapshot.params.alert;
-    }else if(this.routeParams.snapshot.params.id != undefined){
+     if(this.routeParams.snapshot.params.id != undefined){
       this.expeditionId = this.routeParams.snapshot.params.id;
     }
     this.isStoreUser = await this.authService.isStoreUser();
@@ -333,30 +334,26 @@ export class InputCodesComponent implements OnInit {
 
   async printLabelStore(reference_){
     let body;
+    if(this.id !=0){
+      body={
+        uniqueCode : reference_,
+        expeditionId: this.id
+      };
+    }
     if(this.expeditionId != 0){
        body ={
         uniqueCode : reference_,
         expeditionId: this.expeditionId
       }
-    }else if(this.alertId!= 0){
-       body ={
-        uniqueCode : reference_,
-        expeditionId: this.alertId
-      }
     }
+    
+    
     
     this.intermediaryService.presentLoading();
     this.labelService.postPrintLabels(body).subscribe( result =>{
       this.intermediaryService.dismissLoading();
-      console.log(result);
-      
+        this.state.emit(true);
         this.labelService.numScanner(this.numScanner= (this.numScanner-1));
-        if(this.expeditionId != 0){
-          this.router.navigateByUrl('/order-preparation'); 
-        }else if(this.alertId !=0){
-          this.router.navigateByUrl('/order-preparation/expe-alert/'+this.alertId); 
-        }
-      
       
     }, error => {
       this.audioProvider.playDefaultError();
