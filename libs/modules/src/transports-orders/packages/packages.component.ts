@@ -11,9 +11,14 @@ export class PackagesComponent implements OnInit {
   constructor(
     private modalController: ModalController
   ) { }
-
+  displayedColumns: string[] = [
+    'id',
+    'container',
+    'tracking',
+    'nota'
+  ];
   ngOnInit() {
-    console.log(this.packages);
+    // console.log(this.packages);
     
   }
   dismiss() {

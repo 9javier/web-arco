@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, NgZone } from '@angular/core';
 import { app, environment } from '../../../../services/src/environments/environment';
-import {AuthenticationService, Oauth2Service, TariffService, WarehouseModel} from '@suite/services';
+import { AuthenticationService, Oauth2Service, TariffService, WarehouseModel } from '@suite/services';
 import { Router } from '@angular/router';
 import { ScanditService } from "../../../../services/src/lib/scandit/scandit.service";
 import { ReceptionScanditService } from "../../../../services/src/lib/scandit/reception/reception.service";
@@ -11,10 +11,10 @@ import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 import { LoginComponent } from '../../login/login.page';
 import { AuditMultipleScanditService } from "../../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
-import {AlertPopoverComponent} from "../alert-popover/alert-popover.component";
-import {WarehouseReceptionAlertService} from "../../../../services/src/lib/endpoint/warehouse-reception-alert/warehouse-reception-alert.service";
+import { AlertPopoverComponent } from "../alert-popover/alert-popover.component";
+import { WarehouseReceptionAlertService } from "../../../../services/src/lib/endpoint/warehouse-reception-alert/warehouse-reception-alert.service";
 import Warehouse = WarehouseModel.Warehouse;
-import {LocalStorageProvider} from "../../../../services/src/providers/local-storage/local-storage.provider";
+import { LocalStorageProvider } from "../../../../services/src/providers/local-storage/local-storage.provider";
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -439,7 +439,7 @@ export class MenuComponent implements OnInit {
           url: '/incidences-reception',
           icon: 'notifications'
         },
-        
+
       ]
     },
     {
@@ -480,15 +480,17 @@ export class MenuComponent implements OnInit {
           url: '/unlock-expeditions',
           icon: 'unlock',
           tooltip: 'Desbloquear expediciones'
-        }
+        },
+        {
+          title: 'Ordenes de transportes',
+          id: 'package',
+          url: '/transport-orders',
+          icon: 'car',
+          tooltip: 'Ordenes'
+        },
       ]
     },
-    {
-      title: 'Ordenes de transportes',
-      id: 'package',
-      url: '/transport-orders',
-      icon: 'car'
-    },
+
   ];
 
   alPages: MenuItemList = [
@@ -551,7 +553,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Pedidos online',
-      icon:'basket',
+      icon: 'basket',
       type: 'wrapper',
       open: true,
       children: [
@@ -569,7 +571,7 @@ export class MenuComponent implements OnInit {
           icon: 'notifications',
           tooltip: 'listado de incidencias'
         },
-        
+
       ]
     },
     {
@@ -855,9 +857,9 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      id:'incidents',
+      id: 'incidents',
       title: 'Defectuosos',
-      icon:'warning',
+      icon: 'warning',
       url: '/defect-handler'
     },
     {
@@ -875,7 +877,7 @@ export class MenuComponent implements OnInit {
         }
       ]
     },
-    
+
 
 
   ];
@@ -918,7 +920,7 @@ export class MenuComponent implements OnInit {
     this.menuTitle.emit(item.title);
   }
 
-  setTitle(title){
+  setTitle(title) {
     this.toolbarProvider.currentPage.next(title);
   }
 
@@ -932,7 +934,7 @@ export class MenuComponent implements OnInit {
   filterPages(dictionary) {
     dictionary = JSON.parse(JSON.stringify(dictionary));
     this.newTariffs();
-    if(app.name == 'al') {
+    if (app.name == 'al') {
       this.zona.run(() => {
         setInterval(() => {
           this.newTariffs();
@@ -1025,15 +1027,15 @@ export class MenuComponent implements OnInit {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
       this.checkAlertsAndRedirect();
-    } else if(p.url === 'audits/scan'){
+    } else if (p.url === 'audits/scan') {
       this.auditMultipleScanditService.init();
     }
   }
 
   async checkAlertsAndRedirect() {
     const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
-    if(currentWarehouse){
-      this.warehouseReceptionAlertService.check({warehouseId: currentWarehouse.id}).then(async response => {
+    if (currentWarehouse) {
+      this.warehouseReceptionAlertService.check({ warehouseId: currentWarehouse.id }).then(async response => {
         if (response.code == 200 && typeof response.data == 'boolean') {
           if (response.data) {
             await this.localStorageProvider.set('hideAlerts', false);
@@ -1056,7 +1058,7 @@ export class MenuComponent implements OnInit {
       }, error => {
         console.error(error);
       });
-    }else{
+    } else {
       console.error('Current warehouse not found.');
     }
   }
@@ -1081,7 +1083,7 @@ export class MenuComponent implements OnInit {
       this.scanditService.positioning();
     } else if (p.url === 'audits/scan') {
       this.auditMultipleScanditService.init();
-    }else {
+    } else {
       this.returnTitle(p);
     }
     if (p.id === 'workwaves-scheduled-1') {
@@ -1136,9 +1138,9 @@ export class MenuComponent implements OnInit {
         } else {
           console.error('Error to try check if exists new tariffs', tariff);
         }
-    }, (error) => {
+      }, (error) => {
         console.error('Error to try check if exists new tariffs', error);
-    })
+      })
   }
 
   checkIfChildrenHasNewTariffs(element): boolean {

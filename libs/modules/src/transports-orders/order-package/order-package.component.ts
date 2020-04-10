@@ -29,14 +29,12 @@ export class OrderPackageComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   // @ViewChild(MatSort) sort: MatSort;
   filters: OplTransportsModel.OrderExpeditionFilters
+
   displayedColumns: string[] = [
-    'expedition', 
-    'warehouse', 
-    'transport', 
-    'order',
-    'print'
+    'expedition',
+    'barcode',
+    'package',
   ];
-  dataSource: any 
   pagerValues = [50, 100, 1000];
   pauseListenFormChange: boolean;
   selection = new SelectionModel<any>(true, []);
@@ -67,6 +65,7 @@ export class OrderPackageComponent implements OnInit {
   orders: Array<TagsInputOption> = [];
   warehouses: Array<TagsInputOption> = [];
   dates: Array<TagsInputOption> = [];
+  dataSource: any;
   constructor(
     private intermediaryService: IntermediaryService,
     private oplTransportsService: OplTransportsService,
@@ -86,10 +85,8 @@ export class OrderPackageComponent implements OnInit {
   
   getFilters() {
     this.oplTransportsService.getFilters().subscribe((resp: OplTransportsModel.OrderExpeditionFilters) => {
-      console.log(resp);
+      // console.log(resp);
       this.filters = resp
-      this.updateFilterOrders(resp.orders)
-      this.updateFilterSourceWarehouses(resp.warehouses)
 
     })
   }
@@ -97,15 +94,42 @@ export class OrderPackageComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.oplTransportsService.getList(body).subscribe(
       resp => {
-        console.log(resp);
+        // console.log(resp);
         this.dataSource = resp.results;
+        this.dataSource.map(elem => {
+          elem.item = 
+          [
+            {
+              expedition: elem.expedition.id,
+              barcode: elem.expedition.barcode
+            }
+          ]
+        })
+        this.orders = this.dataSource.map(elem => {
+          return {
+            id: elem.id,
+            name: elem.id
+          }
+        })
+        this.updateFilterSourceWarehouses(this.orders)
+        this.warehouses = this.dataSource.map(elem => {
+          return {
+            id: elem.shops.id,
+            name: `${elem.shops.reference} - ${elem.shops.name}` 
+          }
+        })
+        console.log(this.warehouses);
+        
+        this.updateFilterSourceWarehouses(this.warehouses)
+        // console.log('dataSource',this.dataSource);
+        
         const pagination = resp.pagination
         this.paginator.length = pagination.totalResults;
         this.paginator.lastPage = pagination.lastPage;
       
       },
       e => {
-        this.intermediaryService.presentToastError('Ocurrio un error al cargar el listaso')
+        this.intermediaryService.presentToastError('Ocurrio un error al cargar el listado')
         this.intermediaryService.dismissLoading()
       }, 
       () => {
@@ -251,7 +275,7 @@ export class OrderPackageComponent implements OnInit {
       order.hide = false;
       return order;
     });
-    console.log(this.orders);
+    // console.log(this.orders);
     
     if (value && value.length) {
       this.form.get("orders").patchValue(value, { emitEvent: false });
@@ -301,6 +325,20 @@ export class OrderPackageComponent implements OnInit {
     }
     this.getList(this.form.value)
   }
-
+  print(id) {
+    this.intermediaryService.presentLoading()
+    this.oplTransportsService.print(id).subscribe(
+      resp => {
+        this.intermediaryService.presentToastSuccess('Impresion realizada correctamente')
+      }, 
+      e => {
+        this.intermediaryService.dismissLoading()
+        this.intermediaryService.presentToastError('Ocurrio un error al imprimir')
+      },
+      () => {
+        this.intermediaryService.dismissLoading()
+      }
+    );
+  } 
 
 }
