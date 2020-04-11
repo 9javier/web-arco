@@ -13,11 +13,13 @@ export class OplTransportsService {
   private filtersUrl: string;
   private filtersTransportUrl: string;
   private orderExpeditionUrl: string
+  private printOrderUrl: string;
 
   constructor(private http: HttpClient) { 
     this.filtersUrl = `${environment.apiBase}/opl-expedition/order-expedition/get-filters`;
     this.filtersTransportUrl = `${environment.apiBase}/opl-expedition/order-expedition/get-tranports-filters`;
     this.orderExpeditionUrl = `${environment.apiBase}/opl-expedition/order-expedition/filter`;
+    this.printOrderUrl = `${environment.apiBase}/opl-expedition/order-expedition/print`
   }
 
   getFilters(){
@@ -29,6 +31,13 @@ export class OplTransportsService {
 
   getList(body: OplTransportsModel.OrderExpeditionFilterRequest) {
     return this.http.post<HttpRequestModel.Response>(this.orderExpeditionUrl,body).pipe(map(res => res.data));
+  }
+
+  print(id: number) {
+    const body = {
+      "expeditionOrderId": id
+    }
+    return this.http.post<HttpRequestModel.Response>(this.printOrderUrl, body).pipe(map(res => res.data));
   }
 
 }

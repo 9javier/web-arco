@@ -13,6 +13,7 @@ export class TransportsOrdersComponent implements OnInit {
   @ViewChild('#tabGroup') private tabGroup: MatTabsModule;
   selectedIndex = 0;
   transports: Array<OplTransportsModel.ItemFilter> = []
+  indexTab: number;
   constructor(
     private intermediaryService: IntermediaryService,
     private oplTransportsService: OplTransportsService
@@ -24,9 +25,14 @@ export class TransportsOrdersComponent implements OnInit {
   }
   getTranspor(){
     this.oplTransportsService.getTransports().subscribe((resp: OplTransportsModel.OrderExpeditionTransportsFilters) => {
-      console.log(resp);
+      // console.log(resp);
       this.transports = resp.transports
     })
+  }
+  tabChanged(tabChangeEvent: MatTabChangeEvent): void {
+    // console.log('tabChangeEvent => ', tabChangeEvent);
+    // console.log('index => ', tabChangeEvent.index);
+    this.indexTab = tabChangeEvent.index;
   }
   
  }

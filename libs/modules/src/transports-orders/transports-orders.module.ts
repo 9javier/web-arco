@@ -1,16 +1,25 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TransportsOrdersComponent } from './transports-orders.component';
 import { Routes, RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { 
+  MatTabsModule,
+  MatCheckboxModule,
+  MatRippleModule,
+  MatSortModule,
+  MatTooltipModule,
+  MatListModule,
+  MatTableModule,
+  MatPaginatorModule 
+} from '@angular/material';
+import { TransportsOrdersComponent } from './transports-orders.component';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
-import { MatTabsModule, MatCheckboxModule, MatRippleModule, MatSortModule, MatTooltipModule, MatListModule, MatTableModule, MatPaginatorModule } from '@angular/material';
-import { FilterButtonModule, TagsInputModule } from '..';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
-import { OrderPackageComponent } from './order-package/order-package.component';
 import { OrderPackageModule } from './order-package/order-package.module';
 import { PackagesComponent } from './packages/packages.component';
+import { FilterButtonModule } from '../components/filter-button/filter-button.module';
+import { TagsInputModule } from '../components/tags-input/tags-input.module';
 
 const routes: Routes = [
   {
