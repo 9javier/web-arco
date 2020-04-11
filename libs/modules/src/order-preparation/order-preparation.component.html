@@ -78,7 +78,7 @@
             
                         <div class="item">
                             <ion-button *ngIf="expeditButton == false" color="danger" (click)="scanner()">Escanear etiqueta de envio {{ statusScanner() }}</ion-button>
-                            <ion-button *ngIf="expeditButton == true" (click)="return()">Consultar nueva expedición</ion-button>
+                            <ion-button *ngIf="expeditButton == true" (click)="returnToExpedition()">Consultar nueva expedición</ion-button>
                         </div>
                      </div>
                 </div>

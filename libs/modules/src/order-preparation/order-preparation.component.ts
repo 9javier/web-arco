@@ -243,6 +243,13 @@ export class OrderPreparationComponent implements OnInit {
     this.cleanAll();
   }
 
+  returnToExpedition(){
+    this.close();
+    this.initPage = true;
+    this.cleanAll();
+    this.router.navigateByUrl('/order-preparation');
+  }
+
   ngOnDestroy(){
     this.close();
     this.cleanAll();
@@ -255,7 +262,6 @@ export class OrderPreparationComponent implements OnInit {
 
   showExpe(event){
     this.showExpedition();
-    console.log(event);
   }
 
 }
