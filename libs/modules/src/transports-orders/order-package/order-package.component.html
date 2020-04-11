@@ -26,45 +26,53 @@
       <span class="mat-cell">{{data.shops.reference}} - {{data.shops.name}}</span>
       <span class="mat-cell">{{data.date | date: 'dd/MM/yyyy'}}</span>
       <span class="mat-cell">
-          <span (click)="print(data.expedition.id)" class="material-icons">
+          <span (click)="print(data.id)" class="material-icons">
             print
           </span>
       </span>
     </mat-expansion-panel-header>
-    <div>
-      <table class="tables mat-tables" mat-table [dataSource]="data.item">
-        <tr class=" mat-header-cell ion-text-center" mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-        <tr class=" mat-cell ion-text-center" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        <ng-container matColumnDef="expedition">
-          <th class="ion-text-center" class="tables" mat-header-cell *matHeaderCellDef>
-            Expedicion
-          </th>
-          <td class="ion-text-center" mat-cell *matCellDef="let item">            
-            {{ item.expedition }}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="barcode">
-          <th class="ion-text-center" mat-header-cell *matHeaderCellDef>
-            Codigo de barras
-          </th>
-          <td mat-cell *matCellDef="let item">
-            {{item.barcode}}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="package">
-          <th class="ion-text-center" mat-header-cell *matHeaderCellDef>
-            Contenedor
-          </th>
-          <td mat-cell *matCellDef>
-            <span (click)="presentModal(data.expedition.packages)" class="material-icons">
-              assignment
-            </span>
-          </td>
-        </ng-container>
+    <ng-container *ngIf="data.orderSend.length == 0; else info">
+      <div class="ion-text-center ion-padding">
+        <ion-title>No hay informacion para mostrar :-(</ion-title>
+      </div>
+    </ng-container>
+    <ng-template #info>
+      <div>
+        <table class="tables mat-tables" mat-table [dataSource]="data.orderSend">
+          <tr class=" mat-header-cell ion-text-center" mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr class=" mat-cell ion-text-center" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <ng-container matColumnDef="expedition">
+            <th class="ion-text-center" mat-header-cell *matHeaderCellDef>
+              Expedicion
+            </th>
+            <td class="ion-text-center" mat-cell *matCellDef="let item">
+              {{ item.expedition.id }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="barcode">
+            <th class="ion-text-center" mat-header-cell *matHeaderCellDef>
+              Codigo de barras
+            </th>
+            <td mat-cell *matCellDef="let item">
+              {{item.expedition.barcode}}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="package">
+            <th class="ion-text-center" mat-header-cell *matHeaderCellDef>
+              Contenedor
+            </th>
+            <td mat-cell *matCellDef="let item">
+              <span (click)="presentModal(item.expedition.packages)" class="material-icons">
+                assignment
+              </span>
+            </td>
+          </ng-container>
       
-      </table>
-
-    </div>
+        </table>
+      
+      </div>
+    </ng-template>
+    
   </mat-expansion-panel>
 </mat-accordion>
 <suite-paginator [pagerValues]="pagerValues"></suite-paginator>

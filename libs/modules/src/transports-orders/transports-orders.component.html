@@ -1,14 +1,22 @@
 <ion-content>
-  <mat-tab-group 
-    #tabGroup 
-    [(selectedIndex)]="selectedIndex" 
-    [disableRipple]="false"
-    mat-align-tabs="center"
-  >
-  <mat-tab [label]="trans.name" *ngFor="let trans of transports">
-    <ng-template matTabContent>
-      <suite-order-package class="tables" #selected [id]="trans.id"></suite-order-package>
-    </ng-template>
-  </mat-tab>
-</mat-tab-group>
+  <ng-container *ngIf="transports.length === 0; else info">
+    <div class="ion-text-center ion-padding">
+      <ion-title class="ion-margin">No hay informacion para mostar :-(</ion-title>
+    </div>
+  </ng-container>
+  <ng-template #info>
+    <mat-tab-group 
+      #tabGroup 
+      [(selectedIndex)]="selectedIndex" 
+      [disableRipple]="false"
+      mat-align-tabs="center"
+      >
+      <mat-tab [label]="trans.name" *ngFor="let trans of transports">
+        <ng-template matTabContent>
+          <suite-order-package class="tables" #selected [id]="trans.id"></suite-order-package>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+
+  </ng-template>
 </ion-content>
