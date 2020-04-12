@@ -3,6 +3,7 @@ import { IntermediaryService } from '../../../services/src/lib/endpoint/intermed
 import { OplTransportsService } from '../../../services/src/lib/endpoint/opl-transports/opl-transports.service';
 import { MatTabsModule, MatTabChangeEvent } from '@angular/material/tabs';
 import { OplTransportsModel } from '../../../services/src';
+import { OrderPackageComponent } from './order-package/order-package.component';
 
 @Component({
   selector: 'suite-transports-orders',
@@ -11,6 +12,7 @@ import { OplTransportsModel } from '../../../services/src';
 })
 export class TransportsOrdersComponent implements OnInit {
   @ViewChild('#tabGroup') private tabGroup: MatTabsModule;
+  @ViewChild(OrderPackageComponent) orders: OrderPackageComponent 
   selectedIndex = 0;
   transports: Array<OplTransportsModel.ItemFilter> = []
   indexTab: number;
@@ -35,6 +37,10 @@ export class TransportsOrdersComponent implements OnInit {
     // console.log('tabChangeEvent => ', tabChangeEvent);
     // console.log('index => ', tabChangeEvent.index);
     this.indexTab = tabChangeEvent.index;
+  }
+
+  refresh() {
+    this.orders.refresh();
   }
   
  }

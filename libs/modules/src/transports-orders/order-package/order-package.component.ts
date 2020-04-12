@@ -129,20 +129,20 @@ export class OrderPackageComponent implements OnInit {
     )
   }
   clearFilters() {
-    this.form.patchValue({
+    this.form = this.formBuilder.group({
       expeditions: [[]],
       orders: [[]],
       date: [[]],
       warehouses: [[]],
       transports: [[]],
-      orderby: {
+      orderby: this.formBuilder.group({
         type: 1,
         order: "asc"
-      },
-      pagination:{
+      }),
+      pagination: this.formBuilder.group({
         page: 1,
         limit: 50
-      }
+      })
     })
   }
 
@@ -333,5 +333,8 @@ export class OrderPackageComponent implements OnInit {
       }
     );
   } 
-
+ refresh() {
+   this.clearFilters()
+   this.getList(this.form.value)
+ }
 }
