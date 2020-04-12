@@ -96,15 +96,6 @@ export class OrderPackageComponent implements OnInit {
       resp => {
         // console.log(resp);
         this.dataSource = resp.results;
-        this.dataSource.map(elem => {
-          elem.item = 
-          [
-            {
-              expedition: elem.expedition.id,
-              barcode: elem.expedition.barcode
-            }
-          ]
-        })
         this.orders = this.dataSource.map(elem => {
           return {
             id: elem.id,
@@ -126,7 +117,7 @@ export class OrderPackageComponent implements OnInit {
         const pagination = resp.pagination
         this.paginator.length = pagination.totalResults;
         this.paginator.lastPage = pagination.lastPage;
-      
+        this.intermediaryService.dismissLoading()
       },
       e => {
         this.intermediaryService.presentToastError('Ocurrio un error al cargar el listado')
@@ -195,6 +186,8 @@ export class OrderPackageComponent implements OnInit {
   }
 
   async presentModal(packages) {
+    console.log(packages);
+    
     const modal = await this.modalController.create({
     component: PackagesComponent,
     componentProps: { packages }

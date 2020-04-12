@@ -27,6 +27,8 @@ export class TransportsOrdersComponent implements OnInit {
     this.oplTransportsService.getTransports().subscribe((resp: OplTransportsModel.OrderExpeditionTransportsFilters) => {
       // console.log(resp);
       this.transports = resp.transports
+      console.log(this.transports);
+      
     })
   }
   tabChanged(tabChangeEvent: MatTabChangeEvent): void {
