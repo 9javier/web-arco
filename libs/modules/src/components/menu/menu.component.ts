@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, NgZone } from '@angular/core';
-import { app } from '../../../../services/src/environments/environment';
+import { app, environment } from '../../../../services/src/environments/environment';
 import {AuthenticationService, Oauth2Service, TariffService, WarehouseModel} from '@suite/services';
 import { Router } from '@angular/router';
 import { ScanditService } from "../../../../services/src/lib/scandit/scandit.service";
@@ -815,11 +815,11 @@ export class MenuComponent implements OnInit {
       icon: 'build',
       children: [
         {
-          title: 'Ajustes',
+          title: 'Código impresora',
           id: 'settings',
           url: '/settings',
           icon: 'cog',
-          tooltip: 'Ajustes de configuración de la aplicación. Ej: Mac de la impresora'
+          tooltip: 'Mac de la impresora'
         }
       ]
     }
@@ -870,7 +870,7 @@ export class MenuComponent implements OnInit {
   }
 
   loadUpdate() {
-    window.open('https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o', '_blank')
+    window.open(environment.urlDownloadApp, '_blank')
   }
 
   /**

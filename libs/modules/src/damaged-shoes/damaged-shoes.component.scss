@@ -59,3 +59,16 @@ mat-icon {
   display: inline-grid;
   text-align: center;
 }
+
+.pointer{
+  cursor: pointer;
+}
+
+mat-row:hover{
+  background-color: #e5e8ea;
+}
+
+mat-checkbox{
+  width: fit-content;
+  margin: auto;
+}

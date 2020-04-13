@@ -35,19 +35,33 @@
       </ion-item>
 
       <ion-item>
-        <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
-        <ion-select (ionChange)="defectChange($event)" placeholder="Selecciona" formControlName="defectTypeChildId"
-          [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let defect of defects" [value]="defect.id">
-            {{defect.name +" - "+ defect.defectTypeParent.name}}</ion-select-option>
+        <ion-label class="ion-text-capitalize label-text">Defecto</ion-label>
+        <ion-select (ionChange)="defectChange($event)" placeholder="Selecciona" formControlName="defectTypeParentId" [disabled]="barcodeRoute!=null">
+          <ion-select-option *ngFor="let defect of defects" [value]="defect">
+            {{defect.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label class="ion-text-capitalize label-text">Subdefecto</ion-label>
+        <ion-select *ngIf="defectChildsOfParent.length > 0" (ionChange)="defectParentChange($event)" placeholder="Selecciona" formControlName="defectTypeChildId" [disabled]="barcodeRoute!=null">
+          <ion-select-option *ngFor="let defectSubtype of defectChildsOfParent" [value]="defectSubtype.id">
+            {{defectSubtype.name}}</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item>
         <ion-label class="ion-text-capitalize label-text">Zona</ion-label>
-        <ion-select (ionChange)="defectZoneChange($event)" placeholder="Selecciona" formControlName="defectZoneChildId"
+        <ion-select (ionChange)="defectZoneChange($event)" placeholder="Selecciona" formControlName="defectZoneParentId"
                     [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let zone of zones" [value]="zone.id">
-            {{zone.name +" - "+ zone.defectZoneParent.name}}</ion-select-option>
+          <ion-select-option *ngFor="let zone of zones" [value]="zone">
+            {{zone.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label class="ion-text-capitalize label-text">Subzona</ion-label>
+        <ion-select *ngIf="defectZonesChildsOfParent.length > 0" (ionChange)="defectZoneChangeParent($event)" placeholder="Selecciona" formControlName="defectZoneChildId"
+                    [disabled]="barcodeRoute!=null">
+          <ion-select-option *ngFor="let zoneChild of defectZonesChildsOfParent" [value]="zoneChild.id">
+            {{zoneChild.name}}</ion-select-option>
         </ion-select>
       </ion-item>
 
@@ -66,12 +80,8 @@
               maxlength="50"></ion-input><br>
           </ion-item>
           <ion-item lines="none">
-            <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo"
+            <ion-input type="text" formControlName="info" (keyup)="onKeyInfo($event)" placeholder="Tlf/Email"
               maxlength="50"></ion-input><br>
-          </ion-item>
-          <ion-item lines="none">
-            <ion-input type="number" formControlName="phone" (keyup)="onKeyTel($event)" placeholder="Teléfono"
-              maxlength="25"></ion-input>
           </ion-item>
         </div>
       </div>
@@ -120,15 +130,15 @@
         </ion-item>
       </ion-list>
       <!-- <ion-label>{{imgUrl}}</ion-label> -->
-    
+
     <ion-button *ngIf="barcodeRoute==null"  [attr.disabled]="!select1 || !select2" (click)="send()" expand="block" shape="round">
       enviar
     </ion-button>
-    
+
     <ion-button *ngIf="barcodeRoute!=null" [disabled]="differentState" (click)="enviaryarn()" expand="block" shape="round" >
       actualizar
     </ion-button>
- 
+
   </ng-template>
 </form>
 </ion-content>

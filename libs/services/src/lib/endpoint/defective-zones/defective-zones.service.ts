@@ -5,6 +5,9 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { DefectiveZonesModel } from '../../../models/endpoints/defective-zones-model';
 import { DefectiveZonesChildModel } from '../../../models/endpoints/DefectiveZonesChild';
+import { RequestsProvider } from "../../../providers/requests/requests.provider";
+import { HttpRequestModel } from "../../../models/endpoints/HttpRequest";
+import DefectiveZonesChild = DefectiveZonesChildModel.DefectiveZonesChild;
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +22,10 @@ export class DefectiveZonesService {
 
   displayedColumns: string[] = ['name'];
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private requestsProvider: RequestsProvider
+  ) { }
 
   /**
    * Get all group Defective Zones
@@ -84,6 +90,10 @@ export class DefectiveZonesService {
       .replace("{{id}}", String(id)), singleDefectiveZones).pipe(map(response => {
       return response.data;
     }));
+  }
+
+  newUpdateChild(child: DefectiveZonesChild): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.put(this.singleDefectiveChildZonesUrl.replace("{{id}}", String(child.id)), child);
   }
 
   /**

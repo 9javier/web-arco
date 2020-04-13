@@ -84,7 +84,7 @@ export class AppComponent implements OnInit {
       icon: 'filing'
     },
     {
-      title: 'Ajustes',
+      title: 'Código impresora',
       url: '/settings',
       icon: 'cog'
     },

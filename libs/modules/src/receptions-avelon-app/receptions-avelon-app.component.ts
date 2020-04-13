@@ -7,6 +7,7 @@ import Expedition = ReceptionAvelonModel.Expedition;
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
 import {ScannerManualComponent} from "../components/scanner-manual/scanner-manual.component";
+import {LocalStorageProvider} from "../../../services/src/providers/local-storage/local-storage.provider";
 
 @Component({
   selector: 'suite-receptions-avelon-app',
@@ -27,11 +28,24 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
     private toolbarProvider: ToolbarProvider,
     private receptionAvelonProvider: ReceptionAvelonProvider,
     public dateTimeParserService: DateTimeParserService,
-    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider
+    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider,
+    private localStorageProvider: LocalStorageProvider
   ) {}
 
   ngOnInit() {
     this.expedition = this.receptionAvelonProvider.expedition;
+    const expeditionStarted = this.receptionAvelonProvider.expeditionData;
+    this.localStorageProvider.get('last_expedition').then(data => {
+      if (data) {
+        const dataParsed = JSON.parse(String(data));
+        if (dataParsed && expeditionStarted && dataParsed.reference != expeditionStarted.reference) {
+          this.localStorageProvider.set('last_expedition', JSON.stringify(expeditionStarted));
+          this.localStorageProvider.remove('lastPrint');
+        }
+      } else {
+        this.localStorageProvider.set('last_expedition', JSON.stringify(expeditionStarted));
+      }
+    });
     this.isReceptionWithoutOrder = !!(this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path && this.activatedRoute.snapshot.routeConfig.path == 'free');
     this.toolbarProvider.currentPage.next('#'+this.expedition.reference);
   }

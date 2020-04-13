@@ -19,12 +19,12 @@
         <div class="col">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
             <ion-title>
-              Modelos
+              {{typeModelVisualization == TypesModel.MODEL_NAME ? 'Modelos' : (typeModelVisualization == TypesModel.MODEL_REFERENCE ? 'Referencias' : 'Detalles-Artículos')}}
               <mat-form-field class="model-selector" (click)="$event.preventDefault();$event.stopPropagation()">
                 <mat-select [(value)]="typeModelVisualization" (valueChange)="changeValue()">
-                  <mat-option [value]="TypesModel.MODEL_NAME">NOMBRE</mat-option>
-                  <mat-option [value]="TypesModel.MODEL_REFERENCE">REFERENCIA</mat-option>
-                  <mat-option [value]="TypesModel.PROVIDER_REFERENCE">REF. PROVEEDOR</mat-option>
+                  <mat-option [value]="TypesModel.MODEL_NAME">Modelo</mat-option>
+                  <mat-option [value]="TypesModel.MODEL_REFERENCE">Referencia</mat-option>
+                  <mat-option [value]="TypesModel.PROVIDER_REFERENCE">Detalle-Artículo</mat-option>
                 </mat-select>
               </mat-form-field>
             </ion-title>
@@ -77,7 +77,10 @@
               <p>No se han podido cargar tallas para la marca, el modelo y el color seleccionados.</p>
             </div>
             <div *ngIf="!result.modelId || !result.colorId" class="default sizes-select">
-              <p><span *ngIf="!result.modelId">Seleccione un modelo.</span>
+              <p>
+                <span *ngIf="!result.modelId">
+                  {{typeModelVisualization == TypesModel.MODEL_NAME ? 'Seleccione un modelo.' : (typeModelVisualization == TypesModel.MODEL_REFERENCE ? 'Seleccione una referencia.' : 'Seleccione un detalle-artículo.')}}
+                </span>
                 <span *ngIf="!result.colorId">Seleccione un color.</span></p>
             </div>
           </div>

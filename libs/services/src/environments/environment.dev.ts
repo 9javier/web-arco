@@ -4,6 +4,7 @@ export const environment = {
   apiBase: 'http://192.168.254.111:8080/api',
   apiSorter: 'http://192.168.254.111:8080/api',
   urlBase: 'http://192.168.254.111:8080',
+  urlDownloadApp: 'https://drive.google.com/open?id=16DZzQ1hIArX5GF5oZtTpx3ltiPfCvw2K',
   sga:{
     client_id:"krack-client-sga",
     client_secret:"fGx4=yU-j4^jAAjZtV+YTDsm-@R$HAK3"
