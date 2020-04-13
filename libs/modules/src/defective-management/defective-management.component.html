@@ -8,10 +8,16 @@
         <mat-accordion multi="false">
           <mat-expansion-panel *ngFor="let defect of groupsDefectiveManagement; let i = index" (opened)="openGroup(defect.id)" [expanded]="defect.open">
             <mat-expansion-panel-header>
-              <mat-panel-title>
+              <mat-panel-title style="min-width: 200px">
                 <ion-checkbox style="margin-right: 5px" (click)="activateDelete(defect)"></ion-checkbox>
                 {{ defect.name }}
               </mat-panel-title>
+              <mat-panel-description style="margin-left: 100px">
+                <ion-checkbox style="margin-right: 5px;margin-left: 20px" [(ngModel)]="defect.includeInIncidenceTicket" (ionChange)="storeChanges()"></ion-checkbox>
+                Incluir en ticket incidencia
+                <ion-checkbox style="margin-right: 5px;margin-left: 20px" [(ngModel)]="defect.includeInDeliveryNote" (ionChange)="storeChanges()"></ion-checkbox>
+                Incluir en albarán devolución
+              </mat-panel-description>
             </mat-expansion-panel-header>
 
             <ion-item class="no-border">

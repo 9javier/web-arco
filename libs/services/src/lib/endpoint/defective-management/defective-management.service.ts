@@ -73,11 +73,15 @@ export class DefectiveManagementService {
    * @param id - the id of the group to  be updated
    * @param groupDefectiveManagement the new group
    */
-  update(id: number, groupDefectiveManagement: DefectiveManagementModel.RequestDefectiveManagementParent): Observable<DefectiveManagementModel.DefectiveManagementParent> {
+  update(id: number, sinlgeDefectiveManagement: DefectiveManagementModel.RequestDefectiveManagementParent): Observable<DefectiveManagementModel.DefectiveManagementParent> {
     return this.http.put<DefectiveManagementModel.ResponseSingleDefectiveManagementParent>(this.singleDefectiveManagementUrl
-      .replace("{{id}}", String(id)), groupDefectiveManagement).pipe(map(response => {
+      .replace("{{id}}", String(id)), sinlgeDefectiveManagement).pipe(map(response => {
         return response.data;
       }));
+  }
+
+  newUpdate(id: number, sinlgeDefectiveManagement: DefectiveManagementModel.RequestDefectiveManagementParent): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.put(this.singleDefectiveManagementUrl.replace("{{id}}", String(id)), sinlgeDefectiveManagement);
   }
 
   /**

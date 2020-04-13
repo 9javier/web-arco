@@ -279,6 +279,12 @@ export class DefectiveManagementComponent implements OnInit {
     let atLeastOneChangeDetected: boolean = false;
     //save
     for (let i = 0; i < this.groupsDefectiveManagement.length; i++) {
+      const nParent: any = this.groupsDefectiveManagement[i];
+      const oParent: any = this.groupsDefectiveManagementOriginal[i];
+      if (JSON.stringify(nParent) !== JSON.stringify(oParent)) {
+        await this.defectiveManagementService.newUpdate(this.groupsDefectiveManagement[i].id , nParent);
+        atLeastOneChangeDetected = true;
+      }
       for (let j = 0; j < this.groupsDefectiveManagement[i].defectTypeChild.length; j++) {
         const nChild: any = this.groupsDefectiveManagement[i].defectTypeChild[j];
         const oChild: any = this.groupsDefectiveManagementOriginal[i].defectTypeChild[j];
@@ -297,5 +303,4 @@ export class DefectiveManagementComponent implements OnInit {
       await this.intermediaryService.presentToastError('Error: no se han encontrado cambios que guardar.')
     }
   }
-
 }

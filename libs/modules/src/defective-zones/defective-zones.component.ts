@@ -279,6 +279,12 @@ export class DefectiveZonesComponent implements OnInit {
     let atLeastOneChangeDetected: boolean = false;
     //save
     for (let i = 0; i < this.groupsDefectiveZones.length; i++) {
+      const nParent: any = this.groupsDefectiveZones[i];
+      const oParent: any = this.groupsDefectiveZonesOriginal[i];
+      if (JSON.stringify(nParent) !== JSON.stringify(oParent)) {
+        await this.defectiveZonesService.newUpdate(this.groupsDefectiveZones[i].id , nParent);
+        atLeastOneChangeDetected = true;
+      }
       for (let j = 0; j < this.groupsDefectiveZones[i].defectZoneChild.length; j++) {
         const nChild: any = this.groupsDefectiveZones[i].defectZoneChild[j];
         const oChild: any = this.groupsDefectiveZonesOriginal[i].defectZoneChild[j];
