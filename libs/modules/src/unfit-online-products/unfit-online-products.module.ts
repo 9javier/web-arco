@@ -3,26 +3,32 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { UnfitOnlineProductsComponent } from './unfit-online-products.component';
-import { UnfitOnlineProductsRoutingModule } from "./unfit-online-products-routing.module";
 import { CdkTableModule } from "@angular/cdk/table";
 import { MatExpansionModule, MatGridListModule, MatPaginatorModule, MatTooltipModule } from "@angular/material";
 import { TagsInputModule} from "../components/tags-input/tags-input.module";
+import { RouterModule, Routes} from "@angular/router";
+
+const routes: Routes = [
+  {
+    path: '',
+    component: UnfitOnlineProductsComponent
+  }
+];
 
 @NgModule({
-  declarations: [UnfitOnlineProductsComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    UnfitOnlineProductsRoutingModule,
     CdkTableModule,
     FormsModule,
+    RouterModule.forChild(routes),
     MatExpansionModule,
     MatGridListModule,
     MatPaginatorModule,
     TagsInputModule,
     MatTooltipModule
   ],
-  entryComponents: [UnfitOnlineProductsComponent]
+  declarations: [UnfitOnlineProductsComponent]
 })
 export class UnfitOnlineProductsModule {}

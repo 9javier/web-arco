@@ -500,7 +500,7 @@ export class MenuComponent implements OnInit {
         {
           title: 'Productos no aptos online',
           id: 'unfit-online-products',
-          url: 'unfit-online-products',
+          url: '/unfit-online-products',
           icon: 'archive',
           tooltip: 'Listado de productos no aptos online'
         },
