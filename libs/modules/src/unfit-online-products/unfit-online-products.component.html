@@ -27,9 +27,17 @@
     <ion-row>
       <ion-col>
         <ion-item formGroupName="orderBy">
-          <ion-label>Ordenar por:</ion-label>
-          <ion-select class="order-types" formControlName="type" interface="popover">
+          <ion-label>Ordenar:</ion-label>
+          <ion-select class="order-by" formControlName="type" interface="popover">
             <ion-select-option value="{{group.id}}" *ngFor="let group of filterOptions.orderTypes">{{group.name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item formGroupName="orderBy">
+          <ion-select class="order-by" formControlName="order" interface="popover">
+            <ion-select-option value="asc">ASC</ion-select-option>
+            <ion-select-option value="desc">DESC</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-col>
