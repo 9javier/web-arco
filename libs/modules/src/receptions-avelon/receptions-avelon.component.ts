@@ -385,6 +385,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       if (this.response.colors.length == 1) {
         this.result.colorId = this.response.colors[0].id;
         this.response.colors[0].selected = true;
+
+        if (this.response.models.length == 1) {
+          let modelIdForColor = this.response.colors[0].belongsModels.find(m => !!this.response.models[0].available_ids.find(id => id == m));
+          this.result.modelId = modelIdForColor || this.response.models[0].id;
+        }
       }
     }
 
@@ -479,7 +484,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         const colors = this.filterData.colors;
         if(this.result.modelId){
           this.response.colors = [];
-          const model = this.filterData.models.find(m => m.id == this.result.modelId);
+          const model = this.filterData.models.find(m => !!m.available_ids.find(id => id == this.result.modelId));
           for(let color of colors){
             if(color.belongsModels.includes(model.id)){
               color.selected = false;
