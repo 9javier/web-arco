@@ -13,6 +13,9 @@ import { SelectionModel } from '@angular/cdk/collections';
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
 import { RegistryDetailsComponent } from '../components/modal-defective/registry-details/registry-details.component';
+import * as Filesave from 'file-saver';
+import { map, catchError } from 'rxjs/operators';
+import { BehaviorSubject, of, Observable } from 'rxjs';
 
 @Component({
   selector: 'suite-defective-historic',
@@ -618,5 +621,54 @@ export class DefectiveHistoricComponent implements OnInit {
     //     urlImage: photo
     //   }
     // })).present();
+  }
+
+  /**
+   * @description Eviar parametros y recibe un archivo excell
+   */
+  async fileExcell() {
+    this.intermediaryService.presentLoading('Descargando Archivo Excel').then(()=>{
+      const formToExcel = this.getFormValueCopy();
+      this.defectiveRegistryService.getHistoricFileExcell(this.sanitize(formToExcel)).pipe(
+        catchError(error => of(error)),
+        // map(file => file.error.text)
+      ).subscribe((data) => {
+        const blob = new Blob([data], { type: 'application/octet-stream' });
+        Filesave.saveAs(blob, `${Date.now()}.xlsx`);
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastSuccess('Archivo descargado')
+      }, error => console.log(error));
+    });
+  }
+
+  private getFormValueCopy() {
+    return JSON.parse(JSON.stringify(this.form.value || {}));
+  }
+  sanitize(object) {
+    /**mejorable */
+    object = JSON.parse(JSON.stringify(object));
+    if (!object.orderby.type) {
+      delete object.orderby.type;
+    } else {
+      object.orderby.type = object.orderby.type;
+    }
+    if (!object.orderby.order) delete object.orderby.order;
+    Object.keys(object).forEach(key => {
+      if (object[key] instanceof Array) {
+        if (object[key][0] instanceof Array) {
+          object[key] = object[key][0];
+        } else {
+          for (let i = 0; i < object[key].length; i++) {
+            if (object[key][i] === null || object[key][i] === "") {
+              object[key].splice(i, 1);
+            }
+          }
+        }
+      }
+      if (object[key] === null || object[key] === "") {
+        delete object[key];
+      }
+    });
+    return object;
   }
 }
