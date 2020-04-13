@@ -37,10 +37,10 @@ export class UnfitOnlineProductsComponent implements OnInit, AfterViewInit {
       page: 1,
       limit: this.pagerValues[0]
     }),
-    modelIds: [],
-    brandIds: [],
-    colorIds: [],
-    sizeIds: [],
+    models: [],
+    brands: [],
+    colors: [],
+    sizes: [],
     orderBy: this.formBuilder.group({
       type: '',
       order: 'asc'
@@ -111,10 +111,10 @@ export class UnfitOnlineProductsComponent implements OnInit, AfterViewInit {
         page: 1,
         limit: this.pagerValues[0]
       }),
-      modelIds: [],
-      brandIds: [],
-      colorIds: [],
-      sizeIds: [],
+      models: [],
+      brands: [],
+      colors: [],
+      sizes: [],
       orderBy: this.formBuilder.group({
         type: '',
         order: 'asc'
