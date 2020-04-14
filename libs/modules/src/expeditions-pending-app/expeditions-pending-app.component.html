@@ -1,4 +1,18 @@
 <ion-content padding [ngClass]="{'without-order': isReceptionWithoutOrder}">
+  <mat-card *ngIf="lastExepeditionQueried && lastExepeditionQueried.reference">
+    <mat-card-header>
+      <mat-card-title>Continuar recepción anterior</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <h2># {{lastExepeditionQueried.reference}}</h2>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-button type="button" (click)="resumeLastExpedition()" [ngClass]="checkingResumeExpeditionInProcess ? 'spinner' : ''" [disabled]="checkingResumeExpeditionInProcess">
+        {{checkingResumeExpeditionInProcess ? 'COMPROBANDO' : 'CONTINUAR'}}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
   <form-expedition-info (checkExpedition)="searchExpeditions($event)" [isReceptionWithoutOrder]="isReceptionWithoutOrder"></form-expedition-info>
   <form-expedition-provider (checkExpedition)="searchExpeditions($event)" [isReceptionWithoutOrder]="isReceptionWithoutOrder"></form-expedition-provider>
 </ion-content>
