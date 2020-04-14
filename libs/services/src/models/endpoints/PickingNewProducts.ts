@@ -61,6 +61,22 @@ export namespace PickingNewProductsModel {
     hideImpress: boolean
   }
 
+  export interface NoOnlineSearchParameters {
+    warehouseId?: number,
+    pagination: {
+      page: number,
+      limit: number
+    },
+    modelIds: number[],
+    brandIds: number[],
+    colorIds: number[],
+    sizeIds: number[],
+    orderBy: {
+      type: number,
+      order: string
+    }
+  }
+
   export interface Search {
     pagination: {
       page: number,

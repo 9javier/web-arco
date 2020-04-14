@@ -260,6 +260,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'unfit-online-products',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/unfit-online-products/unfit-online-products.module#UnfitOnlineProductsModule',
+    data: {
+      name: 'Lista de productos no aptos online'
+    }
+  },
+  {
     path: 'print/product/list-products-carrier',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/page-list-products-carrier/page-list-products-carrier.module#PageListProductsCarrierModule',

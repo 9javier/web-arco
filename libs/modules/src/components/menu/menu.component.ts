@@ -498,6 +498,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Listado de todos los productos solicitados que se han recibido'
         },
         {
+          title: 'Productos no aptos online',
+          id: 'unfit-online-products',
+          url: '/unfit-online-products',
+          icon: 'archive',
+          tooltip: 'Listado de productos no aptos online'
+        },
+        {
           title: 'Reetiquetado productos',
           id: 'print-product',
           url: 'print/product/relabel',

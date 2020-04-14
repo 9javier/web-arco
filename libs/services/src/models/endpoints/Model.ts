@@ -3,12 +3,13 @@ import {PhotoModel} from "./Photo";
 import {SeasonModel} from "./Season";
 import {FamilyModel} from "./Family";
 import {LifestyleModel} from "./Lifestyle";
+import {ColorModel} from "./Color";
 
 export namespace ModelModel {
   export interface Model{
     id?: number,
     reference: string,
-    color?: any,
+    color?: ColorModel.Color,
     name?: string,
     createdAt?: string,
     updatedAt?: string,
