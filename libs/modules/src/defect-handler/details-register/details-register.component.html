@@ -5,6 +5,11 @@
                 <ion-icon name="close" class="toogleArrow"></ion-icon>
             </ion-button>
         </ion-buttons>
+        <ion-buttons slot="start">
+          <ion-button matTooltip="Imprimir" matTooltipClass="tooltip" (click)="print(registry)">
+            <ion-icon name="print" class="toogleArrow"></ion-icon>
+          </ion-button>
+        </ion-buttons>
         <ion-title>{{ registry.id }}</ion-title>
     </ion-toolbar>
 </ion-header>
