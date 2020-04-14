@@ -24,7 +24,11 @@ ion-text {
   }
 
   .mat-cell, .mat-header-cell {
-    padding: 10px 10px 10px 0;
+    padding: 0 4px 4px 0;
+  }
+
+  .mat-cell:first-of-type, mat-footer-cell:first-of-type, mat-header-cell:first-of-type {
+    padding-left: 6px !important;
   }
 
   .bt-right{

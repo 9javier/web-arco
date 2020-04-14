@@ -7,6 +7,7 @@ import { DefectiveRegistryService } from '../../../../services/src/lib/endpoint/
 import { DamagedModel } from '../../../../services/src/models/endpoints/Damaged';
 import { ChangeStateComponent } from '../../components/modal-defective/change-state/change-state.component';
 import { PrinterService } from '../../../../services/src/lib/printer/printer.service';
+import {PrintTicketService} from "../../../../services/src/lib/print-ticket/print-ticket.service";
 
 @Component({
   selector: 'suite-details-register',
@@ -15,6 +16,7 @@ import { PrinterService } from '../../../../services/src/lib/printer/printer.ser
 })
 export class DetailsRegisterComponent implements OnInit {
   id: number;
+  ticketEmit: boolean;
   private baseUrlPhoto = environment.apiBasePhoto;
   section = 'information';
   title = 'Ubicación ';
@@ -54,6 +56,7 @@ export class DetailsRegisterComponent implements OnInit {
     private inventoryService: InventoryService,
     private loadingController: LoadingController,
     private incidentsService: IncidentsService,
+    private printTicketService: PrintTicketService,
   ) {
     this.id = this.navParams.get("id");
     this.productId = this.navParams.get("productId");
@@ -144,5 +147,14 @@ export class DetailsRegisterComponent implements OnInit {
           return defectStatus.allowOrders;
       }
     }
+  }
+
+  print(defective) {
+    this.incidentsService.getData(defective).subscribe(
+      resp => {
+        if (resp.data.statusManagementDefect.ticketEmit == true) {
+          this.printTicketService.printTicket(resp.data);
+        }
+      });
   }
 }
