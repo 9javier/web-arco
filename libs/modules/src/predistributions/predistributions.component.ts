@@ -1,6 +1,6 @@
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource, MatCheckboxChange, Sort } from '@angular/material';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { MatSort, MatTableDataSource, Sort } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { PredistributionsService } from '../../../services/src/lib/endpoint/predistributions/predistributions.service';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
@@ -9,15 +9,17 @@ import { FilterButtonComponent } from '../components/filter-button/filter-button
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
-import { PaginatorComponent } from '../components/paginator/paginator.component';
+import {PaginatorComponent} from '../components/paginator/paginator.component';
 import * as _ from 'lodash';
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'suite-predistributions',
   templateUrl: './predistributions.component.html',
   styleUrls: ['./predistributions.component.scss'],
 })
-export class PredistributionsComponent implements OnInit {
+export class PredistributionsComponent implements OnInit, OnDestroy {
+
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = ['avelonOrder','references','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle', 'distribution', 'reserved'];
@@ -71,7 +73,7 @@ export class PredistributionsComponent implements OnInit {
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
 
-  pagerValues = [10, 20, 80];
+  pagerValues = [25, 50, 100];
   form: FormGroup = this.formBuilder.group({
     avelonOrder: [],
     references: [],
@@ -95,11 +97,12 @@ export class PredistributionsComponent implements OnInit {
   });
   length: any;
 
+  private paginatorObservable: Subscription = null;
+
   constructor(
     private predistributionsService: PredistributionsService,
     private formBuilder: FormBuilder,
     private intermediaryService:IntermediaryService
-
   ) {}
 
   ngOnInit(): void {
@@ -110,23 +113,25 @@ export class PredistributionsComponent implements OnInit {
     this.getList(this.form);
     this.listenChanges();
   }
-  listenChanges() {
-    let previousPageSize = this.form.value.pagination.limit;
-    /**detect changes in the paginator */
-    this.paginator.page.subscribe(page => {
-      /**true if only change the number of results */
-      let flag = previousPageSize === page.pageSize;
-      previousPageSize = page.pageSize;
-      this.form.value.pagination = {
-        limit: page.pageSize,
-        page: flag ? page.pageIndex : 1
-      };
-      this.getList(this.form)
-    });
+  ngOnDestroy(): void {
+    this.paginatorObservable.unsubscribe();
+  }
 
-/*    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
-      this.getList(this.form);
-    });*/
+  listenChanges() {
+    if (!this.paginatorObservable) {
+      let previousPageSize = this.form.value.pagination.limit;
+      /**detect changes in the paginator */
+      this.paginatorObservable = this.paginator.page.subscribe(page => {
+        /**true if only change the number of results */
+        let flag = previousPageSize === page.pageSize;
+        previousPageSize = page.pageSize;
+        this.form.value.pagination = {
+          limit: page.pageSize,
+          page: flag ? page.pageIndex : 1
+        };
+        this.getList(this.form)
+      });
+    }
   }
   initEntity() {
     this.entities = {
@@ -233,7 +238,6 @@ export class PredistributionsComponent implements OnInit {
   }
 
   async savePredistributions() {
-    this.intermediaryService.presentLoading();
     let list = [];
     this.dataSource.data.forEach((dataRow, index) => {
       if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution || this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
@@ -247,20 +251,21 @@ export class PredistributionsComponent implements OnInit {
       }
     });
 
-    await this.predistributionsService.updateBlockReserved(list).subscribe((data) => {
-      this.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
-      this.initEntity();
-      this.initForm();
-      this.getFilters();
-      this.getList(this.form);
-      this.listenChanges();
-    }, (error) => {
-      this.intermediaryService.presentToastError("Error Actualizado predistribuciones");
-      this.intermediaryService.dismissLoading();
-    }, () => {
-      this.intermediaryService.dismissLoading();
-    });
+    if (list.length > 0) {
+      await this.intermediaryService.presentLoading('Actualizando predistribuciones...', async () => {
+        this.predistributionsService.updateBlockReserved(list).subscribe((data) => {
+          this.intermediaryService.presentToastSuccess("Se han actualizado las predistribuciones correctamente.");
+          this.getList(this.form);
+        }, (error) => {
+          this.intermediaryService.presentToastError("Ha ocurrido un error al intentar actualizar las predistribuciones.");
+          this.intermediaryService.dismissLoading();
+        }, () => {
+          this.intermediaryService.dismissLoading();
+        });
+      });
+    }
   }
+
   getFilters() {
     this.predistributionsService.entities().subscribe(entities => {
       this.avelonOrder = this.updateFilterSource(entities.avelonOrder, 'avelonOrder');
@@ -550,9 +555,9 @@ export class PredistributionsComponent implements OnInit {
       arrayEntity.forEach((item) => {
         item.hide = filteredEntity.includes(item.value);
       });
-
-      return arrayEntity;
     }
+
+    return arrayEntity;
   }
 
   private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
@@ -597,6 +602,8 @@ export class PredistributionsComponent implements OnInit {
   }
 
   refreshPredistributions() {
+    this.paginatorObservable.unsubscribe();
+    this.paginatorObservable = null;
     this.initEntity();
     this.initForm();
     this.getFilters();
@@ -608,7 +615,7 @@ export class PredistributionsComponent implements OnInit {
     this.form.value.orderby.type = this.columns[event.active];
     this.form.value.orderby.order = event.direction;
 
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+    await this.intermediaryService.presentLoading('Cargando Filtros...', () => {
       this.getList(this.form);
     });
   }
