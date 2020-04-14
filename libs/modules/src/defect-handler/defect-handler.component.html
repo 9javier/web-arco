@@ -134,7 +134,7 @@
         <th mat-header-cell *matHeaderCellDef></th>
         <td matTooltip="Imprimir" matTooltipClass="tooltip"
             mat-cell *matCellDef="let defect">
-          <i (click)="print(defect)" class="material-icons action-icon">print</i>
+          <i *ngIf="defect.statusManagementDefect.ticketEmit" (click)="print(defect)" class="material-icons action-icon">print</i>
         </td>
       </ng-container>
     </table>
