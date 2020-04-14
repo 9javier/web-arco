@@ -39,12 +39,11 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
       if (data) {
         const dataParsed = JSON.parse(String(data));
         if (dataParsed && expeditionStarted && dataParsed.reference != expeditionStarted.reference) {
-          this.localStorageProvider.set('last_expedition', JSON.stringify(expeditionStarted));
           this.localStorageProvider.remove('lastPrint');
+          this.localStorageProvider.remove('typeModelVisualization');
         }
-      } else {
-        this.localStorageProvider.set('last_expedition', JSON.stringify(expeditionStarted));
       }
+      this.localStorageProvider.set('last_expedition', JSON.stringify(expeditionStarted));
     });
     this.isReceptionWithoutOrder = !!(this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path && this.activatedRoute.snapshot.routeConfig.path == 'free');
     this.toolbarProvider.currentPage.next('#'+this.expedition.reference);

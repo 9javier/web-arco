@@ -184,6 +184,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.expeditionStarted = null;
 
     this.typeModelVisualization = TypeModelVisualization.MODEL_NAME;
+    this.lastTypeModelVisualization = this.typeModelVisualization;
 
     this.ngOnInit();
   }
@@ -256,7 +257,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.providerId = data.providerId;
 
     await this.intermediaryService.presentLoading('Cargando');
-    this.reception.getReceptions(data.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
+    this.reception.getReceptions(data.providerId, this.typeModelVisualization).subscribe((info: ReceptionAvelonModel.Reception) => {
       this.response = info;
       this.expeditionLines = info.lines;
       this.response.brands = this.clearSelected(this.response.brands);
@@ -384,6 +385,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       if (this.response.colors.length == 1) {
         this.result.colorId = this.response.colors[0].id;
         this.response.colors[0].selected = true;
+
+        if (this.response.models.length == 1) {
+          let modelIdForColor = this.response.colors[0].belongsModels.find(m => !!this.response.models[0].available_ids.find(id => id == m));
+          this.result.modelId = modelIdForColor || this.response.models[0].id;
+        }
       }
     }
 
@@ -478,7 +484,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         const colors = this.filterData.colors;
         if(this.result.modelId){
           this.response.colors = [];
-          const model = this.filterData.models.find(m => m.id == this.result.modelId);
+          const model = this.filterData.models.find(m => !!m.available_ids.find(id => id == this.result.modelId));
           for(let color of colors){
             if(color.belongsModels.includes(model.id)){
               color.selected = false;
@@ -898,7 +904,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     const subscribeResponseOk = (res) => {
       // refresh the data
       this.reception
-        .getReceptions(this.providerId)
+        .getReceptions(this.providerId, this.typeModelVisualization)
         .subscribe((info: ReceptionAvelonModel.Reception) => {
           this.response = info;
           this.response.brands = this.clearSelected(this.response.brands);
