@@ -48,6 +48,7 @@ export namespace ReceptionModel {
       hasNewProducts: boolean,
       hasRequestedProducts?: boolean,
       productRequestedId?: number
+      isNoOnline?: boolean
     },
     message: string,
     code: number,
