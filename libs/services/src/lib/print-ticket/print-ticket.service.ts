@@ -42,7 +42,22 @@ export class PrintTicketService {
     warehouseIdentifier = warehouseIdentifier.padStart(10,0);
     const incidenceId = defective && defective.warehouse ? defective.warehouse.reference + ' / ' + warehouseIdentifier: '';
     const warehouseName = defective && defective.warehouse ? defective.warehouse.name : '';
-    const warehouseDirection = defective && defective.warehouse && defective.warehouse.direction && defective.warehouse.phone ? defective.warehouse.direction+ ' / ' +defective.warehouse.phone : '';
+    const warehouseSocialName = defective && defective.warehouse && defective.warehouse.companyName ? defective.warehouse.companyName : '';
+    let warehouseDirection = '';
+    if(defective && defective.warehouse){
+      if(defective.warehouse.address1){
+        warehouseDirection += defective.warehouse.address1;
+      }
+      if(defective.warehouse.address2){
+        warehouseDirection += ' ' + defective.warehouse.address2;
+      }
+      if(defective.warehouse.zipCode){
+        warehouseDirection += ' ' + defective.warehouse.zipCode;
+      }
+      if(defective.warehouse.city){
+        warehouseDirection += ' ' + defective.warehouse.city;
+      }
+    }
     const warehousePhone = defective && defective.warehouse && defective.warehouse.phone ? defective.warehouse.phone : '';
     const statusName = defective && defective.statusManagementDefect ? defective.statusManagementDefect.name : '';
     const userAl = defective && defective.user ? defective.user.name : '';
@@ -56,7 +71,7 @@ export class PrintTicketService {
         let htmlToPrintC = htmlToPrintB.replace('{{warehouse}}', warehouseName);
         let htmlToPrintD = htmlToPrintC.replace('{{warehouseDirection}}', warehouseDirection);
         let htmlToPrintE = htmlToPrintD.replace('{{warehousePhone}}', warehousePhone);
-        let htmlToPrintF = htmlToPrintE.replace('{{Razón social}}', warehouseName);
+        let htmlToPrintF = htmlToPrintE.replace('{{Razón social}}', warehouseSocialName);
         let htmlToPrintG = htmlToPrintF.replace('{{status}}', statusName);
         let htmlToPrintH = htmlToPrintG.replace('{{updatedAt}}', updatedAt);
         let htmlToPrintI = htmlToPrintH.replace('{{product}}', modelName);
@@ -66,18 +81,18 @@ export class PrintTicketService {
         let htmlToPrintM = htmlToPrintL.replace('{{defectZone}}', defectZone);
         let htmlToPrintN = htmlToPrintM.replace('{{observations}}', observations);
         let htmlToPrintO = htmlToPrintN.replace('{{userAl}}', userAl);
-        if(defective.defectTypeChild.includeInIncidenceTicket==true && defective.defectZoneChild.includeInIncidenceTicket==true){
+        if(defective && defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==true && defective.defectZoneChild && defective.defectZoneChild.includeInIncidenceTicket==true){
           if(cordova.plugins.printer) {
             cordova.plugins.printer.print(htmlToPrintO);
           }
         }else{
-          if(defective.defectTypeChild.includeInIncidenceTicket==true){
+          if(defective && defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==true){
             let htmlToPrintP = htmlToPrintO.replace('class="zone"', displayNone);
             if(cordova.plugins.printer) {
               cordova.plugins.printer.print(htmlToPrintP);
             }
           }else{
-            if(defective.defectZoneChild.includeInIncidenceTicket==true){
+            if(defective && defective.defectZoneChild && defective.defectZoneChild.includeInIncidenceTicket==true){
               let htmlToPrintP = htmlToPrintO.replace('class="type"', displayNone);
               if(cordova.plugins.printer) {
                 cordova.plugins.printer.print(htmlToPrintP);
