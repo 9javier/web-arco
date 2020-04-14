@@ -94,7 +94,7 @@ export class TariffService {
           activeTill: string;
         }
       }
-    }>(this.isCalculatingSGATariff, {}).pipe(map(response => {
+    }>(this.isCalculatingSGA, {}).pipe(map(response => {
       return response;
     })).pipe(map(response => {
       return response.data;

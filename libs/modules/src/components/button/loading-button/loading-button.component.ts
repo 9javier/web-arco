@@ -12,6 +12,7 @@ export class LoadingButtonComponent implements OnInit {
   @Input() icon: string = null;
   @Input() tooltip: string = null;
   @Output() clickButton = new EventEmitter();
+  @Input() isDisabled: boolean = true;
 
   private _isLoading: boolean = false;
   get isLoading(): boolean {
@@ -19,14 +20,6 @@ export class LoadingButtonComponent implements OnInit {
   }
   set isLoading(value: boolean) {
     this._isLoading = value;
-  }
-
-  private _isDisabled: boolean = true;
-  get isDisabled(): boolean {
-    return this._isDisabled;
-  }
-  set isDisabled(value: boolean) {
-    this._isDisabled = value;
   }
 
   constructor() { }
