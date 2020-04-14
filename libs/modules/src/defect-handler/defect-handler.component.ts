@@ -343,7 +343,6 @@ export class DefectHandlerComponent implements OnInit {
   print(defective) {
     this.incidentsService.getData(defective).subscribe(
       resp => {
-        console.log("resp",resp.data);
         if (resp.data.statusManagementDefect.ticketEmit == true) {
           this.printTicketService.printTicket(resp.data);
         }
