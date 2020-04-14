@@ -20,7 +20,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
   @ViewChild(FormExpeditionInfoComponent) formExpeditionInfo: FormExpeditionInfoComponent;
   @ViewChild(FormExpeditionProviderComponent) formExpeditionProvider: FormExpeditionProviderComponent;
 
-  private lastExepeditionQueried = {reference: null, providerId: null};
+  lastExepeditionQueried = {reference: null, providerId: null};
   isReceptionWithoutOrder: boolean = false;
   public checkingResumeExpeditionInProcess: boolean = false;
 
