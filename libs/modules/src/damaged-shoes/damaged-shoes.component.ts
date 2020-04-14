@@ -19,7 +19,7 @@ export class DamagedShoesComponent implements OnInit {
   originalClassifications: string;
   tableClassifications: Classifications[];
   tableAction: Action[];
-  tableColumns = ['statusId', 'status', 'ticketEmit', 'passHistory', 'requirePhoto', 'requireContact', 'requireOk', 'allowOrders', 'shippedFallback'];
+  tableColumns = ['statusId', 'status', 'ticketEmit', 'passHistory', 'requirePhoto', 'requireContact', 'requireOk', 'allowOrders', 'shippedFallback', 'soldFallback'];
   thereAreChanges: boolean;
 
   constructor(
@@ -44,9 +44,19 @@ export class DamagedShoesComponent implements OnInit {
 
   async saveChanges() {
     await this.intermediaryService.presentLoading('Cargando...');
-    await this.postData();
-    this.originalClassifications = JSON.stringify(this.tableClassifications);
-    this.thereAreChanges = false;
+    let soldFallbackCount: number = 0;
+    for(let status of this.tableClassifications){
+      if(status.soldFallback){
+        soldFallbackCount++;
+      }
+    }
+    if(soldFallbackCount > 1){
+      await this.intermediaryService.presentToastError('No puede haber más de un estado al que se cambie automáticamente tras una venta.')
+    }else{
+      await this.postData();
+      this.originalClassifications = JSON.stringify(this.tableClassifications);
+      this.thereAreChanges = false;
+    }
     await this.intermediaryService.dismissLoading();
   }
 
@@ -93,7 +103,8 @@ export class DamagedShoesComponent implements OnInit {
           requireContact: modalData.actions[3].isChecked,
           requireOk: modalData.actions[4].isChecked,
           allowOrders: modalData.actions[5].isChecked,
-          shippedFallback: modalData.actions[6].isChecked
+          shippedFallback: modalData.actions[6].isChecked,
+          soldFallback: modalData.actions[7].isChecked
         };
         await this.productsService.postDamagedUpdate([classification]);
         await this.getData();
@@ -133,7 +144,8 @@ export class DamagedShoesComponent implements OnInit {
       requireContact: data.actions[3].isChecked,
       requireOk: data.actions[4].isChecked,
       allowOrders: data.actions[5].isChecked,
-      shippedFallback: data.actions[6].isChecked
+      shippedFallback: data.actions[6].isChecked,
+      soldFallback: data.actions[7].isChecked
     };
 
     await this.productsService.postDamagedNew([item]);
