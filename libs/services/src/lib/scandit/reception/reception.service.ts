@@ -366,7 +366,7 @@ export class ReceptionScanditService {
           } else if (response.data.hasNewProducts && !hideAlerts) {
             ScanditMatrixSimple.showWarning(true, `El producto escaneado es nuevo en la tienda. ¿Quiere imprimir su código de exposición ahora?`, 'new_product_expo', 'Sí', 'No');
           } else if(response.data.isNoOnline) {
-            ScanditMatrixSimple.showWarning(true, 'El producto escaneado no es apto para la venta online.', 'no_online', 'Aceptar', '');
+            ScanditMatrixSimple.showWarning(true, 'El producto escaneado ['+referenceProduct+'] no es apto para la venta online.', 'no_online', 'Aceptar', '');
           } else {
             this.refenceProductToPrint = null;
             this.scannerPaused = false;
