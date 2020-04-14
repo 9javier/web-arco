@@ -31,10 +31,11 @@ interface MenuSectionItem {
   id?: string,
   url: string,
   icon: string,
-  notification?: boolean
-  children?: MenuSectionItem[];
+  notification?: boolean,
+  children?: MenuSectionItem[],
   header?: boolean,
-  tooltip?: string
+  tooltip?: string,
+  amount?: number
 }
 
 @Component({
@@ -56,6 +57,9 @@ export class MenuComponent implements OnInit {
   iconsDirection = 'start';
   displaySmallSidebar = false;
   currentRoute: string = "";
+
+  pickingTasksStoresAmount: number = 0;
+
   sgaPages: MenuItemList = [
     {
       title: 'Registro horario',
@@ -591,7 +595,8 @@ export class MenuComponent implements OnInit {
           id: 'picking-tasks-stores',
           icon: 'qr-scanner',
           url: '/picking-tasks-stores',
-          tooltip: 'Listado de peticiones pendientes de realizar'
+          tooltip: 'Listado de peticiones pendientes de realizar',
+          amount: this.pickingTasksStoresAmount
         },
         {
           title: 'Asociar pares a embalajes',
