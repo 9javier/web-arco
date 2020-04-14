@@ -14,9 +14,10 @@ import {AuthenticationService} from "@suite/services";
 export class ExpeditionManualService {
 
   private apiGeneralLogisticOperator = environment.apiLogisticOperator;
-  private createExpeditionSeurUrl = this.apiGeneralLogisticOperator + '/expedition-seur/';
+  private createExpeditionUrl = this.apiGeneralLogisticOperator + '/expedition/';
   private getWarehouseUrl = this.apiGeneralLogisticOperator + '/warehouse-logistic/index';
   private getWarehouseLogisticUrl = this.apiGeneralLogisticOperator + '/warehouse-logistic/';
+  private getLogisticsOperatorsUrl = this.apiGeneralLogisticOperator + '/logistics-operators/';
 
   private baseUrl: string;
   private getTrasnports: string;
@@ -69,10 +70,10 @@ export class ExpeditionManualService {
     )
   }
 
-  createExpeditionSeur(data):Observable<any> {
+  createExpedition(data):Observable<any> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
-      return this.http.post<any>(this.createExpeditionSeurUrl, data, {headers}).pipe(map(response=>{
+      return this.http.post<any>(this.createExpeditionUrl, data, {headers}).pipe(map(response=>{
         return response.data;
       }));
     }));
@@ -82,6 +83,15 @@ export class ExpeditionManualService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       return this.http.get<any>(this.getWarehouseUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getLogisticsOperators():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getLogisticsOperatorsUrl, {headers}).pipe(map(response=>{
         return response.data;
       }));
     }));

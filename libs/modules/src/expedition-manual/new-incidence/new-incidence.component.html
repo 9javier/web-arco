@@ -15,7 +15,7 @@
     </ion-item>
     <ion-item id="selected-operator">
       <ion-label>Tienda origen</ion-label>
-      <ion-select placeholder="Selecciona" #mySelect (ionChange)="warehousesSelected(mySelect.value)">
+      <ion-select placeholder="Selecciona" #selectOrigen (ionChange)="warehousesSelected(selectOrigen.value)">
         <ion-select-option *ngFor="let warehouse of warehouses">{{warehouse.name}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -23,7 +23,7 @@
       <ion-input type="text" formControlName="referenceExpedition"   placeholder="Referencia Expedicion"  name="name"  maxlength="50"></ion-input><br>
     </ion-item>
     <ion-item lines="none">
-      <ion-input type="text" formControlName="packages"   placeholder="Nnumero de bultos"  name="name"  maxlength="50"></ion-input><br>
+      <ion-input type="text" formControlName="packages"   placeholder="Numero de bultos"  name="name"  maxlength="50"></ion-input><br>
     </ion-item>
     <ion-item lines="none">
       <ion-input type="text" formControlName="packagesReference"   placeholder="Referencia de bultos"  name="name"  maxlength="50"></ion-input><br>
@@ -34,9 +34,9 @@
     <ion-item>
       <ion-label class="label-text">Operadores logisticos</ion-label>
       <ion-select  formControlName="operator"  name='operator'  placeholder="Selecciona">
-        <div *ngIf="operators !== undefined">
-          <ion-select-option (ionChange)="selectChange($event)" *ngFor="let item of operators" [value]="item.id" >{{item.name}}</ion-select-option>
-        </div>
+        <ion-select placeholder="Selecciona" #selectOperators (ionChange)="operatorsSelected(selectOperators.value)">
+          <ion-select-option *ngFor="let logisticOperator of logisticsOperators">{{logisticOperator.name}}</ion-select-option>
+        </ion-select>
       </ion-select>
     </ion-item>
     <ion-item lines="none">

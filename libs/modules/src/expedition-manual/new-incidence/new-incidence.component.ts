@@ -27,6 +27,9 @@ export class NewIncidenceComponent implements OnInit {
   operators;
   warehouses;
   warehouseSelected = '';
+  operatorSelected = '';
+  logisticsOperators = [];
+  data;
   constructor(
     private formBuilder: FormBuilder,
     private modalController: ModalController,
@@ -43,7 +46,7 @@ export class NewIncidenceComponent implements OnInit {
 
     this.getTransports();
     this.form = this.formBuilder.group({
-      operator: 'SEUR', //new FormControl(''),
+      operator: new FormControl(''),
       name: new FormControl(''),
       lastname: new FormControl(''),
       dni: new FormControl(''),
@@ -57,29 +60,18 @@ export class NewIncidenceComponent implements OnInit {
       packagesReference: new FormControl(''),
       packagesWeight: new FormControl(''),
       incidence: false
-    })
+    });
   }
 
   getTransports(){
-    this.operators = [{id: 1, name: 'SEUR'}];
-    /*this.expeManSrv.getTrasnport().subscribe(data => {
-      console.log(data);
-      this.operators = data;
-    });*/
+    this.expeManSrv.getLogisticsOperators().subscribe(data => {
+      this.logisticsOperators = data;
+    });
   }
 
   save(){
-      /*this.expeManSrv.store(this.form.value).subscribe(data => {
-        console.log(data);
-        this.intermediaryServiceL.presentToastSuccess('Expedicion guardada con exito');
-        this.close();
-      },error=>{
-        console.log(error);
-        this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos por favor de revisar');
-      });*/
-
-    console.log('DATA DATA ---> ', this.form.value);
     const body = {
+      operator: this.form.value.operator.toUpperCase(),
       warehouseReference: this.warehouseSelected['warehouseReference'],
       referenceExpedition: this.form.value.referenceExpedition,
       sender: {
@@ -101,38 +93,33 @@ export class NewIncidenceComponent implements OnInit {
       },
       packages: {
         packagesNum: this.form.value.packages,
-        packageReference: this.form.value.packagesReference
+        packageReference: this.form.value.packagesReference,
+        kilos: this.form.value.packagesWeight
       }
     };
 
-    this.expeManSrv.createExpeditionSeur(body).subscribe(data => {
-
-      if(body['recipient']['country'] !== 'ES'){
-        for(let i = 0; i < parseInt(body['packages']['packagesNum']); i++) {
-          const byteCharacters = atob(data[i]['tracking'][0]['label']);
+    this.expeManSrv.createExpedition(body).subscribe(data => {
+      for(let i = 0; i < data.length; i++){
+        for(let x = 0; x < data[i]['labels'].length; x++){
+          const byteCharacters = atob(data[i]['labels'][x]['label']);
           const byteNumbers = new Array(byteCharacters.length);
           for (let i = 0; i < byteCharacters.length; i++) {
             byteNumbers[i] = byteCharacters.charCodeAt(i);
           }
           const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], {type: "text/zpl"});
-          FileSaver.saveAs(blob, data[i]['tracking'][0]['uniqueCode']+'-label.zpl');
-        }
-      }else{
-        const byteCharacters = atob(data['label']);
-        const byteNumbers = new Array(byteCharacters.length);
-        for(let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], {type: "application/pdf"});
-        FileSaver.saveAs(blob, 'label-'+data['expeditionReference']+'.pdf');
-      }
 
+          if(this.form.value.country.toUpperCase() !== 'ES' && this.form.value.operator.toUpperCase() === 'SEUR') {
+            const blob = new Blob([byteArray], {type: "text/zpl"});
+            FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.zpl');
+          }else{
+            const blob = new Blob([byteArray], {type: "application/pdf"});
+            FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.pdf');
+          }
+        }
+      }
       this.intermediaryServiceL.presentToastSuccess('Expedicion guardada con exito');
       this.close();
     }, error => {
-      console.log('CONSOLE ERROR ---> ', error);
       this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos por favor de revisar');
     });
   }
@@ -142,6 +129,14 @@ export class NewIncidenceComponent implements OnInit {
       if(warehouse === this.warehouses[i].name){
         this.warehouseSelected = this.warehouses[i];
         console.log('WAREHOUSE SELECTED ---> ',this.warehouses[i]);
+      }
+    }
+  }
+
+  operatorsSelected(operator){
+    for(let i = 0; i < this.logisticsOperators.length; i++){
+      if(operator === this.logisticsOperators[i].name){
+        this.operatorSelected = this.logisticsOperators[i];
       }
     }
   }
