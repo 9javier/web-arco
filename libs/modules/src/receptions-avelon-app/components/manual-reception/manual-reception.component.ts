@@ -527,7 +527,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
                 brand: this.brandSelected,
                 model: this.modelSelected,
                 color: this.colorSelected,
-                sizes: this.listSizes
+                sizes: this.listSizes.map(s => {s.quantity = 0; return s;})
               };
               await this.localStorageProvider.set('lastPrint', JSON.stringify(lastPrint));
             }, (error) => {
