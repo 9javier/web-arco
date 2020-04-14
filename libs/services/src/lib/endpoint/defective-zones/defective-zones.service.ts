@@ -80,6 +80,10 @@ export class DefectiveZonesService {
       }));
   }
 
+  newUpdate(id: number, groupDefectiveZones: DefectiveZonesModel.RequestDefectiveZonesParent): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.put(this.singleDefectiveZonesUrl.replace("{{id}}", String(id)), groupDefectiveZones);
+  }
+
   /**
    * Update a new group into server
    * @param id - the id of the group to  be updated

@@ -32,8 +32,10 @@ export class PrintTicketService {
     const modelName = defective && defective.product && defective.product.model ? defective.product.model.name : '';
     const sizeName = defective && defective.product && defective.product.size ? defective.product.size.name : '';
     const productReference = defective && defective.product ? defective.product.reference : '';
-    const defectType = defective && defective.defectTypeParent && defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==true ? defective.defectTypeParent.name + ' - ' + defective.defectTypeChild.name : '';
-    const defectZone = defective && defective.defectZoneParent && defective.defectZoneChild && defective.defectZoneChild.includeInIncidenceTicket==true ? defective.defectZoneParent.name + ' - ' + defective.defectZoneChild.name : '';
+    const defectType = defective && defective.defectTypeParent && defective.defectTypeParent.includeInIncidenceTicket==true ? defective.defectTypeParent.name : '';
+    const defectZone = defective && defective.defectZoneParent && defective.defectZoneParent.includeInIncidenceTicket==true ? defective.defectZoneParent.name : '';
+    const defectTypeChild = defective && defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==true ? defective.defectTypeChild.name : '';
+    const defectZoneChild = defective && defective.defectZoneChild && defective.defectZoneChild.includeInIncidenceTicket==true ? defective.defectZoneChild.name : '';
     const observations = defective ? defective.observations : '';
     const updatedAt = defective ? moment(defective.updatedAt).format('DD/MM/YYYY  HH:mm') : '';
     const incidenceDate = defective ? moment(defective.dateDetection).format('DD/MM/YYYY  HH:mm') : '';
@@ -77,31 +79,44 @@ export class PrintTicketService {
         let htmlToPrintI = htmlToPrintH.replace('{{product}}', modelName);
         let htmlToPrintJ = htmlToPrintI.replace('{{size}}', sizeName);
         let htmlToPrintK = htmlToPrintJ.replace('{{barcode}}', productReference);
-        let htmlToPrintL = htmlToPrintK.replace('{{defectType}}', defectType);
-        let htmlToPrintM = htmlToPrintL.replace('{{defectZone}}', defectZone);
-        let htmlToPrintN = htmlToPrintM.replace('{{observations}}', observations);
-        let htmlToPrintO = htmlToPrintN.replace('{{userAl}}', userAl);
-        if(defective && defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==true && defective.defectZoneChild && defective.defectZoneChild.includeInIncidenceTicket==true){
+        let htmlToPrintL = htmlToPrintK.replace('{{observations}}', observations);
+        let htmlToPrintM = htmlToPrintL.replace('{{userAl}}', userAl);
+        let htmlToPrintN = htmlToPrintM.replace('{{defectType}}', defectType);
+        let htmlToPrintO = htmlToPrintN.replace('{{defectTypeChild}}', defectTypeChild);
+        let htmlToPrintP = htmlToPrintO.replace('{{defectZone}}', defectZone);
+        let htmlToPrintQ = htmlToPrintP.replace('{{defectZoneChild}}', defectZoneChild);
+
+        if( ((defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==true)
+          || (defective.defectTypeParent && defective.defectTypeParent.includeInIncidenceTicket==true))
+          && ((defective.defectZoneChild && defective.defectZoneChild.includeInIncidenceTicket==true)
+          || (defective.defectZoneParent && defective.defectZoneParent.includeInIncidenceTicket==true))
+        ){
           if(cordova.plugins.printer) {
-            cordova.plugins.printer.print(htmlToPrintO);
+            cordova.plugins.printer.print(htmlToPrintQ);
           }
         }else{
-          if(defective && defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==true){
-            let htmlToPrintP = htmlToPrintO.replace('class="zone"', displayNone);
+          if( defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==false
+            && defective.defectTypeParent && defective.defectTypeParent.includeInIncidenceTicket==false
+            && defective.defectZoneChild && defective.defectZoneChild.includeInIncidenceTicket==false
+            && defective.defectZoneParent && defective.defectZoneParent.includeInIncidenceTicket==false
+          ){
+            let htmlToPrintR = htmlToPrintQ.replace('class="type"', displayNone);
+            let htmlToPrintS = htmlToPrintR.replace('class="zone"', displayNone);
             if(cordova.plugins.printer) {
-              cordova.plugins.printer.print(htmlToPrintP);
+              cordova.plugins.printer.print(htmlToPrintS);
             }
           }else{
-            if(defective && defective.defectZoneChild && defective.defectZoneChild.includeInIncidenceTicket==true){
-              let htmlToPrintP = htmlToPrintO.replace('class="type"', displayNone);
+            if( defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==false
+              && defective.defectTypeParent && defective.defectTypeParent.includeInIncidenceTicket==false
+          ){
+              let htmlToPrintR = htmlToPrintQ.replace('class="type"', displayNone);
               if(cordova.plugins.printer) {
-                cordova.plugins.printer.print(htmlToPrintP);
+                cordova.plugins.printer.print(htmlToPrintR);
               }
             }else{
-              let htmlToPrintP = htmlToPrintO.replace('class="type"', displayNone);
-              let htmlToPrintQ = htmlToPrintP.replace('class="zone"', displayNone);
+              let htmlToPrintR = htmlToPrintQ.replace('class="zone"', displayNone);
               if(cordova.plugins.printer) {
-                cordova.plugins.printer.print(htmlToPrintQ);
+                cordova.plugins.printer.print(htmlToPrintR);
               }
             }
           }
