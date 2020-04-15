@@ -327,4 +327,93 @@ export class DefectiveRegistryService {
 
   }
 
+  getFilters(){
+    const body = {
+      id: [],
+      user: [],
+      product: [],
+      model: [],
+      size: [],
+      brand: [],
+      color: [],
+      storeDetection: [],
+      dateDetection: [],
+      statusManagementDefect: [],
+      defectTypeParent: [],
+      defectTypeChild: [],
+      barCode: [],
+      warehouse: [],
+      factoryReturn: []
+    };
+
+    return this.http.post<HttpRequestModel.Response>(this.entitiesFiltersFalseUrlAl, body).pipe(
+      map(resp =>{
+        let filters = {
+          operator:[
+            {
+              id:1,
+              name:'DHL'
+            }
+          ],
+          name:[
+            {
+              id:1,
+              name:'fulanito'
+            }
+          ],
+          lastname:[
+            {
+              id:1,
+              name:'fulanito'
+            }
+          ],
+          dni:[
+            {
+              id:1,
+              name:'dni'
+            }
+          ],
+          phone:[
+            {
+              id:1,
+              name:'32221321'
+            }
+          ],
+          direction:[
+            {
+              id:1,
+              name:'mexico'
+            }
+          ],
+          province:[
+            {
+              id:1,
+              name:'guadalajara'
+            }
+          ],
+          country:[
+            {
+              id:1,
+              name:'mexico'
+            }
+          ],
+          postalcode:[
+            {
+              id:1,
+              name:'23452'
+            }
+          ],
+          packages:[
+            {
+              id:1,
+              name:'2'
+            }
+          ],
+        }
+
+        return filters;
+      })
+    )
+  }
+
 }
