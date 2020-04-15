@@ -4,14 +4,17 @@ import { MenuComponent } from './menu.component';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { MatBadgeModule } from '@angular/material';
+import { MatTooltipModule } from "@angular/material";
+import {AlertPopoverComponent} from "../alert-popover/alert-popover.component";
 @NgModule({
-  entryComponents:[MenuComponent],
-  declarations: [MenuComponent],
+  entryComponents:[MenuComponent, AlertPopoverComponent],
+  declarations: [MenuComponent, AlertPopoverComponent],
   imports: [
     CommonModule,
     IonicModule,
     MatBadgeModule,
-    RouterModule
+    RouterModule,
+    MatTooltipModule
   ],
   exports:[MenuComponent]
 })

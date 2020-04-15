@@ -1,0 +1,19 @@
+  <mat-tab-group [(selectedIndex)]='selectedIndex' (selectedTabChange)="onTabChanged($event)" mat-align-tabs="center">
+      <mat-tab label="Incidencias">
+        <ng-template matTabContent> 
+          <suite-incidences-manual #expeditionManual></suite-incidences-manual>
+        </ng-template>
+      </mat-tab>
+  </mat-tab-group>
+
+
+<ion-footer>
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button (click)="update()" matTooltip="Actualizar" matTooltipClass="tooltip">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="openForm()" matTooltip="Agregar Incidencia" matTooltipClass="tooltip">
+      <ion-icon name="md-add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>

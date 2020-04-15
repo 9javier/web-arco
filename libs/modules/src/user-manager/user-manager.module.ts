@@ -12,6 +12,7 @@ import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ResponsiveLayoutModule } from '../components/responsive-layout/responsive-layout.module';
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -33,7 +34,8 @@ const routes: Routes = [
     BreadcrumbModule,
     MatExpansionModule,
     MatSlideToggleModule,
-    ResponsiveLayoutModule
+    ResponsiveLayoutModule,
+    MatTooltipModule
   ],
   declarations: [UserManagerComponent]
 })

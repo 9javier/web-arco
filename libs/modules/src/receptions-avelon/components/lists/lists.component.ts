@@ -1,6 +1,5 @@
-import { ReceptionAvelonModel } from '@suite/services';
+import { ReceptionAvelonModel, ReceptionsAvelonService } from '@suite/services';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-
 
 @Component({
   selector: 'suite-lists',
@@ -9,37 +8,51 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class ListsComponent implements OnInit {
 
+  @Input('type') type: string;
+  @Output() seleccionado = new EventEmitter();
 
-  @Input('data') datos: Array<ReceptionAvelonModel.Data> = []
-  @Input('type') type: string
-  @Output() seleccionado = new EventEmitter()
+  data: Array<ReceptionAvelonModel.Data> = [];
 
-
-  constructor() { }
+  constructor(
+    private receptions: ReceptionsAvelonService
+  ) {}
 
   ngOnInit() {
-    console.log(this.datos); 
-    this.datos.forEach(elem => {
-      if (elem.selected) {
-        this.seleccionado.emit(elem)
-      }else {
-        this.seleccionado.emit({dato: undefined})
-      }
+    let list;
+    switch(this.type){
+      case 'brands':
+        list = this.receptions.getBrandsList();
+        break;
+      case 'models':
+        list = this.receptions.getModelsList();
+        break;
+      case 'colors':
+        list = this.receptions.getColorsList();
+    }
+    list.subscribe(datos => {
+      setTimeout(() => {
+        this.data = datos.sort((a, b) => a.name.trim().localeCompare(b.name.trim()));
+        this.data.forEach(elem => {
+          if (elem.selected) {
+            this.seleccionado.emit(elem);
+          } else {
+            this.seleccionado.emit({ dato: undefined });
+          }
+        });
+      }, 0);
     });
   }
-  
+
   selected(dato: ReceptionAvelonModel.Data) {
-     dato.selected = !dato.selected
-     if (dato.selected) {
-       this.seleccionado.emit({ type: this.type, dato})
-     }else{
-      this.seleccionado.emit({ type: this.type, dato: undefined})
-     }
-     this.datos.map(elem => {
-      if (elem.id !== dato.id) {
-        elem.selected = false
-      }
-     });
-     console.log(dato.selected)
+    setTimeout(() => {
+      dato.selected = !dato.selected;
+      this.receptions.setEmitList({ type: this.type, dato });
+      this.data.map(elem => {
+        if (elem.id !== dato.id) {
+          elem.selected = false;
+        }
+      });
+    }, 0);
   }
+
 }

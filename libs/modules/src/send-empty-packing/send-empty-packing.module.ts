@@ -13,6 +13,7 @@ import { SendEmptyPackingComponent } from './send-empty-packing.component';
 import { SendEmptyPackingRoutingModule } from './send-empty-packing-routing.module';
 import { SendPackingManualComponent } from './send-packing-manual/send-packing-manual.component';
 import { InputCodesComponent } from './input-codes/input-codes.component';
+import { MatTooltipModule } from "@angular/material";
 
 @NgModule({
   declarations: [SendEmptyPackingComponent, SendPackingComponent, SendPackingManualComponent, InputCodesComponent],
@@ -30,7 +31,8 @@ import { InputCodesComponent } from './input-codes/input-codes.component';
     FormsModule,
     BreadcrumbModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTooltipModule,
   ], entryComponents: [
     SendPackingComponent,
     SendPackingManualComponent,

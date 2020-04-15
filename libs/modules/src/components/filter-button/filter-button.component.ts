@@ -11,10 +11,12 @@ import {FilterPopoverProvider} from "../../../../services/src/providers/filter-p
 export class FilterButtonComponent implements OnInit {
 
   @Input() title: string;
-  @Input() listItems: Array<any>;
+  @Input() listItems: Array<any> = [];
   @Input() isFiltering: boolean;
   @Input() filterType: string = 'search';
+  @Input() customFiltersLoad: boolean = false;
   @Output() applyFilters = new EventEmitter();
+  @Output() clickedToOpenPopover = new EventEmitter();
 
   tooltipHaveValues: string = null;
 
@@ -25,7 +27,17 @@ export class FilterButtonComponent implements OnInit {
 
   ngOnInit() {}
 
-  async openFilterPopover(ev: any) {
+  clickFilterPopover(ev: any) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (this.customFiltersLoad) {
+      this.clickedToOpenPopover.next(ev);
+    } else {
+      this.openFilterPopover(ev, null);
+    }
+  }
+
+  public async openFilterPopover(ev: any, typedValue) {
     this.filterPopoverProvider.title = this.title;
     this.filterPopoverProvider.listItems = JSON.parse(JSON.stringify(this.listItems));
     this.filterPopoverProvider.filterType  = this.filterType;
@@ -33,12 +45,13 @@ export class FilterButtonComponent implements OnInit {
     const popover = await this.popoverController.create({
       cssClass: 'popover-filter',
       component: FilterPopoverComponent,
-      event: ev
+      event: ev,
+      componentProps: { typedValue }
     });
 
     popover.onDidDismiss().then((data) => {
       if (data && data.data && data.data.filters) {
-        this.applyFilters.next(data.data.filters);
+        this.applyFilters.next({filters: data.data.filters, typedFilter: data.data.typedFilter});
         this.listItems = data.data.filters;
         this.filterPopoverProvider.listItems = JSON.parse(JSON.stringify(this.listItems));
       } else {
@@ -50,8 +63,8 @@ export class FilterButtonComponent implements OnInit {
   }
 
   showFiltersActive() {
-    let itemsFiltered = this.listItems.filter(item => item.checked);
-    if (itemsFiltered.length != this.listItems.length) {
+    let itemsFiltered = this.listItems ? this.listItems.filter(item => item.checked) : [];
+    if (this.listItems && itemsFiltered.length != this.listItems.length) {
       this.tooltipHaveValues  = itemsFiltered.map(item => item.value).join(', ');
     } else {
       this.tooltipHaveValues = null;

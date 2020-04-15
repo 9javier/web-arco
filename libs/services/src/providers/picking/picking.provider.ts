@@ -3,6 +3,11 @@ import {ShoesPickingModel} from "../../models/endpoints/ShoesPicking";
 import {PickingModel} from "../../models/endpoints/Picking";
 import {StoresLineRequestsModel} from "../../models/endpoints/StoresLineRequests";
 import {PickingStoreModel} from "../../models/endpoints/PickingStore";
+import {DeliveryRequestModel} from "../../models/endpoints/DeliveryRequest";
+import DeliveryRequest = DeliveryRequestModel.DeliveryRequest;
+import {LineRequestModel} from "../../models/endpoints/LineRequest";
+import LineRequest = LineRequestModel.LineRequest;
+import Filters = PickingStoreModel.Filters;
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +57,7 @@ export class PickingProvider {
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
       wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.',
       scan_packings_to_end: 'Escanee las Jaulas utilizadas para finalizar el picking',
+      press_scan_packings_to_continue: 'Pulse escanear embalajes para continuar con el traspaso'
     },
     'jail': {
       not_registered: 'La Jaula escaneada no está registrada en el sistema.',
@@ -66,6 +72,7 @@ export class PickingProvider {
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
       wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.',
       scan_packings_to_end: 'Escanee las Jaulas utilizadas para finalizar el picking',
+      press_scan_packings_to_continue: 'Pulse escanear embalajes para continuar con el traspaso'
     },
     2: {
       not_registered: 'El Pallet escaneado no está registrado en el sistema.',
@@ -164,6 +171,30 @@ export class PickingProvider {
     this._listProductsToStorePickings = value;
   }
 
+  private _selectedPendingRequests: Array<LineRequest | DeliveryRequest> = null;
+  get selectedPendingRequests(): Array<LineRequest | DeliveryRequest> {
+    return this._selectedPendingRequests;
+  }
+  set selectedPendingRequests(value: Array<LineRequest | DeliveryRequest>) {
+    this._selectedPendingRequests = value;
+  }
+
+  private _selectedProcessedRequests: Array<LineRequest | DeliveryRequest> = null;
+  get selectedProcessedRequests(): Array<LineRequest | DeliveryRequest> {
+    return this._selectedProcessedRequests;
+  }
+  set selectedProcessedRequests(value: Array<LineRequest | DeliveryRequest>) {
+    this._selectedProcessedRequests = value;
+  }
+
+  private _requestFilters: Filters = null;
+  get requestFilters(): Filters {
+    return this._requestFilters;
+  }
+  set requestFilters(value: Filters) {
+    this._requestFilters = value;
+  }
+
   private _listProductsProcessedToStorePickings: StoresLineRequestsModel.LineRequests[] = null;
   get listProductsProcessedToStorePickings(): StoresLineRequestsModel.LineRequests[] {
     return this._listProductsProcessedToStorePickings;
@@ -223,11 +254,11 @@ export class PickingProvider {
     this._pickingSelectedToStart = value;
   }
 
-  private _listStoresToPopoverList: Array<PickingModel.WorkwaveOrderWarehouse> = new Array<PickingModel.WorkwaveOrderWarehouse>();
-  get listStoresToPopoverList(): Array<PickingModel.WorkwaveOrderWarehouse> {
+  private _listStoresToPopoverList: Array<{name: string, reference: string}> = new Array<{name: string, reference: string}>();
+  get listStoresToPopoverList(): Array<{name: string, reference: string}> {
     return this._listStoresToPopoverList;
   }
-  set listStoresToPopoverList(value: Array<PickingModel.WorkwaveOrderWarehouse>) {
+  set listStoresToPopoverList(value: Array<{name: string, reference: string}>) {
     this._listStoresToPopoverList = value;
   }
 }

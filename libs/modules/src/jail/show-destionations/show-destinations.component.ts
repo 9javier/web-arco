@@ -18,7 +18,7 @@ export class ShowDestinationsComponent implements OnInit {
 
   ngOnInit() {
     this.jail = this.navParams.get("jail");
-    this.destinations = this.jail.carrierWarehousesDestiny; // warehouse
+    this.destinations = this.jail.destiny; // warehouse
   }
 
   submit(){

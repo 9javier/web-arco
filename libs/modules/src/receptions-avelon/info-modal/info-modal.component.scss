@@ -1,0 +1,27 @@
+ion-content {
+  p.title {
+    text-align: center;
+    font-size: 20px;
+  }
+  mat-card {
+    margin-top: 16px;
+
+    mat-card-content {
+      span {
+        font-weight: bold;
+      }
+
+      mat-divider {
+        margin: 4px 0;
+        position: initial;
+      }
+
+      p.blocked{
+        text-align: center;
+        span{
+          font-size: larger;
+        }
+      }
+    }
+  }
+}

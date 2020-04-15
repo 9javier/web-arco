@@ -1,0 +1,101 @@
+.wrapp-center{
+    text-align: center; 
+    margin-left: auto;
+    margin-right: auto;   
+}
+.container-label-print{
+    text-align: center; 
+    margin-top:-12% ;   
+}
+.container-label-print-sucess{
+    text-align: center; 
+    margin-top:-15% ;   
+}
+.container{
+    display: table-cell;
+    vertical-align: middle;
+}
+.text-title{
+    font-weight: bold;
+}
+.text-send-by{
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.expediton{
+    margin-top: 10%;
+}
+
+.item{
+    margin-top: 10%;
+}
+
+.item-expedition{
+    margin-top: 10%;
+}
+
+.text-item{
+ font-size: 1em;
+}
+
+.text-error{
+font-size: 16px;
+}
+.error-mesage{
+    margin-top: 55%;
+    margin-left: 4px;
+    text-align: justify;
+    text-justify: inter-word;
+}
+.close-icon{
+    font-size: 90px;
+}
+
+.text-blocked{
+    font-weight: bold;
+    font-size: 1.5em;
+    color: red;
+}
+
+.blocked{
+    margin-top: -12%;
+    margin-bottom: 5%;
+}
+.vertical-align-content > *
+{
+     display: flex!important;
+     align-content: center!important;
+     align-items: center!important;
+}
+
+#title-label{
+    margin-bottom: 4%;
+}
+.max-height{
+    height: 100%;
+}
+
+.footer-label-print {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    .horizontal-fab {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      ion-fab-button {
+        margin-left: 16px;
+      }
+    }
+  }
+
+.description{
+    max-width: 60%;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.wrapp-description{
+    margin-top: 10%;
+}

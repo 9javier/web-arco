@@ -17,6 +17,11 @@ export class ToolbarProvider {
     return this._showAlMenu;
   }
 
+  private _showBackArrow: Subject<boolean> = new Subject();
+  get showBackArrow(): Subject<boolean> {
+    return this._showBackArrow;
+  }
+
   private _optionsActions: Subject<ActionToolbarModel.ActionToolbar[]> = new Subject();
   get optionsActions(): Subject<ActionToolbarModel.ActionToolbar[]> {
     return this._optionsActions;

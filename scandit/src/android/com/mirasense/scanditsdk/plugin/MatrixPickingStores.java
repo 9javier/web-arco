@@ -84,12 +84,14 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
   private static ArrayList<KeyPairBoolData> filtersBrands;
   private static ArrayList<KeyPairBoolData> filtersSizes;
   private static ArrayList<KeyPairBoolData> filtersColors;
+  private static ArrayList<KeyPairBoolData> filtersTypes;
 
   private final int FILTER_SORT_TYPE = 1;
   private final int FILTER_MODEL = 2;
   private final int FILTER_BRAND = 3;
   private final int FILTER_SIZE = 4;
   private final int FILTER_COLOR = 5;
+  private final int FILTER_TYPE = 6;
 
   private static final int SORT_TYPE_NONE = 1;
   private static final int SORT_TYPE_ASC = 2;
@@ -109,6 +111,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
 
   private static ViewGroup viewGroup;
 
+  private boolean packing = false;
   private static String urlBase = "";
   private static Dialog dialogInfoForProduct = null;
 
@@ -127,6 +130,10 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       colorTitle = b.getString("colorTitle", "#424242");
       textInit = b.getString("textInit", "");
       urlBase = b.getString("urlBase", "");
+    }
+
+    if(textInit.equals("Escanee los embalajes a usar")){
+      packing = true;
     }
 
     String package_name = getApplication().getPackageName();
@@ -149,6 +156,12 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     tvPackingStart.setVisibility(View.VISIBLE);
 
     ScanditSDK.setViewDataMatrixSimple(this.findViewById(android.R.id.content).getRootView());
+
+    if(this.packing){
+      TabLayout tabLayout = findViewById(resources.getIdentifier("tlProductsLists", "id", package_name));
+      TabLayout.Tab tab = tabLayout.getTabAt(0);
+      if(tab != null) tab.setText("Embalajes");
+    }
 
     initializeScanditPicker(resources, package_name);
     initializeListManagement(resources, package_name);
@@ -307,33 +320,23 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
   }
 
   private void initializeBottomButtons(Resources resources, String package_name) {
-    Button btnFinishPickingStore = findViewById(resources.getIdentifier("btnFinishPickingStore", "id", package_name));
-    Button btnPackingPickingStore = findViewById(resources.getIdentifier("btnPackingPickingStore", "id", package_name));
-    btnFinishPickingStore.setOnClickListener(v -> {
+    Button btnFinish = findViewById(resources.getIdentifier("btnFinish", "id", package_name));
+
+    if(packing) {
+      btnFinish.setText("Precintar");
+    }
+
+    btnFinish.setOnClickListener(v -> {
       JSONObject jsonObject = new JSONObject();
       try {
         jsonObject.put("result", true);
-        jsonObject.put("action", "matrix_simple_finish_picking");
-      } catch (JSONException e) {
-
-      }
+        jsonObject.put("action", "matrix_simple_finish");
+      } catch (JSONException ignored) {}
       PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
       pResult.setKeepCallback(true);
       ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
     });
 
-    btnPackingPickingStore.setOnClickListener(v -> {
-      JSONObject jsonObject = new JSONObject();
-      try {
-        jsonObject.put("result", true);
-        jsonObject.put("action", "matrix_simple_scan_packings");
-      } catch (JSONException e) {
-
-      }
-      PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
-      pResult.setKeepCallback(true);
-      ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
-    });
   }
 
   private void initializeFilters(Resources resources, String package_name) {
@@ -342,6 +345,13 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     TextView tvFilterBrand = findViewById(resources.getIdentifier("tvFilterBrand", "id", package_name));
     TextView tvFilterSize = findViewById(resources.getIdentifier("tvFilterSize", "id", package_name));
     TextView tvFilterColor = findViewById(resources.getIdentifier("tvFilterColor", "id", package_name));
+
+    if(true){
+      LinearLayout filterTypeLayout = findViewById(resources.getIdentifier("filterTypeLayout", "id", package_name));
+      filterTypeLayout.setVisibility(View.VISIBLE);
+      TextView tvFilterType = findViewById(resources.getIdentifier("tvFilterType", "id", package_name));
+      tvFilterType.setOnClickListener(view -> this.openSearchItemsSpinner(resources, package_name, tvFilterType, filtersTypes, FILTER_TYPE, "Tipos"));
+    }
 
     tvSortBy.setOnClickListener(view -> {
       this.openSortItemsSpinner(resources, package_name, tvSortBy, filtersSortTypes, FILTER_SORT_TYPE, "Ordenar por");
@@ -403,6 +413,9 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
             case FILTER_COLOR:
               defaultMessageFilter = "Filtro color";
               break;
+            case FILTER_TYPE:
+              defaultMessageFilter = "Filtro tipo";
+              break;
           }
           tvSelected.setText(defaultMessageFilter);
         }
@@ -420,6 +433,9 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
           case FILTER_COLOR:
             filtersColors = searchItemsAdapter.getAllItems();
             break;
+          case FILTER_TYPE:
+            filtersTypes = searchItemsAdapter.getAllItems();
+            break;
         }
         responseFiltersToIonic();
       });
@@ -436,6 +452,9 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
             break;
           case FILTER_COLOR:
             filtersColors = originListItemsForCancel;
+            break;
+          case FILTER_TYPE:
+            filtersTypes = originListItemsForCancel;
             break;
         }
       });
@@ -543,6 +562,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       filtersToIonic.put("brand", KeyPairBoolData.arrayToJsonArray(filtersBrands));
       filtersToIonic.put("size", KeyPairBoolData.arrayToJsonArray(filtersSizes));
       filtersToIonic.put("color", KeyPairBoolData.arrayToJsonArray(filtersColors));
+      filtersToIonic.put("type", KeyPairBoolData.arrayToJsonArray(filtersTypes));
       jsonObject.put("filters", filtersToIonic);
     } catch (JSONException e) {
 
@@ -561,6 +581,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       filtersBrands = new ArrayList<>();
       filtersSizes = new ArrayList<>();
       filtersColors = new ArrayList<>();
+      filtersTypes = new ArrayList<>();
 
       if (filtersPickingStores.getOrderTypes().size() > 0) {
         for (SingleFilterPickingStores orderType : filtersPickingStores.getOrderTypes()) {
@@ -609,6 +630,16 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
           keyPairBoolData.setName(color.getName());
           keyPairBoolData.setObject(color);
           filtersColors.add(keyPairBoolData);
+        }
+      }
+
+      if (filtersPickingStores.getTypes().size() > 0) {
+        for (SingleFilterPickingStores type : filtersPickingStores.getTypes()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(type.getId());
+          keyPairBoolData.setName(type.getName());
+          keyPairBoolData.setObject(type);
+          filtersTypes.add(keyPairBoolData);
         }
       }
     }
@@ -728,6 +759,76 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
         pResult.setKeepCallback(true);
         ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
       });
+    }
+
+    Dialog dialogProductInfoLocal = new Dialog(matrixPickingStores);
+    dialogProductInfoLocal.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    dialogProductInfoLocal.setContentView(customView);
+    dialogProductInfoLocal.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    dialogProductInfoLocal.setCancelable(true);
+    dialogProductInfoLocal.show();
+
+    dialogInfoForProduct = dialogProductInfoLocal;
+  }
+
+  public static void showInfoForDeliveryRequest(LineRequestsProduct lineRequestsProduct, Resources resources, String package_name, boolean isProcessed) {
+
+    View customView = LayoutInflater.from(matrixPickingStores).inflate(resources.getIdentifier("product_info_picking_store", "layout", package_name), viewGroup, false);
+    ImageView ivProductPickingStore = customView.findViewById(resources.getIdentifier("ivProductPickingStore", "id", package_name));
+    TextView tvReferencePickingStore = customView.findViewById(resources.getIdentifier("tvReferencePickingStore", "id", package_name));
+    TextView tvNamePickingStore = customView.findViewById(resources.getIdentifier("tvNamePickingStore", "id", package_name));
+    TextView tvSizePickingStore = customView.findViewById(resources.getIdentifier("tvSizePickingStore", "id", package_name));
+    TextView tvBrandPickingStore = customView.findViewById(resources.getIdentifier("tvBrandPickingStore", "id", package_name));
+    TextView tvColorPickingStore = customView.findViewById(resources.getIdentifier("tvColorPickingStore", "id", package_name));
+    Spinner sRejectionReasonPickingStore = customView.findViewById(resources.getIdentifier("sRejectionReasonPickingStore", "id", package_name));
+    LinearLayout llRejectionPickingStore = customView.findViewById(resources.getIdentifier("llRejectionPickingStore", "id", package_name));
+    Button btnRejectionPickingStore = customView.findViewById(resources.getIdentifier("btnRejectionPickingStore", "id", package_name));
+    btnRejectionPickingStore.setText("Cancelar");
+    View vRejectionReasonDividerPickingStore = customView.findViewById(resources.getIdentifier("vRejectionReasonDividerPickingStore", "id", package_name));
+    View vRejectionReasonNoDividerPickingStore = customView.findViewById(resources.getIdentifier("vRejectionReasonNoDividerPickingStore", "id", package_name));
+
+    if (!urlBase.isEmpty()) {
+      String url = urlBase + lineRequestsProduct.getModel().getImageUrl();
+      Glide.with(matrixPickingStores).load(url).fitCenter().into(ivProductPickingStore);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        ivProductPickingStore.setClipToOutline(true);
+      }
+    }
+
+    tvReferencePickingStore.setText(lineRequestsProduct.getModel().getReference());
+    tvNamePickingStore.setText(lineRequestsProduct.getModel().getName());
+    tvSizePickingStore.setText(lineRequestsProduct.getSize().getName());
+    tvBrandPickingStore.setText(lineRequestsProduct.getModel().getBrand().getName());
+    tvColorPickingStore.setText(lineRequestsProduct.getModel().getColor().getName());
+
+    vRejectionReasonDividerPickingStore.setVisibility(View.GONE);
+    vRejectionReasonNoDividerPickingStore.setVisibility(View.VISIBLE);
+    llRejectionPickingStore.setVisibility(View.GONE);
+    sRejectionReasonPickingStore.setVisibility(View.GONE);
+
+    if (!isProcessed) {
+      vRejectionReasonDividerPickingStore.setVisibility(View.VISIBLE);
+      vRejectionReasonNoDividerPickingStore.setVisibility(View.GONE);
+      sRejectionReasonPickingStore.setVisibility(View.GONE);
+      llRejectionPickingStore.setVisibility(View.VISIBLE);
+
+      btnRejectionPickingStore.setOnClickListener(view -> new AlertDialog.Builder(view.getContext())
+        .setMessage("¿Seguro que desea cancelar este pedido?")
+        .setPositiveButton("Aceptar", (dialogInterface, i) -> {
+          JSONObject jsonObject = new JSONObject();
+          try {
+            jsonObject.put("result", true);
+            jsonObject.put("action", "request_cancel");
+            jsonObject.put("requestReference", lineRequestsProduct.getReference());
+          } catch (JSONException e) {}
+          PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+          pResult.setKeepCallback(true);
+          ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+          dialogInfoForProduct.dismiss();
+        })
+        .setNegativeButton("Cancelar", (dialogInterface, i) -> {})
+        .show()
+      );
     }
 
     Dialog dialogProductInfoLocal = new Dialog(matrixPickingStores);

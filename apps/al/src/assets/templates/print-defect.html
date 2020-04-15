@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" id="html">
+<head>
+  <style id="styleToCssFromAjax"></style>
+</head>
+<body>
+<div class="contentTicket" style="border:solid 1px #000">
+  <div class="divTitleTicket" style="text-align: center;">
+    <h3><u>GESTION INCIDENCIA</u></h3>
+  </div>
+  <div class="row">
+    <div class="divHalfRow divResumeTotalText" >
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Nº incidencia: {{incidenceId}}</b><br/>
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Fecha inicio de incidencia: {{incidenceDate}}</b><br/>
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;TIENDA: {{warehouse}}</b><br/>
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Dirección: {{warehouseDirection}} + {{warehouseTlf}}</b><br/>
+      <b>-&nbsp;&nbsp;&nbsp;&nbsp;Razón social: {{Razón social}}</b><br/><br/>
+    </div>
+  </div>
+  <div class="row"  style="border: 1px;">
+    <div class="divHalfRow divPaymentTextRight"  style="border-top-style:dashed;border-width: 1px;">
+      <br/><b>-&nbsp;&nbsp;&nbsp;&nbsp;Estado actual de la incidencia: {{status}}</b><br/>
+      -&nbsp;&nbsp;&nbsp;&nbsp;Fecha estado actual: {{updatedAt}}<br/><br/>
+    </div>
+  </div>
+  <div class="row">
+    <div class="divHalfRow divPaymentTextRight" style="border-top-style:dashed;border-width: 1px;">
+      <br/>-&nbsp;&nbsp;&nbsp;&nbsp;Artículo - talla: {{product}} - {{size}}<br/>
+      -&nbsp;&nbsp;&nbsp;&nbsp;Barcode: {{barcode}}<br/>
+      -&nbsp;&nbsp;&nbsp;&nbsp;Tipo de defecto/s: {{defectType}}<br/>
+      -&nbsp;&nbsp;&nbsp;&nbsp;Observaciones: {{observations}}<br/><br/>
+    </div>
+  </div>
+  <div class="divMessagesFinalTicket" style="border-top-style:dashed;border-width: 1px;">
+    <p style="text-align: center;">
+      "Este recibo es un justificante de depósito<br/>
+      para el estudio de la incidencia<br/>
+      pero no implica la aceptación de la reclamación.<br/>
+      Se le dará respuesta lo antes posible.<br/>
+      Este recibo es imprescindible para<br/>
+      la recuperación del artículo en depósito.<br/>
+      El ticket de compra contiene nuestra política de<br/>
+      cambios / devoluciones y es imprescindible<br/>
+      para la gestión de su reclamación."<br/>
+    </p>
+  </div>
+</div>
+</body>
+</html>

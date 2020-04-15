@@ -1,16 +1,20 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, NgZone } from '@angular/core';
-import { app } from '../../../../services/src/environments/environment';
-import { AuthenticationService, Oauth2Service, TariffService } from '@suite/services';
+import { app, environment } from '../../../../services/src/environments/environment';
+import {AuthenticationService, Oauth2Service, TariffService, WarehouseModel} from '@suite/services';
 import { Router } from '@angular/router';
 import { ScanditService } from "../../../../services/src/lib/scandit/scandit.service";
 import { ReceptionScanditService } from "../../../../services/src/lib/scandit/reception/reception.service";
 import { PrintTagsScanditService } from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
-import { MenuController } from "@ionic/angular";
+import { MenuController, PopoverController } from "@ionic/angular";
 import { SealScanditService } from "../../../../services/src/lib/scandit/seal/seal.service";
 import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/product-info/product-info.service";
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 import { LoginComponent } from '../../login/login.page';
 import { AuditMultipleScanditService } from "../../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
+import {AlertPopoverComponent} from "../alert-popover/alert-popover.component";
+import {WarehouseReceptionAlertService} from "../../../../services/src/lib/endpoint/warehouse-reception-alert/warehouse-reception-alert.service";
+import Warehouse = WarehouseModel.Warehouse;
+import {LocalStorageProvider} from "../../../../services/src/providers/local-storage/local-storage.provider";
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -20,6 +24,7 @@ interface MenuSectionGroupItem {
   type: 'wrapper',
   children: (MenuSectionGroupItem | MenuSectionItem)[],
   thirdLevel?: boolean
+  tooltip?: string
 }
 
 interface MenuSectionItem {
@@ -30,6 +35,7 @@ interface MenuSectionItem {
   notification?: boolean
   children?: (MenuSectionGroupItem | MenuSectionItem)[];
   header?: boolean
+  tooltip?: string
 }
 
 @Component({
@@ -147,11 +153,97 @@ export class MenuComponent implements OnInit {
           icon: 'people'
         },
         {
+          title: 'Asignación de roles',
+          id: 'role-assignment',
+          url: '/role-assignment',
+          icon: 'key'
+        },
+        {
           title: 'Roles',
           id: 'roles',
           url: '/roles/menu',
           icon: 'person'
         },
+      ]
+    },
+    {
+      title: 'Control de exposición',
+      open: true,
+      type: 'wrapper',
+      icon: 'cart',
+      children: [
+        {
+          title: 'Productos sin imprimir',
+          id: 'list-new-products',
+          url: '/list-new-products',
+          icon: 'basket',
+          tooltip: 'Listado de nuevos productos recibidos que aún no han sido impresos'
+        },
+        {
+          title: 'Ocultar alertas de recepción',
+          id: 'reception-hide-alert',
+          url: '/reception-hide-alert',
+          icon: 'alert',
+          tooltip: 'Listado de qué almacenes pueden ocultar las alertas de nuevas recepciones'
+        }
+      ]
+    },
+    {
+      title: 'Defectuosos',
+      open: true,
+      type: 'wrapper',
+      icon: 'paper',
+      children: [
+        {
+          title: 'Registro',
+          id: 'defective-registry',
+          url: '/defective-registry',
+          icon: 'list-box',
+          tooltip: 'Listado de registro de defectusosos'
+        },
+        {
+          title: 'Histórico',
+          id: 'defective-historic',
+          url: '/defective-historic',
+          icon: 'filing',
+          tooltip: 'Listado de registro histórico de defectuosos'
+        },
+        {
+          title: 'Parametrización',
+          id: 'damaged-shoes',
+          url: '/damaged-shoes',
+          icon: 'options',
+          tooltip: 'Parametrización de estados'
+        },
+        {
+          title: 'Tipos de daños',
+          id: 'defective-management',
+          url: '/defective-management',
+          icon: 'flag',
+          tooltip: 'Tipos de daños'
+        },
+        {
+          title: 'Zonas',
+          id: 'defective-zones',
+          url: '/defective-zones',
+          icon: 'flag',
+          tooltip: 'Zonas'
+        },
+      ]
+    },
+    {
+      title: 'Devoluciones',
+      open: true,
+      type: 'wrapper',
+      icon: 'return-left',
+      children: [
+        {
+          title: 'Lista',
+          id: 'returns-list',
+          url: '/returns-list',
+          icon: 'list-box',
+          tooltip: 'Listado de registro de devoluciones'
+        }
       ]
     },
     {
@@ -179,6 +271,12 @@ export class MenuComponent implements OnInit {
           id: 'global-variables',
           url: '/global-variables',
           icon: 'cog'
+        },
+        {
+          title: 'Recepcion Final',
+          id: 'reception-final',
+          url: '/reception-final',
+          icon: 'pricetags'
         },
         {
           title: 'Almacenes',
@@ -283,6 +381,87 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Recepción de fábrica',
+      open: true,
+      type: 'wrapper',
+      icon: 'archive',
+      children: [
+        {
+          title: 'Proceso recepción',
+          id: 'receptions-avelon',
+          url: '/receptions-avelon',
+          icon: 'pricetags'
+        },
+        {
+          title: 'Recepción sin pedido',
+          id: 'receptions-avelon-free',
+          url: '/receptions-avelon/free',
+          icon: 'pricetags'
+        },
+        {
+          title: 'Predistribuciones',
+          id: 'predistributions',
+          url: '/predistributions',
+          icon: 'options'
+        },
+        {
+          title: 'Stock Reservado',
+          id: 'receptions',
+          url: '/receptions',
+          icon: 'hand'
+        },
+        {
+          title: 'Pendiente notificar Avelon',
+          id: 'products-table-seconds-avelon',
+          url: '/pr-ta-se-av',
+          icon: 'cloud-upload'
+        },
+        {
+          title: 'Estados de expediciones',
+          id: 'state-expedition-avelon',
+          url: '/state-expedition-avelon/menu',
+          icon: 'cog'
+        },
+        {
+          title: 'Temporadas habilitadas',
+          id: 'seasons-enabled',
+          url: '/seasons-enabled',
+          icon: 'cog'
+        },
+        {
+          title: 'Habilitar campos comerciales',
+          id: 'commercial-fields',
+          url: '/commercial-fields',
+          icon: 'cog'
+        },
+        {
+          title: 'Marcas habilitadas recepción sin pedido',
+          id: 'brands-enabled-reception',
+          url: '/brands-enabled-reception',
+          icon: 'cog'
+        },
+        {
+          title: 'Incidencias',
+          id: 'incidences-reception',
+          url: '/incidences-reception',
+          icon: 'notifications'
+        },
+
+      ]
+    },
+    {
+      title: 'Regiones',
+      id: 'regions',
+      url: '/regions',
+      icon: 'map'
+    },
+    {
+      title: 'Drop Files',
+      id: 'drop-file',
+      url: '/drop-files',
+      icon: 'folder'
+    },
+    {
       title: 'Regiones',
       id: 'regions',
       url: '/regions',
@@ -305,7 +484,7 @@ export class MenuComponent implements OnInit {
       open: true,
       type: 'wrapper',
       icon: 'cart',
-      children: [ 
+      children: [
         {
           title: 'Catálogos Marketplaces',
           id: 'catalogs-marketplaces',
@@ -353,6 +532,35 @@ export class MenuComponent implements OnInit {
         },
       ]
     },
+    {
+      title: 'Pedidos Online',
+      open: false,
+      type: 'wrapper',
+      icon: 'build',
+      children: [
+        {
+          title: 'Incidencias/Manual',
+          id: 'expedition-manual',
+          url: '/expedition-manual',
+          icon: 'cog',
+          tooltip: 'Lista de incidencias'
+        },
+        {
+          title: 'Expediciones por recoger',
+          id: 'expedition-collected',
+          url: '/expedition-collected',
+          icon: 'cog',
+          tooltip: 'Lista de expediciones por recoger'
+        },
+        {
+          title: 'Desbloquear expediciones',
+          id: 'unlock-expeditions',
+          url: '/unlock-expeditions',
+          icon: 'unlock',
+          tooltip: 'Desbloquear expediciones'
+        }
+      ]
+    }
   ];
 
   alPages: MenuItemList = [
@@ -360,7 +568,8 @@ export class MenuComponent implements OnInit {
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
-      icon: 'time'
+      icon: 'time',
+      tooltip: 'Registrar hora de entrada y salida'
     },
     {
       title: 'Productos',
@@ -372,32 +581,67 @@ export class MenuComponent implements OnInit {
           title: 'Productos',
           id: 'products',
           url: '/products',
-          icon: 'basket'
+          icon: 'basket',
+          tooltip: 'Listado de productos'
         },
         {
           title: 'Consulta',
           id: 'products-info',
           url: 'products/info',
-          icon: 'information-circle'
+          icon: 'information-circle',
+          tooltip: 'Consulta Stock de artículos mediante el escáner'
         },
         {
           title: 'Productos recibidos',
           id: 'print-products-received',
           url: '/print/product/received',
-          icon: 'archive'
+          icon: 'archive',
+          tooltip: 'Listado de todos los productos recibidos'
+        },
+        {
+          title: 'Productos solicitados',
+          id: 'received-products-requested',
+          url: '/requested-products',
+          icon: 'archive',
+          tooltip: 'Listado de todos los productos solicitados que se han recibido'
         },
         {
           title: 'Reetiquetado productos',
           id: 'print-product',
           url: 'print/product/relabel',
-          icon: 'barcode'
+          icon: 'barcode',
+          tooltip: 'Imprimir nuevas etiquetas de productos con cámara'
         },
         {
           title: 'Reetiquetado productos manual',
           id: 'print-product-manual',
           url: '/print/product/relabel',
-          icon: 'barcode'
+          icon: 'barcode',
+          tooltip: 'Imprimir nuevas etiquetas de productos introduciendo el código manualmente'
         }
+      ]
+    },
+    {
+      title: 'Pedidos online',
+      icon:'basket',
+      type: 'wrapper',
+      open: true,
+      children: [
+        {
+          title: 'Generar etiquetas de envio',
+          id: 'order-preparation',
+          url: '/order-preparation',
+          icon: 'basket',
+          tooltip: 'Imprimir etiquetas de contenedores'
+        },
+        {
+          title: 'Incidencias',
+          id: 'order-preparation',
+          url: '/list-alerts',
+          icon: 'notifications',
+          tooltip: 'listado de incidencias'
+        },
+
       ]
     },
     {
@@ -413,25 +657,29 @@ export class MenuComponent implements OnInit {
           id: 'tariff-al',
           url: '/tariff',
           icon: 'logo-usd',
-          notification: this.isNewTariff
+          notification: this.isNewTariff,
+          tooltip: 'Listado de tarifas habilitadas'
         },
         {
           title: 'Código exposición',
           id: 'print-price-tag',
           url: 'print/tag/price',
-          icon: 'pricetags'
+          icon: 'pricetags',
+          tooltip: 'Imprimir etiquetas de exposición escaneando los productos con cámara'
         },
         {
           title: 'Código exposición manual',
           id: 'print-price-tag-manual',
           url: '/print-tag/manual/price',
-          icon: 'pricetags'
+          icon: 'pricetags',
+          tooltip: 'Impresión de códigos de exposición indicando manualmente el código de los productos y el motivo si fuese necesario'
         },
         {
           title: 'Nuevos Productos',
           id: 'new-products',
           url: '/new-products',
-          icon: 'basket'
+          icon: 'basket',
+          tooltip: 'Listado de nuevos productos recibidos que aún no han sido impresos'
         }
       ]
     },
@@ -442,100 +690,137 @@ export class MenuComponent implements OnInit {
       icon: 'send',
       children: [
         {
-          title: 'Ubicar/escanear',
+          title: 'Ubicar/escanear con cámara',
           id: 'positioning',
           icon: 'locate',
-          url: 'positioning'
+          url: 'positioning',
+          tooltip: 'Escanear artículos mediante cámara para ubicar'
         },
         {
-          title: 'Ubicar/escanear manualmente',
+          title: 'Ubicar/escanear con láser',
           icon: 'locate',
           url: '/positioning/manual',
-          id: 'positioning-manual'
+          id: 'positioning-manual',
+          tooltip: 'Escanear artículos mediante láser para ubicar'
+        },
+        {
+          title: 'Ubicar no aptos online',
+          icon: 'locate',
+          url: '/positioning/manual-online',
+          id: 'positioning-manual-online',
+          tooltip: 'Ubicar productos no aptos online'
         },
         {
           title: 'Traspasos',
           id: 'picking-task-store',
           icon: 'qr-scanner',
-          url: '/picking-tasks'
+          url: '/picking-tasks',
+          tooltip: 'Traspasos pendientes de realizar'
         },
         {
-          title: 'Tareas de Picking',
+          title: 'Listado de peticiones',
+          id: 'picking-tasks-stores',
+          icon: 'qr-scanner',
+          url: '/picking-tasks-stores',
+          tooltip: 'Listado de peticiones pendientes de realizar'
+        },
+        {
+          title: 'Asociar pares a embalajes',
+          id: 'picking-scan-packing',
+          icon: 'qr-scanner',
+          url: '/picking-scan-packing',
+          tooltip: 'Asociar pares procesados para traspasos a embalajes y precintarlos'
+        },
+        {
+          title: 'Tareas de picking con cámara',
           id: 'picking-task',
           icon: 'qr-scanner',
-          url: '/picking-tasks'
+          url: '/picking-tasks',
+          tooltip: 'Tareas de picking asignadas para realizarlas con el escáner de la cámara'
         },
         {
-          title: 'Tareas de picking manualmente',
+          title: 'Tareas de picking con láser',
           icon: 'qr-scanner',
           url: '/picking-tasks/manual',
-          id: 'picking-tasks-manual'
+          id: 'picking-tasks-manual',
+          tooltip: 'Tareas de picking asignadas para realizarlas con el láser'
         },
         {
           title: 'Verificación de artículos',
           icon: 'checkmark-circle-outline',
           url: '/picking/online-store/verify',
-          id: 'picking-tasks-manual'
+          id: 'verification-products-online',
+          tooltip: 'Sección para verificar los artículos aptos online'
         },
         {
           title: 'Gestión de almacén',
           id: 'warehouses-management',
           url: '/warehouse/manage',
-          icon: 'apps'
+          icon: 'apps',
+          tooltip: ''
         },
         {
           title: 'Recepcionar embalaje',
           id: 'reception',
           url: 'reception',
-          icon: 'archive'
+          icon: 'archive',
+          tooltip: 'Recepcionar embalaje completo escaneando la etiqueta con cámara'
         },
         {
           title: 'Recepcionar par a par',
           id: 'empty-carrier',
           url: 'reception/empty-carrier',
-          icon: 'square-outline'
+          icon: 'square-outline',
+          tooltip: 'Recepcionar par a par los artículos recibidos escanéandolos con la cámara'
         },
         {
           title: 'Embalajes',
           id: 'jails',
           url: '/jails/menu',
-          icon: 'grid'
+          icon: 'grid',
+          tooltip: 'Listado de embalajes'
         },
         {
           title: 'Reetiquetado embalajes',
           id: 'print-packing',
           url: '/print/packing',
-          icon: 'grid'
+          icon: 'grid',
+          tooltip: 'Imprimir nuevas etiquetas de embalajes'
         },
         {
-          title: 'Precintar embalaje',
+          title: 'Precintar embalaje con cámara',
           id: 'packing-seal',
           url: 'packing/seal',
-          icon: 'paper-plane'
+          icon: 'paper-plane',
+          tooltip: 'Precintar embalaje para enviar desde el escáner de la cámara'
         },
         {
-          title: 'Precintar embalaje manual',
+          title: 'Precintar embalaje con láser',
           id: 'packing-seal-manual',
           url: '/packing/seal/manual',
-          icon: 'paper-plane'
+          icon: 'paper-plane',
+          tooltip: 'Precintar embalaje para enviar desde el láser'
         },
         {
-          title: 'Traspaso embalaje',
+          title: 'Traspaso contenido embalaje',
           id: 'packing-transfer',
           url: '/packing/transfer',
-          icon: 'redo'
+          icon: 'redo',
+          tooltip: 'Traspasar toda la mercancía de un embalaje a otro'
         },
         {
           title: 'Recepción de embalaje vacío',
           id: 'reception-empty-packing',
           url: '/packing/carrierEmptyPacking',
-          icon: 'exit'
+          icon: 'exit',
+          tooltip: 'Recibir embalajes que han sido enviados vacíos'
         },
         {
           title: 'Envío de embalaje vacío',
           id: 'send-empty-packing',
           url: '/sendEmptyPacking',
-          icon: 'send'
+          icon: 'send',
+          tooltip: 'Enviar embalajes vacíos a otro destino'
         }
       ]
     },
@@ -549,13 +834,15 @@ export class MenuComponent implements OnInit {
           title: 'Ventilación de traspasos',
           id: 'ventilation-transfer',
           url: '/ventilation/transfer',
-          icon: 'swap'
+          icon: 'swap',
+          tooltip: 'Escanear embalaje para obtener información sobre el traspaso y seleccionar la opción a realizar'
         },
         {
           title: 'Ventilación sin Sorter',
           id: 'ventilation-no-sorter',
           url: '/ventilation-no-sorter',
-          icon: 'aperture'
+          icon: 'aperture',
+          tooltip: 'Realizar ventilación asignando a embalajes'
         }
       ]
     },
@@ -569,13 +856,15 @@ export class MenuComponent implements OnInit {
           title: 'Entrada',
           id: 'sorter-input',
           url: '/sorter/input',
-          icon: 'log-in'
+          icon: 'log-in',
+          tooltip: 'Escanear artículos con entrada en sorter'
         },
         {
           title: 'Salida',
           id: 'sorter-output',
           url: '/sorter/output',
-          icon: 'log-out'
+          icon: 'log-out',
+          tooltip: 'Vaciado de calles'
         }
       ]
     },
@@ -589,27 +878,59 @@ export class MenuComponent implements OnInit {
           title: 'Lista de auditorias',
           id: 'audit-al',
           url: '/audits',
-          icon: 'list-box'
+          icon: 'list-box',
+          tooltip: 'Listado de auditorías realizadas'
         },
         {
           title: 'Revisiones Pendientes',
           id: 'audit-rv',
           url: '/audits/pending-revisions',
-          icon: 'list-box'
+          icon: 'list-box',
+          tooltip: 'Listado de revisiones de embalajes pendientes de realizar'
         },
         {
           title: 'Escaneo total (láser)',
           id: 'add-audits',
           url: '/audits/add',
-          icon: 'qr-scanner'
+          icon: 'qr-scanner',
+          tooltip: 'Auditoría de embalaje mediante láser escaeando todos los productos'
         },
         {
           title: 'Escaneo aleatorio (cámara)',
           id: 'audit-scan',
           url: 'audits/scan',
-          icon: 'aperture'
+          icon: 'aperture',
+          tooltip: 'Auditoría mediante escáner de la cámara sin necesidad de escaner todos los productos'
         }
       ]
+    },
+    {
+      title: 'Recepción de fábrica',
+      open: false,
+      type: 'wrapper',
+      icon: 'archive',
+      children: [
+        {
+          title: 'Recepción de mercancía',
+          id: 'expeditions-pending',
+          url: '/expeditions/pending/app',
+          icon: 'pricetags',
+          tooltip: 'Realiza la recepción de mercancía recibida de fábrica mediante una expedición o proveedor.'
+        },
+        {
+          title: 'Recepción sin pedido',
+          id: 'receptions-avelon-free',
+          url: '/expeditions/pending/app/free',
+          icon: 'pricetags',
+          tooltip: 'Realiza la recepción de mercancía recibida de fábrica mediante una expedición o proveedor sin necesidad de que esta mercancía esté asignada a un pedido.'
+        }
+      ]
+    },
+    {
+      id:'incidents',
+      title: 'Defectuosos',
+      icon:'warning',
+      url: '/defect-handler'
     },
     {
       title: 'Configuración',
@@ -621,10 +942,13 @@ export class MenuComponent implements OnInit {
           title: 'Ajustes',
           id: 'settings',
           url: '/settings',
-          icon: 'cog'
+          icon: 'cog',
+          tooltip: 'Ajustes de configuración de la aplicación. Ej: Mac de la impresora'
         }
       ]
     },
+
+
 
   ];
   private menuPages = {
@@ -648,6 +972,9 @@ export class MenuComponent implements OnInit {
     private menuController: MenuController,
     private toolbarProvider: ToolbarProvider,
     private tariffService: TariffService,
+    private popoverController: PopoverController,
+    private warehouseReceptionAlertService: WarehouseReceptionAlertService,
+    private localStorageProvider: LocalStorageProvider,
     private zona: NgZone
 
   ) {
@@ -663,8 +990,12 @@ export class MenuComponent implements OnInit {
     this.menuTitle.emit(item.title);
   }
 
+  setTitle(title){
+    this.toolbarProvider.currentPage.next(title);
+  }
+
   loadUpdate() {
-    window.open('https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o', '_blank')
+    window.open(environment.urlDownloadApp, '_blank')
   }
 
   /**
@@ -765,9 +1096,40 @@ export class MenuComponent implements OnInit {
     } else if (p.url === 'reception') {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
-      this.receptionScanditService.reception(2);
+      this.checkAlertsAndRedirect();
     } else if(p.url === 'audits/scan'){
       this.auditMultipleScanditService.init();
+    }
+  }
+
+  async checkAlertsAndRedirect() {
+    const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
+    if(currentWarehouse){
+      this.warehouseReceptionAlertService.check({warehouseId: currentWarehouse.id}).then(async response => {
+        if (response.code == 200 && typeof response.data == 'boolean') {
+          if (response.data) {
+            await this.localStorageProvider.set('hideAlerts', false);
+            const popover = await this.popoverController.create({
+              component: AlertPopoverComponent
+            });
+            popover.onDidDismiss().then(async response => {
+              if (typeof response.data == 'boolean' && response.data) {
+                await this.localStorageProvider.set('hideAlerts', true);
+              }
+              this.receptionScanditService.reception(2);
+            });
+            await popover.present();
+          } else {
+            this.receptionScanditService.reception(2);
+          }
+        } else {
+          console.error(response);
+        }
+      }, error => {
+        console.error(error);
+      });
+    }else{
+      console.error('Current warehouse not found.');
     }
   }
 
@@ -782,7 +1144,7 @@ export class MenuComponent implements OnInit {
     } else if (p.url === 'reception') {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
-      this.receptionScanditService.reception(2);
+      this.checkAlertsAndRedirect();
     } else if (p.url == 'print/product/relabel') {
       this.printTagsScanditService.printRelabelProducts();
     } else if (p.url == 'products/info') {
@@ -806,12 +1168,6 @@ export class MenuComponent implements OnInit {
   }
 
   openSubMenuItem(menuItem) {
-    if(menuItem.thirdLevel && !menuItem.open) {
-      menuItem.icon = 'add-circle';
-    } else if(menuItem.thirdLevel && menuItem.open) {
-      menuItem.icon = 'add-circle-outline';
-    }
-
     if (this.iconsDirection === 'end') {
       this.toggleSidebar();
     }

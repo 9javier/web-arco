@@ -1,7 +1,6 @@
-import { BehaviorSubject, of, Observable } from 'rxjs';
-import { Filter } from './enums/filter.enum';
+import { of } from 'rxjs';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatTableDataSource } from '@angular/material';
+import { MatTableDataSource } from '@angular/material';
 import * as Filesave from 'file-saver';
 import {
   ProductModel,
@@ -14,10 +13,8 @@ import {
   WarehouseService,
   WarehousesService,
   IntermediaryService,
-  UsersService,
-  PermissionsModel
+  UsersService
 } from '@suite/services';
-import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { ProductDetailsComponent } from './modals/product-details/product-details.component';
 import { ModalController, AlertController } from '@ionic/angular';
@@ -26,10 +23,11 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { FilterButtonComponent } from "../components/filter-button/filter-button.component";
-import { map, catchError } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { ProductRelocationComponent } from './modals/product-relocation/product-relocation.component';
 import { PermissionsService } from '../../../services/src/lib/endpoint/permissions/permissions.service';
 
+declare let window: any;
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
@@ -57,9 +55,11 @@ export class ProductsComponent implements OnInit {
   @ViewChild('filterButtonContainers') filterButtonContainers: FilterButtonComponent;
   @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
   @ViewChild('filterButtonSuppliers') filterButtonSuppliers: FilterButtonComponent;
+  @ViewChild('filterButtonOnline') filterButtonOnline: FilterButtonComponent;
 
   form: FormGroup = this.formBuilder.group({
     suppliers: [],
+    online: [],
     brands: [],
     references: [],
     containers: [],
@@ -84,7 +84,7 @@ export class ProductsComponent implements OnInit {
   });
 
   products: ProductModel.Product[] = [];
-  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container', 'brand', 'supplier'];
+  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container', 'brand', 'supplier', 'online'];
   dataSource: any;
 
   /**Filters */
@@ -97,6 +97,7 @@ export class ProductsComponent implements OnInit {
   brands: Array<TagsInputOption> = [];
   suppliers: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
+  online: Array<TagsInputOption> = [];
 
   /** Filters save **/
   colorsSelected: Array<any> = [];
@@ -109,11 +110,13 @@ export class ProductsComponent implements OnInit {
   suppliersSelected: Array<any> = [];
   productReferencePatternSelected: Array<any> = [];
   orderbySelected: Array<any> = [];
+  onlineSelected: Array<any> = [];
 
   /**List of SearchInContainer */
   searchsInContainer: Array<InventoryModel.SearchInContainer> = [];
 
   itemsIdSelected: Array<any> = [];
+  itemsReferenceSelected: Array<any> = [];
 
   isFirst: boolean = true;
   hasDeleteProduct = false;
@@ -127,12 +130,13 @@ export class ProductsComponent implements OnInit {
   isFilteringContainers: number = 0;
   isFilteringBrands: number = 0;
   isFilteringSuppliers: number = 0;
+  isFilteringOnline: number = 0;
 
   lastUsedFilter: string = 'warehouses';
   isMobileApp: boolean = false;
 
   //For sorting
-  lastOrder = [true, true, true, true, true, true, true, true];
+  lastOrder = [true, true, true, true, true, true, true, true, true];
 
   constructor(
     private intermediaryService: IntermediaryService,
@@ -149,12 +153,13 @@ export class ProductsComponent implements OnInit {
     private usersService: UsersService,
     private permisionService: PermissionsService
   ) {
-    this.isMobileApp = typeof window.cordova !== "undefined";
+    this.isMobileApp = typeof (<any>window).cordova !== "undefined";
   }
 
   eraseFilters() {
     this.form = this.formBuilder.group({
       suppliers: [],
+      online: [],
       brands: [],
       references: [],
       containers: [],
@@ -172,7 +177,7 @@ export class ProductsComponent implements OnInit {
         order: "asc"
       })
     });
-    this.deleteArrow();
+    ProductsComponent.deleteArrow();
     this.lastUsedFilter = 'warehouses';
     this.getFilters();
   }
@@ -189,11 +194,11 @@ export class ProductsComponent implements OnInit {
       case 'reference': {
         if (this.lastOrder[0]) {
           this.form.value.orderby = { order: "desc", type: 6 };
-          this.showArrow(0, false);
+          ProductsComponent.showArrow(0, false);
         }
         else {
           this.form.value.orderby = { order: "asc", type: 6 };
-          this.showArrow(0, true);
+          ProductsComponent.showArrow(0, true);
         }
         this.lastOrder[0] = !this.lastOrder[0];
         break;
@@ -201,11 +206,11 @@ export class ProductsComponent implements OnInit {
       case 'model': {
         if (this.lastOrder[1]) {
           this.form.value.orderby = { order: "desc", type: 3 };
-          this.showArrow(1, false);
+          ProductsComponent.showArrow(1, false);
         }
         else {
           this.form.value.orderby = { order: "asc", type: 3 };
-          this.showArrow(1, true);
+          ProductsComponent.showArrow(1, true);
         }
         this.lastOrder[1] = !this.lastOrder[1];
         break;
@@ -213,11 +218,11 @@ export class ProductsComponent implements OnInit {
       case 'color': {
         if (this.lastOrder[2]) {
           this.form.value.orderby = { order: "desc", type: 1 };
-          this.showArrow(2, false);
+          ProductsComponent.showArrow(2, false);
         }
         else {
           this.form.value.orderby = { order: "asc", type: 1 };
-          this.showArrow(2, true);
+          ProductsComponent.showArrow(2, true);
         }
         this.lastOrder[2] = !this.lastOrder[2];
         break;
@@ -225,11 +230,11 @@ export class ProductsComponent implements OnInit {
       case 'size': {
         if (this.lastOrder[3]) {
           this.form.value.orderby = { order: "desc", type: 2 };
-          this.showArrow(3, false);
+          ProductsComponent.showArrow(3, false);
         }
         else {
           this.form.value.orderby = { order: "asc", type: 2 };
-          this.showArrow(3, true);
+          ProductsComponent.showArrow(3, true);
         }
         this.lastOrder[3] = !this.lastOrder[3];
         break;
@@ -237,11 +242,11 @@ export class ProductsComponent implements OnInit {
       case 'warehouse': {
         if (this.lastOrder[4]) {
           this.form.value.orderby = { order: "desc", type: 8 };
-          this.showArrow(4, false);
+          ProductsComponent.showArrow(4, false);
         }
         else {
           this.form.value.orderby = { order: "asc", type: 8 };
-          this.showArrow(4, true);
+          ProductsComponent.showArrow(4, true);
         }
         this.lastOrder[4] = !this.lastOrder[4];
         break;
@@ -249,11 +254,11 @@ export class ProductsComponent implements OnInit {
       case 'container': {
         if (this.lastOrder[5]) {
           this.form.value.orderby = { order: "desc", type: 4 };
-          this.showArrow(5, false);
+          ProductsComponent.showArrow(5, false);
         }
         else {
           this.form.value.orderby = { order: "asc", type: 4 };
-          this.showArrow(5, true);
+          ProductsComponent.showArrow(5, true);
         }
         this.lastOrder[5] = !this.lastOrder[5];
         break;
@@ -261,11 +266,11 @@ export class ProductsComponent implements OnInit {
       case 'brand': {
         if (this.lastOrder[6]) {
           this.form.value.orderby = { order: "desc", type: 9 };
-          this.showArrow(6, false);
+          ProductsComponent.showArrow(6, false);
         }
         else {
           this.form.value.orderby = { order: "asc", type: 9 };
-          this.showArrow(6, true);
+          ProductsComponent.showArrow(6, true);
         }
         this.lastOrder[6] = !this.lastOrder[6];
         break;
@@ -273,26 +278,38 @@ export class ProductsComponent implements OnInit {
       case 'supplier': {
         if (this.lastOrder[7]) {
           this.form.value.orderby = { order: "desc", type: 10 };
-          this.showArrow(7, false);
+          ProductsComponent.showArrow(7, false);
         }
         else {
           this.form.value.orderby = { order: "asc", type: 10 };
-          this.showArrow(7, true);
+          ProductsComponent.showArrow(7, true);
         }
         this.lastOrder[7] = !this.lastOrder[7];
+        break;
+      }
+      case 'online': {
+        if (this.lastOrder[8]) {
+          this.form.value.orderby = { order: "desc", type: 12 };
+          ProductsComponent.showArrow(8, false);
+        }
+        else {
+          this.form.value.orderby = { order: "asc", type: 12 };
+          ProductsComponent.showArrow(8, true);
+        }
+        this.lastOrder[8] = !this.lastOrder[8];
         break;
       }
     }
     this.searchInContainer(this.sanitize(this.getFormValueCopy()));
   }
 
-  showArrow(colNumber, dirDown) {
+  static showArrow(colNumber, dirDown) {
     let htmlColumn = document.getElementsByClassName('title')[colNumber] as HTMLElement;
     if (dirDown) htmlColumn.innerHTML += ' 🡇';
     else htmlColumn.innerHTML += ' 🡅';
   }
 
-  deleteArrow() {
+  static deleteArrow() {
     for (let i = 0; i < document.getElementsByClassName('title').length; i++) {
       let iColumn = document.getElementsByClassName('title')[i] as HTMLElement;
       if (iColumn.innerHTML.includes('🡇') || iColumn.innerHTML.includes('🡅')) {
@@ -301,7 +318,8 @@ export class ProductsComponent implements OnInit {
     }
   }
 
-  applyFilters(filters, filterType) {
+  applyFilters(filtersResult, filterType) {
+    const filters = filtersResult.filters;
     switch (filterType) {
       case 'references':
         let referencesFiltered: string[] = [];
@@ -447,6 +465,24 @@ export class ProductsComponent implements OnInit {
           }
         }
         break;
+      case 'online':
+        let onlineFiltered: string[] = [];
+        for (let online of filters) {
+          if (online.checked) onlineFiltered.push(online.value);
+        }
+        if (onlineFiltered.length >= this.online.length) {
+          this.form.value.online = [];
+          this.isFilteringOnline = this.online.length;
+        } else {
+          if (onlineFiltered.length > 0) {
+            this.form.value.online = onlineFiltered;
+            this.isFilteringOnline = onlineFiltered.length;
+          } else {
+            this.form.value.online = ['99999'];
+            this.isFilteringOnline = this.online.length;
+          }
+        }
+        break;
     }
     this.lastUsedFilter = filterType;
     let flagApply = true;
@@ -535,7 +571,7 @@ export class ProductsComponent implements OnInit {
         this.hasDeleteProduct = response.body.data;
       })
     });
-    this.getPermisionUser()
+    this.getPermisionUser();
 
     this.getFilters();
     this.listenChanges();
@@ -564,7 +600,7 @@ export class ProductsComponent implements OnInit {
       if (this.pauseListenFormChange) return;
       ///**format the reference */
       /**cant send a request in every keypress of reference, then cancel the previous request */
-      clearTimeout(this.requestTimeout)
+      clearTimeout(this.requestTimeout);
       /**it the change of the form is in reference launch new timeout with request in it */
       if (this.form.value.productReferencePattern != this.previousProductReferencePattern) {
         /**Just need check the vality if the change happens in the reference */
@@ -592,6 +628,7 @@ export class ProductsComponent implements OnInit {
     this.suppliersSelected = this.form.value.suppliers;
     this.productReferencePatternSelected = this.form.value.productReferencePattern;
     this.orderbySelected = this.form.value.orderby;
+    this.onlineSelected = this.form.value.online;
   }
 
   private recoverFilters(){
@@ -605,6 +642,7 @@ export class ProductsComponent implements OnInit {
     this.form.get("suppliers").patchValue(this.suppliersSelected, { emitEvent: false });
     this.form.get("productReferencePattern").patchValue(this.productReferencePatternSelected, { emitEvent: false });
     this.form.get("orderby").patchValue(this.orderbySelected, { emitEvent: false });
+    this.form.get("online").patchValue(this.onlineSelected, { emitEvent: false });
   }
 
   private getFormValueCopy() {
@@ -706,6 +744,13 @@ export class ProductsComponent implements OnInit {
         }
         this.filterButtonSuppliers.listItems = this.suppliers;
       }
+      if (this.lastUsedFilter != 'online') {
+        let filteredOnline = searchsInContainer.data.filters['online'] as unknown as string[];
+        for (let index in this.online) {
+          this.online[index].hide = !filteredOnline.includes(this.online[index].value);
+        }
+        this.filterButtonOnline.listItems = this.online;
+      }
       if(applyFilter){
         this.saveFilters();
         this.form.get("pagination").patchValue({
@@ -721,7 +766,7 @@ export class ProductsComponent implements OnInit {
 
   /**
    * go to details modal
-   * @param id - the id of the product
+   * @param product - product data
    */
   async goDetails(product: InventoryModel.SearchInContainer) {
     return (await this.modalController.create({
@@ -750,7 +795,7 @@ export class ProductsComponent implements OnInit {
     ).subscribe((data) => {
 
       const blob = new Blob([data], { type: 'application/octet-stream' });
-      Filesave.saveAs(blob, `${Date.now()}.xlsx`)
+      Filesave.saveAs(blob, `${Date.now()}.xlsx`);
       this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastSuccess('Archivo descargado')
     }, error => console.log(error));
@@ -765,12 +810,11 @@ export class ProductsComponent implements OnInit {
     await this.intermediaryService.presentLoading('Borrando productos');
     this.inventoryServices.delete_Products(id).subscribe(async result => {
       this.getFilters();
-      console.log(result);
     }, async error => {
       await this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError('Ha ocurrido un error el cargar los datos del sevidor')
     });
   }
-
 
   async presentAlertDeleteConfirm() {
     const alert = await this.alertController.create({
@@ -804,7 +848,7 @@ export class ProductsComponent implements OnInit {
     this.warehouseService.getIndex().then(observable => {
       observable.subscribe(response => {
         this.warehouses = (<any>response.body).data;
-        let warehouseMain = (<any>response.body).data.filter(item => item.is_main)
+        let warehouseMain = (<any>response.body).data.filter(item => item.is_main);
         let warehouse = this.warehouses[0];
         if (warehouseMain.length > 0) {
           warehouse = warehouseMain[0];
@@ -820,6 +864,7 @@ export class ProductsComponent implements OnInit {
           this.updateFilterSourceBrands(searchsInContainer.data.filters.brands);
           this.updateFilterSourceSuppliers(searchsInContainer.data.filters.suppliers);
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
+          this.updateFilterSourceOnline(searchsInContainer.data.filters.online);
 
           for (let index in this.warehouses) {
             this.warehouses[index].checked = false;
@@ -834,6 +879,7 @@ export class ProductsComponent implements OnInit {
           this.isFilteringContainers = this.containers.length;
           this.isFilteringBrands = this.brands.length;
           this.isFilteringSuppliers = this.suppliers.length;
+          this.isFilteringOnline = this.online.length;
 
           setTimeout(() => {
             this.pauseListenFormChange = false;
@@ -865,6 +911,12 @@ export class ProductsComponent implements OnInit {
         break;
       case 3:
         location = 'SORTER';
+        break;
+      case 9:
+        location = 'RECEPCIÓN SORTER';
+        break;
+      case 10:
+        location = 'RECEPCIÓN ALMACEN';
         break;
     }
     return location;
@@ -1012,6 +1064,21 @@ export class ProductsComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
+  private updateFilterSourceOnline(online: FiltersModel.Supplier[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("online").value;
+    this.online = online.map(online => {
+      online.value = online.name == '0' ? 'No' : 'Sí';
+      online.checked = true;
+      online.hide = false;
+      return online;
+    });
+    if (value && value.length) {
+      this.form.get("online").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
   private updateFilterSourceOrdertypes(ordertypes: FiltersModel.Group[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("orderby").get("type").value;
@@ -1021,10 +1088,14 @@ export class ProductsComponent implements OnInit {
   }
 
   async presentAlertRelocation() {
+    for(let item of this.itemsIdSelected ){
+      this.itemsReferenceSelected.push(item.productShoeUnit.reference)
+    }
     let modal = await this.modalController.create({
       component: ProductRelocationComponent,
       componentProps: {
         products: this.itemsIdSelected,
+        references: this.itemsReferenceSelected,
         permision:this.permision
       },
       cssClass: 'modal-relocation'
@@ -1034,16 +1105,17 @@ export class ProductsComponent implements OnInit {
       if (data.data.dismissed) {
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         this.itemsIdSelected = [];
+        this.itemsReferenceSelected = [];
       }else if(!data.data.dismissed){
-        this.selectedForm.controls.toSelect.reset()
+        this.selectedForm.controls.toSelect.reset();
         this.itemsIdSelected = [];
+        this.itemsReferenceSelected = [];
       }
     });
     modal.present();
   }
 
   itemSelected(product) {
-
     const index = this.itemsIdSelected.indexOf(product, 0);
     if (index > -1) {
       this.itemsIdSelected.splice(index, 1);
@@ -1051,4 +1123,5 @@ export class ProductsComponent implements OnInit {
       this.itemsIdSelected.push(product);
     }
   }
+
 }

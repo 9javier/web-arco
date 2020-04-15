@@ -1,0 +1,71 @@
+.without-order, .without-order *, .without-order > * {
+  background-color: var(--bg-reception-without-order) !important;
+}
+
+div.container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  place-content: center;
+  border: 1px solid var(--ion-color-primary);
+  border-radius: 5px;
+  position: relative;
+  padding: 15px;
+
+  span.title {
+    position: absolute;
+    top: -10px;
+    padding: 0 4px;
+    background: var(--ion-color-primary-contrast);
+    z-index: 2;
+  }
+  div.row {
+    display: flex;
+    flex-direction: row;
+  }
+  div.col {
+    display: flex;
+    flex-direction: column;
+  }
+  div.data {
+    width: 100%;
+    height: fit-content;
+    align-items: center;
+    place-content: center;
+    div.expedition {
+      span {
+        font-weight: bold;
+        margin-left: 5px;
+      }
+      span.double{
+        margin-right: 50px;
+      }
+    }
+    div.provider {
+      span {
+        margin-left: 8px;
+      }
+    }
+    div.reset {
+      margin-left: auto;
+      height: 95px;
+      place-content: space-between;
+      div.delivery-note {
+        position: relative;
+        input {
+          height: 40px;
+          border: 1px solid black;
+          padding: 4px;
+          text-align: center;
+        }
+        i {
+          position: absolute;
+          right: 4px;
+          top: 8px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

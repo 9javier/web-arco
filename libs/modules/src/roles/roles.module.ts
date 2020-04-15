@@ -11,6 +11,7 @@ import { UpdateComponent } from './update/update.component';
 import { CommonUiCrudModule } from '../../../common/ui/crud/src/lib/common-ui-crud.module';
 import {AssignModule} from "../assign/assign.module";
 import { BreadcrumbModule} from '../components/breadcrumb/breadcrumb.module';
+import { MatTooltipModule } from "@angular/material";
 
 @NgModule({
   declarations: [RolesComponent, StoreComponent, UpdateComponent],
@@ -24,7 +25,8 @@ import { BreadcrumbModule} from '../components/breadcrumb/breadcrumb.module';
     CdkTableModule,
     CommonUiCrudModule,
     AssignModule,
-    BreadcrumbModule
+    BreadcrumbModule,
+    MatTooltipModule
   ],
   entryComponents: [
     StoreComponent

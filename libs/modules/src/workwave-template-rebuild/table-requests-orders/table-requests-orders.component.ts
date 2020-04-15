@@ -398,7 +398,8 @@ export class TableRequestsOrdersComponent implements OnInit {
     this.changeRequestOrder.next({ fields: {listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty}, inPageCreation });
   }
 
-  applyFilters(data: any) {
+  applyFilters(filtersResult: any) {
+    const data = filtersResult.filters;
     for (let iFilter in data) {
       data[iFilter].hide = false;
     }

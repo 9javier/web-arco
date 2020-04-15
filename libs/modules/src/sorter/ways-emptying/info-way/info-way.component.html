@@ -1,6 +1,6 @@
 <div class="container" [ngStyle]="{'height': height || 'auto', 'width': width || 'auto'}" *ngIf="way">
   <ion-item>
-    <ion-label>Calle {{way.number}}</ion-label>
+    <ion-label>Calle {{way.number}} <span *ngIf="wayWithIncidences" class="with-incidence">(con incidencias)</span></ion-label>
     <ion-label slot="end" class="qty-prods">{{listProducts.length}} productos</ion-label>
   </ion-item>
 
@@ -22,7 +22,7 @@
       <ion-list class="list-products">
         <ion-item *ngFor="let product of listProducts">
           <span *ngIf="product">
-            {{product.model.reference}} - {{product.model.name}} / T-{{product.size.name}}
+            {{product.model.reference}} - {{product.model.name}} / T-{{product.size.name}} <span *ngIf="product.with_incidence" class="with-incidence">(sospechoso)</span>
           </span>
           <span *ngIf="!product">
             <b>Producto desconocido</b>

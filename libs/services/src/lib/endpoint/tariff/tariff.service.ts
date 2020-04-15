@@ -17,7 +17,9 @@ export class TariffService {
   private getIndexUrl: string = environment.apiBase + "/tariffs/active";
   private getTariffIfSoftdeleteSGA: string = environment.apiBase + "/tariffs/";
   private isCalculatingSGA: string = environment.apiBase + "/tariffs/iscalculating";
+  private isCalculatingSGATariff: string = environment.apiBase + "/tariffs/iscalculatingTariff";
   private putTariffEnabledUrl: string = environment.apiBase + "/tariffs/updateState";
+  private putTariffEnabledUrlTariff: string = environment.apiBase + "/tariffs/updateAndSyncTC";
   private syncTariffUrl: string = environment.apiBase + "/tariffs/sync";
   private getNewTariffUrl: string = environment.apiBase + "/tariffs/getNewTariff";
   private getTariffUpdatesUrl: string = environment.apiBase + "/tariffs/get-tariff-updates";
@@ -51,7 +53,10 @@ export class TariffService {
   }
 
   updateEnabled(list: any) {
-    return this.http.put(this.putTariffEnabledUrl, list).pipe(map(response => {
+    // return this.http.put(this.putTariffEnabledUrl, list).pipe(map(response => {
+    //   return response;
+    // }));
+    return this.http.put(this.putTariffEnabledUrlTariff, list).pipe(map(response => {
       return response;
     }));
   }
@@ -89,7 +94,7 @@ export class TariffService {
           activeTill: string;
         }
       }
-    }>(this.isCalculatingSGA, {}).pipe(map(response => {
+    }>(this.isCalculatingSGATariff, {}).pipe(map(response => {
       return response;
     })).pipe(map(response => {
       return response.data;

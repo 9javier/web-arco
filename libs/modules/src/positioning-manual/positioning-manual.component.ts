@@ -1,4 +1,7 @@
 import {Component, OnInit} from '@angular/core';
+import {Router } from '@angular/router';
+import * as toolbarProvider from "../../../services/src/providers/toolbar/toolbar.provider";
+
 
 @Component({
   selector: 'app-positioning-manual',
@@ -8,10 +11,19 @@ import {Component, OnInit} from '@angular/core';
 
 export class PositioningManualComponent implements OnInit {
 
-  constructor() {}
+  constructor(
+    private router:Router,
+    private toolbarProvider: toolbarProvider.ToolbarProvider
+  )
+   {}
 
   ngOnInit() {
 
+  }
+
+  returnMenuPosition(){
+    this.router.navigate(['/positioning']);
+    this.toolbarProvider.currentPage.next("Ubicar/escanear");
   }
 
 }

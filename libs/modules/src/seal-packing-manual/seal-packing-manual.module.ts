@@ -7,9 +7,21 @@ import { SealPackingManualRoutingModule } from "./seal-packing-manual-routing.mo
 import { CdkTableModule } from "@angular/cdk/table";
 import { InputCodesComponent } from "./input-codes/input-codes.component";
 import { HideKeyboardModule } from 'hide-keyboard';
+import { AddDestinyComponent} from './add-destiny/add-destiny.component';
+import { MatFormFieldModule } from '@angular/material';
+import { MatSelectModule } from '@angular/material/select';
+import {CommonUiCrudModule} from '@suite/common/ui/crud';
+
+import {
+  MatTableModule,
+  MatCheckboxModule,
+  MatPaginatorModule,
+  MatListModule,
+  MatTooltipModule
+} from '@angular/material';
 
 @NgModule({
-  declarations: [SealPackingManualComponent, InputCodesComponent],
+  declarations: [SealPackingManualComponent, InputCodesComponent,AddDestinyComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -17,8 +29,18 @@ import { HideKeyboardModule } from 'hide-keyboard';
     SealPackingManualRoutingModule,
     CdkTableModule,
     FormsModule,
-    HideKeyboardModule
-  ],
-  entryComponents: [SealPackingManualComponent, InputCodesComponent]
+    HideKeyboardModule,
+    MatFormFieldModule,
+    MatTooltipModule,
+    MatListModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    CommonUiCrudModule
+
+     ],
+  entryComponents: [SealPackingManualComponent, InputCodesComponent, AddDestinyComponent
+  ]
 })
 export class SealPackingManualModule { }

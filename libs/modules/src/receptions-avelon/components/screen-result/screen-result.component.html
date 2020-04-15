@@ -1,6 +1,6 @@
-<div class="container ion-text-center" [ngClass]="{'greenScreen': type == 1, 'redScreen': type == 2}">
+<div class="container ion-text-center" [ngClass]="{'greenScreen': type == screenResultType.WAREHOUSE_LOCATION, 'redScreen': type == screenResultType.SORTER_VENTILATION}">
 
-  <ng-container *ngIf="type == 1;else red">
+  <ng-container *ngIf="type == screenResultType.WAREHOUSE_LOCATION;else red">
     <p class="ion-text-uppercase">
         almacén
     </p>
@@ -11,7 +11,7 @@
     </p>
   </ng-template>
     <ion-button (click)="screenExit()">
-      salir
+      Regresar
       <ion-icon slot="end" name="exit"></ion-icon>
     </ion-button>
 

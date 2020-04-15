@@ -19,8 +19,9 @@ export class SorterInfoWayEmptyingComponent implements OnInit {
 
   public way: WaySorterModel.WaySorter = null;
   public destinyWarehouse: string = null;
-  public listProducts: ProductSorterModel.ProductSorter[] = [];
+  public listProducts: SorterOutputModel.ProductInSorterWithIncidence[] = [];
   public isLoadingData: boolean = false;
+  public wayWithIncidences: boolean = false;
 
   constructor(
     private events: Events,
@@ -30,9 +31,12 @@ export class SorterInfoWayEmptyingComponent implements OnInit {
   ) {
     this.sorterProvider.idZoneSelected = null;
   }
-  
-  ngOnInit() {
 
+  ngOnInit() {
+    this.way = null;
+    this.destinyWarehouse = null;
+    this.listProducts = [];
+    this.isLoadingData = false;
   }
 
   public newWaySelected(way: WaySorterModel.WaySorter) {
@@ -45,6 +49,7 @@ export class SorterInfoWayEmptyingComponent implements OnInit {
           let resData = res.data;
           this.destinyWarehouse = resData.warehouse ? `${resData.warehouse.reference} ${resData.warehouse.name}` : 'NO ASIGNADO';
           this.listProducts = resData.products || [];
+          this.wayWithIncidences = resData.with_incidences;
           this.isLoadingData = false;
         } else {
           let errorMessage = 'Ha ocurrido un error al intentar cargar la información de la calle.';

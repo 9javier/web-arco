@@ -16,6 +16,9 @@ import { ScannerRackComponent } from '../scanner-rack/scanner-rack.component';
 import {AudioProvider} from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
 import {CarrierModel} from "../../../../../services/src/models/endpoints/carrier.model";
+import {PickingStoreService} from "../../../../../services/src/lib/endpoint/picking-store/picking-store.service";
+import {PositionsToast} from "../../../../../services/src/models/positionsToast.type";
+import {TimesToastType} from "../../../../../services/src/models/timesToastType";
 
 @Component({
   selector: 'sorter-input-scanner',
@@ -66,7 +69,8 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
     private inventoryService: InventoryService,
-    private carrierService: CarrierService
+    private carrierService: CarrierService,
+    private pickingStoreService: PickingStoreService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.timeMillisToQuickUserFromSorterProcess = al_environment.time_millis_quick_user_sorter_process;
@@ -86,12 +90,19 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.toolbarProvider.optionsActions.next([]);
   }
 
-  focusToInput() {
+  private focusToInput(playSound: boolean = false, typeSound: 'ok'|'error' = 'ok') {
     setTimeout(() => {
-        if (!this.isWaitingSorterFeedback && document.getElementById('input')) {
-          document.getElementById('input').focus()
+      if (!this.isWaitingSorterFeedback && document.getElementById('input')) {
+        document.getElementById('input').focus()
+      }
+      if (playSound) {
+        if (typeSound == 'ok') {
+          this.audioProvider.playDefaultOk();
+        } else {
+          this.audioProvider.playDefaultError();
         }
-      }, 500);
+      }
+    },500);
   }
 
   async presentScannerRackModal() {
@@ -179,28 +190,24 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PACKING) {
         this.checkPackingToUse(dataWrote);
       } else {
-        this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError('El código escaneado no corresponde con el de un embalaje.', 'bottom');
-        this.focusToInput();
+        await this.intermediaryService.presentToastError('El código escaneado no corresponde con el de un embalaje.', PositionsToast.BOTTOM);
+        this.focusToInput(true, 'error');
       }
     } else if (this.isWaitingSorterFeedback) {
+      let errorMessage = `¡Ya ha escanadeo el producto ${this.productToSetInSorter}! Introdúzcalo en el sorter para continuar.`;
       if (this.productToSetInSorter !== dataWrote) {
-        this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError(`¡El producto ${this.productToSetInSorter} escaneado antes todavía no ha pasado por el sorter!`, 'bottom');
-      } else {
-        this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError(`¡Ya ha escanadeo el producto ${this.productToSetInSorter}! Introdúzcalo en el sorter para continuar.`, 'bottom');
+        errorMessage = `¡El producto ${this.productToSetInSorter} escaneado antes todavía no ha pasado por el sorter!`;
       }
-      this.focusToInput();
+      await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+      this.focusToInput(true, 'error');
     } else {
       if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PRODUCT) {
         this.addScannerRackButton();
         await this.intermediaryService.presentLoading('Registrando entrada de producto...');
         this.inputProductInSorter(dataWrote);
       } else {
-        this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 'bottom');
-        this.focusToInput();
+        await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', PositionsToast.BOTTOM);
+        this.focusToInput(true, 'error');
       }
     }
   }
@@ -214,23 +221,20 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         this.sorterExecutionService
           .postWrongWay({ way: this.idLastWaySet, productReference: productRef })
           .subscribe(async (res: ExecutionSorterModel.WrongWay) => {
-            this.audioProvider.playDefaultOk();
-            await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle equivocada!', 1500);
+            await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle equivocada!', 1500, PositionsToast.BOTTOM);
+            this.focusToInput(true, 'ok');
             this.resetLastScanProcess();
-            this.focusToInput();
           }, async (error: HttpRequestModel.Error) => {
-            this.audioProvider.playDefaultError();
             let errorMessage = 'Ha ocurrido un error al intentar avisar del uso de calle equivocada.';
             if (error.error && error.error.errors) {
               errorMessage = error.error.errors;
             }
-            await this.intermediaryService.presentToastError(errorMessage, 2000);
-            this.focusToInput();
+            await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+            this.focusToInput(true, 'error');
           });
       } else {
-        this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de calle equivocada.', 2000);
-        this.focusToInput();
+        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de calle equivocada.', PositionsToast.BOTTOM);
+        this.focusToInput(true, 'error');
       }
     };
 
@@ -246,32 +250,29 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         this.sorterExecutionService
           .postFullWay({ way: this.idLastWaySet, productReference: productRef })
           .subscribe(async (res: ExecutionSorterModel.FullWay) => {
-            await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle llena!', 1500);
+            await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle llena!', 1500, PositionsToast.BOTTOM);
             setTimeout(async () => {
               if (res.success) {
-                this.audioProvider.playDefaultOk();
                 this.idLastWaySet = res.idNewWay;
-                await this.intermediaryService.presentToastSuccess('Se le ha asignado una nueva calle donde continuar introduciendo el artículo.', 1500);
+                await this.intermediaryService.presentToastSuccess('Se le ha asignado una nueva calle donde continuar introduciendo el artículo.', 1500, PositionsToast.BOTTOM);
+                this.focusToInput(true, 'ok');
               } else {
-                this.audioProvider.playDefaultError();
+                await this.intermediaryService.presentToastSuccess('No se le ha podido asignar una nueva calle donde introducir el artículo.', 1500, PositionsToast.BOTTOM);
+                this.focusToInput(true, 'error');
                 this.resetLastScanProcess();
-                await this.intermediaryService.presentToastSuccess('No se le ha podido asignar una nueva calle donde introducir el artículo.', 1500);
               }
             }, 1.5 * 1000);
-            this.focusToInput();
           }, async (error: HttpRequestModel.Error) => {
-            this.audioProvider.playDefaultError();
             let errorMessage = 'Ha ocurrido un error al intentar avisar de la calle llena.';
             if (error.error && error.error.errors) {
               errorMessage = error.error.errors;
             }
-            await this.intermediaryService.presentToastError(errorMessage, 2000);
-            this.focusToInput();
+            await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+            this.focusToInput(true, 'error');
           });
       } else {
-        this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar de la calle llena.', 2000);
-        this.focusToInput();
+        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar de la calle llena.', PositionsToast.BOTTOM);
+        this.focusToInput(true, 'error');
       }
     };
 
@@ -310,18 +311,16 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           if (resData.wayBusyByAnotherUser) {
             this.checkWayWillFree(this.idLastWaySet, this.productToSetInSorter);
           } else {
-            this.audioProvider.playDefaultOk();
-            await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
+            await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000, PositionsToast.BOTTOM);
             this.checkProductInWay(productReference);
           }
-          this.focusToInput();
+          this.focusToInput(true, 'ok');
         } else if (resCode == 202) {
           this.productToSetInSorter = productReference;
           const resDataException = res.data as InputSorterModel.ProductScanException;
           await this.intermediaryService.dismissLoading();
           this.processStarted = true;
           this.productScanWithException = true;
-          this.audioProvider.playDefaultOk();
           if (resDataException.error.type == 'no_origin_scan') {
             this.destinyForProductScanWithException = null;
           } else if (resDataException.error.type == 'no_way_for_destiny') {
@@ -341,26 +340,34 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
             };
             this.destinyForProductScanWithException = null;
           }
-        } else {
+          this.focusToInput(true, 'ok');
+        } else if (res.code == 406 && res.message == 'ProductForWorkbenchException') {
           let resError = res.errors;
           await this.intermediaryService.dismissLoading();
-          this.audioProvider.playDefaultError();
           let errorMessage = `Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`;
           if (resError) {
             errorMessage = resError;
           }
-          await this.intermediaryService.presentToastError(errorMessage, 1500);
-          this.focusToInput();
+          await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+          this.focusToInput(true, 'error');
+        } else {
+          let resError = res.errors;
+          await this.intermediaryService.dismissLoading();
+          let errorMessage = `Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`;
+          if (resError) {
+            errorMessage = resError;
+          }
+          await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+          this.focusToInput(true, 'error');
         }
       }, async (error: HttpRequestModel.Error) => {
         await this.intermediaryService.dismissLoading();
-        this.audioProvider.playDefaultError();
         let errorMessage = `Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`;
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
         }
-        await this.intermediaryService.presentToastError(errorMessage, 1500);
-        this.focusToInput();
+        await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+        this.focusToInput(true, 'error');
       });
   }
 
@@ -374,16 +381,18 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           .postCheckProductInWay({ productReference, wayId })
           .subscribe((res: InputSorterModel.CheckProductInWay) => {
             if (!res.is_in_way && this.isWaitingSorterFeedback) {
+              if (res.newWay && res.newWay.id) {
+                this.idLastWaySet = res.newWay.id;
+              }
               setTimeout(() => {
                 if (!this.modalScanRack) {
                   checkProductInWayLocal(productReference)
                 }
               }, 0.5 * 1000);
             } else {
-              this.audioProvider.playDefaultOk();
               this.timeoutToQuickUser();
               this.sorterNotifyAboutProductScanned();
-              this.focusToInput();
+              this.focusToInput(true, 'ok');
             }
           }, (error) => {
             console.error('Error::Subscribe::sorterInputService::postCheckProductInWay', error);
@@ -410,7 +419,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
             if (res.code == 200) {
               let resData = res.data;
               if (resData.sorterFull) {
-                await this.intermediaryService.presentToastError(resData.message, 2000);
+                await this.intermediaryService.presentToastError(resData.message, PositionsToast.BOTTOM);
                 setTimeout(() => {
                   this.timeoutToQuickUser();
                   this.sorterNotifyAboutProductScanned();
@@ -421,26 +430,26 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
                   this.timeoutToQuickUser();
                   this.audioProvider.playDefaultOk();
                   if (!firstCheckOfWayFree) {
-                    await this.intermediaryService.presentToastSuccess(resData.message, 2000);
+                    await this.intermediaryService.presentToastSuccess(resData.message, 2000, PositionsToast.BOTTOM);
                   }
                   this.isWaitingWayWillFree = false;
 
-                  await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
+                  await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000, PositionsToast.BOTTOM);
                   this.checkProductInWay(referenceProductScanned);
                 } else if (resData.idNewWay && resData.idNewWay != 0) {
                   this.timeoutToQuickUser();
                   this.audioProvider.playDefaultOk();
                   if (!firstCheckOfWayFree) {
-                    await this.intermediaryService.presentToastSuccess(resData.message, 2000);
+                    await this.intermediaryService.presentToastSuccess(resData.message, 2000, PositionsToast.BOTTOM);
                   }
                   this.isWaitingWayWillFree = false;
                   this.idLastWaySet = resData.idNewWay;
 
-                  await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
+                  await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000, PositionsToast.BOTTOM);
                   this.checkProductInWay(referenceProductScanned);
                 } else {
                   if (firstCheckOfWayFree) {
-                    await this.intermediaryService.presentToastError('La calle que se le asignó está ocupada por otro usuario. Espere a que acabe o se le asigne una nueva para continuar', 2000);
+                    await this.intermediaryService.presentToastError('La calle que se le asignó está ocupada por otro usuario. Espere a que acabe o se le asigne una nueva para continuar', PositionsToast.BOTTOM);
                     firstCheckOfWayFree = false;
                   }
                   if (this.isWaitingWayWillFree && !this.modalScanRack) {
@@ -463,9 +472,9 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       checkWayWillFreeLocal(wayId);
     }
   }
-  
+
   private async sorterNotifyAboutProductScanned() {
-    await this.intermediaryService.presentToastSuccess(`Continúe escaneando productos.`);
+    await this.intermediaryService.presentToastSuccess(`Continúe escaneando productos.`, TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
     this.resetLastScanProcess();
   }
 
@@ -490,6 +499,9 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
         await this.intermediaryService.dismissLoading();
         this.sorterProvider.colorActiveForUser = null;
+        this.sorterProvider.colorSelected = null;
+        this.sorterProvider.idZoneSelected = null;
+        this.sorterProvider.processActiveForUser = null;
         this.location.back();
         this.events.publish(this.LOAD_DATA_INPUT_SORTER);
       }, async (error: HttpRequestModel.Error) => {
@@ -498,7 +510,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
         }
-        await this.intermediaryService.presentToastError(errorMessage, 2000);
+        await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
       });
   }
 
@@ -541,24 +553,22 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           this.assignToPacking(packingReference, false);
         } else {
           await this.intermediaryService.dismissLoading();
-          this.audioProvider.playDefaultError();
           let errorMessage = `Ha ocurrido un error al intentar utilizar el embalaje ${packingReference}.`;
           if (res.errors) {
             errorMessage = res.errors;
           }
-          await this.intermediaryService.presentToastError(errorMessage, 'bottom');
-          this.focusToInput();
+          await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+          this.focusToInput(true, 'error');
         }
       })
       .catch(async (error) => {
         await this.intermediaryService.dismissLoading();
-        this.audioProvider.playDefaultError();
         let errorMessage = `Ha ocurrido un error al intentar utilizar el embalaje ${packingReference}.`;
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
         }
-        await this.intermediaryService.presentToastError(errorMessage, 'bottom');
-        this.focusToInput();
+        await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+        this.focusToInput(true, 'error');
       });
   }
 
@@ -567,37 +577,45 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       await this.intermediaryService.presentLoading('Asignando artículo al embalaje...');
     }
 
-    const params = {
+    const paramsCreateInventory = {
       productReference: this.productToSetInSorter,
       avoidAvelonMovement: true,
       packingReference: packingReferenceToSet,
     };
-    this.inventoryService
-      .postStore(params)
-      .then(async (res: InventoryModel.ResponseStore) => {
-        await this.intermediaryService.dismissLoading();
+
+    await this.pickingStoreService
+      .postVentilate({
+        paramsCreateInventory: paramsCreateInventory,
+        needNotifyAvelon: this.productScanned && (!this.productScanned.destinyWarehouse || (this.productScanned.destinyWarehouse && this.productScanned.destinyWarehouse.reference == '000')),
+        withSorter: true
+      })
+      .then(async (res) => {
         if (res.code == 201) {
           this.destiniesWithPacking[this.destinyCodeToGetPacking] = packingReferenceToSet;
-          await this.intermediaryService.presentToastSuccess(`El artículo se ha asignado al embalaje ${packingReferenceToSet}`, 4 * 1000, 'bottom');
+          await this.intermediaryService.presentToastSuccess(`El artículo se ha asignado al embalaje ${packingReferenceToSet}`, 4 * 1000, PositionsToast.BOTTOM);
+          await this.intermediaryService.dismissLoading();
+          this.focusToInput(true, 'ok');
+
           this.resetLastScanProcess();
-          this.audioProvider.playDefaultOk();
         } else {
-          this.audioProvider.playDefaultError();
           let errorMessage = `Ha ocurrido un error al intentar asignar el artículo al embalaje ${packingReferenceToSet}.`;
           if (res.errors && typeof res.errors == 'string') {
             errorMessage = res.errors;
           }
-          await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+          await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+          await this.intermediaryService.dismissLoading();
+          this.focusToInput(true, 'error');
         }
       })
       .catch(async (error) => {
         await this.intermediaryService.dismissLoading();
-        this.audioProvider.playDefaultError();
         let errorMessage = `Ha ocurrido un error al intentar asignar el artículo al embalaje ${packingReferenceToSet}.`;
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
         }
-        await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+        await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
+        await this.intermediaryService.dismissLoading();
+        this.focusToInput(true, 'error');
       });
   }
 

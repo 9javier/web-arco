@@ -50,6 +50,15 @@ export class WarehousesService {
     });
   }
 
+  async getAllWarehouse(): Promise<Observable<HttpResponse<WarehouseModel.ResponseIndex>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.get<WarehouseModel.ResponseIndex>(PATH_BASE + 'warehouses', {
+      headers: headers,
+      observe: 'response'
+    });
+  }
+
   /**
    * Get enum of packing
    */

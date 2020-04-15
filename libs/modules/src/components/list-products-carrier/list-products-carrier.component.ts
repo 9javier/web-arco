@@ -27,6 +27,8 @@ export class ListProductsCarrierComponent implements OnInit {
     })
   });
 
+  private process: string;
+
   constructor(
     private formBuilder: FormBuilder,
     private listProductsCarrierService : ListProductsCarrierService,
@@ -41,6 +43,7 @@ export class ListProductsCarrierComponent implements OnInit {
     private audioProvider: AudioProvider,
   ) {
     this.carrierReference = this.navParams.get('carrierReference');
+    this.process = this.navParams.get('process');
   }
 
   async ngOnInit() {
@@ -52,6 +55,8 @@ export class ListProductsCarrierComponent implements OnInit {
   private async getProducts(data = null) {
     await this.intermediaryService.presentLoading();
     await this.listProductsCarrierService.getProducts(this.carrierReference, data).subscribe(async (res: any) => {
+      console.log('recive productos');
+      
       if (res.data.results && res.data.results.length > 0) {
         this.packingProducts = res.data.results[0].packingInventorys;
       } else {
@@ -115,8 +120,7 @@ export class ListProductsCarrierComponent implements OnInit {
   async btnCarrierEmpty() {
     console.log('Jaula vacía');
     await this.intermediaryService.presentLoading();
-
-    await this.carrierService.postPackingEmpty(this.carrierReference).then(res => {
+    await this.carrierService.postPackingEmpty(this.carrierReference, this.process).then(res => {
       if(res.code === 200){
         this.audioProvider.playDefaultOk();
         this.intermediaryService.presentToastSuccess(`La Jaula ${this.carrierReference} se ha vaciado corectamente`);

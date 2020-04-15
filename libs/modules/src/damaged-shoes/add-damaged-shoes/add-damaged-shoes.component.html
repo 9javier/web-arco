@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Añadir Parametrización</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="controls-container" [formGroup]="formGroup">
+    <p>
+      <mat-form-field appearance="outline">
+        <mat-label>Estado*</mat-label>
+        <mat-icon matPrefix>format_line_spacing</mat-icon>
+        <input matInput type="text" placeholder="Estado" formControlName="name">
+        <mat-error>Este campo es obligatorio.</mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-label class="float-label">Acciones*</mat-label>
+      <mat-form-field appearance="outline" class="content-checkbox">
+        <input matInput [hidden] = true>
+        <ion-list>
+          <ion-item *ngFor="let action of form.actions">
+            <ion-label>{{action.name}}</ion-label>
+            <ion-checkbox [checked]="action.isChecked" (ionChange)="changeAction(action.id)" color="dark" slot="start"></ion-checkbox>
+          </ion-item>
+        </ion-list>
+      </mat-form-field>
+    </p>
+  </div>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+    <ion-button slot="end" color="primary" type="submit" [disabled]="noActionsChecked()" (click)="submit()">Guardar</ion-button>
+  </ion-toolbar>
+</ion-footer>

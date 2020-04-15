@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+
+
+
 @Component({
   selector: 'title-list-workwaves-history',
   templateUrl: './list-title.component.html',
@@ -7,7 +10,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TitleListWorkwavesHistoryComponent implements OnInit {
 
-  constructor() {}
+  constructor(){}
 
   ngOnInit() {}
 

@@ -1,21 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { COLLECTIONS } from 'config/base';
-import { ModalController, AlertController, LoadingController } from '@ionic/angular';
-import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
-import { CarrierService, WarehouseModel, IntermediaryService } from '@suite/services';
-import { MatTableDataSource } from '@angular/material';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { WarehouseService } from 'libs/services/src/lib/endpoint/warehouse/warehouse.service';
-import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { UpdateComponent } from './update/update.component';
-import { StoreComponent } from './store/store.component';
-import { SendComponent } from './send/send.component';
-import { SendPackingComponent } from './send-packing/send-packing.component';
-import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
-import { SendJailComponent } from './send-jail/send-jail.component';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {COLLECTIONS} from 'config/base';
+import {ModalController, AlertController, LoadingController} from '@ionic/angular';
+import {CarrierModel} from 'libs/services/src/models/endpoints/carrier.model';
+import {
+  CarrierService,
+  WarehouseModel,
+  IntermediaryService,
+  UsersService,
+  FiltersService,
+  TypesService, WarehousesService, ProductsService
+} from '@suite/services';
+import {MatTableDataSource} from '@angular/material';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {WarehouseService} from 'libs/services/src/lib/endpoint/warehouse/warehouse.service';
+import {PrinterService} from 'libs/services/src/lib/printer/printer.service';
+import {Observable} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
+import {UpdateComponent} from './update/update.component';
+import {StoreComponent} from './store/store.component';
+import {SendPackingComponent} from './send-packing/send-packing.component';
+import {ShowDestinationsComponent} from './show-destionations/show-destinations.component';
+import {AddDestinyComponent} from './add-destiny/add-destiny.component';
+import {MultipleDestinationsComponent} from './multiple-destinations/multiple-destinations.component';
+import {HistoryModalComponent} from './history-modal/history-modal.component';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {Router} from '@angular/router';
+import {of} from 'rxjs';
+import * as Filesave from 'file-saver';
+import {TagsInputOption} from '../components/tags-input/models/tags-input-option.model';
+import {PaginatorComponent} from '../components/paginator/paginator.component';
+import {FilterButtonComponent} from "../components/filter-button/filter-button.component";
+import {catchError} from 'rxjs/operators';
+import {PermissionsService} from '../../../services/src/lib/endpoint/permissions/permissions.service';
+
+export interface CallToService {
+  pagination: any,
+  orderby: any,
+  filters: any
+}
 
 @Component({
   selector: 'app-jail',
@@ -23,23 +45,83 @@ import { SendJailComponent } from './send-jail/send-jail.component';
   styleUrls: ['./jail.component.scss'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ]
 })
-
 export class JailComponent implements OnInit {
+
+  pagerValues = [20, 50, 100];
+
+  /**timeout for send request */
+  requestTimeout;
+
+  /**previous reference to detect changes */
+  previousProductReferencePattern = '';
+  pauseListenFormChange = false;
+  permision: boolean;
+
+  /**List of SearchInContainer */
+  results: Array<CarrierModel.SearchInContainer> = [];
+
+  @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
+  @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
+  @ViewChild('filterButtonTypes') filterButtonTypes: FilterButtonComponent;
+  @ViewChild('filterButtonOrigins') filterButtonOrigins: FilterButtonComponent;
+
+  form: FormGroup = this.formBuilder.group({
+    references: [],
+    types: [],
+    origins: [],
+    packingReferencePattern: [],
+    pagination: this.formBuilder.group({
+      page: 1,
+      limit: this.pagerValues[0]
+    }),
+    orderby: this.formBuilder.group({
+      type: null,
+      order: "ASC"
+    })
+  });
+
+  /**Filters */
+  references: Array<TagsInputOption> = [];
+  types: Array<TagsInputOption> = [];
+  origins: Array<TagsInputOption> = [];
+
+  /** Filters save **/
+  referencesSelected: Array<any> = [];
+  typesSelected: Array<any> = [];
+  originsSelected: Array<any> = [];
+  packingReferencePatternSelected: Array<any> = [];
+  orderbySelected: Array<any> = [];
+
+  itemsIdSelected: Array<CarrierModel.SearchInContainer> = [];
+
+  hasDeleteProduct = false;
+
+  //For filter popovers
+  isFilteringReferences: number = 0;
+  isFilteringTypes: number = 0;
+  isFilteringOrigins: number = 0;
+
+  lastUsedFilter: string = '';
+  isMobileApp: boolean = false;
+
+  //For sorting
+  lastOrder = [true, true, true, true, true];
+
   public title = 'Jaulas';
-  // public displayedColumns: string[] = ['select', 'reference', 'buttons-print' ];
-  public columns: any[] = [{ name: 'ID', value: 'id' }, { name: 'Referencia', value: 'reference' }];
+  public columns: any[] = [{name: 'ID', value: 'id'}, {name: 'Referencia', value: 'reference'}];
   public apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers').name;
   public routePath = '/jails';
+  public jails: any[];
 
-  types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'assigned_incidences', 'isSend', "update", 'buttons-print'];
-  dataSource: MatTableDataSource<CarrierModel.Carrier>;
+  displayedColumns = ['select', 'reference', 'packing', 'warehouse', 'destiny', 'products-status', 'sealed', 'isSend', "update", 'open-modal', 'buttons-print',];
+  dataSource: any;
+  listAllCarriers: any;
   expandedElement: CarrierModel.Carrier;
 
   carriers: Array<CarrierModel.Carrier> = [];
@@ -57,14 +139,513 @@ export class JailComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private alertControler: AlertController,
     private printerService: PrinterService,
-    private loadController: LoadingController
+    private loadController: LoadingController,
+    private historyModalComponent: HistoryModalComponent,
+    private router: Router,
+    private warehousesService: WarehousesService,
+    private typeService: TypesService,
+    private alertController: AlertController,
+    private filterServices: FiltersService,
+    private productsService: ProductsService,
+    private modalController: ModalController,
+    private usersService: UsersService,
+    private permisionService: PermissionsService
   ) {
+    this.isMobileApp = typeof (<any>window).cordova !== "undefined";
   }
 
   ngOnInit() {
     this.getTypePacking();
-    this.getCarriers();
     this.getWarehouses();
+    this.usersService.hasDeleteProductPermission().then((observable) => {
+      observable.subscribe((response) => {
+        this.hasDeleteProduct = response.body.data;
+      })
+    });
+    this.getPermisionUser();
+    this.getAllInfo();
+  }
+
+  async getAllInfo() {
+    let body: CallToService = {
+      pagination: null,
+      orderby: null,
+      filters: null
+    };
+    this.intermediaryService.presentLoading();
+    await this.carrierService.getFilters().subscribe(sql_filters_result => {
+      this.listAllCarriers = sql_filters_result.data.filters;
+    });
+
+    await this.carrierService.searchInContainer(body).subscribe(sql_result => {
+      this.results = sql_result.data.results;
+      this.initSelectForm();
+      this.dataSource = new MatTableDataSource<CarrierModel.SearchInContainer>(this.results);
+      let paginator: any = sql_result.data.pagination;
+      this.paginator.length = paginator.totalResults;
+      this.paginator.pageIndex = paginator.selectPage;
+      this.paginator.lastPage = paginator.lastPage;
+      this.getFilters(true);
+      this.listenChanges();
+
+      //Reduce all filters
+      if (this.lastUsedFilter != 'references') {
+        for (let index in this.references) {
+          this.references[index].hide = false;
+          this.references[index].checked = true;
+        }
+        this.filterButtonReferences.listItems = this.references;
+      }
+      if (this.lastUsedFilter != 'types') {
+        for (let index in this.types) {
+          this.types[index].hide = false;
+          this.types[index].checked = true;
+        }
+
+        this.filterButtonTypes.listItems = this.types;
+      }
+      if (this.lastUsedFilter != 'origins') {
+        for (let index in this.origins) {
+          this.origins[index].hide = false;
+          this.origins[index].checked = true;
+          this.origins[index].value = '' + this.origins[index].reference + ' - ' + this.origins[index].name + '';
+        }
+        this.filterButtonOrigins.listItems = this.origins;
+      }
+    });
+    this.intermediaryService.dismissLoading();
+  }
+
+  sort(column: string) {
+    for (let i = 0; i < document.getElementsByClassName('title').length; i++) {
+      let iColumn = document.getElementsByClassName('title')[i] as HTMLElement;
+      if (iColumn.innerHTML.includes('🡇') || iColumn.innerHTML.includes('🡅')) {
+        iColumn.innerHTML = iColumn.innerHTML.slice(0, -2);
+      }
+    }
+
+    switch (column) {
+      case 'reference': {
+        if (this.lastOrder[0]) {
+          this.form.value.orderby = {order: "DESC", type: 1};
+          JailComponent.showArrow(0, false);
+        } else {
+          this.form.value.orderby = {order: "ASC", type: 1};
+          JailComponent.showArrow(0, true);
+        }
+        this.lastOrder[0] = !this.lastOrder[0];
+        break;
+      }
+      case 'type': {
+        if (this.lastOrder[1]) {
+          this.form.value.orderby = {order: "DESC", type: 2};
+          JailComponent.showArrow(1, false);
+        } else {
+          this.form.value.orderby = {order: "ASC", type: 2};
+          JailComponent.showArrow(1, true);
+        }
+        this.lastOrder[1] = !this.lastOrder[1];
+        break;
+      }
+      case 'origin': {
+        if (this.lastOrder[2]) {
+          this.form.value.orderby = {order: "DESC", type: 3};
+          JailComponent.showArrow(2, false);
+        } else {
+          this.form.value.orderby = {order: "ASC", type: 3};
+          JailComponent.showArrow(2, true);
+        }
+        this.lastOrder[2] = !this.lastOrder[2];
+        break;
+      }
+      case 'destiny': {
+        if (this.lastOrder[3]) {
+          this.form.value.orderby = {order: "DESC", type: 4};
+          JailComponent.showArrow(3, false);
+        } else {
+          this.form.value.orderby = {order: "ASC", type: 4};
+          JailComponent.showArrow(3, true);
+        }
+        this.lastOrder[3] = !this.lastOrder[3];
+        break;
+      }
+      case 'product': {
+        if (this.lastOrder[4]) {
+          this.form.value.orderby = {order: "DESC", type: 5};
+          JailComponent.showArrow(4, false);
+        } else {
+          this.form.value.orderby = {order: "ASC", type: 5};
+          JailComponent.showArrow(4, true);
+        }
+        this.lastOrder[4] = !this.lastOrder[4];
+        break;
+      }
+    }
+    this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+  }
+
+  static showArrow(colNumber, dirDown) {
+    let htmlColumn = document.getElementsByClassName('title')[colNumber] as HTMLElement;
+    if (dirDown) htmlColumn.innerHTML += ' 🡇';
+    else htmlColumn.innerHTML += ' 🡅';
+  }
+
+  applyFilters(filtersResult, filterType) {
+    const filters = filtersResult.filters;
+    switch (filterType) {
+      case 'references':
+        let referencesFiltered: string[] = [];
+        for (let reference of filters) {
+          if (reference.checked) referencesFiltered.push(reference);
+        }
+        if (referencesFiltered.length >= this.references.length) {
+          if (referencesFiltered.length > this.references.length) {
+            this.form.value.references = this.references;
+            this.isFilteringReferences = this.references.length;
+          } else {
+            this.form.value.references = referencesFiltered;
+            this.isFilteringReferences = referencesFiltered.length;
+          }
+        } else {
+          if (referencesFiltered.length > 0) {
+            this.form.value.references = referencesFiltered;
+            this.isFilteringReferences = referencesFiltered.length;
+          } else {
+            this.form.value.references = null;
+            this.isFilteringReferences = 0;
+          }
+        }
+        break;
+      case 'types':
+        let typesFiltered: string[] = [];
+        for (let type of filters) {
+          if (type.checked) typesFiltered.push(type);
+        }
+        if (typesFiltered.length >= this.types.length) {
+          if (typesFiltered.length > this.types.length) {
+            this.form.value.types = this.types;
+            this.isFilteringTypes = this.types.length;
+          } else {
+            this.form.value.types = typesFiltered;
+            this.isFilteringTypes = typesFiltered.length;
+          }
+        } else {
+          if (typesFiltered.length > 0) {
+            this.form.value.types = typesFiltered;
+            this.isFilteringTypes = typesFiltered.length;
+          } else {
+            this.form.value.types = null;
+            this.isFilteringTypes = 0;
+          }
+        }
+        break;
+      case 'origins':
+        let originsFiltered: number[] = [];
+        for (let origin of filters) {
+          if (origin.checked) originsFiltered.push(origin);
+        }
+        if (originsFiltered.length >= this.origins.length) {
+          if (originsFiltered.length > this.origins.length) {
+            this.form.value.origins = this.origins;
+            this.isFilteringOrigins = this.origins.length;
+          } else {
+            this.form.value.origins = originsFiltered;
+            this.isFilteringOrigins = originsFiltered.length;
+          }
+        } else {
+          if (originsFiltered.length > 0) {
+            this.form.value.origins = originsFiltered;
+            this.isFilteringOrigins = originsFiltered.length;
+          } else {
+            this.form.value.origins = null;
+            this.isFilteringOrigins = 0;
+          }
+        }
+        break;
+    }
+    this.lastUsedFilter = filterType;
+    let flagApply = true;
+    this.searchInContainer(this.sanitize(this.getFormValueCopy()), flagApply);
+  }
+
+  /**
+   * clear empty values of objecto to sanitize it
+   * @param object Object to sanitize
+   * @return the sanitized object
+   */
+  sanitize(object) {
+    /**mejorable */
+    object = JSON.parse(JSON.stringify(object));
+    if (!object.orderby.type) {
+      delete object.orderby.type;
+    } else {
+      object.orderby.type = parseInt(object.orderby.type);
+    }
+    if (!object.orderby.order) delete object.orderby.order;
+    Object.keys(object).forEach(key => {
+      if (object[key] instanceof Array) {
+        if (object[key][0] instanceof Array) {
+          object[key] = object[key][0];
+        } else {
+          for (let i = 0; i < object[key].length; i++) {
+            if (object[key][i] === null || object[key][i] === "") {
+              object[key].splice(i, 1);
+            }
+          }
+        }
+      }
+    });
+    return object;
+  }
+
+  /**
+   * Select or unselect all visible products
+   * @param event to check the status
+   */
+  selectAll(event): void {
+    let value = event.detail.checked;
+    this.toDelete['controls'].jails['controls'].forEach(control => {
+      control['controls'].selected.setValue(value);
+    });
+
+    if (value) {
+      this.itemsIdSelected = this.results;
+    } else {
+      this.itemsIdSelected = [];
+    }
+  }
+
+  /**
+   * Listen changes in form to resend the request for search
+   */
+  listenChanges(): void {
+    let previousPageSize = this.form.value.pagination.limit;
+    /**detect changes in the paginator */
+    this.paginator.page.subscribe(page => {
+      this.saveFilters();
+      /**true if only change the number of results */
+      let flag = previousPageSize == page.pageSize;
+      previousPageSize = page.pageSize;
+      this.form.get("pagination").patchValue({
+        limit: page.pageSize,
+        page: flag ? page.pageIndex : 1
+      });
+      this.recoverFilters();
+    });
+
+    /**detect changes in the form */
+    this.form.statusChanges.subscribe(change => {
+      if (this.pauseListenFormChange) return;
+      ///**format the reference */
+      /**cant send a request in every keypress of reference, then cancel the previous request */
+      clearTimeout(this.requestTimeout);
+      /**it the change of the form is in reference launch new timeout with request in it */
+      if (this.form.value.productReferencePattern != this.previousProductReferencePattern) {
+        /**Just need check the vality if the change happens in the reference */
+        if (this.form.valid)
+          this.requestTimeout = setTimeout(() => {
+            this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+          }, 1000);
+      } else {
+        /**reset the paginator to the 0 page */
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+      }
+      /**assign the current reference to the previous reference */
+      this.previousProductReferencePattern = this.form.value.productReferencePattern;
+    });
+  }
+
+  private saveFilters() {
+    this.referencesSelected = this.form.value.references;
+    this.typesSelected = this.form.value.types;
+    this.originsSelected = this.form.value.origins;
+    this.packingReferencePatternSelected = this.form.value.packingReferencePattern;
+    this.orderbySelected = this.form.value.orderby;
+  }
+
+  private recoverFilters() {
+    this.form.get("references").patchValue(this.referencesSelected, {emitEvent: false});
+    this.form.get("types").patchValue(this.typesSelected, {emitEvent: false});
+    this.form.get("origins").patchValue(this.originsSelected, {emitEvent: false});
+    this.form.get("packingReferencePattern").patchValue(this.packingReferencePatternSelected, {emitEvent: false});
+    this.form.get("orderby").patchValue(this.orderbySelected, {emitEvent: false});
+  }
+
+  private getFormValueCopy() {
+    return JSON.parse(JSON.stringify(this.form.value || {}));
+  }
+
+  /**
+   * init selectForm controls
+   */
+  initSelectForm(): void {
+    this.toDelete.removeControl("jails");
+    this.toDelete.addControl("jails", this.formBuilder.array(this.results.map(carrier => {
+      return this.formBuilder.group({
+        id: carrier.id,
+        reference: carrier.reference,
+        selected: false
+      });
+    })));
+  }
+
+  /**
+   * search carriers in container by criteria
+   * @param parameters - parameters to search
+   * @param applyFilter - parameters to search
+   */
+  searchInContainer(parameters, applyFilter: boolean = false): void {
+    if (applyFilter) {
+      parameters.pagination.page = 1;
+    }
+
+    let body: CallToService = {
+      pagination: parameters.pagination,
+      orderby: parameters.orderby,
+      filters: {
+        references: parameters.references,
+        types: parameters.types,
+        origins: parameters.origins,
+      }
+    };
+
+    if (this.isFilteringReferences == this.references.length) {
+      body.filters.references = null;
+    }
+    if (this.isFilteringTypes == this.types.length) {
+      body.filters.types = null;
+    }
+    if (this.isFilteringOrigins == this.origins.length) {
+      body.filters.origins = null;
+    }
+
+    this.intermediaryService.presentLoading();
+    this.carrierService.searchInContainer(body).subscribe(sql_result => {
+      this.intermediaryService.dismissLoading();
+      this.results = sql_result.data.results;
+      this.dataSource = new MatTableDataSource<CarrierModel.SearchInContainer>(this.results);
+      this.initSelectForm();
+      let paginator: any = sql_result.data.pagination;
+
+      this.paginator.length = paginator.totalResults;
+      this.paginator.pageIndex = paginator.selectPage;
+      this.paginator.lastPage = paginator.lastPage;
+
+      this.toDelete.removeControl("jails");
+      this.toDelete.addControl("jails", this.formBuilder.array(this.results.map(carrier => {
+        return this.formBuilder.group({
+          id: carrier.id,
+          reference: carrier.reference,
+          selected: false
+        });
+      })));
+
+      if (applyFilter) {
+        this.saveFilters();
+        this.form.get("pagination").patchValue({
+          limit: this.form.value.pagination.limit,
+          page: 1
+        }, {emitEvent: false});
+        this.recoverFilters();
+      }
+    }, () => {
+      this.intermediaryService.dismissLoading();
+    });
+  }
+
+  /**
+   * @description Eviar parametros y recibe un archivo excell
+   */
+  async fileExcell() {
+    this.intermediaryService.presentLoading('Descargando Archivo Excel');
+    const formToExcel = this.getFormValueCopy();
+    if (formToExcel.pagination) {
+      formToExcel.pagination.page = 1;
+      formToExcel.pagination.limit = 0;
+    }
+    this.carrierService.getFileExcell(this.sanitize(formToExcel)).pipe(
+      catchError(error => of(error)),
+    ).subscribe((data) => {
+
+      const blob = new Blob([data], {type: 'application/octet-stream'});
+      Filesave.saveAs(blob, `${Date.now()}.xlsx`);
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastSuccess('Archivo descargado')
+    }, error => console.log(error));
+  }
+
+  /**
+   * get all filters to fill the selects
+   */
+  getFilters(stable: boolean = false) {
+    this.updateFilterSourceReferences(this.listAllCarriers.references, stable);
+    this.updateFilterSourceTypes(this.listAllCarriers.types, stable);
+    this.updateFilterSourceOrigins(this.listAllCarriers.origins, stable);
+
+    this.isFilteringReferences = this.references.length;
+    this.isFilteringTypes = this.types.length;
+    this.isFilteringOrigins = this.origins.length;
+  }
+
+  private getPermisionUser() {
+    this.permisionService.getGestionPermision().then(obs => {
+      obs.subscribe(permision => {
+        this.permision = permision.body.data;
+      })
+    });
+  }
+
+  private updateFilterSourceReferences(references: any, stable: boolean) {
+    this.pauseListenFormChange = true;
+    let referencesList: any[] = [];
+    references.forEach(key => {
+      if (!referencesList.find(f => f.value == key['reference'])) {
+        referencesList.push({value: key['reference']});
+      }
+    });
+    if (stable == true) {
+      this.references = referencesList;
+      this.form.get("references").patchValue(this.references, {emitEvent: false});
+    }
+
+    setTimeout(() => {
+      this.pauseListenFormChange = false;
+    }, 0);
+  }
+
+  private updateFilterSourceTypes(types: any, stable: boolean) {
+    this.pauseListenFormChange = true;
+    let typesList: any[] = [];
+    types.forEach(key => {
+      if (!typesList.find(f => f.value == key['name'])) {
+        typesList.push({value: key['name']});
+      }
+    });
+    if (stable == true) {
+      this.types = typesList;
+      this.form.get("types").patchValue(this.types, {emitEvent: false});
+    }
+
+    setTimeout(() => {
+      this.pauseListenFormChange = false;
+    }, 0);
+  }
+
+  private updateFilterSourceOrigins(origins: any, stable: boolean) {
+    this.pauseListenFormChange = true;
+    let originsList: any[] = [];
+    origins.forEach(key => {
+      if (!originsList.find(f => f.reference == key['reference'])) {
+        originsList.push({reference: key['reference'], name: key['name']});
+      }
+    });
+    if (stable == true) {
+      this.origins = originsList;
+      this.form.get("origins").patchValue(this.origins, {emitEvent: false});
+    }
+    setTimeout(() => {
+      this.pauseListenFormChange = false;
+    }, 0);
   }
 
   /**
@@ -75,12 +656,10 @@ export class JailComponent implements OnInit {
     if (this.types) {
       return this.types.find(type => type.id == id);
     }
-    return { name: '' };
+    return {name: ''};
   }
 
   prevent(event) {
-    // console.log(event);
-
     event.preventDefault();
     event.stopPropagation();
   }
@@ -90,18 +669,21 @@ export class JailComponent implements OnInit {
    * @param event - to cancel it
    * @param jail - jail to be updated
    */
-  async toUpdate(event, jail) {
+  async toUpdate(event, jail: CarrierModel.SearchInContainer) {
     event.stopPropagation();
     event.preventDefault();
+
     let modal = (await this.modalCtrl.create({
       component: UpdateComponent,
       componentProps: {
         jail: jail
       }
-    }))
+    }));
+
     modal.onDidDismiss().then(() => {
       this.getCarriers();
-    })
+    });
+
     modal.present();
   }
 
@@ -110,32 +692,36 @@ export class JailComponent implements OnInit {
    * @param event - to cancel it
    * @param jail - jail to be updated
    */
-  async toSend(event, jail) {
+  async toSend(event, jail: CarrierModel.SearchInContainer) {
     event.stopPropagation();
     event.preventDefault();
+
     let modal = (await this.modalCtrl.create({
       component: SendPackingComponent,
       componentProps: {
         jail: jail
       }
-    }))
+    }));
+
     modal.onDidDismiss().then(() => {
       this.getCarriers();
-    })
+    });
+
     modal.present();
   }
+
   /**
    * Open modal to store jail
-   * @param event - to cancel it
-   * @param jail - jail to be updated
    */
   async toStore() {
     let modal = (await this.modalCtrl.create({
       component: StoreComponent
     }));
+
     modal.onDidDismiss().then(() => {
       this.getCarriers();
-    })
+    });
+
     modal.present();
   }
 
@@ -146,6 +732,56 @@ export class JailComponent implements OnInit {
       this.intermediaryService.dismissLoading();
     })
   }
+
+  loadCarriers(): void {
+    let parameters = this.sanitize(this.getFormValueCopy());
+    if (!parameters.orderby.type) {
+      parameters.orderby.type = null;
+    }
+
+    let body: CallToService = {
+      pagination: parameters.pagination,
+      orderby: parameters.orderby,
+      filters: {
+        references: parameters.references,
+        types: parameters.types,
+        origins: parameters.origins,
+      }
+    };
+
+    if (this.isFilteringReferences == this.references.length) {
+      body.filters.references = null;
+    }
+    if (this.isFilteringTypes == this.types.length) {
+      body.filters.types = null;
+    }
+    if (this.isFilteringOrigins == this.origins.length) {
+      body.filters.origins = null;
+    }
+
+    this.intermediaryService.presentLoading("Actualizando...");
+    this.carrierService.searchInContainer(body).subscribe(sql_result => {
+      this.results = sql_result.data.results;
+      this.dataSource = new MatTableDataSource<CarrierModel.SearchInContainer>(this.results);
+      this.initSelectForm();
+      let paginator: any = sql_result.data.pagination;
+
+      this.paginator.length = paginator.totalResults;
+      this.paginator.pageIndex = paginator.selectPage;
+      this.paginator.lastPage = paginator.lastPage;
+
+      this.toDelete.removeControl("jails");
+      this.toDelete.addControl("jails", this.formBuilder.array(this.results.map(carrier => {
+        return this.formBuilder.group({
+          id: carrier.id,
+          reference: carrier.reference,
+          selected: false
+        });
+      })));
+      this.intermediaryService.dismissLoading();
+    });
+  }
+
   delete() {
     let observable = new Observable(observer => observer.next());
     this.toDelete.value.jails.forEach(jail => {
@@ -170,62 +806,22 @@ export class JailComponent implements OnInit {
     );
   }
 
-  cleanSelect(closeAlert?: boolean) {
-    this.carrierService.getIndex().subscribe(carriers => {
-
-      this.carriers = carriers;
-      //this.carriers = this.carriers.map(this.isAvailableSend);
-      this.toDelete.removeControl("jails");
-      this.toDelete.addControl("jails", this.formBuilder.array(carriers.map(carrier => {
-        return this.formBuilder.group({
-          id: carrier.id,
-          reference: carrier.reference,
-          selected: false
-        });
-      })));
-      this.dataSource = new MatTableDataSource(carriers);
-      if (closeAlert) {
-        this.intermediaryService.dismissLoading();
-      }
-
-    })
-  }
-
   getCarriers(): void {
-    this.intermediaryService.presentLoading();
-    this.carrierService.getIndex().subscribe(carriers => {
-
-      this.carriers = carriers;
-      //this.carriers = this.carriers.map(this.isAvailableSend);
-      this.toDelete.removeControl("jails");
-      this.toDelete.addControl("jails", this.formBuilder.array(carriers.map(carrier => {
-        return this.formBuilder.group({
-          id: carrier.id,
-          reference: carrier.reference,
-          selected: false
-        });
-      })));
-      this.dataSource = new MatTableDataSource(carriers);
-      this.intermediaryService.dismissLoading();
-    })
+    this.getAllInfo();
   }
 
-  isAvailableSend(carrier) {
-    let isAvailable = carrier.packingSends.length > 0 ? carrier.packingSends[carrier.packingSends.length - 1].isReception : true;
+  isAvailableSend(carrier: CarrierModel.SearchInContainer) {
+    let isAvailable = parseInt(carrier.product) > 0 ? false : true;
     if (isAvailable) {
-      return carrier.carrierWarehousesDestiny.length == 0 || carrier.carrierWarehousesDestiny.length == 1;
+      return carrier.destiny.length == 0 || carrier.destiny.length == 1;
     }
     return false;
   }
-
-
 
   /**
    * check if have items to delete
    */
   hasToDelete(): boolean {
-
-
     return !!this.toDelete.value.jails.find(jail => jail.selected);
   }
 
@@ -234,7 +830,7 @@ export class JailComponent implements OnInit {
    * @param event
    * @param row
    */
-  async print(event, row?: CarrierModel.Carrier) {
+  async print(event, row?: CarrierModel.SearchInContainer) {
     event.stopPropagation();
     let listReferences: Array<string> = null;
     if (row && row.reference) {
@@ -248,11 +844,8 @@ export class JailComponent implements OnInit {
     }
   }
 
-
-
   async newJail() {
     let lista: number[] = this.toDelete.value.jails.filter(jail => jail.selected).map(x => x.id);
-    let newLista = this.toDelete.value.jails.filter(jail => jail.selected);
     let newId: CarrierModel.Carrier = null;
     let listaCarrier: CarrierModel.Carrier[] = [];
     let listaSend: CarrierModel.Carrier[] = [];
@@ -262,64 +855,58 @@ export class JailComponent implements OnInit {
         this.carriers = carriers;
       })
     }
-
-
     lista.forEach(async (id) => {
-
-      newId = this.carriers.find(x => x.id === id)
+      newId = this.carriers.find(x => x.id === id);
 
       if (newId) {
         listaCarrier.push(newId)
       }
     });
-    if (listaCarrier.length > 0) {
 
+    if (listaCarrier.length > 0) {
       listaSend = listaCarrier.filter(x => {
         if (x.packingInventorys.length > 0 && x.status !== 4 && x.carrierWarehousesDestiny.length === 1) {
           return x;
         }
-      })
+      });
       if (listaSend.length > 0) {
         listaSend.forEach(y => {
           listaCarrier = listaCarrier.filter(x => x.id !== y.id)
         })
       }
       this.presentAlert(listaCarrier, listaSend)
-
     }
-
-
-
-
-
   }
 
   async presentAlert(lista: CarrierModel.Carrier[], listaPresentada: CarrierModel.Carrier[]) {
     let listaRefereceJaulainviata = listaPresentada.map(x => x.reference);
-    let newlista = [];
+    let listWithDestiny = [];
+    let listWithNoDestiny = [];
     let newlistaPrint = [];
+    listaPresentada.forEach(item => {
+      //Lista llenada toda
+      listWithDestiny.push({
+        id: item.id,
+        idWarehouse: item.warehouse.id,
+        idWarehouseName: item.carrierWarehousesDestiny[0].warehouse.name,
+        reference: item.reference,
+        destiny: item.carrierWarehousesDestiny.length,
+        status: item.status,
+        products: item.packingInventorys.length,
+      });
+    });
     lista.forEach(item => {
-      let er = '';
-      if (item.carrierWarehousesDestiny.length === 0) {
-        er = '- Sin destino';
-      } else
-        if (item.carrierWarehousesDestiny.length > 1) {
-          er = '- Varios destinos';
-        } else
-          if (item.packingInventorys.length === 0) {
-            er = '- Sin productos';
-          } else
-            if (item.status === 4 || item.status === 5) {
-              if (item.status === 5) {
-                er = '- Sin productos';
-              }
-              else
-                if (item.status === 4) {
-                  er = '- Precintada';
-                }
-            }
-      newlistaPrint.push(item.reference + er);
-    })
+      //Lista no llenada toda
+      listWithNoDestiny.push({
+        id: item.id,
+        idWarehouse: item.warehouse.id,
+        reference: item.reference,
+        destiny: item.carrierWarehousesDestiny.length,
+        products: item.packingInventorys.length,
+        status: item.status
+      });
+    });
+
     let lstShow = "";
     newlistaPrint.map(x => {
       lstShow += `${x}</br>`;
@@ -333,94 +920,12 @@ export class JailComponent implements OnInit {
       return `${x}</br>`
     });
 
-
-    let alert;
-    if (listaRefereceJaulainviata.length === 0) {
-
-      alert = await this.alertControler.create({
-        header: 'Aviso',
-        message: `<b>Los siguientes embalajes no se pueden precintar</b></br></br>${lstShow}`,
-        buttons: [
-          {
-            text: 'Cancelar',
-            role: 'cancel',
-            cssClass: 'danger',
-            handler: () => {
-              this.cleanSelect(false);
-            }
-          }
-        ]
-      });
-
-    } else {
-
-      if (listaRefereceJaulainviata.length > 0 && lista.length === 0) {
-        alert = await this.alertControler.create({
-          header: 'Confirmación',
-          message: `<b>Embalajes que se van a precintar. ¿Está seguro?</b></br></br>${lst}</br>`,
-          buttons: [
-            {
-              text: 'Cancelar',
-              role: 'cancel',
-              cssClass: 'danger',
-              handler: () => {
-              }
-            },
-            {
-              text: 'Aceptar',
-              role: 'send',
-              cssClass: 'primary',
-              handler: () => {
-                if (listaRefereceJaulainviata.length > 0) {
-                  this.intermediaryService.presentLoading('Precintando Embalaje/s')
-                  this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
-                    this.cleanSelect(true);
-                  });
-                }
-              }
-            }
-          ]
-        });
-      } else {
-
-        alert = await this.alertControler.create({
-          header: 'Aviso',
-          message: `<b>Embalajes que se van a precintar</b></br></br>${lst}</br></br><b>Embalajes que NO se van a precintar</b></br></br>${lstShow}`,
-          buttons: [
-            {
-              text: 'Cancelar',
-              role: 'cancel',
-              cssClass: 'danger',
-              handler: () => {
-              }
-            },
-            {
-              text: 'Aceptar',
-              role: 'send',
-              cssClass: 'primary',
-              handler: () => {
-                if (listaRefereceJaulainviata.length > 0) {
-                  this.intermediaryService.presentLoading('Precintando Embalaje/s')
-                  this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
-                    this.cleanSelect(true);
-                  });
-                }
-              }
-            }
-          ]
-        });
-      }
-    }
-
-
-
-
-    await alert.present();
+    this.setMultipleDestinations(listWithDestiny, listWithNoDestiny);
   }
 
   private async printReferencesList(listReferences: Array<string>) {
     if ((<any>window).cordova) {
-      this.printerService.print({ text: listReferences, type: 0 });
+      this.printerService.print({text: listReferences, type: 0});
     } else {
       return await this.printerService.printBarcodesOnBrowser(listReferences);
     }
@@ -431,76 +936,54 @@ export class JailComponent implements OnInit {
    * @param event - to cancel it
    * @param jail - jail to be updated
    */
-  async send(event, jail) {
+  async send(event, jail: CarrierModel.SearchInContainer) {
     event.stopPropagation();
     event.preventDefault();
+
     let modal = (await this.modalCtrl.create({
-      component: SendComponent,
+      component: AddDestinyComponent,
       componentProps: {
         jail: jail
       },
       cssClass: 'modalStyles'
-    }))
+    }));
+
     modal.onDidDismiss().then(() => {
       this.getCarriers();
-    })
+    });
+
     modal.present();
   }
 
-  async sendJaula(jails) {
+  async viewCarrier(element: CarrierModel.SearchInContainer) {
     let modal = (await this.modalCtrl.create({
-      component: SendJailComponent,
-      componentProps: {
-        jails
-      },
-      cssClass: 'modalStyles',
-    }))
+      component: HistoryModalComponent,
+      componentProps: {packingReference: element.reference}
+    }));
+
     modal.present()
   }
 
-  /**
-   * Change one destination
-   * @param prev the previous warehouse
-   * @param current the current value of this destination
-   */
-  updateDestination(prev: number, current: number): void {
-    this.intermediaryService.presentLoading();
-    this.carrierService.updateDestination(prev, { destinationWarehouseId: current }).subscribe(() => {
-      this.intermediaryService.presentToastSuccess("Destino actualizado con éxito");
-      this.intermediaryService.dismissLoading();
-      this.getCarriers();
-    }, () => {
-      this.intermediaryService.presentToastError("Error al actualizar destino");
-      this.intermediaryService.dismissLoading();
-    });
+  async callToHistory() {
+    this.router.navigate(['jails/history/']);
   }
 
-  setDestination(carrierId: number, current: number): void {
-    this.intermediaryService.presentLoading();
-    this.carrierService.setDestination(carrierId, current).subscribe(() => {
-      this.intermediaryService.presentToastSuccess("Destino actualizado con éxito");
-      this.intermediaryService.dismissLoading();
-      this.getCarriers();
-    }, () => {
-      this.intermediaryService.presentToastError("Error al actualizar destino");
-      this.intermediaryService.dismissLoading();
-    });
-  }
-
-  async showDestinations(event, jail) {
+  async showDestinations(event, jail: CarrierModel.SearchInContainer) {
     event.stopPropagation();
     event.preventDefault();
+
     let modal = (await this.modalCtrl.create({
       component: ShowDestinationsComponent,
       componentProps: {
         jail: jail
       }
-    }))
+    }));
+
     modal.onDidDismiss().then(() => {
 
-    })
-    modal.present();
+    });
 
+    modal.present();
   }
 
   getWarehouses() {
@@ -513,19 +996,24 @@ export class JailComponent implements OnInit {
     })
   }
 
-  closeModal() {
-    this.modalCtrl.dismiss();
-  }
+  async setMultipleDestinations(listWithDestiny, listWithNoDestiny) {
+    event.stopPropagation();
+    event.preventDefault();
 
-  async moveToFirst() {
-    const modal = await this.modalCtrl.create({
-      component: 'StoreComponent'
+    let modal = await this.modalCtrl.create({
+      component: MultipleDestinationsComponent,
+      componentProps: {
+        listWithNoDestiny: listWithNoDestiny,
+        listWithDestiny: listWithDestiny
+      }
     });
 
-    return await modal.present();
+    modal.onDidDismiss().then((p) => {
+      if (p && p.data) {
+        this.getCarriers();
+      }
+    });
+
+    modal.present();
   }
 }
-
-
-
-

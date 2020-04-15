@@ -39,7 +39,7 @@ export class SendComponent implements OnInit {
   ngOnInit() {
     this.warehousesService.getIndex().then(observable => {
       observable.subscribe(warehouses => {
-        this.warehouses = warehouses.body.data;
+        this.warehouses = warehouses.body.data.filter((warehouse)=>warehouse.id == this.jail.id);
       });
     })
   }

@@ -1,11 +1,14 @@
 export const environment = {
   production: false,
   apiBase: 'http://localhost:8081/api',
-  apiLogisticOperator: 'http://localhost:3003/api',
+  apiLogisticOperator: 'http://localhost:3052/api',
   apiSorter: 'http://localhost:8081/api',
   urlBase: 'http://localhost:8081',
   apiRule: "https://localhost:5001",
   apiMiddleware: "http://localhost:3002",
+  apiBasePhoto: 'http://localhost:8081',
+  uploadFiles: 'http://localhost:8081/api/upload-files',
+  urlDownloadApp: 'https://drive.google.com/open?id=16DZzQ1hIArX5GF5oZtTpx3ltiPfCvw2K',
   sga: {
     client_id: "krack-client-sga",
     client_secret: "fGx4=yU-j4^jAAjZtV+YTDsm-@R$HAK3"
@@ -19,5 +22,3 @@ export const environment = {
 export let app: { name: "sga" | "al" } = {
   name: 'sga'
 };
-
-

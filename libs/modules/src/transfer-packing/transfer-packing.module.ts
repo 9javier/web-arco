@@ -6,6 +6,7 @@ import { TransferPackingComponent } from './transfer-packing.component';
 import {TransferPackingRoutingModule} from "./transfer-packing-routing.module";
 import {CdkTableModule} from "@angular/cdk/table";
 import {InputCodesComponent} from "./input-codes/input-codes.component";
+import { HideKeyboardModule } from 'hide-keyboard';
 
 @NgModule({
   declarations: [TransferPackingComponent, InputCodesComponent],
@@ -15,7 +16,8 @@ import {InputCodesComponent} from "./input-codes/input-codes.component";
     IonicModule,
     TransferPackingRoutingModule,
     CdkTableModule,
-    FormsModule
+    FormsModule,
+    HideKeyboardModule
   ],
   entryComponents: [TransferPackingComponent, InputCodesComponent]
 })

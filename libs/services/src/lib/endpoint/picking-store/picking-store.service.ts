@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {from, Observable} from "rxjs";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {map, switchMap} from "rxjs/operators";
+import {switchMap} from "rxjs/operators";
 import {AuthenticationService} from "@suite/services";
 import {PickingStoreModel} from "../../../models/endpoints/PickingStore";
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
@@ -16,12 +16,15 @@ export class PickingStoreService {
   private getByProductReferenceUrl = environment.apiBase + '/processes/picking-store/get-by-product-reference';
   private getInitiatedUrl = environment.apiBase + '/processes/picking-store/initiated';
   private getLineRequestsUrl = environment.apiBase + '/processes/picking-store/lines-request';
+  private getLineRequestsStoreOnlineUrl = environment.apiBase + '/processes/picking-store/lines-request-store-online';
   private postLineRequestsPendingUrl = environment.apiBase + '/processes/picking-store/lines-request/pending';
   private postCheckPackingUrl = environment.apiBase + '/processes/picking-store/packing';
   private postLineRequestsFilteredUrl = environment.apiBase + '/processes/picking-store/lines-request/filtered';
   private getLoadRejectionReasonsUrl = environment.apiBase + '/processes/picking-store/lines-request-reasons-reject';
   private postRejectRequestUrl = environment.apiBase + '/processes/picking-store/line-request-reject';
+  private postCancelRequestUrl = environment.apiBase + '/delivery-request/cancel';
   private postLineRequestDisassociateUrl = environment.apiBase + '/processes/picking-store/line-request-disassociate';
+  private postVentilateUrl = environment.apiBase + '/processes/picking-store/ventilate';
 
   constructor(
     private http: HttpClient,
@@ -39,6 +42,10 @@ export class PickingStoreService {
 
   getLineRequests() : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.get(this.getLineRequestsUrl);
+  }
+
+  getLineRequestsStoreOnline() : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getLineRequestsStoreOnlineUrl);
   }
 
   getLineRequestsPending() : Observable<PickingStoreModel.ResponseLineRequestsPending> {
@@ -64,8 +71,16 @@ export class PickingStoreService {
     return this.requestsProvider.post(this.postRejectRequestUrl, params);
   }
 
+  postCancelRequest(parameters: {reference: number}) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postCancelRequestUrl, parameters);
+  }
+
   postLineRequestDisassociate(params: PickingStoreModel.ParamsLineRequestDisassociate) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postLineRequestDisassociateUrl, params);
+  }
+
+  postVentilate(params: PickingStoreModel.ParamsVentilate) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postVentilateUrl, params);
   }
 
   // Send_Process endpoints

@@ -6,6 +6,9 @@ export const environment = {
   urlBase: 'http://192.168.254.111:8080',
   apiRule: "http://192.168.254.111:5000",
   apiMiddleware: "http://192.168.254.111:3002",
+  apiBasePhoto: 'http://192.168.254.111:8080',
+  uploadFiles: 'http://192.168.254.111:8080/api/upload-files',
+  urlDownloadApp: 'https://drive.google.com/open?id=16DZzQ1hIArX5GF5oZtTpx3ltiPfCvw2K',
   sga:{
     client_id:"krack-client-sga",
     client_secret:"fGx4=yU-j4^jAAjZtV+YTDsm-@R$HAK3"

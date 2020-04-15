@@ -7,6 +7,7 @@ import {Router} from "@angular/router";
 import {PickingService} from "../../../../services/src/lib/endpoint/picking/picking.service";
 import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
+import {IntermediaryService} from "@suite/services";
 
 @Component({
   selector: 'list-workwaves-history',
@@ -21,7 +22,8 @@ export class ListWorkwavesHistoryComponent implements OnInit {
     private router: Router,
     private workwavesService: WorkwavesService,
     private pickingService: PickingService,
-    private pickingProvider: PickingProvider
+    private pickingProvider: PickingProvider,
+    private intermediaryService: IntermediaryService
   ) {}
 
   ngOnInit() {
@@ -34,6 +36,7 @@ export class ListWorkwavesHistoryComponent implements OnInit {
       .then((data: Observable<HttpResponse<WorkwaveModel.ResponseListExecuted>>) => {
         data.subscribe((res: HttpResponse<WorkwaveModel.ResponseListExecuted>) => {
           this.workwavesHistory = res.body.data;
+          console.log(this.workwavesHistory);
         });
       });
   }
@@ -57,6 +60,13 @@ export class ListWorkwavesHistoryComponent implements OnInit {
         this.pickingProvider.listPickingsHistory = null;
         this.router.navigate(['workwaves-history/detail']);
       });
+  }
+
+  loadWorkWave(){
+    this.intermediaryService.presentLoading("Actualizando...");
+    const response = this.loadWorkwavesTemplates();
+    this.intermediaryService.dismissLoading();
+    return response;
   }
 
 }

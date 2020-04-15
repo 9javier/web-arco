@@ -111,6 +111,22 @@ const routes: Routes = [
     }
   },
   {
+    path: 'commercial-fields',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/commercial-fields/commercial-fields.module#CommercialFieldsModule',
+    data: {
+      name: 'Campos Comerciales'
+    }
+  },
+  {
+    path: 'brands-enabled-reception',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/brands-enabled-reception/brands-enabled-reception.module#BrandsEnabledReceptionModule',
+    data: {
+      name: 'Marcas habilitadas recepción sin pedido'
+    }
+  },
+  {
     path: 'pallets',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
@@ -150,6 +166,69 @@ const routes: Routes = [
     }
   },
   {
+    path: 'role-assignment',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/role-assignment/role-assignment.module#RoleAssignmentModule',
+    data: {
+      name: 'Asignación de roles'
+    }
+  },
+  {
+    path: 'damaged-shoes',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/damaged-shoes/damaged-shoes.module#DamagedShoesModule',
+    data: {
+      name: 'Parametrización de Daños'
+    }
+  },
+  {
+    path: 'defective-management',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-management/defective-management.module#DefectiveManagementModule',
+    data: {
+      name: 'Tipos de defectos'
+    }
+  },{
+    path: 'defective-zones',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-zones/defective-zones.module#DefectiveZonesModule',
+    data: {
+      name: 'Zonas'
+    }
+  },
+  {
+    path: 'defective-registry',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-registry/defective-registry.module#DefectiveRegistryModule',
+    data: {
+      name: 'Registro de Defectuosos'
+    }
+  },
+  {
+    path: 'defective-historic',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-historic/defective-historic.module#DefectiveHistoricModule',
+    data: {
+      name: 'Historico Defectuosos'
+    }
+  },
+  {
+    path: 'returns-list',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/returns-list/returns-list.module#ReturnsListModule',
+    data: {
+      name: 'Lista'
+    }
+  },
+  {
+    path: 'returns-list-products',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/returns-list-products/returns-list-products.module#ReturnsListProductsModule',
+    data: {
+      name: 'Lista de Productos Devueltos'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',
@@ -163,6 +242,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/products/products.module#ProductsModule',
     data: {
       name: 'Productos'
+    }
+  },
+  {
+    path: 'list-new-products',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/list-new-products/list-new-products.module#ListNewProductsComponentModule',
+    data: {
+      name: 'Nuevos Productos'
     }
   },
   {
@@ -248,6 +335,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'reception-hide-alert',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/reception-hide-alert/reception-hide-alert.module#ReceptionHideAlertModule',
+    data: {
+      name: 'Ocultar Alertas'
+    }
+  },
+  {
     path: 'assign/user/picking',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-assignment-picking/user-assignment-picking.module#UserAssignmentPickingModule',
@@ -277,6 +372,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/incidences-list/incidences-list.module#IncidencesListModule',
     data: {
       name: 'Notificaciones'
+    }
+  },
+  {
+    path: 'incidences-reception',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/incidences-reception-list/incidences-reception-list.module#IncidencesReceptionListModule',
+    data: {
+      name: 'Incidencias'
     }
   },
   {
@@ -335,11 +438,75 @@ const routes: Routes = [
     }
   },
   {
+    path:'reception-final',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/reception-final/reception-final.module#ReceptionFinalModule',
+    data: {
+      name: 'ReceptionFinal'
+    }
+  },
+  {
     path:'predistributions',
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/predistributions/predistributions.module#PredistributionsModule',
     data: {
       name: 'Predistribuciones'
+    }
+  },
+  {
+    path:'receptions',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/receptionss-avelon/receptionss-avelon.module#ReceptionssAvelonModule',
+    data: {
+      name: 'Recepciones'
+    }
+  },
+  {
+    path:'pr-ta-se-av',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/products-avelon/products-avelon.module#ProductsAvelonModule',
+    data: {
+      name: 'ProductsAvelon'
+    }
+  },
+  {
+    path:'seasons-enabled',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/seasons-enabled/seasons-enabled.module#SeasonsEnabledModule',
+    data: {
+      name: 'SeasonsEnabled'
+    }
+  },
+  {
+    path:'drop-files',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/drop-files/drop-files.module#DropFilesModule',
+    data: {
+      name: 'Drop-Files'
+    }
+  },
+  {
+    path:'expedition-manual',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/expedition-manual/expedition-manual.module#ExpeditionManualModule',
+    data: {
+      name: 'Expedition-Manual'
+    }
+  },
+  {
+    path:'expedition-collected',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/expedition-collected/expedition-collected.module#ExpeditionCollectedModule',
+    data: {
+      name: 'Expedition-Collected'
+    }
+  },
+  {
+    path:'unlock-expeditions',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/unlock-expeditions/unlock-expeditions.module#UnlockExpeditionsModule',
+    data: {
+      name: 'Desbloquear'
     }
   },
   {

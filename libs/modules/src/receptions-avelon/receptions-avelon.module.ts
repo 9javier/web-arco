@@ -6,20 +6,36 @@ import { ReceptionsAvelonComponent } from './receptions-avelon.component';
 import { ListsComponent } from './components/lists/lists.component';
 import { SizesComponent } from './components/sizes/sizes.component';
 import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-keyboard.module';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ScreenResultComponent } from './components/screen-result/screen-result.component';
-import { useAnimation, transition, trigger, style, animate } from '@angular/animations';
-
+import {
+  MatAutocompleteModule, MatButtonModule,
+  MatFormFieldModule, MatIconModule,
+  MatInputModule,
+  MatRippleModule,
+  MatSelectModule,
+  MatTooltipModule
+} from "@angular/material";
+import {InfoModalModule} from "./info-modal/info-modal.module";
+import {SizeInputModule} from "../components/size-input/size-input.module";
+import {FormHeaderReceptionComponent} from "./components/form-header-reception/form-header-reception.component";
+import {LoadingButtonModule} from "../components/button/loading-button/loading-button.module";
+import {InfoHeaderReceptionComponent} from "./components/info-header-reception/info-header-reception.component";
+import {SizeSelectModule} from "../components/size-select/size-select.module";
 
 const routes: Routes = [
   {
     path: '',
     component: ReceptionsAvelonComponent
+  },
+  {
+    path: 'free',
+    component: ReceptionsAvelonComponent
   }
 ];
 @NgModule({
-  declarations: [ReceptionsAvelonComponent, ListsComponent, SizesComponent, ScreenResultComponent],
-  entryComponents: [ReceptionsAvelonComponent, ListsComponent, SizesComponent, ScreenResultComponent],
+  declarations: [ReceptionsAvelonComponent, ListsComponent, SizesComponent, ScreenResultComponent, FormHeaderReceptionComponent, InfoHeaderReceptionComponent],
+  entryComponents: [ReceptionsAvelonComponent, ListsComponent, SizesComponent, ScreenResultComponent, FormHeaderReceptionComponent, InfoHeaderReceptionComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -28,6 +44,19 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     VirtualKeyboardModule,
     RouterModule.forChild(routes),
+    MatFormFieldModule,
+    InfoModalModule,
+    MatAutocompleteModule,
+    MatSelectModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    SizeInputModule,
+    MatTooltipModule,
+    LoadingButtonModule,
+    MatRippleModule,
+    SizeSelectModule,
+    MatIconModule,
+    MatButtonModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

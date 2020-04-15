@@ -13,6 +13,7 @@ import { ComponentsModule } from '../components/components.module';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from "@angular/material";
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { MatListModule } from '@angular/material/list';
     ComponentsModule,
     MatExpansionModule,
     MatSlideToggleModule,
-    MatListModule
+    MatListModule,
+    MatTooltipModule
   ],
   entryComponents: [
     StoreComponent

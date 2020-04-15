@@ -1,0 +1,32 @@
+
+
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+        <ion-button (click)="close()">
+            <ion-icon name="close" class="toogleArrow"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+  <ion-title>{{packingReference}}</ion-title>
+</ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-segment>
+    <ion-segment-button value="historical">
+        <ion-label>Histórico</ion-label>
+    </ion-segment-button>
+</ion-segment>
+
+  <ion-list>
+      <ion-item *ngFor="let ref of reference; let i = index">
+          <div>
+              <p>
+                <b>{{movementTypes[ref.typeAction]}}</b> - {{getFormatDate(ref.createdAt)}}<br>
+                <span *ngIf="ref.originWarehouse">Origen: <b>{{ ref.originWarehouse?.reference }}</b> - {{ ref.originWarehouse?.name }} </span><br>
+                <span *ngIf="ref.destinationWarehouse">Destino: <b>{{ ref.destinationWarehouse?.reference }}</b> - {{ ref.destinationWarehouse?.name }}</span>
+              </p>
+          </div>
+      </ion-item>
+  </ion-list>
+
+</ion-content>

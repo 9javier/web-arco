@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Añadir Roles</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="controls-container">
+    <p>
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario*</mat-label>
+        <mat-icon matPrefix>format_line_spacing</mat-icon>
+        <mat-select (selectionChange)="changeUser($event.value)" [(value)]="selectedUserId">
+          <mat-option *ngFor="let user of users" [value]="user.id">
+            {{user.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error>Este campo es obligatorio.</mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field appearance="outline">
+        <mat-label>Almacén*</mat-label>
+        <mat-icon matPrefix>format_line_spacing</mat-icon>
+        <mat-select (selectionChange)="changeWarehouse($event.value)" [(value)]="selectedWarehouseId">
+          <mat-option *ngFor="let warehouse of getSelectedUserWarehouses()" [value]="warehouse.id">
+            {{warehouse.reference}} - {{warehouse.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error>Este campo es obligatorio.</mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-label class="float-label">Roles*</mat-label>
+      <mat-form-field appearance="outline" class="content-checkbox">
+        <input matInput [hidden] = true>
+        <ion-list>
+          <ion-item *ngFor="let role of form.roles">
+            <ion-label>{{role.name}}</ion-label>
+            <ion-checkbox [checked]="role.isChecked" (ionChange)="changeRole(role.id)" color="dark" slot="start"></ion-checkbox>
+          </ion-item>
+        </ion-list>
+      </mat-form-field>
+    </p>
+  </div>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+    <ion-button slot="end" color="primary" type="submit" [disabled]="noRolesChecked()" (click)="submit()">Guardar</ion-button>
+  </ion-toolbar>
+</ion-footer>
