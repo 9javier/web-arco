@@ -303,6 +303,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'workwave-config-menu',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/workwave-config-menu/workwave-config-menu.module#WorkwaveConfigMenuModule',
+    data: {
+      name: 'Configuración de olas de trabajo'
+    }
+  },
+  {
     path: 'workwaves-scheduled',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwaves-schedule/workwaves-schedule.module#WorkwavesScheduleModule',
