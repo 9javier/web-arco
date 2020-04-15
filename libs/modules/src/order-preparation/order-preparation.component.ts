@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, 
   Input,Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { LabelsService } from '@suite/services';
+import { LabelsService, environment } from '@suite/services';
 import { IntermediaryService } from '@suite/services';
 import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
 import {Subscription} from "rxjs";
@@ -193,6 +193,15 @@ export class OrderPreparationComponent implements OnInit {
  async sendServicePrintPack(id){
    let body = {expeditionId:id }
   this.labelsService.postServicePrintPack(body).subscribe(result =>{
+    console.log(result);
+    
+    const url = `${environment.downloadFiles}/${result.pdf}`
+    const archor = document.createElement('a');
+    archor.href= url;
+    archor.target= '_blank'
+    archor.download;
+    console.log(archor);
+    archor.click()
   },
   async (err) => {
   });
