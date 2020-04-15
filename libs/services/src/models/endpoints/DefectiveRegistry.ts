@@ -96,7 +96,8 @@ export namespace DefectiveRegistryModel {
      photo?: (number | string)[],
      warehouse?: (number | string)[],
      factoryReturn?: (boolean)[],
-     orderBy: OrderBy
+     contact?: (number | string)[],
+     orderBy: OrderBy,
      pagination: Pagination
    }
    interface Pagination {

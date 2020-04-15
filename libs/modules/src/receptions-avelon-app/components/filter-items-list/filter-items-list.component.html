@@ -18,8 +18,10 @@
 
 <ion-content>
   <mat-list>
-    <mat-list-item matRipple (click)="selectItem(item)" *ngFor="let item of listItems">
-      <h4 mat-line [ngClass]="{'green': item.color == 'green', 'orange': item.color == 'orange', 'red': item.color == 'red'}">{{item.name}}</h4>
-    </mat-list-item>
+    <cdk-virtual-scroll-viewport itemSize="18" style="height: calc(100vh - 56px);">
+      <mat-list-item matRipple (click)="selectItem(item)" *cdkVirtualFor="let item of listItems">
+        <h4 mat-line [ngClass]="{'green': item.color == 'green', 'orange': item.color == 'orange', 'red': item.color == 'red'}">{{item.name}}</h4>
+      </mat-list-item>
+    </cdk-virtual-scroll-viewport>
   </mat-list>
 </ion-content>

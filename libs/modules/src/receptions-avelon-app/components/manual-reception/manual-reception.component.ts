@@ -44,6 +44,9 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   public listBrands: any[] = [];
   public listModels: any[] = [];
   public listColors: any[] = [];
+  public listBrandsAll: any[] = [];
+  public listModelsAll: any[] = [];
+  public listColorsAll: any[] = [];
   public listSizes: ReceptionAvelonModel.LoadSizesList[] = [];
 
   public resultsList: any[] = [];
@@ -69,6 +72,12 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   ) { }
 
   async ngOnInit() {
+    const tmpTypeModelVisualization = await this.localStorageProvider.get('typeModelVisualization');
+    if (tmpTypeModelVisualization) {
+      this.typeModelVisualization = parseInt(tmpTypeModelVisualization.toString());
+      this.lastTypeModelVisualization = this.typeModelVisualization;
+    }
+
     if (this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path) {
       this.isReceptionWithoutOrder = /^free\//.test(this.activatedRoute.snapshot.routeConfig.path);
     }
@@ -83,16 +92,20 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         action: () => this.resetData()
       }
     ]);
+
     if (!this.eanCode) {
       try {
         const lastPrint = await this.localStorageProvider.get('lastPrint');
-        if(lastPrint){
-          this.lastPrint = JSON.parse(String(lastPrint));
-          this.brandSelected = this.lastPrint.brand;
-          this.modelSelected = this.lastPrint.model;
-          this.modelIdSelected = this.modelSelected.id;
-          this.colorSelected = this.lastPrint.color;
-          this.listSizes = this.lastPrint.sizes;
+        if (lastPrint) {
+          const lastPrintParsed = JSON.parse(String(lastPrint));
+          if (lastPrintParsed) {
+            this.lastPrint = lastPrintParsed;
+            this.brandSelected = this.lastPrint.brand;
+            this.modelSelected = this.lastPrint.model;
+            this.modelIdSelected = this.modelSelected.id;
+            this.colorSelected = this.lastPrint.color;
+            this.listSizes = this.lastPrint.sizes;
+          }
         }
       } catch (error) {
         console.log(error)
@@ -126,48 +139,53 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   private loadReceptions(dataToConcat = null) {
     this.receptionsAvelonService
-      .getReceptions(this.receptionAvelonProvider.expeditionData.providerId)
+      .getReceptions(this.receptionAvelonProvider.expeditionData.providerId, this.typeModelVisualization)
       .subscribe((res) => {
-        this.expeditionLines = res.lines;
-        this.listBrands = res.brands;
-        this.listModels = res.models;
-        this.listColors = res.colors;
-        if (dataToConcat) {
-          for (let brand of dataToConcat.brands) {
-            if (!this.listBrands.find(b => b.id == brand.id)) {
-              this.listBrands.push(brand);
+        if (res) {
+          this.expeditionLines = res.lines;
+          this.listBrands = res.brands;
+          this.listModels = res.models;
+          this.listColors = res.colors;
+          this.listBrandsAll = res.brands;
+          this.listModelsAll = res.models;
+          this.listColorsAll = res.colors;
+          if (dataToConcat) {
+            for (let brand of dataToConcat.brands) {
+              if (!this.listBrands.find(b => b.id == brand.id)) {
+                this.listBrands.push(brand);
+              }
             }
-          }
-          for (let color of dataToConcat.colors) {
-            const colorInList = this.listColors.find(c => c.id == color.id);
-            if (!!colorInList) {
-              for (let model of color.belongsModels) {
-                if (!colorInList.belongsModels.find(m => m == model)) {
-                  colorInList.belongsModels.push(model);
+            for (let color of dataToConcat.colors) {
+              const colorInList = this.listColors.find(c => c.id == color.id);
+              if (!!colorInList) {
+                for (let model of color.belongsModels) {
+                  if (!colorInList.belongsModels.find(m => m == model)) {
+                    colorInList.belongsModels.push(model);
+                  }
                 }
+              } else {
+                this.listColors.push(color);
               }
-            } else {
-              this.listColors.push(color);
             }
-          }
-          for (let model of dataToConcat.models) {
-            const modelInList = this.listModels.find(m => m.name == model.name);
-            if (!!modelInList) {
-              for (let modelId of model.available_ids) {
-                if (!modelInList.available_ids.find(i => i == modelId)) {
-                  modelInList.available_ids.push(modelId);
+            for (let model of dataToConcat.models) {
+              const modelInList = this.listModels.find(m => m.name == model.name);
+              if (!!modelInList) {
+                for (let modelId of model.available_ids) {
+                  if (!modelInList.available_ids.find(i => i == modelId)) {
+                    modelInList.available_ids.push(modelId);
+                  }
                 }
+                for (let photo in model.photos_models) {
+                  if (!modelInList.photos_models) {
+                    modelInList.photos_models = {};
+                  }
+                  if (!modelInList.photos_models[photo]) {
+                    modelInList.photos_models[photo] = model.photos_models[photo];
+                  }
+                }
+              } else {
+                this.listModels.push(model);
               }
-              for (let photo in model.photos_models) {
-                if (!modelInList.photos_models) {
-                  modelInList.photos_models = {};
-                }
-                if (!modelInList.photos_models[photo]) {
-                  modelInList.photos_models[photo] = model.photos_models[photo];
-                }
-              }
-            } else {
-              this.listModels.push(model);
             }
           }
         }
@@ -181,15 +199,15 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     switch (itemToList) {
       case 1:
         filterType = 'Marcas';
-        listItemsForFilter = this.listBrands;
+        listItemsForFilter = this.getAllBrandsByMoldelAndColorSelected(this.modelSelected, this.colorSelected);
         break;
       case 2:
-        filterType = 'Modelos';
-        listItemsForFilter = this.listModels;
+        filterType = this.typeModelVisualization == this.TypesModel.MODEL_NAME ? 'Modelos' : (this.typeModelVisualization == this.TypesModel.MODEL_REFERENCE ? 'Referencias' : 'Detalles-Artículos');
+        listItemsForFilter = this.getAllModelsByBrandsAndColorsSelected(this.brandSelected, this.colorSelected);
         break;
       case 3:
         filterType = 'Colores';
-        listItemsForFilter = this.listColors;
+        listItemsForFilter = this.getAllColorsByBrandAndModelSelected(this.brandSelected, this.modelSelected);
         break;
     }
 
@@ -205,12 +223,18 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       if (data && data.data) {
         if (data.data.filterListType == 'Marcas') {
           this.brandSelected = data.data.itemSelected;
+          this.listModels = this.getAllModelsByBrandsAndColorsSelected(this.brandSelected, this.colorSelected);
+          this.listColors = this.getAllColorsByBrandAndModelSelected(this.brandSelected, this.modelSelected);
           this.getModelAndColorColors(this.brandSelected.id);
-        } else if (data.data.filterListType == 'Modelos') {
+        } else if (data.data.filterListType == 'Modelos' || data.data.filterListType == 'Referencias' || data.data.filterListType == 'Detalles-Artículos') {
           this.modelSelected = data.data.itemSelected;
+          this.listBrands = this.getAllBrandsByMoldelAndColorSelected(this.modelSelected, this.colorSelected);
+          this.listColors = this.getAllColorsByBrandAndModelSelected(this.brandSelected, this.modelSelected);
           this.getColorColors(this.modelSelected.id);
         } else if (data.data.filterListType == 'Colores') {
           this.colorSelected = data.data.itemSelected;
+          this.listBrands = this.getAllBrandsByMoldelAndColorSelected(this.modelSelected, this.colorSelected);
+          this.listModels = this.getAllModelsByBrandsAndColorsSelected(this.brandSelected, this.colorSelected);
         }
         this.updateFilterLists(data.data.itemSelected, data.data.filterListType);
       }
@@ -393,6 +417,105 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     }
   }
 
+  private getAllModelsByBrandsAndColorsSelected(brandSelected, colorSelected){
+    let availableModels = [];
+    if(brandSelected && brandSelected.belongsModels && brandSelected.belongsModels.length > 0){
+      availableModels = brandSelected.belongsModels;
+    }
+    if(colorSelected && colorSelected.belongsModels && colorSelected.belongsModels.length > 0){
+      if(availableModels.length > 0){
+        availableModels = availableModels.filter((id) => colorSelected.belongsModels.includes(id));
+      } else {
+        availableModels = colorSelected.belongsModels;
+      }
+    }
+    return this.getAllModelsAvailableModels(availableModels);
+  }
+
+  private getAllColorsByBrandAndModelSelected(brandSelected, modelSelected){
+    let availableModels = [];
+    if(brandSelected && brandSelected.belongsModels && brandSelected.belongsModels.length > 0){
+      availableModels = brandSelected.belongsModels;
+    }
+    if(modelSelected && modelSelected.available_ids && modelSelected.available_ids.length > 0){
+      if(availableModels.length > 0){
+        availableModels = availableModels.filter((id) => modelSelected.available_ids.includes(id));
+      } else {
+        availableModels = modelSelected.available_ids
+      }
+    }
+    return this.getAllColorsByAvailableModels(availableModels);
+  }
+
+  private getAllBrandsByMoldelAndColorSelected(modelSelected, colorSelected){
+    let availableModels = [];
+    if(modelSelected && modelSelected.available_ids && modelSelected.available_ids.length > 0){
+      availableModels = modelSelected.available_ids;
+    }
+    if(colorSelected && colorSelected.belongsModels && colorSelected.belongsModels.length > 0){
+      if(availableModels.length > 0){
+        availableModels = availableModels.filter((id) => colorSelected.belongsModels.includes(id));
+      } else {
+        availableModels = colorSelected.belongsModels;
+      }
+    }
+    return this.getAllBrandsByAvailableModels(availableModels);
+  }
+
+  private getAllModelsAvailableModels(availableModels : number[]){
+    if(availableModels && availableModels.length > 0){
+      let listModels = [];
+      availableModels.forEach(modelId => {
+        const modelsFilter = this.listModelsAll.filter(model => !!model.available_ids.find(id => id == modelId));
+        modelsFilter.forEach(m => {
+          const modelFind = listModels.find(elem => elem.id == m.id);
+          if (modelFind === undefined) {
+            listModels.push(m)
+          }
+        });
+      })
+      return listModels;
+    } else {
+      return this.listModelsAll;
+    }
+  }
+
+  private getAllColorsByAvailableModels(availableModels : number[]){
+    if(availableModels && availableModels.length > 0){
+      let listColors = [];
+      availableModels.forEach(modelId => {
+        const colorsFilter = this.listColorsAll.filter(color => !!color.belongsModels.find(id => id == modelId));
+        colorsFilter.forEach(m => {
+          const colorFind = listColors.find(elem => elem.id == m.id);
+          if (colorFind === undefined) {
+            listColors.push(m)
+          }
+        });
+      })
+      return listColors;
+    } else {
+      return this.listColorsAll;
+    }
+  }
+
+  private getAllBrandsByAvailableModels(availableModels : number[]){
+    if(availableModels && availableModels.length > 0){
+      let listBrands = [];
+      availableModels.forEach(modelId => {
+        const brandsFilter = this.listBrandsAll.filter(brand => !!brand.belongsModels.find(id => id == modelId));
+        brandsFilter.forEach(m => {
+          const brandFind = listBrands.find(elem => elem.id == m.id);
+          if (brandFind === undefined) {
+            listBrands.push(m)
+          }
+        });
+      })
+      return listBrands;
+    } else {
+      return this.listBrandsAll;
+    }
+  }
+
   public async showImages(ev) {
     const photoForModel = this.getPhotoUrl(this.modelIdSelected);
     if (photoForModel) {
@@ -515,7 +638,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
                 brand: this.brandSelected,
                 model: this.modelSelected,
                 color: this.colorSelected,
-                sizes: this.listSizes
+                sizes: this.listSizes.map(s => {s.quantity = 0; return s;})
               };
               await this.localStorageProvider.set('lastPrint', JSON.stringify(lastPrint));
             }, (error) => {
@@ -574,6 +697,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         this.modelIdSelected = null;
         this.colorSelected = null;
         this.lastTypeModelVisualization = this.typeModelVisualization;
+        this.localStorageProvider.set('typeModelVisualization', this.typeModelVisualization);
       }, error => {
         console.error('Error reloading models: ', error);
         this.typeModelVisualization = this.lastTypeModelVisualization;

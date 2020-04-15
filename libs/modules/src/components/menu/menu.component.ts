@@ -536,6 +536,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Listado de todos los productos solicitados que se han recibido'
         },
         {
+          title: 'Productos no aptos online',
+          id: 'unfit-online-products',
+          url: '/unfit-online-products',
+          icon: 'archive',
+          tooltip: 'Listado de productos no aptos online'
+        },
+        {
           title: 'Reetiquetado productos',
           id: 'print-product',
           url: 'print/product/relabel',
@@ -869,11 +876,11 @@ export class MenuComponent implements OnInit {
       icon: 'build',
       children: [
         {
-          title: 'Ajustes',
+          title: 'Código impresora',
           id: 'settings',
           url: '/settings',
           icon: 'cog',
-          tooltip: 'Ajustes de configuración de la aplicación. Ej: Mac de la impresora'
+          tooltip: 'Mac de la impresora'
         }
       ]
     },

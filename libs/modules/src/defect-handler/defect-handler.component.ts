@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort, MatTableDataSource, Sort } from '@angular/material';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import { IntermediaryService, PriceModel } from '@suite/services';
+import { IncidentsService, IntermediaryService, PriceModel} from '@suite/services';
 import { DefectiveRegistryService } from '../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
@@ -12,6 +12,7 @@ import { validators } from '../utils/validators';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
 import { DetailsRegisterComponent } from './details-register/details-register.component';
+import { PrintTicketService } from '../../../services/src/lib/print-ticket/print-ticket.service';
 
 @Component({
   selector: 'suite-defect-handler',
@@ -21,7 +22,7 @@ import { DetailsRegisterComponent } from './details-register/details-register.co
 export class DefectHandlerComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['id', 'barcode', 'registerDate', 'state'];
+  displayedColumns: string[] = ['id', 'product', 'registerDate', 'state', 'contact', 'print'];
   OrderSelect;
   dataSource;
   columns = {};
@@ -37,12 +38,14 @@ export class DefectHandlerComponent implements OnInit {
 
   ngInit: boolean;
   ngInitFilter: boolean;
+  ticketEmit: boolean;
   /**Filters */
   product: Array<TagsInputOption> = [];
   model: Array<TagsInputOption> = [];
   size: Array<TagsInputOption> = [];
   color: Array<TagsInputOption> = [];
   brand: Array<TagsInputOption> = [];
+  contact: Array<TagsInputOption> = [];
   statusManagementDefect: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
 
@@ -59,6 +62,7 @@ export class DefectHandlerComponent implements OnInit {
     size: [],
     color: [],
     brand: [],
+    contact: [],
     dateDetection: [],
     statusManagementDefect: [],
     defectTypeParent: [],
@@ -81,6 +85,8 @@ export class DefectHandlerComponent implements OnInit {
     private defectiveRegistryService: DefectiveRegistryService,
     private modalController: ModalController,
     private formBuilder: FormBuilder,
+    private printTicketService: PrintTicketService,
+    private incidentsService: IncidentsService,
   ) { }
 
   ionViewWillEnter() {
@@ -106,6 +112,7 @@ export class DefectHandlerComponent implements OnInit {
       size: [],
       color: [],
       brand: [],
+      contact: [],
       dateDetection: [],
       statusManagementDefect: [],
       defectTypeParent: [],
@@ -125,6 +132,7 @@ export class DefectHandlerComponent implements OnInit {
       size: [],
       color: [],
       brand: [],
+      contact: [],
       dateDetection: [],
       statusManagementDefect: [],
       defectTypeParent: [],
@@ -236,6 +244,7 @@ export class DefectHandlerComponent implements OnInit {
       this.size = filters.size;
       this.color = filters.color;
       this.brand = filters.brand;
+      this.contact = filters.contact;
       this.statusManagementDefect = filters.statusManagementDefect;
       this.applyFilters();
     }, (err) => {
@@ -329,5 +338,14 @@ export class DefectHandlerComponent implements OnInit {
       this.isRefresh = true;
       this.clearFilters();
     }
+  }
+
+  print(defective) {
+    this.incidentsService.getData(defective).subscribe(
+      resp => {
+        if (resp.data.statusManagementDefect.ticketEmit == true) {
+          this.printTicketService.printTicket(resp.data);
+        }
+      });
   }
 }
