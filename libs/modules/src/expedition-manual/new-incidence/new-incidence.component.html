@@ -13,6 +13,12 @@
     <ion-item lines="none">
       <h2>Datos del envio</h2>
     </ion-item>
+    <ion-item>
+      <ion-label class="label-text">Marketplace</ion-label>
+        <ion-select formControlName="marketId" name='marketId' placeholder="Selecciona" #selectMarket (ionChange)="operatorsSelected(selectMarket.value)">
+          <ion-select-option *ngFor="let market of markets" [value]="market.id">{{market.name}}</ion-select-option>
+        </ion-select>
+    </ion-item>
     <ion-item id="selected-operator">
       <ion-label>Tienda origen</ion-label>
       <ion-select placeholder="Selecciona" #selectOrigen (ionChange)="warehousesSelected(selectOrigen.value)">
@@ -33,10 +39,8 @@
     </ion-item>
     <ion-item>
       <ion-label class="label-text">Operadores logisticos</ion-label>
-      <ion-select  formControlName="operator"  name='operator'  placeholder="Selecciona">
-        <ion-select placeholder="Selecciona" #selectOperators (ionChange)="operatorsSelected(selectOperators.value)">
-          <ion-select-option *ngFor="let logisticOperator of logisticsOperators">{{logisticOperator.name}}</ion-select-option>
-        </ion-select>
+      <ion-select formControlName="operator" name='operator' placeholder="Selecciona" #selectOperators (ionChange)="operatorsSelected(selectOperators.value)">
+        <ion-select-option *ngFor="let logisticOperator of logisticsOperators">{{logisticOperator.name}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item lines="none">

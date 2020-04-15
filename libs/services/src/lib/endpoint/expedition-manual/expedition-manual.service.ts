@@ -13,11 +13,13 @@ import {AuthenticationService} from "@suite/services";
 })
 export class ExpeditionManualService {
 
+  private apiMga = environment.apiBase;
   private apiGeneralLogisticOperator = environment.apiLogisticOperator;
   private createExpeditionUrl = this.apiGeneralLogisticOperator + '/expedition/';
   private getWarehouseUrl = this.apiGeneralLogisticOperator + '/warehouse-logistic/index';
   private getWarehouseLogisticUrl = this.apiGeneralLogisticOperator + '/warehouse-logistic/';
   private getLogisticsOperatorsUrl = this.apiGeneralLogisticOperator + '/logistics-operators/';
+  private getMarketsUrl = this.apiMga + '/markets/';
 
   private baseUrl: string;
   private getTrasnports: string;
@@ -92,6 +94,15 @@ export class ExpeditionManualService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       return this.http.get<any>(this.getLogisticsOperatorsUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getMarkets():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getMarketsUrl, {headers}).pipe(map(response=>{
         return response.data;
       }));
     }));

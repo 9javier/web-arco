@@ -30,6 +30,7 @@ export class NewIncidenceComponent implements OnInit {
   operatorSelected = '';
   logisticsOperators = [];
   data;
+  markets = [];
   constructor(
     private formBuilder: FormBuilder,
     private modalController: ModalController,
@@ -45,7 +46,9 @@ export class NewIncidenceComponent implements OnInit {
     });
 
     this.getTransports();
+    this.getMarkets();
     this.form = this.formBuilder.group({
+      marketId: new FormControl(''),
       operator: new FormControl(''),
       name: new FormControl(''),
       lastname: new FormControl(''),
@@ -69,8 +72,15 @@ export class NewIncidenceComponent implements OnInit {
     });
   }
 
+  getMarkets(){
+    this.expeManSrv.getMarkets().subscribe(data => {
+      this.markets = data;
+    });
+  }
+
   save(){
     const body = {
+      marketId: this.form.value.marketId,
       operator: this.form.value.operator.toUpperCase(),
       warehouseReference: this.warehouseSelected['warehouseReference'],
       referenceExpedition: this.form.value.referenceExpedition,
@@ -128,7 +138,6 @@ export class NewIncidenceComponent implements OnInit {
     for(let i = 0; i < this.warehouses.length; i++){
       if(warehouse === this.warehouses[i].name){
         this.warehouseSelected = this.warehouses[i];
-        console.log('WAREHOUSE SELECTED ---> ',this.warehouses[i]);
       }
     }
   }
