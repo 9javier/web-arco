@@ -4,9 +4,10 @@ import { WorkwaveConfigMenuComponent } from './workwave-config-menu.component';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/material';
+import {MatListModule, MatTableModule, MatPaginatorModule, MatFormFieldModule, MatIconModule} from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { MatTooltipModule } from "@angular/material";
+import { UsersReplenishmentComponent } from './users-replenishment/users-replenishment.component'
 
 const routes: Routes = [
   {
@@ -16,7 +17,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [WorkwaveConfigMenuComponent],
+  declarations: [WorkwaveConfigMenuComponent, UsersReplenishmentComponent],
+  entryComponents: [UsersReplenishmentComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -27,7 +29,9 @@ const routes: Routes = [
     BreadcrumbModule,
     RouterModule.forChild(routes),
     FormsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatFormFieldModule,
+    MatIconModule
   ]
 })
 export class WorkwaveConfigMenuModule { }
