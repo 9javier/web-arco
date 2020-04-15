@@ -7,6 +7,8 @@ import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar
 import {Subscription} from "rxjs";
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
+import { saveAs } from "file-saver";
+
 
 @Component({
   selector: 'order-preparation',
@@ -194,14 +196,13 @@ export class OrderPreparationComponent implements OnInit {
    let body = {expeditionId:id }
   this.labelsService.postServicePrintPack(body).subscribe(result =>{
     console.log(result);
-    
-    const url = `${environment.downloadFiles}/${result.pdf}`
-    const archor = document.createElement('a');
-    archor.href= url;
-    archor.target= '_blank'
-    archor.download;
-    console.log(archor);
-    archor.click()
+    const blob = new Blob([result], { type: 'application/pdf' });
+    saveAs(blob, 'documento.pdf')
+    // const url = `${environment.downloadFiles}/${result.pdf}`
+    // const archor = document.createElement('a');
+    // archor.href= url;
+    // console.log(archor);
+    // archor.click()
   },
   async (err) => {
   });
