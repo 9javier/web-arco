@@ -72,7 +72,7 @@ export class WorkwaveConfigMenuComponent implements OnInit {
             x.value  = (parseInt(x.value)/60).toString();
           }
         });
-        this.listVariablesFromDb = globalVariables;
+        this.listVariablesFromDb = globalVariables.filter(variable => this.listTypesFromDb.map(type=>type.id).includes(variable.type));
         this.events.publish('load_of_variables');
       });
   }
@@ -81,7 +81,7 @@ export class WorkwaveConfigMenuComponent implements OnInit {
     this.globalVariableService
       .getTypes()
       .subscribe((types) => {
-        this.listTypesFromDb = types;
+        this.listTypesFromDb = types.filter((type: any) => type.workwaves == true);
         this.events.publish('load_of_variables');
       });
   }
