@@ -6,8 +6,41 @@
       </ion-button>
     </ion-buttons>
     <ion-title>Usuarios que generan reposiciones</ion-title>
+    <ion-buttons slot="end">
+      <ion-button matTooltip="Filtros" matTooltipClass="tooltip">
+        <i class="material-icons" [ngClass]="showFilters ? 'white-background' : 'black-background'" (click)="showFilters = !showFilters">filter_list</i>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
+<ion-row class="filter-row" *ngIf="showFilters">
+  <ion-col>
+    <mat-form-field class="form">
+      <mat-label>Nombre</mat-label>
+      <input matInput placeholder="Nombre" [(ngModel)]="filters.name">
+      <mat-icon matSuffix class="search" (click)="search()">search</mat-icon>
+    </mat-form-field>
+  </ion-col>
+  <ion-col>
+    <mat-form-field class="form">
+      <mat-label>Genera reposiciones</mat-label>
+      <mat-select [(value)]="filters.replenishment" (selectionChange)="search()">
+        <mat-option value="any">Cualquiera</mat-option>
+        <mat-option value="yes">Sí</mat-option>
+        <mat-option value="no">No</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ion-col>
+  <ion-col>
+    <mat-form-field class="form">
+      <mat-label>Ordenar</mat-label>
+      <mat-select [(value)]="filters.order" (selectionChange)="search()">
+        <mat-option value="ASC">Ascendente</mat-option>
+        <mat-option value="DESC">Descendente</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ion-col>
+</ion-row>
 <ion-content class="ion-padding">
   <ion-list>
     <ion-item *ngFor="let employee of employees">
@@ -16,10 +49,10 @@
     </ion-item>
   </ion-list>
 </ion-content>
-<mat-paginator></mat-paginator>
 <ion-footer>
   <ion-toolbar>
+    <mat-paginator></mat-paginator>
     <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
-    <ion-button slot="end" color="primary" type="submit" [disabled]="checkChanges()" (click)="submit()">Guardar</ion-button>
+    <ion-button slot="end" color="primary" type="submit" [disabled]="!employees || checkChanges()" (click)="submit()">Guardar</ion-button>
   </ion-toolbar>
 </ion-footer>

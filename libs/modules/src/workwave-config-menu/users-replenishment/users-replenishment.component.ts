@@ -16,6 +16,12 @@ export class UsersReplenishmentComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   employees: EmployeeReplenishment[];
+  showFilters: boolean;
+  filters: {
+    name: string,
+    replenishment: string,
+    order: string
+  };
 
   constructor(
     private modalController: ModalController,
@@ -24,6 +30,12 @@ export class UsersReplenishmentComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.showFilters = false;
+    this.filters = {
+      name: '',
+      replenishment: 'any',
+      order: 'ASC'
+    };
     this.paginator.pageSizeOptions = [10, 50, 100];
     this.search();
     this.paginator.page.subscribe(() => this.search());
@@ -32,9 +44,12 @@ export class UsersReplenishmentComponent implements OnInit {
   search(){
     this.intermediaryService.presentLoading('Cargando usuarios...').then(()=>{
       const searchParameters = {
+        name: this.filters.name,
+        replenishment: this.filters.replenishment,
         pagination: {
           page: this.paginator.pageIndex+1,
-          limit: this.paginator.pageSize
+          limit: this.paginator.pageSize,
+          sortType: this.filters.order
         }
       };
       this.employeeService.search(searchParameters).then(async response => {
