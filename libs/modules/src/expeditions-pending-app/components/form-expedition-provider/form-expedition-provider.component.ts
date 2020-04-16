@@ -44,6 +44,7 @@ export class FormExpeditionProviderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.subscriptionToFormChanges) {
       this.subscriptionToFormChanges.unsubscribe();
+      this.subscriptionToFormChanges = null;
     }
   }
 
@@ -82,24 +83,26 @@ export class FormExpeditionProviderComponent implements OnInit, OnDestroy {
   }
 
   private listenFormChanges() {
-    this.subscriptionToFormChanges = this.expeditionForm.valueChanges.subscribe((c) => {
-      if (!c.provider_expedition) {
-        if (this.listProviders.length != this.listProvidersOriginal.length) {
-          this.listProviders = this.copyItem(this.listProvidersOriginal);
-        }
-      } else {
-        let providerWrote = null;
-        if (typeof c.provider_expedition == 'string') {
-          providerWrote = c.provider_expedition;
+    if (!this.subscriptionToFormChanges) {
+      this.subscriptionToFormChanges = this.expeditionForm.valueChanges.subscribe((c) => {
+        if (!c.provider_expedition) {
+          if (this.listProviders.length != this.listProvidersOriginal.length) {
+            this.listProviders = this.copyItem(this.listProvidersOriginal);
+          }
         } else {
-          providerWrote = c.provider_expedition.name;
+          let providerWrote = null;
+          if (typeof c.provider_expedition == 'string') {
+            providerWrote = c.provider_expedition;
+          } else {
+            providerWrote = c.provider_expedition.name;
+          }
+          const listProvidersTemp = this.copyItem(this.listProvidersOriginal);
+          this.listProviders = listProvidersTemp.filter((s) => {
+            return s.name.toUpperCase().includes(providerWrote.toUpperCase());
+          });
         }
-        const listProvidersTemp = this.copyItem(this.listProvidersOriginal);
-        this.listProviders = listProvidersTemp.filter((s) => {
-          return s.name.toUpperCase().includes(providerWrote.toUpperCase());
-        });
-      }
-    });
+      });
+    }
   }
 
   public check() {
