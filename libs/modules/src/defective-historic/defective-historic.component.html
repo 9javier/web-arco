@@ -119,7 +119,7 @@
                                (applyFilters)="applyFilters($event, 'defectTypeParent')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.defectTypeParent.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element?.defectTypeParent?.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="defectTypeChild">
@@ -130,7 +130,7 @@
                                (applyFilters)="applyFilters($event, 'defectTypeChild')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element.defectTypeChild.name}}  </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element?.defectTypeChild?.name}}  </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="defectZoneParent">
@@ -141,7 +141,7 @@
                                (applyFilters)="applyFilters($event, 'defectZoneParent')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.defectZoneParent.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element?.defectZoneParent?.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="defectZoneChild">
@@ -152,7 +152,7 @@
                                (applyFilters)="applyFilters($event, 'defectZoneChild')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element.defectZoneChild.name}}  </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element?.defectZoneChild?.name}}  </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
@@ -160,6 +160,11 @@
       </mat-row>
     </mat-table>
   </div>
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button matTooltip="Descargar Excel" matTooltipClass="tooltip" color="primary" (click)="fileExcell()">
+      <ion-icon name="document"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
   <ion-grid>
     <ion-row>
       <ion-col size='8'>

@@ -90,6 +90,9 @@ export class EanScannerComponent implements OnInit {
               component: ModalDestinyReceptionComponent,
               componentProps: { typeDestinyReception: typeDestinyReception }
             });
+            modalDestiny.onDidDismiss().then(data => {
+              this.scannerManual.focusToInput();
+            });
             modalDestiny.present();
           } else {
             this.scannerManual.blockScan(false);

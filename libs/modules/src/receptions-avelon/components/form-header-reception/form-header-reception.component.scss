@@ -17,7 +17,7 @@ div.container {
     width: 100%;
     display: flex;
     flex-direction: row;
-    div.expedition, div.provider {
+    div.resume, div.expedition, div.provider {
       position: relative;
       place-content: center;
       border: 1px solid var(--ion-color-primary);
@@ -59,8 +59,17 @@ div.container {
         }
       }
     }
-    div.expedition {
+    div.resume {
       margin-right: 8px;
+      div.row {
+        place-content: space-between;
+        p {
+          padding-left: 8px;
+        }
+      }
+    }
+    div.expedition {
+      margin: 0 8px 0;
     }
     div.provider {
       margin-left: 8px;

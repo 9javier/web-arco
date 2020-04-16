@@ -12,6 +12,8 @@ export namespace DefectiveZonesModel {
         addedChild?: boolean;
         open?: boolean;
         defectZoneChild: Array<DefectiveZonesChildModel.DefectiveZonesChild>
+        includeInIncidenceTicket?: boolean;
+        includeInDeliveryNote?: boolean;
     }
 
     export interface DefectiveZonesParentSelected {

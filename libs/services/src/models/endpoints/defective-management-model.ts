@@ -12,6 +12,8 @@ export namespace DefectiveManagementModel {
         addedChild?: boolean;
         open?: boolean;
         defectTypeChild: Array<DefectiveManagementChildModel.DefectiveManagementChild>
+        includeInIncidenceTicket?: boolean;
+        includeInDeliveryNote?: boolean;
     }
 
     export interface DefectiveManagementParentSelected {

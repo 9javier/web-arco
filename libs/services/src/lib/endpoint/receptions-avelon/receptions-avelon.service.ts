@@ -22,17 +22,17 @@ export class ReceptionsAvelonService {
   private postReloadModelsListUrl: string = `${environment.apiBase}/reception/models/list`;
   makeReceptionFreeUrl: string = `${this.receptionsUrl}/free`;
 
-  private models = new BehaviorSubject([]); 
+  private models = new BehaviorSubject([]);
   private models$ = this.models.asObservable()
-  private brands = new BehaviorSubject([]); 
+  private brands = new BehaviorSubject([]);
   private brands$ = this.brands.asObservable()
-  private sizes = new BehaviorSubject([]); 
+  private sizes = new BehaviorSubject([]);
   private sizes$ = this.sizes.asObservable()
-  private colors = new BehaviorSubject([]); 
+  private colors = new BehaviorSubject([]);
   private colors$ = this.colors.asObservable()
-  private emit = new BehaviorSubject({}); 
+  private emit = new BehaviorSubject({});
   private emit$ = this.emit.asObservable()
-  private emitSize = new BehaviorSubject({}); 
+  private emitSize = new BehaviorSubject({});
   private emitSize$ = this.emitSize.asObservable();
 
   constructor(
@@ -40,16 +40,18 @@ export class ReceptionsAvelonService {
   ) {}
 
   //region API Requests
-  getReceptions(providerId: number) {
+  getReceptions(providerId: number, typeVisualization: number) {
     const body: ReceptionAvelonModel.GetProvider = {
-      providerId
+      providerId,
+      typeVisualization
     };
     return this.http.post<HttpRequestModel.Response>(`${this.receptionsUrl}/all`, body).pipe(map(resp => resp.data));
   }
 
-  getReceptionsNotifiedProviders(providerId: number) {
+  getReceptionsNotifiedProviders(providerId: number, typeVisualization: number) {
     const body: ReceptionAvelonModel.GetProvider = {
-      providerId
+      providerId,
+      typeVisualization
     };
     return this.http.post<HttpRequestModel.Response>(`${this.receptionsUrl}/all-with-notified`, body).pipe(map(resp => resp.data));
   }
@@ -98,7 +100,7 @@ export class ReceptionsAvelonService {
   getModelsList(){
     return this.models$
   }
-  
+
   setBrandsList(data: Array<any>){
     this.brands.next(data)
   }
@@ -123,7 +125,7 @@ export class ReceptionsAvelonService {
   getEmitList(){
     return this.emit$
   }
-  
+
   setEmitSizes(data: any){
     this.emitSize.next(data)
   }

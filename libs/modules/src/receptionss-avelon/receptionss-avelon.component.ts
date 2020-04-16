@@ -1,6 +1,6 @@
 import { ModalController} from '@ionic/angular';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import {  MatSort, Sort ,MatTableDataSource, MatCheckboxChange } from '@angular/material';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {  MatSort, Sort ,MatTableDataSource } from '@angular/material';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
 import Predistribution = PredistributionModel.Predistribution;
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
@@ -11,21 +11,19 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import {
-  UserTimeService,
-  UserTimeModel
-} from '@suite/services';
+import {UserTimeModel} from '@suite/services';
 import { ModalUserComponent } from "../components/modal-user/modal-user.component";
 import { Router } from '@angular/router';
-import * as _ from "lodash";
 import {TimesToastType} from "../../../services/src/models/timesToastType";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'suite-receptionss-avelon',
   templateUrl: './receptionss-avelon.component.html',
   styleUrls: ['./receptionss-avelon.component.scss']
 })
-export class ReceptionssAvelonComponent implements OnInit {
+export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
+
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = ['select','references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
@@ -33,7 +31,7 @@ export class ReceptionssAvelonComponent implements OnInit {
   selection = new SelectionModel<Predistribution>(true, []);
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
-  columns = {};
+  private columns = null;
 
   users:UserTimeModel.ListUsersRegisterTimeActiveInactive;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
@@ -77,7 +75,7 @@ export class ReceptionssAvelonComponent implements OnInit {
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
 
-  pagerValues = [10, 20, 80];
+  pagerValues = [25, 50, 100];
   form: FormGroup = this.formBuilder.group({
     references: [],
     sizes: [],
@@ -101,6 +99,8 @@ export class ReceptionssAvelonComponent implements OnInit {
   });
   length: any;
 
+  private paginatorObservable: Subscription = null;
+
   constructor(
     private predistributionsService: PredistributionsService,
     private formBuilder: FormBuilder,
@@ -113,28 +113,28 @@ export class ReceptionssAvelonComponent implements OnInit {
     this.initEntity();
     this.initForm();
     this.getFilters();
-    this.getColumns(this.form);
     this.getList(this.form);
     this.listenChanges();
   }
+  ngOnDestroy(): void {
+    this.paginatorObservable.unsubscribe();
+  }
 
   listenChanges() {
-    let previousPageSize = this.form.value.pagination.limit;
-    /**detect changes in the paginator */
-    this.paginator.page.subscribe(page => {
-      /**true if only change the number of results */
-      let flag = previousPageSize === page.pageSize;
-      previousPageSize = page.pageSize;
-      this.form.value.pagination = {
-        limit: page.pageSize,
-        page: flag ? page.pageIndex : 1
-      };
-      this.getList(this.form)
-    });
-
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
-      this.getList(this.form);
-    });
+    if (!this.paginatorObservable) {
+      let previousPageSize = this.form.value.pagination.limit;
+      /**detect changes in the paginator */
+      this.paginatorObservable = this.paginator.page.subscribe(page => {
+        /**true if only change the number of results */
+        let flag = previousPageSize === page.pageSize;
+        previousPageSize = page.pageSize;
+        this.form.value.pagination = {
+          limit: page.pageSize,
+          page: flag ? page.pageIndex : 1
+        };
+        this.getList(this.form)
+      });
+    }
   }
 
   initEntity() {
@@ -224,43 +224,6 @@ export class ReceptionssAvelonComponent implements OnInit {
   close():void{
   }
 
-  release(){
-
-   let ListReceptions = this.getListReceptions();
-   let _data: Array<PredistributionModel.BlockReservedRequest> = ListReceptions;
-   _data = _data.map(item => {
-     return {
-       reserved: false,
-       distribution: false,
-       modelId: item.modelId,
-       warehouseId: item.warehouseId,
-       sizeId: item.sizeId,
-       avelonOrderId: item.avelonOrderId,
-       userId: 0,
-     };
-
-   });
-
-   let This = this;
-    this.predistributionsService.updateBlockReserved2(ListReceptions).subscribe(function (data) {
-     This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
-     This.intermediaryService.dismissLoading();
-     // reload page
-     This.close();
-     This.initEntity();
-     This.initForm();
-     This.getFilters();
-     This.getList(This.form);
-     This.listenChanges();
-     This.selection.clear();
-   }, (error) => {
-     This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
-     This.intermediaryService.dismissLoading();
-   }, () => {
-     This.intermediaryService.dismissLoading();
-   });
-  }
-
   getListReceptions(){
     let receptionList =[];
         receptionList.length=0;
@@ -329,22 +292,6 @@ export class ReceptionssAvelonComponent implements OnInit {
     })
   }
 
-  async getColumns(form?: FormGroup){
-    this.predistributionsService.index2(form.value).subscribe(
-      (resp:any) => {
-        resp.filters.forEach(element => {
-          this.columns[element.name] = element.id;
-        });
-      },
-      async err => {
-        await this.intermediaryService.dismissLoading()
-      },
-      async () => {
-        await this.intermediaryService.dismissLoading()
-      }
-    )
-  }
-
   private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
     let resultEntity;
 
@@ -369,8 +316,15 @@ export class ReceptionssAvelonComponent implements OnInit {
     return resultEntity;
   }
 
-  async getList(form?: FormGroup){
-    this.predistributionsService.index2(form.value).subscribe((resp:any) => {
+  async getList(form?: FormGroup) {
+    this.predistributionsService.index2(form.value).subscribe((resp: PredistributionModel.DataSource) => {
+      if (!this.columns) {
+        this.columns = {};
+        resp.filters.forEach(element => {
+          this.columns[element.name] = element.id;
+        });
+      }
+
       if (resp.results) {
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
         const paginator = resp.pagination;
@@ -641,7 +595,7 @@ export class ReceptionssAvelonComponent implements OnInit {
     this.form.value.orderby.type = this.columns[event.active];
     this.form.value.orderby.order = event.direction;
 
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+    await this.intermediaryService.presentLoading('Cargando filtros...', () => {
       this.getList(this.form);
     });
   }
