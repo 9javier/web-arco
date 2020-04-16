@@ -12,6 +12,8 @@ import {MarketplacesService} from "../../../../services/src/lib/endpoint/marketp
 })
 export class CatalogComponent implements OnInit {
 
+  private static readonly MINI_MARKET_ID = '406A51C8-EA12-4D6D-B05D-C2EA70A1A609';
+
   private catalogData;
   private catalogTableData;
   private catalogTableHeader;
@@ -53,25 +55,20 @@ export class CatalogComponent implements OnInit {
     this.catalogData = [];
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'color', 'family', 'description', 'pvp', 'discount', 'units', 'active'];
     this.selectedProducts = [];
-    this.marketplacesService.getMarkets().subscribe((data: any) => {
-      this.market = null;
-      if (data && data.length) {
-        for (let market of data) {
-          if (this.route.snapshot.data['name'] == market.name) {
-            this.market = market.id;
-            break;
-          }
-        }
-      }
+    this.market = null;
+    switch (this.route.snapshot.data['name']) {
+      case 'Miniprecios':
+        this.market = CatalogComponent.MINI_MARKET_ID;
+        break;
+    }
 
+    this.getProducts();
+
+    this.refresher = setInterval(() => {
+      this.catalogData = [];
       this.getProducts();
-
-      this.refresher = setInterval(() => {
-        this.getProducts();
-        this.changeSelectedFilters()
-      }, 60000);
-
-    });
+      this.changeSelectedFilters()
+    }, 60000);
 
   }
 
@@ -190,19 +187,24 @@ export class CatalogComponent implements OnInit {
     this.marketplacesService.getProductCatalog().subscribe(data => {
       for (let product of data) {
         for (let productMarket of product.productsMarkets) {
-          if (productMarket.market.id == this.market && productMarket.valid) {
-            this.catalogData.push({
-              ref: product.reference,
-              model: product.model,
-              brand: product.brand,
-              color: product.color ? product.color : '-',
-              family: product.family ? product.family : '-',
-              description: product.description ? product.description : '-',
-              pvp: productMarket.originalPrice ? parseFloat(productMarket.originalPrice).toFixed(2) : '-',
-              discount: productMarket.discountedPrice ? parseFloat(productMarket.discountedPrice).toFixed(2) : '-',
-              units: productMarket.stock,
-              active: (!productMarket.notSalable && !productMarket.notPublishable)
-            });
+          if (productMarket.market.externalId == this.market && (productMarket.status == 3 || productMarket.status == 4 || productMarket.status == 6 || productMarket.status == 7)) {
+            for (let productVariation of product.productVariations) {
+              if (productVariation.market.externalId == this.market) {
+                this.catalogData.push({
+                  ref: product.reference,
+                  model: product.model + ' (' + productVariation.idSize + ')',
+                  brand: product.brand,
+                  color: product.color ? product.color : '-',
+                  family: product.family ? product.family : '-',
+                  description: product.description ? product.description : '-',
+                  pvp: productVariation.originalPrice ? productVariation.originalPrice : '-',
+                  discount: productVariation.discountedPrice ? productVariation.discountedPrice : '-',
+                  units: productVariation.stock,
+                  active: (productMarket.status == 3 || productMarket.status == 4)
+                });
+              }
+            }
+            break;
           }
         }
       }

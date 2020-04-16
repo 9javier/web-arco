@@ -42,61 +42,77 @@
     }
   }
 
-  .symbolActivate {
-    &:before {
-      content: "●";
-      font-size: 24px;
-      color: #216334;
-    }
-
-    .hidden-value {
-      visibility: hidden;
-      position: absolute;
-    }
-
-  }
-
-  .symbolNotUpdated {
-    &:before {
-      content: "●";
-      font-size: 24px;
-      color: #355dd8;
-    }
-
-    .hidden-value {
-      visibility: hidden;
-      position: absolute;
-    }
-  }
-
-  .symbolDisabledInMarket {
-    &:before {
-      content: "●";
-      font-size: 24px;
-      color: #d8682f;
-    }
-
-    .hidden-value {
-      visibility: hidden;
-      position: absolute;
-    }
-  }
-
-  .symbolInvalid {
+  .symbol-invalid {
     &:before {
       content: "●";
       font-size: 24px;
       color: #F93E3E;
     }
+  }
 
-    .hidden-value {
-      visibility: hidden;
-      position: absolute;
+  .symbol-valid {
+    &:before {
+      content: "●";
+      font-size: 24px;
+      color: #366AD8;
+    }
+  }
+
+  .symbol-valid-disabled {
+    &:before {
+      content: "●";
+      font-size: 24px;
+      color: #F9CC56;
+    }
+  }
+
+  .symbol-uploaded {
+    &:before {
+      content: "●";
+      font-size: 24px;
+      color: #216334;
+    }
+  }
+
+  .symbol-uploaded-disabled {
+    &:before {
+      content: "●";
+      font-size: 24px;
+      color: #D8682F;
+    }
+  }
+
+  .symbol-market-uploading-error {
+    &:before {
+      content: "●";
+      font-size: 24px;
+      color: #D82F65;
+    }
+  }
+
+  .symbol-invalid-but-products-uploaded {
+    &:before {
+      content: "●";
+      font-size: 24px;
+      color: #080D12;
+    }
+  }
+
+  .symbol-invalid-but-disabled-products-uploaded {
+    &:before {
+      content: "●";
+      font-size: 24px;
+      color: #9B9B9B;
     }
   }
 
   .symbol {
     margin-top: -3px;
+
+    .hidden-value {
+      visibility: hidden;
+      position: absolute;
+    }
   }
 
   .mp-catalog-table-wrapper {
@@ -192,6 +208,7 @@
               white-space: nowrap;
               text-overflow: ellipsis;
               overflow-x: hidden;
+              overflow-y: hidden;
               height: 31px;
             }
 
@@ -203,6 +220,12 @@
               font-size: 11px;
               font-weight: 400;
 
+            }
+
+            mat-select {
+              padding: 9.5px 10px;
+              font-size: 11px;
+              min-height: 32px;
             }
 
             &:first-of-type {

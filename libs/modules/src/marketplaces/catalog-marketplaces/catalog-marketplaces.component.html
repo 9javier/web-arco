@@ -65,21 +65,40 @@
       <ng-container matColumnDef="KO">
         <th mat-header-cell *matHeaderCellDef>
           <span>KO</span>
+          <mat-select  *ngIf="actionSelected == 1" [(ngModel)]="statusKO" (selectionChange)="changeSearchStatus('KO')">
+            <mat-option *ngFor="let item of status" [value]="item.id">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
           <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchKO"/>
         </th>
         <td mat-cell *matCellDef="let product">
-          <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.name == 'KrackOnline'">
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
-                <span class="hidden-value">✓</span>
-              </span>
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
-                <span class="hidden-value">✗</span>
-              </span>
-              <span *ngIf="actionSelected == 2">
-                {{market.stock}}
-              </span>
-            </span>
+          <span *ngIf="actionSelected == 1 && product.statusKO == 1" class="symbol symbol-invalid">
+            <span class="hidden-value">Error de mapeo (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusKO == 2" class="symbol symbol-valid">
+            <span class="hidden-value">Válido (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusKO == 3" class="symbol symbol-valid-disabled">
+            <span class="hidden-value">Válido y desactivado (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusKO == 4" class="symbol symbol-uploaded">
+            <span class="hidden-value">Subido a market</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusKO == 5" class="symbol symbol-uploaded-disabled">
+            <span class="hidden-value">Subido a market y desactivado</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusKO == 6" class="symbol symbol-market-uploading-error">
+            <span class="hidden-value">Error de sincronización (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusKO == 7" class="symbol symbol-invalid-but-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusKO == 8" class="symbol symbol-invalid-but-disabled-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactivado desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 2 && product.statusKO != 0">
+            {{product.stockKO}}
           </span>
         </td>
       </ng-container>
@@ -87,27 +106,40 @@
       <ng-container matColumnDef="Mini">
         <th mat-header-cell *matHeaderCellDef>
           <span>Mini</span>
+          <mat-select  *ngIf="actionSelected == 1" [(ngModel)]="statusMini" (selectionChange)="changeSearchStatus('Mini')">
+            <mat-option *ngFor="let item of status" [value]="item.id">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
           <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchMini"/>
         </th>
         <td mat-cell *matCellDef="let product">
-          <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.name == 'Miniprecios'">
-              <span *ngIf="actionSelected == 1 && market.valid && !market.notSalable && !market.notPublishable && market.updated" class="symbol symbolActivate">
-                <span class="hidden-value">ACTIVO</span>
-              </span>
-              <span *ngIf="actionSelected == 1 && market.valid && !market.updated" class="symbol symbolNotUpdated">
-                <span class="hidden-value">DESACTUALIZADO</span>
-              </span>
-              <span *ngIf="actionSelected == 1 && market.valid && (market.notSalable || market.notPublishable) && market.updated" class="symbol symbolDisabledInMarket">
-                <span class="hidden-value">DESACTIVADO</span>
-              </span>
-              <span *ngIf="actionSelected == 1 && !market.valid" class="symbol symbolInvalid">
-                <span class="hidden-value">INVÁLIDO</span>
-              </span>
-              <span *ngIf="actionSelected == 2">
-                {{market.stock}}
-              </span>
-            </span>
+          <span *ngIf="actionSelected == 1 && product.statusMini == 1" class="symbol symbol-invalid">
+            <span class="hidden-value">Error de mapeo (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusMini == 2" class="symbol symbol-valid">
+            <span class="hidden-value">Válido (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusMini == 3" class="symbol symbol-valid-disabled">
+            <span class="hidden-value">Válido y desactivado (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusMini == 4" class="symbol symbol-uploaded">
+            <span class="hidden-value">Subido a market</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusMini == 5" class="symbol symbol-uploaded-disabled">
+            <span class="hidden-value">Subido a market y desactivado</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusMini == 6" class="symbol symbol-market-uploading-error">
+            <span class="hidden-value">Error de sincronización (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusMini == 7" class="symbol symbol-invalid-but-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusMini == 8" class="symbol symbol-invalid-but-disabled-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactivado desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 2 && product.statusMini != 0">
+            {{product.stockMini}}
           </span>
         </td>
       </ng-container>
@@ -115,21 +147,40 @@
       <ng-container matColumnDef="Amazon">
         <th mat-header-cell *matHeaderCellDef>
           <span>Amazon</span>
+          <mat-select  *ngIf="actionSelected == 1" [(ngModel)]="statusAmazon" (selectionChange)="changeSearchStatus('Amazon')">
+            <mat-option *ngFor="let item of status" [value]="item.id">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
           <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchAmazon"/>
         </th>
         <td mat-cell *matCellDef="let product">
-          <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.name == 'Amazon'">
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
-                <span class="hidden-value">✓</span>
-              </span>
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
-                <span class="hidden-value">✗</span>
-              </span>
-              <span *ngIf="actionSelected == 2">
-                {{market.stock}}
-              </span>
-            </span>
+          <span *ngIf="actionSelected == 1 && product.statusAmazon == 1" class="symbol symbol-invalid">
+            <span class="hidden-value">Error de mapeo (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusAmazon == 2" class="symbol symbol-valid">
+            <span class="hidden-value">Válido (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusAmazon == 3" class="symbol symbol-valid-disabled">
+            <span class="hidden-value">Válido y desactivado (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusAmazon == 4" class="symbol symbol-uploaded">
+            <span class="hidden-value">Subido a market</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusAmazon == 5" class="symbol symbol-uploaded-disabled">
+            <span class="hidden-value">Subido a market y desactivado</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusAmazon == 6" class="symbol symbol-market-uploading-error">
+            <span class="hidden-value">Error de sincronización (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusAmazon == 7" class="symbol symbol-invalid-but-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusAmazon == 8" class="symbol symbol-invalid-but-disabled-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactivado desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 2 && product.statusAmazon != 0">
+            {{product.stockAmazon}}
           </span>
         </td>
       </ng-container>
@@ -137,21 +188,40 @@
       <ng-container matColumnDef="Spartoo">
         <th mat-header-cell *matHeaderCellDef>
           <span>Spartoo</span>
+          <mat-select  *ngIf="actionSelected == 1" [(ngModel)]="statusSpartoo" (selectionChange)="changeSearchStatus('Spartoo')">
+            <mat-option *ngFor="let item of status" [value]="item.id">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
           <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchSpartoo"/>
         </th>
         <td mat-cell *matCellDef="let product">
-          <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.name == 'Spartoo'">
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
-                <span class="hidden-value">✓</span>
-              </span>
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
-                <span class="hidden-value">✗</span>
-              </span>
-              <span *ngIf="actionSelected == 2">
-                {{market.stock}}
-              </span>
-            </span>
+          <span *ngIf="actionSelected == 1 && product.statusSpartoo == 1" class="symbol symbol-invalid">
+            <span class="hidden-value">Error de mapeo (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusSpartoo == 2" class="symbol symbol-valid">
+            <span class="hidden-value">Válido (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusSpartoo == 3" class="symbol symbol-valid-disabled">
+            <span class="hidden-value">Válido y desactivado (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusSpartoo == 4" class="symbol symbol-uploaded">
+            <span class="hidden-value">Subido a market</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusSpartoo == 5" class="symbol symbol-uploaded-disabled">
+            <span class="hidden-value">Subido a market y desactivado</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusSpartoo == 6" class="symbol symbol-market-uploading-error">
+            <span class="hidden-value">Error de sincronización (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusSpartoo == 7" class="symbol symbol-invalid-but-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusSpartoo == 8" class="symbol symbol-invalid-but-disabled-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactivado desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 2 && product.statusSpartoo != 0">
+            {{product.stockSpartoo}}
           </span>
         </td>
       </ng-container>
@@ -159,21 +229,40 @@
       <ng-container matColumnDef="Zalando">
         <th mat-header-cell *matHeaderCellDef>
           <span>Zalando</span>
+          <mat-select  *ngIf="actionSelected == 1" [(ngModel)]="statusZalando" (selectionChange)="changeSearchStatus('Zalando')">
+            <mat-option *ngFor="let item of status" [value]="item.id">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
           <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchZalando"/>
         </th>
         <td mat-cell *matCellDef="let product">
-          <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.name == 'Zalando'">
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
-                <span class="hidden-value">✓</span>
-              </span>
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
-                <span class="hidden-value">✗</span>
-              </span>
-              <span *ngIf="actionSelected == 2">
-                {{market.stock}}
-              </span>
-            </span>
+          <span *ngIf="actionSelected == 1 && product.statusZalando == 1" class="symbol symbol-invalid">
+            <span class="hidden-value">Error de mapeo (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusZalando == 2" class="symbol symbol-valid">
+            <span class="hidden-value">Válido (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusZalando == 3" class="symbol symbol-valid-disabled">
+            <span class="hidden-value">Válido y desactivado (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusZalando == 4" class="symbol symbol-uploaded">
+            <span class="hidden-value">Subido a market</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusZalando == 5" class="symbol symbol-uploaded-disabled">
+            <span class="hidden-value">Subido a market y desactivado</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusZalando == 6" class="symbol symbol-market-uploading-error">
+            <span class="hidden-value">Error de sincronización (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusZalando == 7" class="symbol symbol-invalid-but-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusZalando == 8" class="symbol symbol-invalid-but-disabled-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactivado desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 2 && product.statusZalando != 0">
+            {{product.stockZalando}}
           </span>
         </td>
       </ng-container>
@@ -181,21 +270,40 @@
       <ng-container matColumnDef="CDiscount">
         <th mat-header-cell *matHeaderCellDef>
           <span>CDiscount</span>
+          <mat-select  *ngIf="actionSelected == 1" [(ngModel)]="statusCDiscount" (selectionChange)="changeSearchStatus('CDiscount')">
+            <mat-option *ngFor="let item of status" [value]="item.id">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
           <input matInput type="text" *ngIf="actionSelected == 2" placeholder="..." (keyup)="changeSelectedFilters()" [(ngModel)]="searchCDiscount"/>
         </th>
         <td mat-cell *matCellDef="let product">
-          <span *ngFor="let market of product.productsMarkets">
-            <span *ngIf="market.market.name == 'CDiscount'">
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '1'" class="symbol symbolActivate">
-                <span class="hidden-value">✓</span>
-              </span>
-              <span *ngIf="actionSelected == 1 && market.onboardStatus == '0'" class="symbol symbolDisabled">
-                <span class="hidden-value">✗</span>
-              </span>
-              <span *ngIf="actionSelected == 2">
-                {{market.stock}}
-              </span>
-            </span>
+          <span *ngIf="actionSelected == 1 && product.statusCDiscount == 1" class="symbol symbol-invalid">
+            <span class="hidden-value">Error de mapeo (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusCDiscount == 2" class="symbol symbol-valid">
+            <span class="hidden-value">Válido (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusCDiscount == 3" class="symbol symbol-valid-disabled">
+            <span class="hidden-value">Válido y desactivado (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusCDiscount == 4" class="symbol symbol-uploaded">
+            <span class="hidden-value">Subido a market</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusCDiscount == 5" class="symbol symbol-uploaded-disabled">
+            <span class="hidden-value">Subido a market y desactivado</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusCDiscount == 6" class="symbol symbol-market-uploading-error">
+            <span class="hidden-value">Error de sincronización (no subido)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusCDiscount == 7" class="symbol symbol-invalid-but-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 1 && product.statusCDiscount == 8" class="symbol symbol-invalid-but-disabled-products-uploaded">
+            <span class="hidden-value">Error de mapeo (subido, producto desactivado desactualizado)</span>
+          </span>
+          <span *ngIf="actionSelected == 2 && product.statusCDiscount != 0">
+            {{product.stockCDiscount}}
           </span>
         </td>
       </ng-container>
@@ -203,17 +311,28 @@
   </div>
   <div class="mp-catalog-legend">
     <div>
-      <span class="symbol symbolActivate"></span>
-      <span>Sincronizado y activo</span>
+      <span class="symbol symbol-valid"></span> Válido (no subido)
     </div>
     <div>
-      <span class="symbol symbolDisabledInMarket"></span> Sincronizado y no activo
+      <span class="symbol symbol-valid-disabled"></span> Válido y desactivado (no subido)
     </div>
     <div>
-      <span class="symbol symbolInvalid"></span> Error de sincronización
+      <span class="symbol symbol-uploaded"></span> Subido a market
     </div>
     <div>
-      <span class="symbol symbolNotUpdated"></span> No actualizado
+      <span class="symbol symbol-uploaded-disabled"></span> Subido a market y desactivado
+    </div>
+    <div>
+      <span class="symbol symbol-invalid"></span> Error de mapeo (no subido)
+    </div>
+    <div>
+      <span class="symbol symbol-invalid-but-products-uploaded"></span> Error de mapeo (subido, producto desactualizado)
+    </div>
+    <div>
+      <span class="symbol symbol-invalid-but-disabled-products-uploaded"></span> Error de mapeo (subido, producto desactivado desactualizado)
+    </div>
+    <div>
+      <span class="symbol symbol-market-uploading-error"></span> Error de sincronización (no subido)
     </div>
   </div>
   <div class="mp-catalog-table-footer-wrapper">
