@@ -5,6 +5,7 @@ export const environment = {
   apiSorter: 'http://192.168.254.109:8080/api',
   urlBase: 'http://192.168.254.109:8080',
   uploadFiles: 'http://192.168.254.109:8081/api/upload-files',
+  downloadPdf: 'http://192.168.254.109:8081',
   urlDownloadApp: 'https://drive.google.com/open?id=16DZzQ1hIArX5GF5oZtTpx3ltiPfCvw2K',
   sga: {
     client_id: "krack-client-sga",

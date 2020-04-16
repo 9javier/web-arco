@@ -11,7 +11,7 @@ import { saveAs } from "file-saver";
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { environment } from '../../../services/src/environments/environment';
-
+import { Downloader,DownloadRequest,NotificationVisibility } from '@ionic-native/downloader/ngx';
 
 
 
@@ -38,7 +38,7 @@ export class OrderPreparationComponent implements OnInit {
   expeId:number =0;
   viewInput:boolean = false;
   id=0;
-  
+  errorLabel:boolean = false;
   constructor(
     private labelsService: LabelsService,
     private router: Router,
@@ -47,6 +47,7 @@ export class OrderPreparationComponent implements OnInit {
     private routeParams: ActivatedRoute,
     private transfer: FileTransfer,
     private file:File,
+    private downloader:Downloader,
 
   ) { }
 
@@ -204,24 +205,23 @@ export class OrderPreparationComponent implements OnInit {
  async sendServicePrintPack(id){
    let body = {expeditionId:id }
    await this.labelsService.postServicePrintPack(body).subscribe(result =>{
+    let isMobileApp = typeof (<any>window).cordova !== "undefined";
+    if(isMobileApp == true){
       this.intermediaryService.presentLoading("Descargando archivo...");
       for(let i=0;i < result.length;i++){
         let urlDownload = environment.downloadPdf+result[i];
         let urlname = urlDownload.split('/');
         let date =  Date.now();
         let name = date+urlname[urlname.length - 1];
-        this.download(urlDownload,name);
+        if(i == (result.length-1)){
+          this.downloadUrl(urlDownload,name,true);
+        }else{
+          this.downloadUrl(urlDownload,name,false);
+        }
+  
       }
-      this.intermediaryService.dismissLoading();
-
-      /*
-    const blob = new Blob([result], { type: 'application/pdf' });
-    saveAs(blob, 'documento.pdf')*/
-    //const url = `${environment.downloadFiles}/${result.pdf}`
-    // const archor = document.createElement('a');
-    // archor.href= url;
-    // console.log(archor);
-    // archor.click()
+    }
+      
   },
   async (err) => {
     console.log(err);
@@ -229,19 +229,38 @@ export class OrderPreparationComponent implements OnInit {
   });
   }
 
- async download(url,name) {
+ async downloadUrl(urlDownload,name,isFinish){
+    let request = this.notificationDownload(urlDownload,name);
+      await this.downloader.download(request).then((location: string) =>{
+          if(isFinish == true){
+            this.intermediaryService.dismissLoading();
+            this.intermediaryService.presentToastSuccess("Descarga exitosa...");
+          }
+          }).catch((error: any) => {
+            if(isFinish == true){
+              this.intermediaryService.dismissLoading();
+              this.intermediaryService.presentToastError("Error al descargar etiqueta");
+            }
+          });
+  }
 
-    let path = this.file.externalApplicationStorageDirectory;
-    const transfer = this.transfer.create();
-    await transfer.download(url, `${path}`+name).then( entry =>{
-      let url = entry.toUrl();
-     
-    },(error)=>{
-      this.intermediaryService.dismissLoading();
-    });
-  
-    }
 
+
+  notificationDownload(url,name):DownloadRequest{
+    let request: DownloadRequest = {
+      uri: url,
+      title: 'Etiqueta de expedición',
+      description: '',
+      mimeType: '',
+      visibleInDownloadsUi: true,
+      notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
+      destinationInExternalFilesDir: {
+          dirType: 'Downloads',
+          subPath: name
+      }
+  };
+  return request;
+  }
 
   
 
