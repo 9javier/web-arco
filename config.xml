@@ -60,4 +60,5 @@
     <plugin name="cordova-plugin-printer" spec="^0.8.0" />
     <plugin name="cordova-plugin-nativeaudio" spec="^3.0.9" />
     <engine name="android" spec="8.1.0" />
+    <plugin name="cordova-plugin-android-permissions" spec="^1.0.2" />
 </widget>

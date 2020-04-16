@@ -793,7 +793,8 @@ export class ProductsComponent implements OnInit {
       catchError(error => of(error)),
       // map(file => file.error.text)
     ).subscribe((data) => {
-
+      console.log(data);
+      
       const blob = new Blob([data], { type: 'application/octet-stream' });
       Filesave.saveAs(blob, `${Date.now()}.xlsx`);
       this.intermediaryService.dismissLoading();

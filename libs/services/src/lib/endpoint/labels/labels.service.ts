@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -71,7 +72,7 @@ export class LabelsService {
   }
 
   postServicePrintPack(body):Observable<any>{
-    return this.http.post(this.postServicePrintPackUrl,body).pipe(map((response:any)=>{
+    return this.http.post(this.postServicePrintPackUrl, body).pipe(map((response:any)=>{
       return response.data
     }));
   }
