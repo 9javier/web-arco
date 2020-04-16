@@ -1,33 +1,55 @@
 ion-slides, ion-slide,scanner-manual, form {
-    height: 100% !important;
-    width: 100% !important;
+  height: 100% !important;
+  width: 100% !important;
 }
 
 .contact{
-    margin-top: 3%;
+  margin-top: 3%;
 }
 
 .example-form {
-    min-width: 150px;
-    max-width: 500px;
-    width: 100%;
-  }
-  
-  .example-full-width {
-    width: 100%;
-  }
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
 
-  .input-barcode{
-      text-align: center;
-      margin-left: 5%;
-  }
+.example-full-width {
+  width: 100%;
+}
 
-  .label-text{
-    font-weight: bold;
-  }
+.input-barcode{
+  text-align: center;
+  margin-left: 5%;
+}
 
-  .icon-camare{
-    margin-right: 4%;
-  }
-  
-  
+.label-text{
+  font-weight: bold;
+}
+
+.icon-camare{
+  margin-right: 4%;
+}
+
+/*.wrapper{
+  height: 50px;
+  !*overflow-x: hidden;
+  overflow-y: scroll;*!
+  width: 150px;
+}
+.wrapper .selection{
+  margin-top: 16px;
+  width: 150px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  border: none;
+  background-color: white;
+}*/
+
+.select{
+  padding-left: 20px;
+  border: none;
+  text-align: end;
+  height: 40px;
+  width: 150px;
+  overflow:scroll;
+}

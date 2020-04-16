@@ -3,8 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import * as moment from 'moment'
 import { IonSlides, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx'
-  ;
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { formatDate } from '@angular/common';
 import { IntermediaryService, IncidentsService, environment, UploadFilesService } from '../../../services/src';
 import { DropFilesService } from '../../../services/src/lib/endpoint/drop-files/drop-files.service';
@@ -20,14 +19,13 @@ import { AlertController } from "@ionic/angular";
 import { PositionsToast } from '../../../services/src/models/positionsToast.type';
 import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
 import { Subscription } from 'rxjs';
-import { KeyboardService } from '../../../services/src/lib/keyboard/keyboard.service';
 import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
 import { PrintTicketService } from '../../../services/src/lib/print-ticket/print-ticket.service';
 import {DefectiveRegistryModel} from "../../../services/src/models/endpoints/DefectiveRegistry";
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
-
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
+import { SelectScrollbarComponent } from './components/select-scrollbar/select-scrollbar.component';
 
 declare let ScanditMatrixSimple;
 
@@ -101,6 +99,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   color: string;
   private lastCodeScanned = '';
   private timeMillisToResetScannedCode = 2000;
+  labelKey: string;
+  idKey: string;
+  options = [];
+  model: any;
 
   constructor(
     private fb: FormBuilder,
@@ -131,7 +133,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.signatures = null;
     this.toolbarProvider.currentPage.next("Registro defectuoso")
     this.photos = [];
-    this.showKeyboard = true
 
 
     this.signaturesSubscription = this.uploadService.signatureEventAsign().subscribe(resp => {
@@ -198,6 +199,10 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     //this.photos = []
     this.clearVariables();
     this.signaturesSubscription.unsubscribe();
+  }
+
+  get label() {
+    return this.model ? this.model[this.labelKey] : 'Select...';
   }
 
   defectType(defecType) {
@@ -579,6 +584,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   gestionChange(e) {
+    console.log("gestionChange");
     let id = e.detail.value;
     let res;
     if (this.barcodeRoute == null || this.barcodeRoute == undefined) {
@@ -987,5 +993,4 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         break;
     }
   }
-
 }

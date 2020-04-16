@@ -15,9 +15,10 @@ import { SignatureModule } from '../signature/signature.module';
 import { DropFilesModule } from '../drop-files/drop-files.module';
 import { ReviewImagesComponent } from './components/review-images/review-images.component';
 import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-keyboard.module';
+import { SelectScrollbarComponent } from './components/select-scrollbar/select-scrollbar.component';
 
 @NgModule({
-  declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent,],
+  declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent, SelectScrollbarComponent],
   entryComponents: [IncidentsComponent, PhotoModalComponent],
   imports: [
     CommonModule,
@@ -30,10 +31,10 @@ import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-ke
     CdkTableModule,
     SignatureModule,
     DropFilesModule,
-    
+
   ],
   exports: [
-    
+
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
