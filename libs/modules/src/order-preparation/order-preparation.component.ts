@@ -1,13 +1,18 @@
 import { Component, OnInit, ViewChild, 
   Input,Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { LabelsService, environment } from '@suite/services';
+import { LabelsService } from '@suite/services';
 import { IntermediaryService } from '@suite/services';
 import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
 import {Subscription} from "rxjs";
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
 import { saveAs } from "file-saver";
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { environment } from '../../../services/src/environments/environment';
+
+
 
 
 @Component({
@@ -33,12 +38,16 @@ export class OrderPreparationComponent implements OnInit {
   expeId:number =0;
   viewInput:boolean = false;
   id=0;
+  
   constructor(
     private labelsService: LabelsService,
     private router: Router,
     private intermediaryService: IntermediaryService,
     private toolbarProvider: ToolbarProvider,
-    private routeParams: ActivatedRoute
+    private routeParams: ActivatedRoute,
+    private transfer: FileTransfer,
+    private file:File,
+
   ) { }
 
   ngOnInit() {
@@ -194,19 +203,48 @@ export class OrderPreparationComponent implements OnInit {
 
  async sendServicePrintPack(id){
    let body = {expeditionId:id }
-  this.labelsService.postServicePrintPack(body).subscribe(result =>{
-    console.log(result);
+   await this.labelsService.postServicePrintPack(body).subscribe(result =>{
+      this.intermediaryService.presentLoading("Descargando archivo...");
+      for(let i=0;i < result.length;i++){
+        let urlDownload = environment.downloadPdf+result[i];
+        let urlname = urlDownload.split('/');
+        let date =  Date.now();
+        let name = date+urlname[urlname.length - 1];
+        this.download(urlDownload,name);
+      }
+      this.intermediaryService.dismissLoading();
+
+      /*
     const blob = new Blob([result], { type: 'application/pdf' });
-    saveAs(blob, 'documento.pdf')
-    // const url = `${environment.downloadFiles}/${result.pdf}`
+    saveAs(blob, 'documento.pdf')*/
+    //const url = `${environment.downloadFiles}/${result.pdf}`
     // const archor = document.createElement('a');
     // archor.href= url;
     // console.log(archor);
     // archor.click()
   },
   async (err) => {
+    console.log(err);
+    this.intermediaryService.presentToastError("No se pudo descargar el archivo");
   });
   }
+
+ async download(url,name) {
+
+    let path = this.file.externalApplicationStorageDirectory;
+    const transfer = this.transfer.create();
+    await transfer.download(url, `${path}`+name).then( entry =>{
+      let url = entry.toUrl();
+     
+    },(error)=>{
+      this.intermediaryService.dismissLoading();
+    });
+  
+    }
+
+
+  
+
 
   statusScanner(){
     let numScanned = (this.numAllScanner - this.numScanner)

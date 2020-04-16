@@ -72,8 +72,8 @@ export class LabelsService {
   }
 
   postServicePrintPack(body):Observable<any>{
-    return this.http.post(this.postServicePrintPackUrl, body, { responseType: 'blob'}).pipe(map((response:any)=>{
-      return response
+    return this.http.post(this.postServicePrintPackUrl, body).pipe(map((response:any)=>{
+      return response.data
     }));
   }
 
