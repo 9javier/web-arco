@@ -3,8 +3,6 @@ import { GlobalVariableService, GlobalVariableModel, IntermediaryService } from 
 import { FormBuilder } from '@angular/forms';
 import {Events, ModalController} from "@ionic/angular";
 import {UsersReplenishmentComponent} from "./users-replenishment/users-replenishment.component";
-import {EmployeeModel} from "../../../services/src/models/endpoints/Employee";
-import EmployeeReplenishment = EmployeeModel.EmployeeReplenishment;
 import {EmployeeService} from "../../../services/src/lib/endpoint/employee/employee.service";
 
 @Component({
@@ -128,12 +126,7 @@ export class WorkwaveConfigMenuComponent implements OnInit {
   }
 
   async usersReplenishment(){
-    const employees: EmployeeReplenishment[] = (await this.employeeService.getAll()).data;
-
-    const modal = await this.modalController.create({
-      component: UsersReplenishmentComponent,
-      componentProps: {employees: employees}
-    });
+    const modal = await this.modalController.create({component: UsersReplenishmentComponent});
 
     modal.onDidDismiss().then(async response => {
       if (response.data) {

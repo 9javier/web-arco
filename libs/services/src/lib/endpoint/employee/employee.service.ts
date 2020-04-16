@@ -10,18 +10,19 @@ import EmployeeReplenishment = EmployeeModel.EmployeeReplenishment;
 })
 export class EmployeeService {
 
-  private employeesUrl: string = environment.apiBase+'/employees';
+  private postSearchEmployeesUrl: string = environment.apiBase+'/employees/search';
+  private postStoresEmployeesUrl: string = environment.apiBase+'/employees/store';
 
   constructor(
     private requestsProvider: RequestsProvider
   ) {}
 
-  getAll(): Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.get(this.employeesUrl);
+  search(parameters): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postSearchEmployeesUrl, parameters);
   }
 
   store(employees: EmployeeReplenishment[]): Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.post(this.employeesUrl, employees);
+    return this.requestsProvider.post(this.postStoresEmployeesUrl, employees);
   }
 
 }

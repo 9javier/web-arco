@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import {EmployeeModel} from "../../../../services/src/models/endpoints/Employee";
 import EmployeeReplenishment = EmployeeModel.EmployeeReplenishment;
+import {EmployeeService} from "../../../../services/src/lib/endpoint/employee/employee.service";
+import {MatPaginator} from "@angular/material";
+import {IntermediaryService} from "@suite/services";
 
 @Component({
   selector: 'suite-users-replenishment',
@@ -10,16 +13,38 @@ import EmployeeReplenishment = EmployeeModel.EmployeeReplenishment;
 })
 export class UsersReplenishmentComponent implements OnInit {
 
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
   employees: EmployeeReplenishment[];
 
   constructor(
-    private modalController: ModalController
+    private modalController: ModalController,
+    private employeeService: EmployeeService,
+    private intermediaryService: IntermediaryService
   ) {}
 
   ngOnInit() {
-    for(let employee of this.employees){
-      employee.changed = false;
-    }
+    this.paginator.pageSizeOptions = [10, 50, 100];
+    this.search();
+    this.paginator.page.subscribe(() => this.search());
+  }
+
+  search(){
+    this.intermediaryService.presentLoading('Cargando usuarios...').then(()=>{
+      const searchParameters = {
+        pagination: {
+          page: this.paginator.pageIndex+1,
+          limit: this.paginator.pageSize
+        }
+      };
+      this.employeeService.search(searchParameters).then(async response => {
+        if(response.code == 200){
+          this.employees = response.data[0];
+          this.paginator.length = response.data[1];
+          await this.intermediaryService.dismissLoading();
+        }
+      });
+    });
   }
 
   async close() {
