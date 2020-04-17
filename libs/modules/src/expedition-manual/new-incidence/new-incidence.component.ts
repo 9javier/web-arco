@@ -118,13 +118,8 @@ export class NewIncidenceComponent implements OnInit {
           }
           const byteArray = new Uint8Array(byteNumbers);
 
-          if(this.form.value.country.toUpperCase() !== 'ES' && this.form.value.operator.toUpperCase() === 'SEUR') {
-            const blob = new Blob([byteArray], {type: "text/zpl"});
-            FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.zpl');
-          }else{
-            const blob = new Blob([byteArray], {type: "application/pdf"});
-            FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.pdf');
-          }
+          const blob = new Blob([byteArray], {type: "application/pdf"});
+          FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.pdf');
         }
       }
       this.intermediaryServiceL.presentToastSuccess('Expedicion guardada con exito');
