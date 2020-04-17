@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, OnChanges, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, OnChanges, AfterViewInit, OnDestroy, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import * as moment from 'moment'
 import { IonSlides, ModalController } from '@ionic/angular';
@@ -26,6 +26,9 @@ import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 import { SelectScrollbarComponent } from './components/select-scrollbar/select-scrollbar.component';
+import {FilterPopoverComponent} from "../components/filter-popover/filter-popover.component";
+import {PopoverController} from "@ionic/angular";
+import {SelectScrollbarProvider} from "../../../services/src/providers/select-scrollbar/select-scrollbar.provider";
 
 declare let ScanditMatrixSimple;
 
@@ -103,6 +106,14 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   idKey: string;
   options = [];
   model: any;
+  selection: any;
+  @Input() title: string;
+  @Input() listItems: Array<any> = [];
+  @Input() isFiltering: boolean;
+  @Input() filterType: string = 'search';
+  @Input() customFiltersLoad: boolean = false;
+  @Output() applyFilters = new EventEmitter();
+  @Output() clickedToOpenPopover = new EventEmitter();
 
   constructor(
     private fb: FormBuilder,
@@ -122,6 +133,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     private dropService: DropFilesService,
     private itemReferencesProvider: ItemReferencesProvider,
     private printTicketService: PrintTicketService,
+    private popoverController: PopoverController,
+    private selectScrollbarProvider: SelectScrollbarProvider
 
   ) {
 
@@ -133,7 +146,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     this.signatures = null;
     this.toolbarProvider.currentPage.next("Registro defectuoso")
     this.photos = [];
-
 
     this.signaturesSubscription = this.uploadService.signatureEventAsign().subscribe(resp => {
       if (resp) {
@@ -173,6 +185,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       this.barcodeRoute = navigation.extras.state['reference'];
     }
     this.initDinamicFields();
+    /*this.selectChange(this.selection).subscribe(resp => { });*/
 
   }
   ngOnDestroy() {
@@ -992,5 +1005,44 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
         ScanditMatrixSimple.showText(false);
         break;
     }
+  }
+
+  clickSelectPopover(ev: any) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (this.customFiltersLoad) {
+      this.clickedToOpenPopover.next(ev);
+    } else {
+      this.openSelectPopover(ev, null, this.allDefectType);
+    }
+  }
+
+  public async openSelectPopover(ev: any, typedValue, allDefectType) {
+    this.selectScrollbarProvider.title = this.title;
+    this.selectScrollbarProvider.listItems = JSON.parse(JSON.stringify(this.listItems));
+    this.selectScrollbarProvider.allDefectType = this.allDefectType;
+    this.selectScrollbarProvider.filterType  = this.filterType;
+
+    const popover = await this.popoverController.create({
+      cssClass: 'select-scrollbar',
+      component: SelectScrollbarComponent,
+      componentProps: { typedValue, allDefectType }
+    });
+
+    popover.onDidDismiss().then((data) => {
+      if (data && data.data && data.data.filters) {
+        this.applyFilters.next({filters: data.data.filters, typedFilter: data.data.typedFilter});
+        this.listItems = data.data.filters;
+        this.selectScrollbarProvider.listItems = JSON.parse(JSON.stringify(this.listItems));
+      } else {
+        this.selectScrollbarProvider.listItems = this.listItems;
+      }
+    });
+    await popover.present();
+  }
+
+  selectChange(defectType) {
+    console.log("selectChange");
+    this.selection = defectType;
   }
 }

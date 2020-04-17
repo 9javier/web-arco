@@ -22,9 +22,11 @@
         </ion-datetime>
         <!--<ion-input *ngIf="barcodeRoute!=null" class="input-barcode" type="text" readonly style="text-align: right;" [value]="this.dateNow"></ion-input><br>-->
       </ion-item>
-      <ion-item>
+      <ion-item (click)="clickSelectPopover($event)" [disabled]="barcodeRoute!=null">
         <ion-label class="label-text">Estado de gestion</ion-label>
-        <suite-select-scrollbar></suite-select-scrollbar>
+        <ion-label style="text-align: end" *ngIf="!selection">Selecciona</ion-label>
+        <ion-label style="text-align: end" *ngIf="selection">{{ selection.name }}</ion-label>
+        <!--<suite-select-scrollbar></suite-select-scrollbar>-->
 <!--        <div class="wrapper">
           <select placeholder="Selecciona" size="1" class="selection" *ngIf="barcodeRoute==null" (ionChange)="gestionChange($event)"
                   [disabled]="barcodeRoute!=null">
