@@ -209,7 +209,7 @@ export class OrderPreparationComponent implements OnInit {
     if(isMobileApp == true){
       this.intermediaryService.presentLoading("Descargando archivo...");
       for(let i=0;i < result.length;i++){
-        let urlDownload = environment.urlBase+result[i];
+        let urlDownload = environment.downloadPdf+result[i];
         let urlname = urlDownload.split('/');
         let date =  Date.now();
         let name = date+urlname[urlname.length - 1];
