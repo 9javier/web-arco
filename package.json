@@ -139,9 +139,10 @@
       "cordova-plugin-printer": {
         "ANDROID_SUPPORT_V4_VERSION": "28.+"
       },
-      "com.mirasense.scanditsdk.plugin": {},
       "cordova-plugin-android-permissions": {},
-      "integrator-cordova-plugin-downloader": {}
+      "integrator-cordova-plugin-downloader": {},
+      "com.mirasense.scanditsdk.plugin": {},
+      "cordova-plugin-zebra-printer": {}
     },
     "platforms": [
       "android"
