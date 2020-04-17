@@ -44,6 +44,7 @@
     "@ionic-native/app-version": "^5.15.1",
     "@ionic-native/camera": "^5.22.0",
     "@ionic-native/core": "^5.0.0",
+    "@ionic-native/downloader": "^5.23.0",
     "@ionic-native/file": "^5.23.0",
     "@ionic-native/file-transfer": "^5.23.0",
     "@ionic-native/keyboard": "^5.17.0",
@@ -74,6 +75,7 @@
     "file-saver": "^2.0.2",
     "hammerjs": "^2.0.8",
     "hide-keyboard": "^0.2.1",
+    "integrator-cordova-plugin-downloader": "1.1.0",
     "ionic": "^4.12.0",
     "jsbarcode": "^3.11.0",
     "lodash": "^4.17.15",
@@ -138,7 +140,8 @@
         "ANDROID_SUPPORT_V4_VERSION": "28.+"
       },
       "com.mirasense.scanditsdk.plugin": {},
-      "cordova-plugin-android-permissions": {}
+      "cordova-plugin-android-permissions": {},
+      "integrator-cordova-plugin-downloader": {}
     },
     "platforms": [
       "android"
