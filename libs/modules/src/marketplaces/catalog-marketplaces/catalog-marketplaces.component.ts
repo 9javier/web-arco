@@ -14,6 +14,18 @@ export class CatalogMarketplacesComponent implements OnInit {
 
   @ViewChild('catalogTable') table: ElementRef;
 
+  private static readonly MINI_MARKET_ID = '406A51C8-EA12-4D6D-B05D-C2EA70A1A609';
+
+  private static readonly NOT_IN_MARKET = 0;
+  private static readonly INVALID = 1;
+  private static readonly VALID = 2;
+  private static readonly VALID_DISABLED = 3;
+  private static readonly UPLOADED = 4;
+  private static readonly UPLOADED_DISABLED = 5;
+  private static readonly MARKET_UPLOADING_ERROR = 6;
+  private static readonly INVALID_BUT_PRODUCTS_UPLOADED = 7;
+  private static readonly INVALID_BUT_DISABLED_PRODUCTS_UPLOADED = 8;
+
   private products;
   private unFilteredProducts;
   private catalogTableData;
@@ -36,6 +48,13 @@ export class CatalogMarketplacesComponent implements OnInit {
   private searchSpartoo;
   private searchZalando;
   private searchCDiscount;
+  private statusKO;
+  private statusMini;
+  private statusAmazon;
+  private statusSpartoo;
+  private statusZalando;
+  private statusCDiscount;
+  private status;
   private refresher;
 
   constructor(
@@ -80,15 +99,97 @@ export class CatalogMarketplacesComponent implements OnInit {
     this.searchZalando = "";
     this.searchCDiscount = "";
 
+    this.status = [
+      {id: 0, name: '-'},
+      {id: 1, name: 'Error de mapeo (no subido)'},
+      {id: 2, name: 'Válido (no subido)'},
+      {id: 3, name: 'Válido y desactivado (no subido)'},
+      {id: 4, name: 'Subido a market'},
+      {id: 5, name: 'Subido a market y desactivado'},
+      {id: 6, name: 'Error de sincronización (no subido)'},
+      {id: 7, name: 'Error de mapeo (subido, producto desactualizado)'},
+      {id: 7, name: 'Error de mapeo (subido, producto desactivado desactualizado)'}
+    ];
+
+    this.statusKO = 0;
+    this.statusMini = 0;
+    this.statusAmazon = 0;
+    this.statusSpartoo = 0;
+    this.statusZalando = 0;
+    this.statusCDiscount = 0;
+
     this.marketplacesService.getProductCatalog().subscribe(data => {
       this.products = data;
       this.products.sort((a, b) => (a.reference.length > b.reference.length) ? 1 : ((b.reference.length > a.reference.length) ? -1 : ((parseInt(a.reference) > parseInt(b.reference)) ? 1 : ((parseInt(b.reference) > parseInt(a.reference)) ? -1 : 0))));
       this.unFilteredProducts = this.products.slice();
 
-      this.catalogTableData = new MatTableDataSource(this.products);
-
       for (let product of this.products) {
+
+        product.stockKO = 0;
+        product.stockMini = 0;
+        product.stockAmazon = 0;
+        product.stockSpartoo = 0;
+        product.stockZalando = 0;
+        product.stockCDiscount = 0;
+
+        for (let productVariation of product.productVariations) {
+          switch (productVariation.market.externalId) {
+            case CatalogMarketplacesComponent.MINI_MARKET_ID:
+              product.stockMini += productVariation.stock;
+              break;
+          }
+        }
+
+        product.statusKO = CatalogMarketplacesComponent.NOT_IN_MARKET;
+        product.statusMini = CatalogMarketplacesComponent.NOT_IN_MARKET;
+        product.statusAmazon = CatalogMarketplacesComponent.NOT_IN_MARKET;
+        product.statusSpartoo = CatalogMarketplacesComponent.NOT_IN_MARKET;
+        product.statusZalando = CatalogMarketplacesComponent.NOT_IN_MARKET;
+        product.statusCDiscount = CatalogMarketplacesComponent.NOT_IN_MARKET;
+
         for (let productMarket of product.productsMarkets) {
+          let status = CatalogMarketplacesComponent.NOT_IN_MARKET;
+
+          switch (productMarket.status) {
+            case 0:
+              status = CatalogMarketplacesComponent.INVALID;
+              break;
+
+            case 1:
+              status = CatalogMarketplacesComponent.VALID;
+              break;
+
+            case 2:
+              status = CatalogMarketplacesComponent.VALID_DISABLED;
+              break;
+
+            case 3:
+              status = CatalogMarketplacesComponent.UPLOADED;
+              break;
+
+            case 4:
+              status = CatalogMarketplacesComponent.UPLOADED_DISABLED;
+              break;
+
+            case 5:
+              status = CatalogMarketplacesComponent.MARKET_UPLOADING_ERROR;
+              break;
+
+            case 6:
+              status = CatalogMarketplacesComponent.INVALID_BUT_PRODUCTS_UPLOADED;
+              break;
+
+            case 7:
+              status = CatalogMarketplacesComponent.INVALID_BUT_DISABLED_PRODUCTS_UPLOADED;
+              break;
+          }
+
+          switch (productMarket.market.externalId) {
+            case CatalogMarketplacesComponent.MINI_MARKET_ID:
+              product.statusMini = status;
+              break;
+          }
+
           if (!this.marketplaces.some(e => e.id == productMarket.market.id)) {
             this.marketplaces.push({id: productMarket.market.id, name: productMarket.market.name});
           }
@@ -103,18 +204,88 @@ export class CatalogMarketplacesComponent implements OnInit {
         }
       }
 
+      this.catalogTableData = new MatTableDataSource(this.products);
+
     });
 
     this.refresher = setInterval(() => {
+
+      this.marketplaces = [{id: 0, name: 'Marketplaces'}];
+      this.descriptions = ['Descripción'];
+      this.families = ['Familia'];
+
       this.marketplacesService.getProductCatalog().subscribe(data => {
         this.products = data;
         this.products.sort((a, b) => (a.reference.length > b.reference.length) ? 1 : ((b.reference.length > a.reference.length) ? -1 : ((parseInt(a.reference) > parseInt(b.reference)) ? 1 : ((parseInt(b.reference) > parseInt(a.reference)) ? -1 : 0))));
         this.unFilteredProducts = this.products.slice();
 
-        this.catalogTableData = new MatTableDataSource(this.products);
-
         for (let product of this.products) {
+
+          product.stockKO = 0;
+          product.stockMini = 0;
+          product.stockAmazon = 0;
+          product.stockSpartoo = 0;
+          product.stockZalando = 0;
+          product.stockCDiscount = 0;
+
+          for (let productVariation of product.productVariations) {
+            switch (productVariation.market.externalId) {
+              case CatalogMarketplacesComponent.MINI_MARKET_ID:
+                product.stockMini += productVariation.stock;
+                break;
+            }
+          }
+
+          product.statusKO = CatalogMarketplacesComponent.NOT_IN_MARKET;
+          product.statusMini = CatalogMarketplacesComponent.NOT_IN_MARKET;
+          product.statusAmazon = CatalogMarketplacesComponent.NOT_IN_MARKET;
+          product.statusSpartoo = CatalogMarketplacesComponent.NOT_IN_MARKET;
+          product.statusZalando = CatalogMarketplacesComponent.NOT_IN_MARKET;
+          product.statusCDiscount = CatalogMarketplacesComponent.NOT_IN_MARKET;
+
           for (let productMarket of product.productsMarkets) {
+            let status = CatalogMarketplacesComponent.NOT_IN_MARKET;
+
+            switch (productMarket.status) {
+              case 0:
+                status = CatalogMarketplacesComponent.INVALID;
+                break;
+
+              case 1:
+                status = CatalogMarketplacesComponent.VALID;
+                break;
+
+              case 2:
+                status = CatalogMarketplacesComponent.VALID_DISABLED;
+                break;
+
+              case 3:
+                status = CatalogMarketplacesComponent.UPLOADED;
+                break;
+
+              case 4:
+                status = CatalogMarketplacesComponent.UPLOADED_DISABLED;
+                break;
+
+              case 5:
+                status = CatalogMarketplacesComponent.MARKET_UPLOADING_ERROR;
+                break;
+
+              case 6:
+                status = CatalogMarketplacesComponent.INVALID_BUT_PRODUCTS_UPLOADED;
+                break;
+
+              case 7:
+                status = CatalogMarketplacesComponent.INVALID_BUT_DISABLED_PRODUCTS_UPLOADED;
+                break;
+            }
+
+            switch (productMarket.market.externalId) {
+              case CatalogMarketplacesComponent.MINI_MARKET_ID:
+                product.statusMini = status;
+                break;
+            }
+
             if (!this.marketplaces.some(e => e.id == productMarket.market.id)) {
               this.marketplaces.push({id: productMarket.market.id, name: productMarket.market.name});
             }
@@ -128,6 +299,8 @@ export class CatalogMarketplacesComponent implements OnInit {
             this.families.push(product.family);
           }
         }
+
+        this.catalogTableData = new MatTableDataSource(this.products);
 
       });
     }, 60000);
@@ -145,6 +318,14 @@ export class CatalogMarketplacesComponent implements OnInit {
   }
 
   changeAction() {
+
+    this.statusKO = 0;
+    this.statusMini = 0;
+    this.statusAmazon = 0;
+    this.statusSpartoo = 0;
+    this.statusZalando = 0;
+    this.statusCDiscount = 0;
+
     if (this.actionSelected == 1) {
       this.searchKO = "";
       this.searchMini = "";
@@ -153,6 +334,17 @@ export class CatalogMarketplacesComponent implements OnInit {
       this.searchZalando = "";
       this.searchCDiscount = "";
     }
+
+    this.changeSelectedFilters();
+  }
+
+  changeSearchStatus(market) {
+    this.statusKO = (market == 'KO') ? this.statusKO : 0;
+    this.statusMini = (market == 'Mini') ? this.statusMini : 0;
+    this.statusAmazon = (market == 'Amazon') ? this.statusAmazon : 0;
+    this.statusSpartoo = (market == 'Spartoo') ? this.statusSpartoo : 0;
+    this.statusZalando = (market == 'Zalando') ? this.statusZalando : 0;
+    this.statusCDiscount = (market == 'CDiscount') ? this.statusCDiscount : 0;
 
     this.changeSelectedFilters();
   }
@@ -196,6 +388,66 @@ export class CatalogMarketplacesComponent implements OnInit {
       this.products = filteredProducts.slice();
     }
 
+    if (this.statusKO != 0) {
+      let products = [];
+      for (let product of this.products) {
+        if (product.statusKO == this.statusKO) {
+          products.push(product);
+        }
+      }
+      this.products = products.slice();
+    }
+
+    if (this.statusMini != 0) {
+      let products = [];
+      for (let product of this.products) {
+        if (product.statusMini == this.statusMini) {
+          products.push(product);
+        }
+      }
+      this.products = products.slice();
+    }
+
+    if (this.statusAmazon != 0) {
+      let products = [];
+      for (let product of this.products) {
+        if (product.statusAmazon == this.statusAmazon) {
+          products.push(product);
+        }
+      }
+      this.products = products.slice();
+    }
+
+    if (this.statusSpartoo != 0) {
+      let products = [];
+      for (let product of this.products) {
+        if (product.statusSpartoo == this.statusSpartoo) {
+          products.push(product);
+        }
+      }
+      this.products = products.slice();
+    }
+
+    if (this.statusZalando != 0) {
+      let products = [];
+      for (let product of this.products) {
+        if (product.statusZalando == this.statusZalando) {
+          products.push(product);
+        }
+      }
+      this.products = products.slice();
+    }
+
+    if (this.statusCDiscount != 0) {
+      let products = [];
+      for (let product of this.products) {
+        if (product.statusCDiscount == this.statusCDiscount) {
+          products.push(product);
+        }
+      }
+      this.products = products.slice();
+    }
+
     if (this.searchReference != "" && this.searchReference.trim() != "") {
       let products = [];
       for (let product of this.products) {
@@ -234,14 +486,9 @@ export class CatalogMarketplacesComponent implements OnInit {
       if (this.searchKO != "" && this.searchKO.trim() != "") {
         let products = [];
         for (let product of this.products) {
-          for (let productMarket of product.productsMarkets) {
-            if (productMarket.market.name == "KrackOnline") {
-              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchKO.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
-                !== -1) {
-                products.push(product);
-              }
-              break;
-            }
+          if (product.stockKO.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchKO.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+            !== -1) {
+            products.push(product);
           }
         }
         this.products = products.slice();
@@ -250,14 +497,9 @@ export class CatalogMarketplacesComponent implements OnInit {
       if (this.searchMini != "" && this.searchMini.trim() != "") {
         let products = [];
         for (let product of this.products) {
-          for (let productMarket of product.productsMarkets) {
-            if (productMarket.market.name == "Miniprecios") {
-              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchMini.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
-                !== -1) {
-                products.push(product);
-              }
-              break;
-            }
+          if (product.stockMini.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchMini.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+            !== -1) {
+            products.push(product);
           }
         }
         this.products = products.slice();
@@ -266,14 +508,9 @@ export class CatalogMarketplacesComponent implements OnInit {
       if (this.searchAmazon != "" && this.searchAmazon.trim() != "") {
         let products = [];
         for (let product of this.products) {
-          for (let productMarket of product.productsMarkets) {
-            if (productMarket.market.name == "Amazon") {
-              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchAmazon.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
-                !== -1) {
-                products.push(product);
-              }
-              break;
-            }
+          if (product.stockAmazon.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchAmazon.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+            !== -1) {
+            products.push(product);
           }
         }
         this.products = products.slice();
@@ -282,14 +519,9 @@ export class CatalogMarketplacesComponent implements OnInit {
       if (this.searchSpartoo != "" && this.searchSpartoo.trim() != "") {
         let products = [];
         for (let product of this.products) {
-          for (let productMarket of product.productsMarkets) {
-            if (productMarket.market.name == "Spartoo") {
-              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchSpartoo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
-                !== -1) {
-                products.push(product);
-              }
-              break;
-            }
+          if (product.stockSpartoo.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchSpartoo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+            !== -1) {
+            products.push(product);
           }
         }
         this.products = products.slice();
@@ -298,14 +530,9 @@ export class CatalogMarketplacesComponent implements OnInit {
       if (this.searchZalando != "" && this.searchZalando.trim() != "") {
         let products = [];
         for (let product of this.products) {
-          for (let productMarket of product.productsMarkets) {
-            if (productMarket.market.name == "Zalando") {
-              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchZalando.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
-                !== -1) {
-                products.push(product);
-              }
-              break;
-            }
+          if (product.stockZalando.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchZalando.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+            !== -1) {
+            products.push(product);
           }
         }
         this.products = products.slice();
@@ -314,14 +541,9 @@ export class CatalogMarketplacesComponent implements OnInit {
       if (this.searchCDiscount != "" && this.searchCDiscount.trim() != "") {
         let products = [];
         for (let product of this.products) {
-          for (let productMarket of product.productsMarkets) {
-            if (productMarket.market.name == "CDiscount") {
-              if (productMarket.stock.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchCDiscount.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
-                !== -1) {
-                products.push(product);
-              }
-              break;
-            }
+          if (product.stockCDiscount.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.searchCDiscount.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+            !== -1) {
+            products.push(product);
           }
         }
         this.products = products.slice();
