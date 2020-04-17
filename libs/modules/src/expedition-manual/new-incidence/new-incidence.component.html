@@ -67,8 +67,11 @@
     <ion-item lines="none">
       <ion-input type="text"  formControlName="province"  placeholder="Provincia"  name="province" maxlength="25"></ion-input>
     </ion-item>
-    <ion-item lines="none">
-      <ion-input type="text"  formControlName="country"  placeholder="Pais"  name="country" maxlength="25"></ion-input>
+    <ion-item>
+      <ion-label class="label-text">Pais</ion-label>
+      <ion-select formControlName="country" name='country' placeholder="Selecciona" #selectCountry (ionChange)="operatorsSelected(selectCountry.value)">
+        <ion-select-option *ngFor="let country of countries" [value]="country.isoCode">{{country.name}}</ion-select-option>
+      </ion-select>
     </ion-item>
     <ion-button   expand="block" shape="round" (click)="save()">Generar expedicion</ion-button>
     </form>

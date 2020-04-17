@@ -31,6 +31,8 @@ export class NewIncidenceComponent implements OnInit {
   logisticsOperators = [];
   data;
   markets = [];
+  countries = [];
+
   constructor(
     private formBuilder: FormBuilder,
     private modalController: ModalController,
@@ -47,6 +49,7 @@ export class NewIncidenceComponent implements OnInit {
 
     this.getTransports();
     this.getMarkets();
+    this.getCountries();
     this.form = this.formBuilder.group({
       marketId: new FormControl(''),
       operator: new FormControl(''),
@@ -75,6 +78,12 @@ export class NewIncidenceComponent implements OnInit {
   getMarkets(){
     this.expeManSrv.getMarkets().subscribe(data => {
       this.markets = data;
+    });
+  }
+
+  getCountries(){
+    this.expeManSrv.getCountries().subscribe(data => {
+      this.countries = data;
     });
   }
 
