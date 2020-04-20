@@ -138,6 +138,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   }
 
   private loadReceptions(dataToConcat = null) {
+    this.intermediaryService.presentLoading();
     this.receptionsAvelonService
       .getReceptions(this.receptionAvelonProvider.expeditionData.providerId, this.typeModelVisualization)
       .subscribe((res) => {
@@ -189,7 +190,8 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
             }
           }
         }
-      });
+      }, (error)=>{
+      }, ()=> this.intermediaryService.dismissLoading());
   }
 
   public async listItems(itemToList: number) {
