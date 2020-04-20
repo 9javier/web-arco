@@ -1137,48 +1137,54 @@ export class MenuComponent implements OnInit {
   /**
    * Listen changes in form to resend the request for search
    */
-  newTariffs() {
-    this.tariffService
-      .getNewTariff()
-      .then(tariff => {
-        if (tariff.code == 200) {
-          let newTariff = tariff.data;
-          /**save the data and format the dates */
-          this.alPages.forEach((item, i) => {
-            if ((<any>item).id == "tarifas") {
-              (<any>item).notification = newTariff;
-              (<any>item).children.forEach((child, j) => {
-                if ((<any>child).id == "tariff-al") {
-                  (<any>child).notification = newTariff;
-                }
-              });
-            }
-          });
-        } else {
-          console.error('Error to try check if exists new tariffs', tariff);
-        }
-      }, (error) => {
-        console.error('Error to try check if exists new tariffs', error);
-      })
+  async newTariffs() {
+    const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
+    if(currentWarehouse){
+      this.tariffService
+        .getNewTariff()
+        .then(tariff => {
+          if (tariff.code == 200) {
+            let newTariff = tariff.data;
+            /**save the data and format the dates */
+            this.alPages.forEach((item, i) => {
+              if ((<any>item).id == "tarifas") {
+                (<any>item).notification = newTariff;
+                (<any>item).children.forEach((child, j) => {
+                  if ((<any>child).id == "tariff-al") {
+                    (<any>child).notification = newTariff;
+                  }
+                });
+              }
+            });
+          } else {
+            console.error('Error to try check if exists new tariffs', tariff);
+          }
+        }, (error) => {
+          console.error('Error to try check if exists new tariffs', error);
+        })
+    }
   }
 
-  getPickingTasksStoresAmount(){
-    this.pickingStoreService.getLineRequestsStoreOnlineAmount().then(response => {
-      if(response.code == 200){
-        for(let page of this.alPages){
-          if(page.children){
-            for(let child of page.children){
-              if(child.amount || child.amount == 0){
-                child.amount = response.data;
-                return;
+  async getPickingTasksStoresAmount(){
+    const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
+    if(currentWarehouse){
+      this.pickingStoreService.getLineRequestsStoreOnlineAmount().then(response => {
+        if(response.code == 200){
+          for(let page of this.alPages){
+            if(page.children){
+              for(let child of page.children){
+                if(child.amount || child.amount == 0){
+                  child.amount = response.data;
+                  return;
+                }
               }
             }
           }
+        }else{
+          console.error(response);
         }
-      }else{
-        console.error(response);
-      }
-    },console.error).catch(console.error);
+      },console.error).catch(console.error);
+    }
   }
 
   checkIfChildrenNotification(element): boolean {
