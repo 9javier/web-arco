@@ -15,6 +15,7 @@ import { AlertPopoverComponent } from "../alert-popover/alert-popover.component"
 import { WarehouseReceptionAlertService } from "../../../../services/src/lib/endpoint/warehouse-reception-alert/warehouse-reception-alert.service";
 import Warehouse = WarehouseModel.Warehouse;
 import { LocalStorageProvider } from "../../../../services/src/providers/local-storage/local-storage.provider";
+import { PickingStoreService } from "../../../../services/src/lib/endpoint/picking-store/picking-store.service";
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -31,10 +32,11 @@ interface MenuSectionItem {
   id?: string,
   url: string,
   icon: string,
-  notification?: boolean
-  children?: MenuSectionItem[];
+  notification?: boolean,
+  children?: MenuSectionItem[],
   header?: boolean,
-  tooltip?: string
+  tooltip?: string,
+  amount?: number
 }
 
 @Component({
@@ -56,6 +58,9 @@ export class MenuComponent implements OnInit {
   iconsDirection = 'start';
   displaySmallSidebar = false;
   currentRoute: string = "";
+
+  pickingTasksStoresAmount: number = 0;
+
   sgaPages: MenuItemList = [
     {
       title: 'Registro horario',
@@ -438,8 +443,7 @@ export class MenuComponent implements OnInit {
           id: 'incidences-reception',
           url: '/incidences-reception',
           icon: 'notifications'
-        },
-
+        }
       ]
     },
     {
@@ -659,7 +663,8 @@ export class MenuComponent implements OnInit {
           id: 'picking-tasks-stores',
           icon: 'qr-scanner',
           url: '/picking-tasks-stores',
-          tooltip: 'Listado de peticiones pendientes de realizar'
+          tooltip: 'Listado de peticiones pendientes de realizar',
+          amount: this.pickingTasksStoresAmount
         },
         {
           title: 'Asociar pares a embalajes',
@@ -883,8 +888,7 @@ export class MenuComponent implements OnInit {
           tooltip: 'Mac de la impresora'
         }
       ]
-    },
-
+    }
 
 
   ];
@@ -912,8 +916,8 @@ export class MenuComponent implements OnInit {
     private popoverController: PopoverController,
     private warehouseReceptionAlertService: WarehouseReceptionAlertService,
     private localStorageProvider: LocalStorageProvider,
-    private zona: NgZone
-
+    private zona: NgZone,
+    private pickingStoreService: PickingStoreService
   ) {
     this.loginService.availableVersion.subscribe(res => {
       this.versionUpdate = res;
@@ -941,10 +945,12 @@ export class MenuComponent implements OnInit {
   filterPages(dictionary) {
     dictionary = JSON.parse(JSON.stringify(dictionary));
     this.newTariffs();
-    if (app.name == 'al') {
+    this.getPickingTasksStoresAmount();
+    if(app.name == 'al') {
       this.zona.run(() => {
         setInterval(() => {
           this.newTariffs();
+          this.getPickingTasksStoresAmount();
         }, 5 * 60 * 1000);
       });
     }
@@ -1148,6 +1154,25 @@ export class MenuComponent implements OnInit {
       }, (error) => {
         console.error('Error to try check if exists new tariffs', error);
       })
+  }
+
+  getPickingTasksStoresAmount(){
+    this.pickingStoreService.getLineRequestsStoreOnlineAmount().then(response => {
+      if(response.code == 200){
+        for(let page of this.alPages){
+          if(page.children){
+            for(let child of page.children){
+              if(child.amount || child.amount == 0){
+                child.amount = response.data;
+                return;
+              }
+            }
+          }
+        }
+      }else{
+        console.error(response);
+      }
+    },console.error).catch(console.error);
   }
 
   checkIfChildrenHasNewTariffs(element): boolean {

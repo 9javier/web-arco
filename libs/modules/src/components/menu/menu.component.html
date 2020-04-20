@@ -31,6 +31,7 @@
         <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
         <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
           {{ sub.title }}
+          <b id="pickingTasksStoreAmount" *ngIf="sub.amount || sub.amount == 0">{{sub.amount}}</b>
         </ion-label>
         <ion-icon slot="end" name="information-circle" *ngIf="sub.notification" class="color-notification"></ion-icon>
       </ion-item>
