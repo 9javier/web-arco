@@ -209,7 +209,7 @@ export class OrderPreparationComponent implements OnInit {
     if(isMobileApp == true){
       this.intermediaryService.presentLoading("Descargando archivo...");
       for(let i=0;i < result.length;i++){
-        let urlDownload = environment.downloadPdf+result[i];
+        let urlDownload = environment.downloadPdf+'/'+result[i];
         let urlname = urlDownload.split('/');
         let date =  Date.now();
         let name = date+urlname[urlname.length - 1];
@@ -230,6 +230,7 @@ export class OrderPreparationComponent implements OnInit {
   }
 
  async downloadUrl(urlDownload,name,isFinish){
+   
     let request = this.notificationDownload(urlDownload,name);
       await this.downloader.download(request).then((location: string) =>{
           if(isFinish == true){
