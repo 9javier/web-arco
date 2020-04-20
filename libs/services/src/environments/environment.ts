@@ -6,7 +6,7 @@ export const environment = {
   urlBase: 'http://localhost:8080',
   uploadFiles: 'http://localhost:8081/api/upload-files',
   downloadFiles: 'http://localhost:8088',
-  downloadPdf: 'http://localhost:3011',
+  downloadPdf: 'http://localhost:8080',
   urlDownloadApp: 'https://drive.google.com/open?id=16DZzQ1hIArX5GF5oZtTpx3ltiPfCvw2K',
   sga: {
     client_id: "krack-client-sga",
