@@ -292,6 +292,10 @@ export * from './agency/agency.module';
 export * from './global-variables/global-variables.component';
 export * from './global-variables/global-variables.module';
 
+/**Workwave config menu */
+export * from './workwave-config-menu/workwave-config-menu.component';
+export * from './workwave-config-menu/workwave-config-menu.module';
+
 /** List Pickings with Products Rebuild */
 export * from './list-picking-rebuild/list-picking-rebuild.component';
 export * from './list-picking-rebuild/list-picking-rebuild.module';

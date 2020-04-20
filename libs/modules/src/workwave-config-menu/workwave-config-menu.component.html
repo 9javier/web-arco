@@ -1,0 +1,17 @@
+<ion-content class="variables-list" padding-top padding-bottom>
+  <div class="main-element-global-variables">
+    <div class="scroll-list">
+      <ion-item *ngFor="let variable of listVariables" class="variable-item" [ngClass]="variable.error ? 'wrong-variable' : ''">
+        <ion-label>{{ getTypeById(variable.type) }}</ion-label>
+        <i class="material-icons" *ngIf="variable.error">warning</i>
+        <ion-input [(ngModel)]="variable.value" placeholder="Valor"></ion-input>
+      </ion-item>
+    </div>
+  </div>
+</ion-content>
+
+<ion-fab vertical="bottom" horizontal="end">
+  <ion-fab-button matTooltip="Guardar Configuración" matTooltipClass="tooltip" (click)="updateVariables()">
+    <ion-icon name="save"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
