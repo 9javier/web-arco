@@ -1175,8 +1175,8 @@ export class MenuComponent implements OnInit {
     },console.error).catch(console.error);
   }
 
-  checkIfChildrenHasNewTariffs(element): boolean {
-    return !!element.children.find(c => c.notification)
+  checkIfChildrenNotification(element): boolean {
+    return !!element.children.find(c => c.notification || (c.amount && c.amount > 0));
   }
 
 }

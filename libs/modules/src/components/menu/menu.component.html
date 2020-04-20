@@ -20,7 +20,7 @@
   <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open" detail="false" lines="none" class="parent-subitems" matTooltip="{{p.tooltip}}" matTooltipClass="tooltip" matTooltipPosition="right" matTooltipShowDelay="1000" matTooltipHideDelay="4000">
     <ion-icon slot="start" [name]="p.icon"></ion-icon>
     <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">{{ p.title }}</ion-label>
-    <ion-icon slot="end" name="information-circle" *ngIf="checkIfChildrenHasNewTariffs(p)" class="color-notification"></ion-icon>
+    <ion-icon slot="end" name="information-circle" *ngIf="checkIfChildrenNotification(p)" class="color-notification"></ion-icon>
     <ion-icon slot="end" name="ios-arrow-down" *ngIf="!p.open"></ion-icon>
     <ion-icon slot="end" name="ios-arrow-up" *ngIf="p.open"></ion-icon>
   </ion-item>
@@ -31,8 +31,8 @@
         <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
         <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
           {{ sub.title }}
-          <b id="pickingTasksStoreAmount" *ngIf="sub.amount || sub.amount == 0">{{sub.amount}}</b>
         </ion-label>
+        <ion-badge *ngIf="sub.amount || sub.amount == 0" color="danger" slot="end">{{sub.amount}}</ion-badge>
         <ion-icon slot="end" name="information-circle" *ngIf="sub.notification" class="color-notification"></ion-icon>
       </ion-item>
       <!-- item header -->
