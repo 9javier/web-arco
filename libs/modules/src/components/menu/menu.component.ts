@@ -371,7 +371,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Auditorias',
+      title: 'Control de embalajes',
       open: false,
       type: 'wrapper',
       icon: 'ribbon',
@@ -817,7 +817,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Auditorias',
+      title: 'Control de embalajes',
       open: false,
       type: 'wrapper',
       icon: 'ribbon',
