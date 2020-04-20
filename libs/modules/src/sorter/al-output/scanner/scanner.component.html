@@ -34,8 +34,12 @@
     </div>
   </div>
 
+  <p *ngIf="!isFirstProductScanned && !wrongCodeScanned && !packingIsFull && messageGuide=='ESCANEAR 1º ARTÍCULO' && processStarted" class="message-guide-finish">
+    Escanea el primer artículo de la calle.
+  </p>
+
   <p *ngIf="isFirstProductScanned && !wrongCodeScanned && !packingIsFull" class="message-guide-finish">
-    Si quedan artículos en la calle, por favor, escanee el último artículo.
+    Retira artículos del sorter hasta que se vacíe la calle o se llene la jaula.
   </p>
 
   <p *ngIf="wrongCodeScanned && !packingIsFull && processStarted && !outputWithIncidencesClear" class="message-guide-wrong-code">
