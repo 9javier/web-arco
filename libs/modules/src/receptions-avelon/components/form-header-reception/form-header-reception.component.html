@@ -1,13 +1,5 @@
 <div class="container" [ngClass]="{'without-order': isReceptionWithoutOrder}">
   <div class="row form">
-    <div class="col resume" *ngIf="lastExepeditionQueried && lastExepeditionQueried.reference">
-      <span>Continuar recepción anterior</span>
-      <div class="row">
-        <p># {{lastExepeditionQueried.reference}}</p>
-        <loading-button #loadingButtonResumeExpedition id="loadingButtonResumeExpedition" label="CONTINUAR" labelLoading="COMPROBANDO" [isDisabled]="false" (clickButton)="clickResumeExpedition()"></loading-button>
-      </div>
-    </div>
-
     <div class="col expedition">
       <span>Comenzar una recepción por expedición</span>
       <div class="row">
@@ -19,6 +11,7 @@
           <i slot="end" class="material-icons" id="expeditionKeyboard">keyboard</i>
         </form>
         <loading-button #loadingButtonExpedition id="loadingButtonExpedition" label="COMPROBAR" labelLoading="COMPROBANDO"></loading-button>
+        <loading-button *ngIf="lastExepeditionQueried && lastExepeditionQueried.reference" #loadingButtonResumeExpedition id="loadingButtonResumeExpedition" [label]="'CONTINUAR #' + lastExepeditionQueried.reference" labelLoading="COMPROBANDO" [isDisabled]="false" (clickButton)="clickResumeExpedition()"></loading-button>
       </div>
     </div>
 

@@ -8,7 +8,6 @@ import {ModalController} from "@ionic/angular";
 import {FormExpeditionProviderComponent} from "./components/form-expedition-provider/form-expedition-provider.component";
 import {InfoExpeditionsComponent} from "./modals/info-expeditions/info-expeditions.component";
 import {ReceptionAvelonProvider} from "../../../services/src/providers/reception-avelon/reception-avelon.provider";
-import {LocalStorageProvider} from "../../../services/src/providers/local-storage/local-storage.provider";
 
 @Component({
   selector: 'suite-expeditions-pending-app',
@@ -20,7 +19,6 @@ export class ExpeditionsPendingAppComponent implements OnInit {
   @ViewChild(FormExpeditionInfoComponent) formExpeditionInfo: FormExpeditionInfoComponent;
   @ViewChild(FormExpeditionProviderComponent) formExpeditionProvider: FormExpeditionProviderComponent;
 
-  lastExepeditionQueried = {reference: null, providerId: null};
   isReceptionWithoutOrder: boolean = false;
   public checkingResumeExpeditionInProcess: boolean = false;
 
@@ -30,21 +28,11 @@ export class ExpeditionsPendingAppComponent implements OnInit {
     private modalController: ModalController,
     private receptionsAvelonService: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
-    private receptionAvelonProvider: ReceptionAvelonProvider,
-    private localStorageProvider: LocalStorageProvider
+    private receptionAvelonProvider: ReceptionAvelonProvider
   ) {}
 
   ngOnInit() {
     this.isReceptionWithoutOrder = !!(this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path && this.activatedRoute.snapshot.routeConfig.path == 'free');
-    this.localStorageProvider.get('last_expedition').then(data => {
-      this.lastExepeditionQueried = {reference: null, providerId: null};
-      if (data) {
-        const dataParsed = JSON.parse(String(data));
-        if (dataParsed) {
-          this.lastExepeditionQueried = dataParsed;
-        }
-      }
-    });
   }
 
   public searchExpeditions(data) {
@@ -148,18 +136,18 @@ export class ExpeditionsPendingAppComponent implements OnInit {
       });
   }
 
-  public resumeLastExpedition() {
-    this.checkingResumeExpeditionInProcess = true;
+  public resumeLastExpedition(lastExpeditionReference: string) {
+    this.formExpeditionInfo.checkingResumeExpeditionInProcess = true;
     this.receptionsAvelonService
-      .checkExpeditionByReference(this.lastExepeditionQueried.reference)
+      .checkExpeditionByReference(lastExpeditionReference)
       .subscribe(res => {
         if (res.code == 200) {
           if (res.data.expedition_available && res.data.expedition) {
             this.startReception(res.data.expedition);
-            this.checkingResumeExpeditionInProcess = false;
+            this.formExpeditionInfo.checkingResumeExpeditionInProcess = false;
           } else {
             this.intermediaryService.presentWarning(`No hay ninguna expedición con referencia ${res.data.expedition_reference_queried} pendiente de recepción.`, null);
-            this.checkingResumeExpeditionInProcess = false;
+            this.formExpeditionInfo.checkingResumeExpeditionInProcess = false;
           }
         } else {
           let errorMessage = 'Ha ocurrido un error al intentar continuar con la expedición indicada.';
@@ -167,7 +155,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
             errorMessage = res.error.errors;
           }
           this.intermediaryService.presentToastError(errorMessage);
-          this.checkingResumeExpeditionInProcess = false;
+          this.formExpeditionInfo.checkingResumeExpeditionInProcess = false;
         }
       }, (e) => {
         let errorMessage = 'Ha ocurrido un error al intentar continuar con la expedición indicada.';
@@ -175,17 +163,18 @@ export class ExpeditionsPendingAppComponent implements OnInit {
           errorMessage = e.error.errors;
         }
         this.intermediaryService.presentToastError(errorMessage);
-        this.checkingResumeExpeditionInProcess = false;
+        this.formExpeditionInfo.checkingResumeExpeditionInProcess = false;
       });
   }
 
   private startReception(expedition) {
-    this.lastExepeditionQueried = {
+    const lastExepeditionQueried = {
       reference: expedition.reference,
       providerId: expedition.providerId
     };
 
-    this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
+    this.formExpeditionInfo.lastExpeditionQueried = lastExepeditionQueried;
+    this.receptionAvelonProvider.expeditionData = lastExepeditionQueried;
     this.receptionAvelonProvider.expedition = expedition;
     const routeSections = ['receptions-avelon', 'app'];
     if (this.isReceptionWithoutOrder) {
