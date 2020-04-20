@@ -1,15 +1,12 @@
-<cdk-virtual-scroll-viewport itemSize="allDefectType.length" style="max-height: 200px">
+<cdk-virtual-scroll-viewport itemSize="allOptions.length">
 
-  <div *ngIf="!allDefectType.length">No results found...</div>
+  <div class="div-scroll"
+    *cdkVirtualFor="let option of allOptions"
+    (click)="select(option)" >
 
-  <div
-    *cdkVirtualFor="let defect of allDefectType"
-    [class.active]="isActive(defect)"
-    (click)="select(defect)" style="min-height: 40px">
+    <ng-template [ngIf]="!optionTpl" >{{ option.name }}</ng-template>
 
-    <ng-template [ngIf]="!optionTpl">{{ defect.name }}</ng-template>
-
-    <ng-template *ngTemplateOutlet="optionTpl; context: {$implicit: defect}">
+    <ng-template *ngTemplateOutlet="optionTpl; context: {$implicit: option}">
     </ng-template>
   </div>
 

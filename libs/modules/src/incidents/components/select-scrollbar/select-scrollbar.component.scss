@@ -1,8 +1,10 @@
 cdk-virtual-scroll-viewport {
-  height: 100vh;
+  height: 40vh;
 
-  li {
-    height: 100px;
+  div.div-scroll {
+    min-height: 40px;
+    padding-top: 16px;
+    padding-left: 16px
   }
 
   // Bonus points
@@ -15,7 +17,7 @@ cdk-virtual-scroll-viewport {
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgb(238, 169, 79);
+    background-color: #808080;
   }
 }
 

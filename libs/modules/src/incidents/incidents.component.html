@@ -22,79 +22,34 @@
         </ion-datetime>
         <!--<ion-input *ngIf="barcodeRoute!=null" class="input-barcode" type="text" readonly style="text-align: right;" [value]="this.dateNow"></ion-input><br>-->
       </ion-item>
-      <ion-item (click)="clickSelectPopover($event)" [disabled]="barcodeRoute!=null">
+      <ion-item (click)="clickSelectPopover($event, 'status')" [disabled]="barcodeRoute!=null">
         <ion-label class="label-text">Estado de gestion</ion-label>
-        <ion-label style="text-align: end" *ngIf="!selection">Selecciona</ion-label>
-        <ion-label style="text-align: end" *ngIf="selection">{{ selection.name }}</ion-label>
-        <!--<suite-select-scrollbar></suite-select-scrollbar>-->
-<!--        <div class="wrapper">
-          <select placeholder="Selecciona" size="1" class="selection" *ngIf="barcodeRoute==null" (ionChange)="gestionChange($event)"
-                  [disabled]="barcodeRoute!=null">
-            <option disabled selected>Selecciona</option>
-            <option *ngFor="let item of allDefectType" [value]="item.id">{{item.name}}</option>
-          </select>
-        </div>-->
-       <!-- <select name="select1"
-                title="select1"
-                ng-model=""
-                onchange="gestionChange($event)"
-                selectpicker=""
-                class="form-control select"
-                *ngIf="barcodeRoute==null"
-                [disabled]="barcodeRoute!=null">
-          <option disabled selected>Selecciona</option>
-          <option *ngFor="let item of allDefectType" [value]="item.id">{{item.name}}</option>
-        </select>
-        <select name="select2"
-                title="select2"
-                ng-model=""
-                onchange="onChange(typeID.value); gestionChange($event)"
-                selectpicker=""
-                class="form-control select"
-                *ngIf="barcodeRoute!=null"
-                formControlName="gestionState" #typeID>
-          <option disabled selected>Selecciona</option>
-          <option *ngFor="let item of allDefectType" [value]="item.id">{{item.name}}</option>
-        </select>-->
-        <!--<ion-select *ngIf="barcodeRoute==null" class="wrapper" (ionChange)="gestionChange($event)" placeholder="Selecciona"
-                    [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let item of allDefectType" [value]="item.id">{{item.name}}</ion-select-option>
-        </ion-select>
-        <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" formControlName="gestionState" #typeID
-                    (ionChange)="onChange(typeID.value); gestionChange($event)">
-          <ion-select-option *ngFor="let item of types" [value]="item.id || 01">{{item.name}}</ion-select-option>
-        </ion-select>-->
+        <ion-label class="content-select" style="text-align: center" *ngIf="!defectStatus"><font color="#808080">Selecciona</font> <i></i></ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="defectStatus">{{ defectStatus.name }} <i></i></ion-label>
       </ion-item>
 
-      <ion-item>
+      <ion-item (click)="clickSelectPopover($event, 'typeP')" [disabled]="barcodeRoute!=null">
         <ion-label class="ion-text-capitalize label-text">Defecto</ion-label>
-        <ion-select (ionChange)="defectChange($event)" placeholder="Selecciona" formControlName="defectTypeParentId" [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let defect of defects" [value]="defect">
-            {{defect.name}}</ion-select-option>
-        </ion-select>
+        <ion-label class="content-select" style="text-align: center" *ngIf="!defectTypeP"><font color="#808080">Selecciona</font> <i></i></ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="defectTypeP">{{ defectTypeP.name }} <i></i></ion-label>
       </ion-item>
-      <ion-item>
+
+      <ion-item (click)="clickSelectPopover($event, 'typeC')" [disabled]="defectTypeP==null">
         <ion-label class="ion-text-capitalize label-text">Subdefecto</ion-label>
-        <ion-select *ngIf="defectChildsOfParent.length > 0" (ionChange)="defectParentChange($event)" placeholder="Selecciona" formControlName="defectTypeChildId" [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let defectSubtype of defectChildsOfParent" [value]="defectSubtype.id">
-            {{defectSubtype.name}}</ion-select-option>
-        </ion-select>
+        <ion-label class="content-select" style="text-align: center" *ngIf="!defectTypeC"><font color="#808080">Selecciona</font> <i></i></ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="defectTypeC">{{ defectTypeC.name }} <i></i></ion-label>
       </ion-item>
-      <ion-item>
+
+      <ion-item (click)="clickSelectPopover($event, 'zoneP')" [disabled]="barcodeRoute!=null">
         <ion-label class="ion-text-capitalize label-text">Zona</ion-label>
-        <ion-select (ionChange)="defectZoneChange($event)" placeholder="Selecciona" formControlName="defectZoneParentId"
-                    [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let zone of zones" [value]="zone">
-            {{zone.name}}</ion-select-option>
-        </ion-select>
+        <ion-label class="content-select" style="text-align: center" *ngIf="!defectZoneP"><font color="#808080">Selecciona</font> <i></i></ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="defectZoneP">{{ defectZoneP.name }} <i></i></ion-label>
       </ion-item>
-      <ion-item>
+
+      <ion-item (click)="clickSelectPopover($event, 'zoneC')" [disabled]="defectZoneP==null">
         <ion-label class="ion-text-capitalize label-text">Subzona</ion-label>
-        <ion-select *ngIf="defectZonesChildsOfParent.length > 0" (ionChange)="defectZoneChangeParent($event)" placeholder="Selecciona" formControlName="defectZoneChildId"
-                    [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let zoneChild of defectZonesChildsOfParent" [value]="zoneChild.id">
-            {{zoneChild.name}}</ion-select-option>
-        </ion-select>
+        <ion-label class="content-select" style="text-align: center" *ngIf="!defectZoneC"><font color="#808080">Selecciona</font> <i></i></ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="defectZoneC">{{ defectZoneC.name }} <i></i></ion-label>
       </ion-item>
 
       <ion-item>

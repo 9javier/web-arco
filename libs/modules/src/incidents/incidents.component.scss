@@ -30,21 +30,6 @@ ion-slides, ion-slide,scanner-manual, form {
   margin-right: 4%;
 }
 
-/*.wrapper{
-  height: 50px;
-  !*overflow-x: hidden;
-  overflow-y: scroll;*!
-  width: 150px;
-}
-.wrapper .selection{
-  margin-top: 16px;
-  width: 150px;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  border: none;
-  background-color: white;
-}*/
-
 .select{
   padding-left: 20px;
   border: none;
@@ -52,4 +37,19 @@ ion-slides, ion-slide,scanner-manual, form {
   height: 40px;
   width: 150px;
   overflow:scroll;
+}
+
+.content-select i{
+  position: absolute;
+  margin-top: 8px;
+  margin-right: 8px;
+  right: 20px;
+  top: calc(50% - 13px);
+  width: 8px;
+  height: 8px;
+  display: block;
+  border-left:4px solid #808080;
+  border-bottom:4px solid #808080;
+  transform: rotate(-45deg); /* Giramos el cuadrado */
+  transition: all 0.25s ease;
 }

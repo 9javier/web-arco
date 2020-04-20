@@ -26,7 +26,6 @@ import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
 //import { ReviewImagesComponent } from './components/review-images/review-images.component';
 import { SelectScrollbarComponent } from './components/select-scrollbar/select-scrollbar.component';
-import {FilterPopoverComponent} from "../components/filter-popover/filter-popover.component";
 import {PopoverController} from "@ionic/angular";
 import {SelectScrollbarProvider} from "../../../services/src/providers/select-scrollbar/select-scrollbar.provider";
 
@@ -45,10 +44,9 @@ const HEADER_COLOR: string = '#FFFFFF';
 })
 export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
-  principal: boolean = true;
-  dataUrl: string;
   select1: boolean = false;
   select2: boolean = false;
+  allOptions = [];
   allDefectType = [];
   ticketEmit: boolean;
   passHistory: boolean;
@@ -102,18 +100,12 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   color: string;
   private lastCodeScanned = '';
   private timeMillisToResetScannedCode = 2000;
-  labelKey: string;
-  idKey: string;
-  options = [];
-  model: any;
-  selection: any;
-  @Input() title: string;
-  @Input() listItems: Array<any> = [];
-  @Input() isFiltering: boolean;
-  @Input() filterType: string = 'search';
-  @Input() customFiltersLoad: boolean = false;
-  @Output() applyFilters = new EventEmitter();
-  @Output() clickedToOpenPopover = new EventEmitter();
+  lastPopoverType: string;
+  defectStatus: any;
+  defectTypeP: any;
+  defectTypeC: any;
+  defectZoneP: any;
+  defectZoneC: any;
 
   constructor(
     private fb: FormBuilder,
@@ -185,7 +177,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
       this.barcodeRoute = navigation.extras.state['reference'];
     }
     this.initDinamicFields();
-    /*this.selectChange(this.selection).subscribe(resp => { });*/
 
   }
   ngOnDestroy() {
@@ -212,10 +203,6 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     //this.photos = []
     this.clearVariables();
     this.signaturesSubscription.unsubscribe();
-  }
-
-  get label() {
-    return this.model ? this.model[this.labelKey] : 'Select...';
   }
 
   defectType(defecType) {
@@ -597,8 +584,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
 
   gestionChange(e) {
-    console.log("gestionChange");
-    let id = e.detail.value;
+    let id = e.id;
     let res;
     if (this.barcodeRoute == null || this.barcodeRoute == undefined) {
       res = this.statusManagament['classifications'].find(x => x.id == id);
@@ -636,30 +622,26 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   }
   defectChange(e) {
     this.select2 = true;
-    console.log(e);
-    this.defectParentId = e.detail.value.id;
-    this.defectChildsOfParent = e.detail.value.defectTypeChild ? e.detail.value.defectTypeChild : [];
+    this.defectParentId = e.id;
+    this.defectChildsOfParent = e.defectTypeChild ? e.defectTypeChild : [];
     this.defectChildId = 0;
   }
 
   defectParentChange(e) {
     this.select2 = true;
-    console.log(e);
-    this.defectChildId = e.detail.value;
+    this.defectChildId = e.id;
   }
 
   defectZoneChange(e) {
     this.select2 = true;
-    console.log(e);
-    this.defectZoneParentId = e.detail.value.id;
-    this.defectZonesChildsOfParent = e.detail.value.defectZoneChild ? e.detail.value.defectZoneChild : [];
+    this.defectZoneParentId = e.id;
+    this.defectZonesChildsOfParent = e.defectZoneChild ? e.defectZoneChild : [];
     this.defectZoneChildId = 0;
   }
 
   defectZoneChangeParent(e) {
     this.select2 = true;
-    console.log(e);
-    this.defectZoneChildId = e.detail.value;
+    this.defectZoneChildId = e.id;
   }
 
   ngAfterViewInit() {
@@ -1007,42 +989,81 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }
   }
 
-  clickSelectPopover(ev: any) {
+  clickSelectPopover(ev: any, popoverType: string) {
     ev.stopPropagation();
     ev.preventDefault();
-    if (this.customFiltersLoad) {
-      this.clickedToOpenPopover.next(ev);
-    } else {
-      this.openSelectPopover(ev, null, this.allDefectType);
+    this.lastPopoverType = popoverType;
+
+    switch (popoverType) {
+      case 'status':
+        this.openSelectPopover(ev, null, this.allDefectType);
+        break;
+      case 'typeP':
+        this.openSelectPopover(ev, null, this.defects);
+        break;
+      case 'typeC':
+        this.openSelectPopover(ev, null, this.defectChildsOfParent);
+        break;
+      case 'zoneP':
+        this.openSelectPopover(ev, null, this.zones);
+        break;
+      case 'zoneC':
+        this.openSelectPopover(ev, null, this.defectZonesChildsOfParent);
+        break;
     }
+
   }
 
-  public async openSelectPopover(ev: any, typedValue, allDefectType) {
-    this.selectScrollbarProvider.title = this.title;
-    this.selectScrollbarProvider.listItems = JSON.parse(JSON.stringify(this.listItems));
-    this.selectScrollbarProvider.allDefectType = this.allDefectType;
-    this.selectScrollbarProvider.filterType  = this.filterType;
+  public async openSelectPopover(ev: any, typedValue, allOptions) {
+    this.selectScrollbarProvider.allOptions = allOptions;
+    this.allOptions = allOptions;
 
     const popover = await this.popoverController.create({
       cssClass: 'select-scrollbar',
       component: SelectScrollbarComponent,
-      componentProps: { typedValue, allDefectType }
+      componentProps: { typedValue, allOptions }
     });
 
     popover.onDidDismiss().then((data) => {
-      if (data && data.data && data.data.filters) {
-        this.applyFilters.next({filters: data.data.filters, typedFilter: data.data.typedFilter});
-        this.listItems = data.data.filters;
-        this.selectScrollbarProvider.listItems = JSON.parse(JSON.stringify(this.listItems));
-      } else {
-        this.selectScrollbarProvider.listItems = this.listItems;
+      switch(this.lastPopoverType){
+        case 'status':
+          this.selectChangeStatus(data);
+          break;
+        case 'typeP':
+          this.selectChangeTypeP(data);
+          break;
+        case 'typeC':
+          this.selectChangeTypeC(data);
+          break;
+        case 'zoneP':
+          this.selectChangeZoneP(data);
+          break;
+        case 'zoneC':
+          this.selectChangeZoneC(data);
+          break;
       }
     });
     await popover.present();
   }
 
-  selectChange(defectType) {
-    console.log("selectChange");
-    this.selection = defectType;
+  selectChangeStatus(defectStatus) {
+    this.defectStatus = defectStatus.data;
+    this.gestionChange(this.defectStatus);
+  }
+  selectChangeTypeP(defectTypeP) {
+    this.defectTypeP = defectTypeP.data;
+    this.defectChange(this.defectTypeP);
+  }
+  selectChangeTypeC(defectTypeC) {
+    this.defectTypeC = defectTypeC.data;
+    this.defectParentChange(this.defectTypeC);
+  }
+  selectChangeZoneP(defectZoneP) {
+    this.defectZoneP = defectZoneP.data;
+    this.defectZoneChange(this.defectZoneP);
+  }
+  selectChangeZoneC(defectZoneC) {
+    this.defectZoneC = defectZoneC.data;
+    this.defectZoneChangeParent(this.defectZoneC);
   }
 }
