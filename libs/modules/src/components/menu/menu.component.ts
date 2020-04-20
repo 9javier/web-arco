@@ -950,9 +950,9 @@ export class MenuComponent implements OnInit {
    */
   filterPages(dictionary) {
     dictionary = JSON.parse(JSON.stringify(dictionary));
-    this.newTariffs();
-    this.getPickingTasksStoresAmount();
     if(app.name == 'al') {
+      this.newTariffs();
+      this.getPickingTasksStoresAmount();
       this.zona.run(() => {
         setInterval(() => {
           this.newTariffs();
