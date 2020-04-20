@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService, GlobalVariableModel, IntermediaryService } from '@suite/services';
 import { FormBuilder } from '@angular/forms';
-import {Events} from "@ionic/angular";
+import {Events, ModalController} from "@ionic/angular";
+import {UsersReplenishmentComponent} from "./users-replenishment/users-replenishment.component";
+import {EmployeeService} from "../../../services/src/lib/endpoint/employee/employee.service";
 
 @Component({
   selector: 'suite-workwave-config-menu',
@@ -19,7 +21,9 @@ export class WorkwaveConfigMenuComponent implements OnInit {
     private events: Events,
     private globalVariableService: GlobalVariableService,
     private formBuilder: FormBuilder,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private modalController: ModalController,
+    private employeeService: EmployeeService
   ) { }
 
   ngOnInit() {
@@ -119,6 +123,33 @@ export class WorkwaveConfigMenuComponent implements OnInit {
     } else {
       this.intermediaryService.presentToastError('Inicialice todas las variables del sistema.');
     }
+  }
+
+  async usersReplenishment(){
+    const modal = await this.modalController.create({component: UsersReplenishmentComponent});
+
+    modal.onDidDismiss().then(async response => {
+      if (response.data) {
+        await this.intermediaryService.presentLoading('Cargando...');
+        this.employeeService.store(response.data).then(async response => {
+          if(response.code == 200){
+            await this.intermediaryService.dismissLoading();
+            await this.intermediaryService.presentToastSuccess('Los cambios se han guardado correctamente.');
+          }else{
+            console.error(response);
+            await this.intermediaryService.dismissLoading();
+          }
+        }, async error => {
+          console.error(error);
+          await this.intermediaryService.dismissLoading();
+        }).catch(async error => {
+          console.error(error);
+          await this.intermediaryService.dismissLoading();
+        });
+      }
+    });
+
+    await modal.present();
   }
 
 }
