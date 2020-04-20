@@ -377,7 +377,7 @@ export class MenuComponent implements OnInit {
       icon: 'ribbon',
       children: [
         {
-          title: 'Lista de auditorias',
+          title: 'Lista Control Embalajes',
           id: 'audit-sga',
           url: '/audits',
           icon: 'list-box'
@@ -823,11 +823,11 @@ export class MenuComponent implements OnInit {
       icon: 'ribbon',
       children: [
         {
-          title: 'Lista de auditorias',
+          title: 'Lista Control Embalajes',
           id: 'audit-al',
           url: '/audits',
           icon: 'list-box',
-          tooltip: 'Listado de auditorías realizadas'
+          tooltip: 'Listado de controles de embalajes realizados'
         },
         {
           title: 'Revisiones Pendientes',

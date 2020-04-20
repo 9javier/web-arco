@@ -31,7 +31,7 @@ export class AuditsMobileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.toolbarProvider.currentPage.next('Auditorías');
+    this.toolbarProvider.currentPage.next('Control de embalajes');
     this.getAllAudits();
   }
 
@@ -45,7 +45,7 @@ export class AuditsMobileComponent implements OnInit {
 
   closeAuditoria(data){
     this.audit.create({packingReference:data,status:2}).subscribe(res =>{
-      this.intermediaryService.presentToastSuccess('Auditoria Cerrada!!',TimesToastType.DURATION_SUCCESS_TOAST_3750);
+      this.intermediaryService.presentToastSuccess('Control de embalaje cerrado!!',TimesToastType.DURATION_SUCCESS_TOAST_3750);
       this.getAllAudits();
     })
   }

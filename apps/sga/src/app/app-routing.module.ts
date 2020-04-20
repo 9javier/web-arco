@@ -257,7 +257,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/audits/audits.module#AuditsModule',
     data: {
-      name: 'Auditorias'
+      name: 'Control de embalajes'
     }
   },
   {

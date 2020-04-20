@@ -56,9 +56,9 @@ export class ToolbarAlComponent implements OnInit {
         this.currentPage.includes(' laser') ||
         this.currentPage.includes('Verificación de artículos') ||
         this.currentPage.includes('Entrada') ||
-        this.currentPage.includes('Lista de auditorias') ||
+        this.currentPage.includes('Lista Control Embalajes') ||
         this.currentPage.includes('Salida') ||
-        this.currentPage.includes('Auditorías') ||
+        this.currentPage.includes('Control de embalajes') ||
         this.currentPage.includes('Ventilación de traspasos') ||
         this.currentPage.includes('Ventilación sin Sorter') ||
         this.currentPage.includes('Traspaso embalaje') ||
