@@ -15,10 +15,12 @@ import { SignatureModule } from '../signature/signature.module';
 import { DropFilesModule } from '../drop-files/drop-files.module';
 import { ReviewImagesComponent } from './components/review-images/review-images.component';
 import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-keyboard.module';
+import { SelectScrollbarComponent } from './components/select-scrollbar/select-scrollbar.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
-  declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent,],
-  entryComponents: [IncidentsComponent, PhotoModalComponent],
+  declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent, SelectScrollbarComponent],
+  entryComponents: [IncidentsComponent, PhotoModalComponent, SelectScrollbarComponent],
   imports: [
     CommonModule,
     IncidentsRoutingModule,
@@ -30,10 +32,11 @@ import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-ke
     CdkTableModule,
     SignatureModule,
     DropFilesModule,
-    
+    ScrollingModule
+
   ],
   exports: [
-    
+
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
