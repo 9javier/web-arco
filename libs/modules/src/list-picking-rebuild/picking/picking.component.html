@@ -22,10 +22,11 @@
   </mat-grid-tile>
   <mat-grid-tile colspan="4">
     <div class="tile-value" *ngIf="picking.destinyWarehouse">
-      {{ picking.destinyWarehouse.reference }} {{ picking.destinyWarehouse.name }}
+      <span *ngIf="picking.typePicking == 3">Peticiones Tienda</span>
+      <span *ngIf="picking.typePicking != 3">{{ picking.destinyWarehouse.reference }} {{ picking.destinyWarehouse.name }}</span>
     </div>
     <div class="tile-value" *ngIf="!picking.destinyWarehouse">
-      DOMICILIO
+      ONLINE
   </div>
   </mat-grid-tile>
   <mat-grid-tile colspan="4">

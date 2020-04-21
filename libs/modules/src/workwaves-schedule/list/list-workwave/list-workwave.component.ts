@@ -35,12 +35,17 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
         })
         .join(', ');
     }else{
-      return 'DOMICILIO';
+      return 'ONLINE';
     }
   }
 
   getTypeShippingOrderString(line: number) : string {
     let type = this.workWave.typeShippingOrder;
+    if(!type){
+      return "";
+    } else if(type == 6){
+      return "";
+    }
     if (line == 1) {
       if (type == 1) {
         return "Reposición";
