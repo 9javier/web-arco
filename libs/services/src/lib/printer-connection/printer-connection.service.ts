@@ -21,8 +21,12 @@ export class PrinterConnectionService {
     }
   }
 
-  public connect(){
-    this.printerService.openConnection();
+  public connect(callback: () => any = ()=>{}){
+    this.printerService.openConnection(true ).then(()=> {
+      if (callback && typeof callback == 'function') {
+        callback();
+      }
+    });
   }
 
   public disconnect(){

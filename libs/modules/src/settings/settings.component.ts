@@ -50,10 +50,10 @@ export class SettingsComponent implements OnInit {
       this.settingsService.saveDeviceSettings(this.form.value)
         .then(() => {
           this.printerConnectionService.disconnect();
-          this.printerConnectionService.connect();
-          this.intermediaryService.presentToastSuccess("Configuración guardada", TimesToastType.DURATION_SUCCESS_TOAST_3750);
+          this.printerConnectionService.connect( () =>{
+              this.intermediaryService.dismissLoading();
+          });
         });
-      this.intermediaryService.dismissLoading();
     });
   }
 }

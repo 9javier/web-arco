@@ -59,21 +59,21 @@ export class PrinterService {
                 this.intermediaryService.presentToastError('No ha sido posible conectarse con la impresora', TimesToastType.DURATION_ERROR_TOAST);
               }
               console.debug("PRINT::openConnection 3 [" + new Date().toJSON() + "]", error);
-              reject();
+              resolve(false);
             });
         } else {
           if (showAlert) {
             this.intermediaryService.presentToastError('No ha sido posible conectarse con la impresora', TimesToastType.DURATION_ERROR_TOAST);
           }
           console.debug("PRINT::openConnection 4 [" + new Date().toJSON() + "]");
-          reject();
+          resolve(false);
         }
       } else {
         if (showAlert) {
           this.intermediaryService.presentToastError('No está configurada la impresora', TimesToastType.DURATION_ERROR_TOAST);
         }
         console.debug("PRINT::openConnection 5 [" + new Date().toJSON() + "]");
-        reject();
+        resolve(false);
       }
     });
   }
