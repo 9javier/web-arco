@@ -39,6 +39,7 @@ export class OrderPreparationComponent implements OnInit {
   viewInput:boolean = false;
   id=0;
   errorLabel:boolean = false;
+  scann:boolean = false;
   constructor(
     private labelsService: LabelsService,
     private router: Router,
