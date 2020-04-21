@@ -50,8 +50,13 @@ export class SettingsComponent implements OnInit {
       this.settingsService.saveDeviceSettings(this.form.value)
         .then(() => {
           this.printerConnectionService.disconnect();
-          this.printerConnectionService.connect( () =>{
-              this.intermediaryService.dismissLoading();
+          this.printerConnectionService.connect().then((data: boolean) => {
+            this.intermediaryService.dismissLoading();
+            if(data==true){
+              this.intermediaryService.presentToastSuccess('Conectado a la impresora', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+            }else{
+              this.intermediaryService.presentToastError('No ha sido posible conectarse con la impresora', TimesToastType.DURATION_ERROR_TOAST);
+            }
           });
         });
     });

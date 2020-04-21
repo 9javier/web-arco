@@ -42,7 +42,7 @@ export class PrinterService {
   public async openConnection(showAlert: boolean = false) {
     this.address = await this.getConfiguredAddress();
     console.debug("PRINT::openConnection 1 [" + new Date().toJSON() + "]", this.address);
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
       if (this.address) {
         if (cordova.plugins.zbtprinter) {
@@ -53,7 +53,7 @@ export class PrinterService {
               }
               console.debug("PRINT::openConnection 2 [" + new Date().toJSON() + "]", result);
 
-              resolve();
+              resolve(true);
             }, (error) => {
               if (showAlert) {
                 this.intermediaryService.presentToastError('No ha sido posible conectarse con la impresora', TimesToastType.DURATION_ERROR_TOAST);
