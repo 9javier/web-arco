@@ -1,9 +1,10 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {ReceptionAvelonModel, ReceptionsAvelonService} from "@suite/services";
+import {IntermediaryService, ReceptionAvelonModel, ReceptionsAvelonService} from "@suite/services";
 import {Type} from "../../enums/type.enum";
 import {VirtualKeyboardService} from "../../../components/virtual-keyboard/virtual-keyboard.service";
 import {LoadingButtonComponent} from "../../../components/button/loading-button/loading-button.component";
 import {LocalStorageProvider} from "../../../../../services/src/providers/local-storage/local-storage.provider";
+declare const BrowserPrint: any;
 
 @Component({
   selector: 'suite-form-header-reception',
@@ -34,7 +35,8 @@ export class FormHeaderReceptionComponent implements OnInit {
   constructor(
     private virtualKeyboardService: VirtualKeyboardService,
     private receptionsAvelonService: ReceptionsAvelonService,
-    private localStorageProvider: LocalStorageProvider
+    private localStorageProvider: LocalStorageProvider,
+    private intermediaryService: IntermediaryService
   ) { }
 
   ngOnInit() {
@@ -156,4 +158,32 @@ export class FormHeaderReceptionComponent implements OnInit {
     this.localStorageProvider.set('last_expedition', JSON.stringify(expedition));
   }
   //endregion
+
+  printZebraTest(){
+    console.log("BrowserPrint::printZebraTest");
+    const dataToPrint = "^XA^CI28^LH30,5^AVN^FO1,5^FDPRUEBA^FS^AVN^FO0,15^FB325,1,0,R,0^FD00^FS^ABN^FO3,70^FDMARCA^FS^ABN^FO3,85^FDMODELO^FS^ABN^FO3,100^FDCOLOR^FS^AQN^FO0,110^FB325,1,0,R,0^FDTEMP^FS^FO10,125^BY2,3.0^BCN,40,Y,N,N^FD>;000000000000000000^FS^XZ";
+    if(BrowserPrint){
+      BrowserPrint.getDefaultDevice("printer", function(device) {
+        console.log("BrowserPrint::device", device);
+        if(device){
+          console.log("BrowserPrint::send", dataToPrint)
+          device.send(dataToPrint, function (data) {
+            console.log("BrowserPrint::data", data);
+          }, function (e) {
+            console.log("BrowserPrint::Error send", e);
+            this.intermediaryService.presentToastError('Error enviando datos a la impresora');
+          });
+        } else {
+          this.intermediaryService.presentToastError('No hay impresora por defecto de Browser Print');
+        }
+      }, function(error){
+        this.intermediaryService.presentToastError('Error obteniendo impresora por defecto de Browser Print');
+        console.log("BrowserPrint::Error getDevice", error)
+      });
+    } else {
+      this.intermediaryService.presentToastError('Browser Print no instalado');
+      console.log("BrowserPrint not installed")
+    }
+
+  }
 }

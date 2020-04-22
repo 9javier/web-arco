@@ -919,6 +919,9 @@ export class ProductsComponent implements OnInit {
       case 10:
         location = 'RECEPCIÓN ALMACEN';
         break;
+      case 11:
+        if(product.carrier != null) location = product.carrier.reference;
+        break;
     }
     return location;
   }

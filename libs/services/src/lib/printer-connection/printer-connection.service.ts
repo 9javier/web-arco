@@ -21,8 +21,8 @@ export class PrinterConnectionService {
     }
   }
 
-  public connect(){
-    this.printerService.openConnection();
+  public connect() {
+    return this.printerService.openConnection();
   }
 
   public disconnect(){

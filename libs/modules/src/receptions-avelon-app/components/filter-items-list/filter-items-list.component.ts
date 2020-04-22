@@ -15,7 +15,7 @@ export class FilterItemsListComponent implements OnInit {
   public searchText: string = null;
 
   private originaListItems = [];
-  private paginatedListItems = [];
+  paginatedListItems = [];
 
   private LIMIT_PAGINATION: number = 30;
 
