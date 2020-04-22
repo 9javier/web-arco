@@ -228,3 +228,81 @@ ion-toggle {
   padding-bottom: 5px;
   padding-right: 5px;
 }
+
+div.list-header-filters {
+  ion-grid {
+    .header {
+      padding: 0 16px 0 16px;
+      height: 56px;
+
+      ion-col {
+        height: 56px;
+      }
+
+      ion-col.check-all, ion-col.filters {
+        padding: 0;
+        div.check-all, div.filters {
+          display: table;
+          height: 56px;
+          ion-checkbox, i, p {
+            display: table-cell;
+            vertical-align: middle;
+            margin: 0;
+          }
+        }
+        div.filters {
+          text-align: end;
+          width: 100%;
+          p {
+            padding-right: 16px;
+          }
+          i {
+            text-align: center;
+            width: 32px;
+            height: 32px;
+          }
+        }
+        div.filters.filters-opened {
+          padding: 12px 0;
+          i {
+            background-color: black;
+            color: white;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+
+    form {
+      position: absolute;
+      background: white;
+      z-index: 3;
+      width: 100vw;
+      left: 0;
+      border: 1px solid #eee;
+
+      ion-select.order-types {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      ion-item.hide-impress-products {
+        --border-width: 0;
+        ion-label {
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+
+  ion-col.btn-remove {
+    ion-button {
+      --background: white;
+      background: white;
+      color: var(--ion-color-primary);
+    }
+  }
+  ion-col.btn-remove, ion-col.btn-apply {
+    text-align: center;
+  }
+}
