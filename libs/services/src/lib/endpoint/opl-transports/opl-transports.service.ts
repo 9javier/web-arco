@@ -44,7 +44,7 @@ export class OplTransportsService {
 
   downloadPdf(path?:string) {
     const body = {
-      path: path || './public/pdf/'
+      path: path || '/pdf/documento1.pdf'
     }
     return this.http.post<HttpRequestModel.Response>(this.dowloadPdf, body).pipe(map(res => {      
       return res.data
