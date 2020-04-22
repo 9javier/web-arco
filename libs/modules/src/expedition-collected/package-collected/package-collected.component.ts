@@ -23,6 +23,7 @@ import { parseDate } from '@ionic/core/dist/types/components/datetime/datetime-u
 import { ExpeditionCollectedService } from '../../../../services/src/lib/endpoint/expedition-collected/expedition-collected.service';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../services/src/environments/environment';
+import { saveAs } from "file-saver";
 
 @Component({
   selector: 'suite-package-collected',
@@ -284,18 +285,11 @@ export class PackageCollectedComponent {
       this.oplTransportsService.downloadPdf().subscribe(
         resp => {
           console.log(resp);
-          const url = `${environment.downloadFiles}/${resp}`
-          const archor = document.createElement('a');
-          archor.href = url;
-          archor.target = '_blank'
-          archor.download;
-          console.log(archor);
-          archor.click()
+          const blob = new Blob([resp], { type: 'application/pdf' });
+          saveAs(blob, 'documento.pdf')
         },
         e => {
           console.log(e.error.text);
-
-
         }
       )
     }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { HttpRequestModel } from '../../../models/endpoints/HttpRequest';
 import { map } from 'rxjs/operators';
@@ -46,9 +46,8 @@ export class OplTransportsService {
     const body = {
       path: path || '/pdf/documento1.pdf'
     }
-    return this.http.post<HttpRequestModel.Response>(this.dowloadPdf, body).pipe(map(res => {      
-      return res.data
-    }));
+    let headers: HttpHeaders = new HttpHeaders({ Accept: 'application/pdf' });
+    return this.http.post(this.dowloadPdf, body,{headers, responseType:'blob'})
   }
 
 }
