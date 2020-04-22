@@ -10,6 +10,7 @@ import { PaginatorComponent } from '../../components/paginator/paginator.compone
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { PackagesComponent } from '../packages/packages.component';
 import { TagsInputOption } from '../../components/tags-input/models/tags-input-option.model';
+import { environment } from '../../../../services/src/environments/environment';
 
 
 @Component({
@@ -330,6 +331,24 @@ export class OrderPackageComponent implements OnInit {
       },
       () => {
         this.intermediaryService.dismissLoading()
+        this.oplTransportsService.downloadPdf().subscribe(
+          resp => {
+            console.log(resp); 
+            const url = `${environment.downloadFiles}/${resp}`
+            const archor = document.createElement('a');
+            archor.href= url;
+            archor.target= '_blank'
+            archor.download;
+            console.log(archor);
+            archor.click()
+          },
+          e => {
+            console.log(e.error.text);
+            
+            
+          }
+        )
+
       }
     );
   } 

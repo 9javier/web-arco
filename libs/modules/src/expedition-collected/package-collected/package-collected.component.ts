@@ -7,7 +7,7 @@ import { parse } from 'querystring';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { Platform, ModalController, NavController } from '@ionic/angular';
-import { IntermediaryService } from '../../../../services/src';
+import { IntermediaryService, OplTransportsService } from '../../../../services/src';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PaginatorComponent } from '../../components/paginator/paginator.component';
 import { DefectiveRegistryModel } from '../../../../services/src/models/endpoints/DefectiveRegistry';
@@ -22,6 +22,8 @@ import { FiltersModel } from '../../../../services/src/models/endpoints/filters'
 import { parseDate } from '@ionic/core/dist/types/components/datetime/datetime-util';
 import { ExpeditionCollectedService } from '../../../../services/src/lib/endpoint/expedition-collected/expedition-collected.service';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from '../../../../services/src/environments/environment';
+
 @Component({
   selector: 'suite-package-collected',
   templateUrl: './package-collected.component.html',
@@ -37,7 +39,9 @@ export class PackageCollectedComponent {
     private intermediary: IntermediaryService,
     private expeditionCollectedService: ExpeditionCollectedService,
     private navCtrl: NavController,
-    private activateRoute: ActivatedRoute
+    private activateRoute: ActivatedRoute,
+    private oplTransportsService: OplTransportsService,
+
   ) {
   }
   @Input() id: any;
@@ -275,7 +279,27 @@ export class PackageCollectedComponent {
       this.selection.clear();
       this.intermediaryService.presentToastError('Debe Seleccionar Todos los paquetes de las expediciones');
       this.intermediaryService.dismissLoading();
-    });
+    },
+    () => {
+      this.oplTransportsService.downloadPdf().subscribe(
+        resp => {
+          console.log(resp);
+          const url = `${environment.downloadFiles}/${resp}`
+          const archor = document.createElement('a');
+          archor.href = url;
+          archor.target = '_blank'
+          archor.download;
+          console.log(archor);
+          archor.click()
+        },
+        e => {
+          console.log(e.error.text);
+
+
+        }
+      )
+    }
+    );
 
   }
 
