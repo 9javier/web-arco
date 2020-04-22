@@ -32,6 +32,8 @@ export class NewIncidenceComponent implements OnInit {
   data;
   markets = [];
   countries = [];
+  provinces = [];
+  rules = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -50,8 +52,12 @@ export class NewIncidenceComponent implements OnInit {
     this.getTransports();
     this.getMarkets();
     this.getCountries();
+    this.getProvinces();
+    this.getRules();
     this.form = this.formBuilder.group({
       marketId: new FormControl(''),
+      warehouseOrigin: new FormControl(''),
+      warehouseDestiny: new FormControl(''),
       operator: new FormControl(''),
       name: new FormControl(''),
       lastname: new FormControl(''),
@@ -87,35 +93,89 @@ export class NewIncidenceComponent implements OnInit {
     });
   }
 
+  getProvinces(){
+    this.expeManSrv.getProvinces().subscribe(data => {
+      this.provinces = data;
+    });
+  }
+
+  getRules(){
+    this.expeManSrv.getRules().subscribe(data => {
+      this.rules = data;
+    });
+  }
+
   save(){
-    const body = {
-      marketId: this.form.value.marketId,
-      operator: this.form.value.operator.toUpperCase(),
-      warehouseReference: this.warehouseSelected['warehouseReference'],
-      referenceExpedition: this.form.value.referenceExpedition,
-      sender: {
-        name: this.warehouseSelected['name'],
-        address: this.warehouseSelected['address1'] + ' ' + this.warehouseSelected['address2'],
-        country: this.warehouseSelected['country'].toUpperCase(),
-        city: this.warehouseSelected['city'],
-        zipCode: this.warehouseSelected['postcode'],
-        phone: this.warehouseSelected['phone'].replace(/\(([^)]*)\)/g,'')
-      },
-      recipient: {
+    const marketId = this.form.value.marketId.id;
+    const warehouseReference = this.form.value.warehouseOrigin;
+    const warehouseDestinySelect = this.form.value.warehouseDestiny;
+    const countryId = this.form.value.country.id;
+    const provinceId = this.form.value.province.id;
+    let operator = this.form.value.operator;
+
+    if(operator === '') {
+      let matchingrule;
+      matchingrule = this.rules.find(rule => {
+        let marketMatch = !rule.markets.length|| rule.markets.find(market => market.id == marketId);
+        let warehouseOriginMatch = !rule.warehousesOrigins.length|| rule.warehousesOrigins.find(warehousesOrigin => warehousesOrigin.id == warehouseReference.id);
+        let warehouseDestinyMatch = !rule.warehousesDestinies.length|| rule.warehousesDestinies.find(warehouseDestiny => warehouseDestiny.id == warehouseDestinySelect.id);
+        let provinceMatch = !rule.provinces.length|| rule.provinces.find(province => province.id == provinceId);
+        let countryMatch = !rule.countries.length|| rule.countries.find(country => country.id == countryId);
+        return (marketMatch && warehouseOriginMatch && ((warehouseDestinyMatch || provinceMatch && countryMatch) || (warehouseDestinyMatch && provinceMatch && countryMatch)));
+      });
+
+      if(matchingrule === undefined){
+        this.intermediaryServiceL.presentToastError('No existen reglas creadas. Selecciona un operador manualmente o crea las reglas.');
+      }else{
+        operator = matchingrule['logisticOperator']['name'];
+      }
+    }
+    console.log('CALC OPERATOR --> ', operator);
+
+    let recipient;
+    if(this.form.value.warehouseDestiny != ''){
+      recipient = {
+        name: this.form.value.warehouseDestiny.name,
+        address: this.form.value.warehouseDestiny.address1 + ' '+ this.form.value.warehouseDestiny.address2,
+        country: this.form.value.warehouseDestiny.country.toUpperCase(),
+        city: this.form.value.warehouseDestiny.city,
+        zipCode: this.form.value.warehouseDestiny.postcode,
+        phone: this.form.value.warehouseDestiny.phone.replace(/\(([^)]*)\)/g,''),
+        contactName: this.form.value.warehouseDestiny.name
+      }
+    }else{
+      recipient = {
         name: this.form.value.name + ' '+ this.form.value.lastname,
         address: this.form.value.direction,
-        country: this.form.value.country.toUpperCase(),
-        city: this.form.value.province,
+        country: this.form.value.country.isoCode.toUpperCase(),
+        city: this.form.value.province.name,
         zipCode: this.form.value.postalcode,
         phone: this.form.value.phone,
-        contactName: this.form.value.name + ' '+ this.form.value.lastname,
+        contactName: this.form.value.name + ' '+ this.form.value.lastname
+      }
+    }
+
+    const body = {
+      marketId: marketId,
+      operator: operator.toUpperCase(),
+      warehouseReference: this.form.value.warehouseOrigin.warehouseReference,
+      referenceExpedition: this.form.value.referenceExpedition,
+      sender: {
+        name: this.form.value.warehouseOrigin.name,
+        address: this.form.value.warehouseOrigin.address1 + ' ' + this.form.value.warehouseOrigin.address2,
+        country: this.form.value.warehouseOrigin.country.toUpperCase(),
+        city: this.form.value.warehouseOrigin.city,
+        zipCode: this.form.value.warehouseOrigin.postcode,
+        phone: this.form.value.warehouseOrigin.phone.replace(/\(([^)]*)\)/g,'')
       },
+      recipient,
       packages: {
         packagesNum: this.form.value.packages,
         packageReference: this.form.value.packagesReference,
         kilos: this.form.value.packagesWeight
       }
     };
+    console.log('BODY -> ', body);
 
     this.expeManSrv.createExpedition(body).subscribe(data => {
       for(let i = 0; i < data.length; i++){
@@ -130,6 +190,7 @@ export class NewIncidenceComponent implements OnInit {
           const blob = new Blob([byteArray], {type: "application/pdf"});
           FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.pdf');
         }
+        console.log('RESPONSE -> ',data[i]);
       }
       this.intermediaryServiceL.presentToastSuccess('Expedicion guardada con exito');
       this.close();

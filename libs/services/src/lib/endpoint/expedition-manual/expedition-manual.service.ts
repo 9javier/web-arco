@@ -21,6 +21,8 @@ export class ExpeditionManualService {
   private getLogisticsOperatorsUrl = this.apiGeneralLogisticOperator + '/logistics-operators/';
   private getMarketsUrl = this.apiMga + '/markets/';
   private getCountriesUrl = this.apiMga + '/countries/';
+  private getProvincesUrl = this.apiMga + '/provinces/';
+  private getRulesUrl = this.apiGeneralLogisticOperator + '/logistics-operators-rules/';
 
   private baseUrl: string;
   private getTrasnports: string;
@@ -113,6 +115,24 @@ export class ExpeditionManualService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       return this.http.get<any>(this.getCountriesUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getProvinces():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getProvincesUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getRules():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getRulesUrl, {headers}).pipe(map(response=>{
         return response.data;
       }));
     }));
