@@ -136,14 +136,12 @@
 <ion-footer>
   <div class="nr-modal-buttons-wrapper">
     <div class="nr-rule-button"
-         *ngIf="activateButton.markets === true && activateButton.warehousesOrigins === true && activateButton.warehousesDestinies === true &&
-         activateButton.provinces === true && activateButton.countries === true && activateButton.logisticOperator === true"
+         *ngIf="activateButton.logisticOperator === true"
          (click)="updateRules()">
       <span>EDITAR REGLA</span>
     </div>
     <div class="nr-rule-button-disabled"
-         *ngIf="activateButton.markets === false || activateButton.warehousesOrigins === false || activateButton.warehousesDestinies === false ||
-         activateButton.provinces === false || activateButton.countries === false || activateButton.logisticOperator === false">
+         *ngIf="activateButton.logisticOperator === false">
       <span>EDITAR REGLA</span>
     </div>
   </div>

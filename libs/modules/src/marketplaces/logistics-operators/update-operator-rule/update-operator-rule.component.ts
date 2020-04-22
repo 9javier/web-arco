@@ -196,70 +196,40 @@ export class UpdateOperatorRuleComponent implements OnInit {
   marketsSelected(market){
     if(market.isChecked === true){
       this.marketsCheck.push(market);
-      if(this.marketsCheck.length > 0){
-        this.activateButton.markets = true;
-      }
     }else{
       this.removeItem(this.marketsCheck, market);
-      if(this.marketsCheck.length === 0){
-        this.activateButton.markets = false;
-      }
     }
   }
 
   warehousesOriginsSelected(warehouse){
     if(warehouse.isChecked === true){
       this.warehousesOriginsCheck.push(warehouse);
-      if(this.warehousesOriginsCheck.length > 0){
-        this.activateButton.warehousesOrigins = true;
-      }
     }else{
       this.removeItem(this.warehousesOriginsCheck, warehouse);
-      if(this.warehousesOriginsCheck.length === 0){
-        this.activateButton.warehousesOrigins = false;
-      }
     }
   }
 
   warehousesDestiniesSelected(warehouse){
     if(warehouse.isChecked === true){
       this.warehousesDestiniesCheck.push(warehouse);
-      if(this.warehousesDestiniesCheck.length > 0){
-        this.activateButton.warehousesDestinies = true;
-      }
     }else{
       this.removeItem(this.warehousesDestiniesCheck, warehouse);
-      if(this.warehousesDestiniesCheck.length === 0){
-        this.activateButton.warehousesDestinies = false;
-      }
     }
   }
 
   provincesSelected(province){
     if(province.isChecked === true){
       this.provincesCheck.push(province);
-      if(this.provincesCheck.length > 0){
-        this.activateButton.provinces = true;
-      }
     }else{
       this.removeItem(this.provincesCheck, province);
-      if(this.provincesCheck.length === 0){
-        this.activateButton.provinces = false;
-      }
     }
   }
 
   countriesSelected(country){
     if(country.isChecked === true){
       this.countriesCheck.push(country);
-      if(this.countriesCheck.length > 0){
-        this.activateButton.countries = true;
-      }
     }else{
       this.removeItem(this.countriesCheck, country);
-      if(this.countriesCheck.length === 0){
-        this.activateButton.countries = false;
-      }
     }
   }
 
