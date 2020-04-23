@@ -15,6 +15,7 @@ export class OplTransportsService {
   private orderExpeditionUrl: string
   private printOrderUrl: string;
   private dowloadPdf: string;
+  private printOrderTransportUrl: string
 
   constructor(private http: HttpClient) { 
     this.filtersUrl = `${environment.apiBase}/opl-expedition/order-expedition/get-filters`;
@@ -22,6 +23,8 @@ export class OplTransportsService {
     this.orderExpeditionUrl = `${environment.apiBase}/opl-expedition/order-expedition/filter`;
     this.printOrderUrl = `${environment.apiBase}/opl-expedition/order-expedition/print`
     this.dowloadPdf = `${environment.downloadFiles}/api/opl-expedition/order-expedition/transport/download/pdf`
+    this.printOrderTransportUrl = `${environment.apiBase}/opl-expedition/order/print`
+
   }
 
   getFilters(){
@@ -48,6 +51,14 @@ export class OplTransportsService {
     }
     let headers: HttpHeaders = new HttpHeaders({ Accept: 'application/pdf' });
     return this.http.post(this.dowloadPdf, body,{headers, responseType:'blob'})
+  }
+
+  downloadPdfTransortOrders(expeditionOrderId: number) {
+    const body = {
+      expeditionOrderId
+    }
+    let headers: HttpHeaders = new HttpHeaders({ Accept: 'application/pdf' });
+    return this.http.post(this.printOrderTransportUrl, body, { headers, responseType: 'blob' })
   }
 
 }

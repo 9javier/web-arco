@@ -282,7 +282,7 @@ export class PackageCollectedComponent {
       this.intermediaryService.dismissLoading();
     },
     () => {
-      this.oplTransportsService.downloadPdf().subscribe(
+      this.oplTransportsService.downloadPdfTransortOrders(this.form.value.id).subscribe(
         resp => {
           console.log(resp);
           const blob = new Blob([resp], { type: 'application/pdf' });

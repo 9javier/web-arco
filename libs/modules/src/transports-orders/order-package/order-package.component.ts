@@ -331,7 +331,7 @@ export class OrderPackageComponent implements OnInit {
       },
       () => {
         this.intermediaryService.dismissLoading()
-        this.oplTransportsService.downloadPdf().subscribe(
+        this.oplTransportsService.downloadPdfTransortOrders(id).subscribe(
           resp => {
             console.log(resp); 
             const blob = new Blob([resp], { type: 'application/pdf' });
