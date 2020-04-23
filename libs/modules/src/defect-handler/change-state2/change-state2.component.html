@@ -18,12 +18,12 @@
     <ion-label class="label-text">Fecha</ion-label>
     <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format disabled></ion-datetime>
   </ion-item>
-  <ion-item>
+
+  <ion-item (click)="clickSelectPopover($event)">
     <ion-label class="label-text">Estado de gestion</ion-label>
-    <ion-select  (ionChange)="gestionChange($event)" placeholder="Selecciona" >
-      <ion-select-option  *ngFor="let item of allDefectType" [value]="item.id" >{{item.name}}</ion-select-option>
-    </ion-select>
-  </ion-item> 
+    <ion-label class="content-select" style="text-align: center" *ngIf="!defectStatus"><font color="#808080">Selecciona</font> <i></i></ion-label>
+    <ion-label class="content-select" style="text-align: center" *ngIf="defectStatus">{{ defectStatus.name }} <i></i></ion-label>
+  </ion-item>
 
   <ion-item>
     <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
@@ -38,7 +38,7 @@
     <ion-input style="margin-left: 10%;" disabled>{{ ZoneAndChild }}</ion-input>
   </ion-item>
 
- 
+
 
 
   <ion-item *ngIf="selectGestionState == true">
@@ -71,7 +71,7 @@
       <ion-icon name="images"></ion-icon>
     </ion-button>
   </ion-item>
-  
+
   <ion-item *ngIf="requirePhoto && photoList" (click)="showPhotoList()" lines="none">
     <ion-label class="label-text">Fotos</ion-label>
     <ion-icon slot="end" *ngIf="displayPhotoList" name="arrow-down"></ion-icon>
@@ -86,7 +86,7 @@
     </ion-item>
   </ion-list>
   </div>
- 
+
 <div *ngIf="selectGestionState == true">
   <ion-item lines="none" *ngIf="requireOk == true">
     <ion-label lines="none" class="ion-text-capitalize label-text">generar firma</ion-label>
