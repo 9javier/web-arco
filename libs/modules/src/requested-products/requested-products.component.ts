@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ChangeDetectorRef, OnDestroy} from '@angular/core';
+import {Component, OnInit, ViewChild, ChangeDetectorRef, OnDestroy, AfterViewInit} from '@angular/core';
 import { MatPaginator } from '@angular/material';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import {
@@ -72,14 +72,14 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
   public products: PickingNewProductsModel.ProductReceivedSearch[] = [];
 
   /** List of items for filters */
-  public models: TagsInputOption[] = [];
-  public brands: TagsInputOption[] = [];
-  public references: TagsInputOption[] = [];
-  public dates: TagsInputOption[] = [];
-  public sizes: TagsInputOption[] = [];
-  public families: TagsInputOption[] = [];
-  public lifestyles: TagsInputOption[] = [];
-  public groups: TagsInputOption[] = [];
+  models: Array<TagsInputOption> = [];
+  brands: Array<TagsInputOption> = [];
+  references: Array<TagsInputOption> = [];
+  dates: Array<TagsInputOption> = [];
+  sizes: Array<TagsInputOption> = [];
+  families: Array<TagsInputOption> = [];
+  lifestyles: Array<TagsInputOption> = [];
+  groups: Array<TagsInputOption> = [];
 
   flagPageChange: boolean = false;
   flagSizeChange: boolean = false;
@@ -102,10 +102,9 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
 
   //region Lifecycle events
   ngOnInit() {
-    this.clearFilters();
     this.loadToolbarActions();
+    this.clearFilters();
     this.listenChanges();
-    this.startCleanScreen();
   }
 
   ngOnDestroy() {
@@ -138,10 +137,14 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
     }, {
       validators: validators.haveItems("toSelect")
     });
-    this.loadReceivedItemsRequested(this.sanitize(this.getFormValueCopy()));
+    this.clearFilters();
   }
 
-  private async loadReceivedItemsRequested(parameters, applyFilter: boolean = false){
+  private async loadReceivedItemsRequested(parameters, applyFilter: boolean = false, initFilters: boolean = false){
+    console.log("parameters",parameters);
+    if(initFilters){
+      applyFilter = false;
+    }
     if(applyFilter){
       parameters.pagination.page = 1;
     }
@@ -159,7 +162,8 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
           this.paginatorComponent.length = paginator.totalResults;
           this.paginatorComponent.pageIndex = paginator.selectPage;
           this.paginatorComponent.lastPage = paginator.lastPage;
-
+          console.log("brands",this.brands);
+          console.log("form2",this.form.value);
           if(applyFilter){
             //this.saveFilters();
             this.form.get("pagination").patchValue({
@@ -204,7 +208,6 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
 
   private sanitize(object) {
     /**mejorable */
-    object = JSON.parse(JSON.stringify(object));
     object = JSON.parse(JSON.stringify(object));
     if(!object.orderby.type){
       delete object.orderby.type;
@@ -287,6 +290,7 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
     this.appFiltersService
       .postProductsRequested({})
       .subscribe((res: AppFiltersModel.ProductsRequested) => {
+        console.log("res filters",res);
         this.brands = res.brands;
         this.references = res.references;
         this.models = res.models;
@@ -296,12 +300,14 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
         this.dates = res.dates.map(date => {
           return { id: date.id, name: this.dateTimeParserService.date(date.name) };
         });
+        console.log("this.brands",this.brands)
         this.groups = res.ordertypes;
 
+        this.applyFilters(true);
       });
   }
 
-  public applyFilters() {
+  public applyFilters(init: boolean) {
     if (this.pauseListenFormChange) return;
     ///**format the reference */
     /**cant send a request in every keypress of reference, then cancel the previous request */
@@ -312,12 +318,14 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
       if(this.form.valid)
         this.requestTimeout = setTimeout(()=>{
           let flagApply = true;
-          this.loadReceivedItemsRequested(this.sanitize(this.getFormValueCopy()), flagApply);
+          let flagInit = init;
+          this.loadReceivedItemsRequested(this.sanitize(this.getFormValueCopy()), flagApply, flagInit);
         },1000);
     }else{
       /**reset the paginator to the 0 page */
       let flagApply = true;
-      this.loadReceivedItemsRequested(this.sanitize(this.getFormValueCopy()), flagApply);
+      let flagInit = init;
+      this.loadReceivedItemsRequested(this.sanitize(this.getFormValueCopy()), flagApply, flagInit);
     }
     /**assign the current reference to the previous reference */
     this.previousProductReferencePattern = this.form.value.productReferencePattern;
