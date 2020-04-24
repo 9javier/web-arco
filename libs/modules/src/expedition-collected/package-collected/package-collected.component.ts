@@ -261,7 +261,7 @@ export class PackageCollectedComponent {
 
 
   async update() {
-    const data = this.selection.selected.map(function (obj) {
+    const data: any = this.selection.selected.map(function (obj) {
       var rObj = {};
       rObj['warehouse'] = obj.warehouse.id;
       rObj['expedition'] = obj.expedition;
@@ -270,7 +270,11 @@ export class PackageCollectedComponent {
       return rObj;
     });
     await this.intermediaryService.presentLoading();
+    console.log(data);
+    const transport = data[0].expedition
     this.expeditionCollectedService.updatePackage(data).subscribe(data => {
+      console.log(data);
+      
       this.selection.clear();
       this.ngOnInit();
       this.intermediaryService.dismissLoading();
@@ -282,7 +286,7 @@ export class PackageCollectedComponent {
       this.intermediaryService.dismissLoading();
     },
     () => {
-      this.oplTransportsService.downloadPdfTransortOrders(this.form.value.id).subscribe(
+      this.oplTransportsService.downloadPdfTransortOrders(transport).subscribe(
         resp => {
           console.log(resp);
           const blob = new Blob([resp], { type: 'application/pdf' });
