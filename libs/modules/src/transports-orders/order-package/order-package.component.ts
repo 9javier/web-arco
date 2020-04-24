@@ -10,7 +10,8 @@ import { PaginatorComponent } from '../../components/paginator/paginator.compone
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { PackagesComponent } from '../packages/packages.component';
 import { TagsInputOption } from '../../components/tags-input/models/tags-input-option.model';
-
+import { environment } from '../../../../services/src/environments/environment';
+import { saveAs } from "file-saver";
 
 @Component({
   selector: 'suite-order-package',
@@ -330,6 +331,17 @@ export class OrderPackageComponent implements OnInit {
       },
       () => {
         this.intermediaryService.dismissLoading()
+        this.oplTransportsService.downloadPdfTransortOrders(id).subscribe(
+          resp => {
+            console.log(resp); 
+            const blob = new Blob([resp], { type: 'application/pdf' });
+            saveAs(blob, 'documento.pdf')
+          },
+          e => {
+            console.log(e.error.text);
+          }
+        )
+
       }
     );
   } 
