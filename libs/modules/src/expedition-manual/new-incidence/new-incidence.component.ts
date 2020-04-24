@@ -179,23 +179,27 @@ export class NewIncidenceComponent implements OnInit {
 
     this.expeManSrv.createExpedition(body).subscribe(data => {
       for(let i = 0; i < data.length; i++){
-        for(let x = 0; x < data[i]['labels'].length; x++){
-          const byteCharacters = atob(data[i]['labels'][x]['label']);
-          const byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
-          const byteArray = new Uint8Array(byteNumbers);
+        if(data[i].success === true){
+          for(let x = 0; x < data[i]['labels'].length; x++){
+            const byteCharacters = atob(data[i]['labels'][x]['label']);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
 
-          const blob = new Blob([byteArray], {type: "application/pdf"});
-          FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.pdf');
+            const blob = new Blob([byteArray], {type: "application/pdf"});
+            FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.pdf');
+          }
+          this.intermediaryServiceL.presentToastSuccess('Expedicion guardada con exito');
+          this.close();
+        }else{
+          this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
         }
         console.log('RESPONSE -> ',data[i]);
       }
-      this.intermediaryServiceL.presentToastSuccess('Expedicion guardada con exito');
-      this.close();
     }, error => {
-      this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos por favor de revisar');
+      this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
     });
   }
 
