@@ -15,32 +15,39 @@ export class TransportsOrdersComponent implements OnInit {
   @ViewChild(OrderPackageComponent) orders: OrderPackageComponent 
   selectedIndex = 0;
   transports: Array<OplTransportsModel.ItemFilter> = []
-  indexTab: number;
+  indexTab: number = 0;
   constructor(
     private intermediaryService: IntermediaryService,
     private oplTransportsService: OplTransportsService
   ) { }
 
   ngOnInit() {
-    
     this.getTranspor()
   }
   getTranspor(){
     this.oplTransportsService.getTransports().subscribe((resp: OplTransportsModel.OrderExpeditionTransportsFilters) => {
       // console.log(resp);
       this.transports = resp.transports
-      console.log(this.transports);
+      console.log('Transports', this.transports);
       
     })
   }
   tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    // console.log('tabChangeEvent => ', tabChangeEvent);
-    // console.log('index => ', tabChangeEvent.index);
+    console.log('tabChangeEvent => ', tabChangeEvent);
+    console.log('index => ', tabChangeEvent.index);
     this.indexTab = tabChangeEvent.index;
   }
 
+  indexChange(event) {
+    console.log(event);
+    this.indexChange
+    
+    
+  }
+
   refresh() {
-    this.orders.refresh();
+    const transportId = this.transports[this.indexTab].id
+    this.orders.refresh(transportId);
   }
   
  }

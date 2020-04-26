@@ -10,6 +10,8 @@
       [(selectedIndex)]="selectedIndex" 
       [disableRipple]="false"
       mat-align-tabs="center"
+      (selectedTabChange)="tabChanged($event)"
+      (selectedIndexChange)="indexChange($event)"
       >
       <mat-tab [label]="trans.name" *ngFor="let trans of transports">
         <ng-template matTabContent>
