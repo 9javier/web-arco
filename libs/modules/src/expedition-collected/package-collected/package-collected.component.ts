@@ -1,5 +1,5 @@
 import { BehaviorSubject, of, Observable, Subscription } from 'rxjs';
-import { Component, OnInit, ViewChild, AfterViewInit, Query, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Query, Input,Output,EventEmitter } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange, Sort } from '@angular/material';
 import * as Filesave from 'file-saver';
 import * as _ from 'lodash';
@@ -42,12 +42,13 @@ export class PackageCollectedComponent {
     private navCtrl: NavController,
     private activateRoute: ActivatedRoute,
     private oplTransportsService: OplTransportsService,
-
   ) {
   }
   @Input() id: any;
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
+  flagEmmiter:boolean = false;
+state
   displayedColumns: string[] = ['select', 'expedition', 'uniquecode', 'warehouse', 'products'];
   dataSource;
   selection = new SelectionModel<any>(true, []);
@@ -80,9 +81,34 @@ export class PackageCollectedComponent {
     })
   });
   length: any;
+
+  ionViewWillEnter(){
+    console.log("ionViewEnter");
+    this.flagEmmiter = true;
+  }
+
   ngOnInit() {
+    console.log("ngOninit");
+    this.flagEmmiter = true;
     this.form.get('idTransport').setValue(this.id);
     this.getList(this.form);
+    this.getRefreshStatus();
+  }
+
+  async getRefreshStatus() {
+   
+
+    
+      console.log("entre");
+    await  this.expeditionCollectedService.getData().subscribe((id: any) => {
+         console.log(id);
+        this.form.get('idTransport').setValue(this.id);
+        this.getList(this.form);
+      
+        },(error)=>{
+          console.log(error);
+        });
+    
 
   }
 

@@ -1,5 +1,5 @@
 import { BehaviorSubject, of, Observable } from 'rxjs';
-import { Component, OnInit, ViewChild, AfterViewInit, Query, NgModule, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Query, NgModule, Input,Output,EventEmitter } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange, Sort } from '@angular/material';
 import * as Filesave from 'file-saver';
 import * as _ from 'lodash';
@@ -31,9 +31,12 @@ import { PackageCollectedComponent } from './package-collected/package-collected
 export class ExpeditionCollectedComponent {
   selectedIndex = 0;
   indexTab;
+  
   dataTransport: any;
   @ViewChild('#tabGroup') private tabGroup: MatTabsModule;
   @ViewChild('#selected') private tabSelected: PackageCollectedComponent;
+  @Output()refreshTab = new EventEmitter<boolean>();
+
   constructor(
     private defectiveRegistryService: DefectiveRegistryService,
     private formBuilder: FormBuilder,
@@ -54,8 +57,18 @@ export class ExpeditionCollectedComponent {
     // await this.intermediaryService.presentLoading();
     // await this.tabSelected.ngOnInit();
     // this.intermediaryService.dismissLoading();
-    console.log(this.indexTab);
+    console.log("cambio de tab...");
+    //console.log(this.indexTab);
+    //evento emmiter llamando al componente hijo
+     console.log("referencia: "); 
+     console.log(this.dataTransport); 
+     this.expeditionCollectedService.setEmitTabId(2);
   }
+
+  refreshTabById($event){
+    console.log($event);
+  }
+
 
   tabChanged(tabChangeEvent: MatTabChangeEvent): void {
     // console.log('tabChangeEvent => ', tabChangeEvent);
