@@ -10,7 +10,8 @@ import { PaginatorComponent } from '../../components/paginator/paginator.compone
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { PackagesComponent } from '../packages/packages.component';
 import { TagsInputOption } from '../../components/tags-input/models/tags-input-option.model';
-
+import { environment } from '../../../../services/src/environments/environment';
+import { saveAs } from "file-saver";
 
 @Component({
   selector: 'suite-order-package',
@@ -39,20 +40,26 @@ export class OrderPackageComponent implements OnInit {
   pauseListenFormChange: boolean;
   selection = new SelectionModel<any>(true, []);
   form: FormGroup = this.formBuilder.group({
-      expeditions: [[]],
-      orders: [[]],
-      date: [[]],
-      warehouses: [[]],
-      transports: [[]],
-      orderby: this.formBuilder.group({
-        type: 1,
-        order: "asc"
-      }),
-      pagination: this.formBuilder.group({
-        page: 1,
-        limit: 50
-      })
+    expeditions: [[]],
+    orders: [[]],
+    date: [[]],
+    warehouses: [[]],
+    transports: [[]],
+    orderby: this.formBuilder.group({
+      type: 1,
+      order: "asc"
+    }),
+    pagination: this.formBuilder.group({
+      page: 1,
+      limit: 50
+    })
   })
+
+  orderByOrden: boolean
+  orderByWarehouse: boolean
+  orderByDate: boolean
+
+
   columns: any;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
@@ -82,19 +89,18 @@ export class OrderPackageComponent implements OnInit {
     this.getList(this.form.value);
     this.listenChanges();
   }
-  
+
   getFilters() {
     this.oplTransportsService.getFilters().subscribe((resp: OplTransportsModel.OrderExpeditionFilters) => {
-      // console.log(resp);
       this.filters = resp
 
     })
   }
-  getList(body: OplTransportsModel.OrderExpeditionFilterRequest){
+  getList(body: OplTransportsModel.OrderExpeditionFilterRequest) {
     this.intermediaryService.presentLoading();
     this.oplTransportsService.getList(body).subscribe(
       resp => {
-        // console.log(resp);
+        console.log(resp);
         this.dataSource = resp.results;
         this.orders = this.dataSource.map(elem => {
           return {
@@ -102,18 +108,26 @@ export class OrderPackageComponent implements OnInit {
             name: elem.id
           }
         })
-        this.updateFilterSourceWarehouses(this.orders)
+        this.updateFilterOrders(this.orders)
         this.warehouses = this.dataSource.map(elem => {
           return {
             id: elem.shops.id,
-            name: `${elem.shops.reference} - ${elem.shops.name}` 
+            name: `${elem.shops.reference} - ${elem.shops.name}`
           }
         })
+
         console.log(this.warehouses);
-        
+
         this.updateFilterSourceWarehouses(this.warehouses)
         // console.log('dataSource',this.dataSource);
-        
+
+        this.dates = this.dataSource.map(elem => {
+          return {
+            name: elem.date
+          }
+        })
+
+        this.updateFilterDates(this.dates)
         const pagination = resp.pagination
         this.paginator.length = pagination.totalResults;
         this.paginator.lastPage = pagination.lastPage;
@@ -122,7 +136,7 @@ export class OrderPackageComponent implements OnInit {
       e => {
         this.intermediaryService.presentToastError('Ocurrio un error al cargar el listado')
         this.intermediaryService.dismissLoading()
-      }, 
+      },
       () => {
         this.intermediaryService.dismissLoading()
       }
@@ -187,14 +201,14 @@ export class OrderPackageComponent implements OnInit {
 
   async presentModal(packages) {
     console.log(packages);
-    
+
     const modal = await this.modalController.create({
-    component: PackagesComponent,
-    componentProps: { packages }
+      component: PackagesComponent,
+      componentProps: { packages }
     });
-  
+
     await modal.present();
-  
+
   }
   sort(column: string) {
     for (let i = 0; i < document.getElementsByClassName('title').length; i++) {
@@ -235,7 +249,7 @@ export class OrderPackageComponent implements OnInit {
         this.lastOrder[2] = !this.lastOrder[2];
         break;
       }
-      
+
     }
     this.getList(this.form.value)
   }
@@ -244,8 +258,8 @@ export class OrderPackageComponent implements OnInit {
   private updateFilterSourceWarehouses(warehouses: Array<any>) {
     this.pauseListenFormChange = true;
     let value = this.form.get("warehouses").value;
-    this.warehouses = warehouses.map(warehouse => { 
-      warehouse.id = warehouse.id  
+    this.warehouses = warehouses.map(warehouse => {
+      warehouse.id = warehouse.id
       warehouse.name = warehouse.name;
       warehouse.value = warehouse.name;
       warehouse.checked = true;
@@ -269,7 +283,36 @@ export class OrderPackageComponent implements OnInit {
       return order;
     });
     // console.log(this.orders);
-    
+
+    if (value && value.length) {
+      this.form.get("orders").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+  formatDate(data: string): string {
+    const date = new Date(data);
+    const day = date.getDate()
+    let month: any = date.getMonth() + 1
+    if (month < 10) {
+      month = `0${month}`
+    }
+    const year = date.getFullYear()
+    const formatedDate = `${day}-${month}-${year}`
+    return formatedDate
+  }
+  private updateFilterDates(dates: Array<any>) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("date").value;
+    this.dates = <any>dates.map(date => {
+      date.id = date.name
+      date.name = this.formatDate(date.name)
+      date.value = date.name;
+      date.checked = true;
+      date.hide = false;
+      return date;
+    });
+    // console.log(this.orders);
+
     if (value && value.length) {
       this.form.get("orders").patchValue(value, { emitEvent: false });
     }
@@ -315,6 +358,25 @@ export class OrderPackageComponent implements OnInit {
           }
         }
         break;
+      case 'dates':
+        let datesFiltered: number[] = [];
+        for (let date of filters) {
+          if (date.checked) datesFiltered.push(date.id);
+        }
+        if (datesFiltered.length >= this.dates.length) {
+          this.form.value.date = [];
+          this.isFilteringDate = this.dates.length;
+        } else {
+          if (datesFiltered.length > 0) {
+            this.form.value.date = datesFiltered;
+            this.isFilteringDate = datesFiltered.length;
+          } else {
+            this.form.value.date = [99999];
+            this.isFilteringDate = this.dates.length;
+          }
+        }
+        break;
+
     }
     this.getList(this.form.value)
   }
@@ -322,19 +384,88 @@ export class OrderPackageComponent implements OnInit {
     this.intermediaryService.presentLoading()
     this.oplTransportsService.print(id).subscribe(
       resp => {
+        console.log(resp);
+
         this.intermediaryService.presentToastSuccess('Impresion realizada correctamente')
-      }, 
+      },
       e => {
         this.intermediaryService.dismissLoading()
         this.intermediaryService.presentToastError('Ocurrio un error al imprimir')
       },
       () => {
-        this.intermediaryService.dismissLoading()
+        this.oplTransportsService.downloadPdfTransortOrders(id).subscribe(
+          resp => {
+            console.log(resp);
+            const blob = new Blob([resp], { type: 'application/pdf' });
+            saveAs(blob, 'documento.pdf')
+          },
+          e => {
+            console.log(e.error.text);
+          },
+          () => {
+            this.intermediaryService.dismissLoading()
+
+          }
+        )
+
       }
     );
-  } 
- refresh() {
-   this.clearFilters()
-   this.getList(this.form.value)
- }
+  }
+  refresh(transportId: number) {
+    this.clearFilters()
+    this.form.patchValue({
+      transports: [transportId]
+    })
+    this.getList(this.form.value)
+  }
+
+  setOrder(data:boolean) {
+    let order: string;
+    if (data) {
+      order = 'asc';
+    } else {
+      order = 'desc';
+    }
+    return order
+  }
+
+  setOrderByOrden(){
+    const type = 5;
+    let order: string;
+    this.orderByOrden = !this.orderByOrden;
+    order = this.setOrder(this.orderByOrden)
+    this.form.patchValue({
+      orderby: {
+        type,
+        order
+      },
+    })
+    this.getList(this.form.value)
+  }
+  setOrderByWarehouse(){
+    const type: number = 3;
+    let order
+    this.orderByOrden = !this.orderByOrden;
+    order = this.setOrder(this.orderByWarehouse)
+    this.form.patchValue({
+      orderby: {
+        type,
+        order
+      },
+    })
+    this.getList(this.form.value)
+  }
+  setOrderByDate(){
+    const type: number = 1;
+    let order
+    this.orderByDate = !this.orderByDate;
+    order = this.setOrder(this.orderByDate)
+    this.form.patchValue({
+      orderby: {
+        type,
+        order
+      },
+    })
+    this.getList(this.form.value)
+  }
 }

@@ -7,7 +7,7 @@ import { parse } from 'querystring';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { Platform, ModalController, NavController } from '@ionic/angular';
-import { IntermediaryService } from '../../../../services/src';
+import { IntermediaryService, OplTransportsService } from '../../../../services/src';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PaginatorComponent } from '../../components/paginator/paginator.component';
 import { DefectiveRegistryModel } from '../../../../services/src/models/endpoints/DefectiveRegistry';
@@ -22,6 +22,9 @@ import { FiltersModel } from '../../../../services/src/models/endpoints/filters'
 import { parseDate } from '@ionic/core/dist/types/components/datetime/datetime-util';
 import { ExpeditionCollectedService } from '../../../../services/src/lib/endpoint/expedition-collected/expedition-collected.service';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from '../../../../services/src/environments/environment';
+import { saveAs } from "file-saver";
+
 @Component({
   selector: 'suite-package-collected',
   templateUrl: './package-collected.component.html',
@@ -37,7 +40,9 @@ export class PackageCollectedComponent {
     private intermediary: IntermediaryService,
     private expeditionCollectedService: ExpeditionCollectedService,
     private navCtrl: NavController,
-    private activateRoute: ActivatedRoute
+    private activateRoute: ActivatedRoute,
+    private oplTransportsService: OplTransportsService,
+
   ) {
   }
   @Input() id: any;
@@ -256,7 +261,7 @@ export class PackageCollectedComponent {
 
 
   async update() {
-    const data = this.selection.selected.map(function (obj) {
+    const data: any = this.selection.selected.map(function (obj) {
       var rObj = {};
       rObj['warehouse'] = obj.warehouse.id;
       rObj['expedition'] = obj.expedition;
@@ -265,17 +270,35 @@ export class PackageCollectedComponent {
       return rObj;
     });
     await this.intermediaryService.presentLoading();
+    console.log(data);
+    const transport = data[0].expedition
     this.expeditionCollectedService.updatePackage(data).subscribe(data => {
+      console.log(data);
+      
       this.selection.clear();
       this.ngOnInit();
-      this.intermediaryService.dismissLoading();
+      this.oplTransportsService.downloadPdfTransortOrders(data.order.id).subscribe(
+        resp => {
+          console.log(resp);
+          const blob = new Blob([resp], { type: 'application/pdf' });
+          saveAs(blob, 'documento.pdf')
+        },
+        e => {
+          console.log(e.error.text);
+        },
+        () => this.intermediaryService.dismissLoading()
+      )
       this.intermediaryService.presentToastSuccess('Los paquetes seleccionados fueron actualizados con exito');
 
     }, error => {
       this.selection.clear();
       this.intermediaryService.presentToastError('Debe Seleccionar Todos los paquetes de las expediciones');
       this.intermediaryService.dismissLoading();
-    });
+    },
+    () => {
+      
+    }
+    );
 
   }
 
