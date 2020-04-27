@@ -109,32 +109,12 @@ export class NewIncidenceComponent implements OnInit {
     const marketId = this.form.value.marketId.id;
     const warehouseReference = this.form.value.warehouseOrigin;
     const warehouseDestinySelect = this.form.value.warehouseDestiny;
-    const countryId = this.form.value.country.id;
-    const provinceId = this.form.value.province.id;
     let operator = this.form.value.operator;
-
-    if(operator === '') {
-      let matchingrule;
-      matchingrule = this.rules.find(rule => {
-        let marketMatch = !rule.markets.length|| rule.markets.find(market => market.id == marketId);
-        let warehouseOriginMatch = !rule.warehousesOrigins.length|| rule.warehousesOrigins.find(warehousesOrigin => warehousesOrigin.id == warehouseReference.id);
-        let warehouseDestinyMatch = !rule.warehousesDestinies.length|| rule.warehousesDestinies.find(warehouseDestiny => warehouseDestiny.id == warehouseDestinySelect.id);
-        let provinceMatch = !rule.provinces.length|| rule.provinces.find(province => province.id == provinceId);
-        let countryMatch = !rule.countries.length|| rule.countries.find(country => country.id == countryId);
-        return (marketMatch && warehouseOriginMatch && ((warehouseDestinyMatch || provinceMatch && countryMatch) || (warehouseDestinyMatch && provinceMatch && countryMatch)));
-      });
-
-      if(matchingrule === undefined){
-        this.intermediaryServiceL.presentToastError('No existen reglas creadas. Selecciona un operador manualmente o crea las reglas.');
-      }else{
-        operator = matchingrule['logisticOperator']['name'];
-      }
-    }
-    console.log('CALC OPERATOR --> ', operator);
 
     let recipient;
     if(this.form.value.warehouseDestiny != ''){
       recipient = {
+        warehouseDestinityId: warehouseDestinySelect.id,
         name: this.form.value.warehouseDestiny.name,
         address: this.form.value.warehouseDestiny.address1 + ' '+ this.form.value.warehouseDestiny.address2,
         country: this.form.value.warehouseDestiny.country.toUpperCase(),
@@ -161,6 +141,7 @@ export class NewIncidenceComponent implements OnInit {
       warehouseReference: this.form.value.warehouseOrigin.warehouseReference,
       referenceExpedition: this.form.value.referenceExpedition,
       sender: {
+        warehouseOriginId: warehouseReference.id,
         name: this.form.value.warehouseOrigin.name,
         address: this.form.value.warehouseOrigin.address1 + ' ' + this.form.value.warehouseOrigin.address2,
         country: this.form.value.warehouseOrigin.country.toUpperCase(),
