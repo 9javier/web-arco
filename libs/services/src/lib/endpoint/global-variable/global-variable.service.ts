@@ -33,14 +33,14 @@ export class GlobalVariableService extends CrudService<
 
   /**esta ruta ya no pertenece a un crud básico, pues involucra obtener un tipo, en un futuro se podría añadir a la superclase, es cuestiond evaluar su frecuencia de uso */
   private requestTypeUrl:string = environment.apiBase+"/types/global-variables";
-  
+
   /**acá el objeto http debe ser creado como protected en lugar de como privado, y debe inyectarse en el constructor del padre */
-  constructor(protected http:HttpClient) { 
+  constructor(protected http:HttpClient) {
     super(http);
   }
 
   /**acá un ejemplo de como se le pueden añadir métodos adicionales a un crud normal */
-  getTypes():Observable<{id:number,name:string}[]>{
+  getTypes():Observable<{id:number,name:string,workwave:boolean,type:string}[]>{
       return this.http.get<any>(this.requestTypeUrl).pipe(map(response=>{
         return (<any>response).data;
       }))

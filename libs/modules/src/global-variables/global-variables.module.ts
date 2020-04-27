@@ -4,10 +4,18 @@ import { GlobalVariablesComponent } from './global-variables.component';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ModalsModule } from './modals/modals.module';
 import { MatTooltipModule } from "@angular/material";
+import { UsersReplenishmentGlobalVarComponent } from './users-replenishment-global-var/users-replenishment-global-var.component';
+import {
+  MatListModule,
+  MatTableModule,
+  MatPaginatorModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule, MatSelectModule
+} from '@angular/material';
 
 const routes: Routes = [
   {
@@ -17,7 +25,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [GlobalVariablesComponent],
+  declarations: [GlobalVariablesComponent, UsersReplenishmentGlobalVarComponent],
+  entryComponents: [UsersReplenishmentGlobalVarComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -29,7 +38,20 @@ const routes: Routes = [
     ModalsModule,
     RouterModule.forChild(routes),
     FormsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ReactiveFormsModule,
+    IonicModule,
+    MatListModule,
+    MatTableModule,
+    MatPaginatorModule,
+    BreadcrumbModule,
+    RouterModule.forChild(routes),
+    FormsModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatSelectModule
   ]
 })
 export class GlobalVariablesModule { }
