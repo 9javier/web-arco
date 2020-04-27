@@ -115,13 +115,20 @@ export namespace WorkwaveModel {
     request: {
       id: number,
       requestId: number,
-      date: string
+      date: string,
+      typeShippingOrderLineRequest: TypeOrderLine
     },
+    typesShippingOrders: Array<TypeOrderLine>,
     preparationLinesTypes: {
       id: number,
       name: string,
       priority: number
     }
+  }
+
+  export interface TypeOrderLine {
+    id: number,
+    name: string
   }
 
   export interface ResponseMatchLineRequest {
