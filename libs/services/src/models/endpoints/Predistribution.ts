@@ -14,6 +14,7 @@ export namespace PredistributionModel {
     date_service?: string;
     distribution?: boolean;
     reserved?: boolean;
+    positioned?: boolean
   }
   export interface DataSource {
     filters: Array<Filters>

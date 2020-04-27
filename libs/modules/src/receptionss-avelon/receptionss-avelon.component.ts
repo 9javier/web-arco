@@ -1,4 +1,4 @@
-import { ModalController} from '@ionic/angular';
+import {AlertController, ModalController} from '@ionic/angular';
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {  MatSort, Sort ,MatTableDataSource } from '@angular/material';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
@@ -106,7 +106,8 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private intermediaryService:IntermediaryService,
     private modalController: ModalController,
-    private router: Router
+    private router: Router,
+    private alertController: AlertController
   ) {}
 
   ngOnInit(): void {
@@ -169,42 +170,58 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
   }
 
   async newPicking() {
-    await this.intermediaryService.presentLoading();
+    const notPositioned: string[] = this.selection.selected.filter(x => !x.positioned).map(x => x.article);
+    if(notPositioned.length == 0){
+      await this.intermediaryService.presentLoading();
 
-    const modal = await this.modalController.create({
-      component: ModalUserComponent
-    });
+      const modal = await this.modalController.create({
+        component: ModalUserComponent
+      });
 
-    const selectedReceptions = this.getListReceptions();
-    const selectedReceptionsIds: number[] = [];
-    for(let reception of selectedReceptions){
-      selectedReceptionsIds.push(parseInt(reception.expeditionLineId));
-    }
-
-    modal.onDidDismiss().then(async response => {
-      if(response.data) {
-        await this.intermediaryService.presentLoading();
-        const parameters: PredistributionModel.PickingRequest = {
-          receptionIds: selectedReceptionsIds,
-          destinies: [{warehouseId: Number(parseInt(selectedReceptions[0].warehouseId)), userId: response.data}]
-        };
-        await this.predistributionsService.newDirectPicking(parameters).then(async response => {
-          if (response.code == 201) {
-            await this.intermediaryService.presentToastSuccess('Tarea de picking generada con éxito.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
-            await this.intermediaryService.dismissLoading();
-            await this.router.navigate(['workwaves-scheduled/pickings'], {replaceUrl: true});
-          } else {
-            console.log('ERROR:', response);
-            await this.intermediaryService.dismissLoading()
-          }
-        }, async error => {
-          console.error(error);
-          await this.intermediaryService.dismissLoading();
-        });
+      const selectedReceptions = this.getListReceptions();
+      const selectedReceptionsIds: number[] = [];
+      for(let reception of selectedReceptions){
+        selectedReceptionsIds.push(parseInt(reception.expeditionLineId));
       }
-    });
 
-    await modal.present().then(async () => await this.intermediaryService.dismissLoading());
+      modal.onDidDismiss().then(async response => {
+        if(response.data) {
+          await this.intermediaryService.presentLoading();
+          const parameters: PredistributionModel.PickingRequest = {
+            receptionIds: selectedReceptionsIds,
+            destinies: [{warehouseId: Number(parseInt(selectedReceptions[0].warehouseId)), userId: response.data}]
+          };
+          await this.predistributionsService.newDirectPicking(parameters).then(async response => {
+            if (response.code == 201) {
+              await this.intermediaryService.presentToastSuccess('Tarea de picking generada con éxito.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+              await this.intermediaryService.dismissLoading();
+              await this.router.navigate(['workwaves-scheduled/pickings'], {replaceUrl: true});
+            } else {
+              console.log('ERROR:', response);
+              await this.intermediaryService.dismissLoading()
+            }
+          }, async error => {
+            console.error(error);
+            await this.intermediaryService.dismissLoading();
+          });
+        }
+      });
+
+      await modal.present().then(async () => await this.intermediaryService.dismissLoading());
+    }else{
+      const alert = await this.alertController.create({
+        backdropDismiss: false,
+        message: notPositioned.length > 1 ? 'No se puede lanzar el picking, ya que los artículos '+notPositioned.join(', ')+' no se encuentran ubicados en el almacén.' :
+                                             'No se puede lanzar el picking, ya que el artículo '+notPositioned[0]+' no se encuentra ubicado en el almacén.',
+        buttons: [
+          {
+            text: 'Aceptar'
+          }
+        ]
+      });
+
+      await alert.present();
+    }
   }
 
   sameDestiny(): boolean{
