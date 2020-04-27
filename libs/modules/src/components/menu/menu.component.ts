@@ -135,12 +135,6 @@ export class MenuComponent implements OnInit {
           id: 'pickings-execution',
           url: '/workwaves-scheduled/pickings',
           icon: 'code-working'
-        },
-        {
-          title: 'Configuración',
-          id: 'workwave-config-menu',
-          url: '/workwave-config-menu',
-          icon: 'settings'
         }
       ]
     },
