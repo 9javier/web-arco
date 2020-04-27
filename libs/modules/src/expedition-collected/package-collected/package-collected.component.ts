@@ -319,7 +319,17 @@ export class PackageCollectedComponent {
       
       this.selection.clear();
       this.ngOnInit();
-      this.intermediaryService.dismissLoading();
+      this.oplTransportsService.downloadPdfTransortOrders(data.order.id).subscribe(
+        resp => {
+          console.log(resp);
+          const blob = new Blob([resp], { type: 'application/pdf' });
+          saveAs(blob, 'documento.pdf')
+        },
+        e => {
+          console.log(e.error.text);
+        },
+        () => this.intermediaryService.dismissLoading()
+      )
       this.intermediaryService.presentToastSuccess('Los paquetes seleccionados fueron actualizados con exito');
 
     }, error => {
@@ -328,16 +338,7 @@ export class PackageCollectedComponent {
       this.intermediaryService.dismissLoading();
     },
     () => {
-      this.oplTransportsService.downloadPdfTransortOrders(transport).subscribe(
-        resp => {
-          console.log(resp);
-          const blob = new Blob([resp], { type: 'application/pdf' });
-          saveAs(blob, 'documento.pdf')
-        },
-        e => {
-          console.log(e.error.text);
-        }
-      )
+      
     }
     );
 
