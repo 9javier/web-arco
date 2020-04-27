@@ -141,7 +141,6 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
   }
 
   private async loadReceivedItemsRequested(parameters, applyFilter: boolean = false, initFilters: boolean = false){
-    console.log("parameters",parameters);
     if(initFilters){
       applyFilter = false;
     }
@@ -162,8 +161,6 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
           this.paginatorComponent.length = paginator.totalResults;
           this.paginatorComponent.pageIndex = paginator.selectPage;
           this.paginatorComponent.lastPage = paginator.lastPage;
-          console.log("brands",this.brands);
-          console.log("form2",this.form.value);
           if(applyFilter){
             //this.saveFilters();
             this.form.get("pagination").patchValue({
@@ -290,7 +287,6 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
     this.appFiltersService
       .postProductsRequested({})
       .subscribe((res: AppFiltersModel.ProductsRequested) => {
-        console.log("res filters",res);
         this.brands = res.brands;
         this.references = res.references;
         this.models = res.models;
@@ -300,7 +296,6 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
         this.dates = res.dates.map(date => {
           return { id: date.id, name: this.dateTimeParserService.date(date.name) };
         });
-        console.log("this.brands",this.brands)
         this.groups = res.ordertypes;
 
         this.applyFilters(true);
