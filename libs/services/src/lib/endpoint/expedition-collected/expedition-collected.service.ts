@@ -68,7 +68,7 @@ export class ExpeditionCollectedService {
 
   getFiltersPackage(id){
     const body = {
-      idExpedition:id
+      idTransport:id
     };
     return this.http.post<HttpRequestModel.Response>(this.getFiltersPackages, body).pipe(
       map(resp => {

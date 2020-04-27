@@ -50,24 +50,32 @@ export class PackageCollectedComponent {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('filterButtonUniqueCode') filterButtonUniqueCode: FilterButtonComponent;
+  @ViewChild('filterButtonExpeditions') filterButtonExpeditions: FilterButtonComponent;
+  @ViewChild('filterButtonShops') filterButtonShops:FilterButtonComponent;
 
 
   /**Filters */
-  uniquecode: Array<TagsInputOption> = [];
+  uniquecodes: Array<TagsInputOption> = [];
+  expeditions: Array<TagsInputOption> =[];
+  shops: Array<TagsInputOption> = [];
 
-  displayedColumns: string[] = ['select', 'expedition', 'uniquecode', 'warehouse', 'products'];
+  displayedColumns: string[] = ['select', 'expeditions', 'uniquecodes', 'shops', 'products'];
   dataSource;
   button:boolean = false;
   subscriptionRefresh: Subscription;
   buttonSendEmiter: Subscription;
   selection = new SelectionModel<any>(true, []);
-  columns = {};
+  columns=['uniquecodes','expeditions','shops'];
+
+
   toDelete: FormGroup = this.formBuilder.group({
     jails: this.formBuilder.array([])
   });
 
   isFilteringUniqueCode: number = 0;
-  /**Filters */
+  isFilteringExpeditions: number = 0;
+  isFilteringShops: number = 0;
+
 
 
   entities;
@@ -76,7 +84,10 @@ export class PackageCollectedComponent {
   pagerValues = [10, 20, 80];
 
   form: FormGroup = this.formBuilder.group({
-    id: [],
+    id: [[]],
+    uniquecodes:[[]],
+    expeditions:[[]],
+    shops:[[]],
     idTransport: new FormControl(''),
     pagination: this.formBuilder.group({
       page: 1,
@@ -92,30 +103,29 @@ export class PackageCollectedComponent {
 
   ngOnInit() {
     this.initEntity();
+    this.initForm();
+    this.getFilters(this.id);
     this.form.get('idTransport').patchValue(this.id);
     this.getList(this.form);
     this.initEventsEmmiter();
+    
   }
   ngOnChanges(changes: { [property: string]: SimpleChange }){
-    console.log("......");
     let change: SimpleChange = changes['sendEvent'];
-    console.log(changes);
     if(this.sendEvent == true){
       console.log("actualizar");
       if(this.stateUpdate() == true){
-        console.log("si se puede actualizar...");
         this.update();
       }
     } 
   }
+
   initEventsEmmiter(){
     this.getRefreshStatus();
   }
 
   public async getRefreshStatus() {
     this.subscriptionRefresh =  await this.expeditionCollectedService.getData().subscribe((id: any) => {
-      console.log("aqui ")
-      console.log(this.id);
       if(this.id == id){
         this.id = id;
         this.form.get('idTransport').patchValue(this.id);
@@ -128,26 +138,22 @@ export class PackageCollectedComponent {
 
 
 
-
-
   initEntity() {
     this.entities = {
       id: [],
-      uniquecode:[],
-      orderby: this.formBuilder.group({
-        type: 1,
-        order: "asc"
-      })
+      uniquecodes:[],
+      expeditions:[],
+      shops:[],
+    
     }
   }
 
   initForm() {
     this.form.patchValue({
       id: [],
-      orderby: this.formBuilder.group({
-        type: 1,
-        order: "asc"
-      })
+      uniquecodes:[],
+      expeditions:[],
+      shops:[],
     })
   }
 
@@ -167,37 +173,36 @@ export class PackageCollectedComponent {
 
   }
 
-
-
   getFilters(id) {
     this.expeditionCollectedService.getFiltersPackage(id).subscribe((entities) => {
-      console.log(entities);
-      this.uniquecode = this.updateFilterSource(entities.uniquecode, 'id');
+      this.uniquecodes = this.updateFilterSource(entities.uniquecodes, 'uniquecodes');
+      this.expeditions = this.updateFilterSource(entities.expeditions,'expeditions');
+      this.shops = this.updateFilterSource(entities.shops,'shops');
       this.reduceFilters(entities);
+      
       setTimeout(() => {
         this.pauseListenFormChange = false;
         this.pauseListenFormChange = true;
       }, 0);
+    },(error)=>{
+      console.log(error);
     })
   }
 
-
-
-  private updateFilterSource(dataEntity, entityName: string) {
+  private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
     let resultEntity;
-
+    
     this.pauseListenFormChange = true;
     let dataValue = this.form.get(entityName).value;
 
-    resultEntity = dataEntity.map(entity => {
+    resultEntity = dataEntity ? dataEntity.map(entity => {
       entity.id = <number>(<unknown>entity.id);
       entity.name = entity.name;
       entity.value = entity.name;
       entity.checked = true;
       entity.hide = false;
       return entity;
-    });
-
+    }) : [];
     if (dataValue && dataValue.length) {
       this.form.get(entityName).patchValue(dataValue, { emitEvent: false });
     }
@@ -207,9 +212,14 @@ export class PackageCollectedComponent {
     return resultEntity;
   }
 
+
   private reduceFilters(entities) {
-    // this.filterButtonUniqueCode.listItems = this.reduceFilterEntities(this.uniquecode, entities, 'id');
+    this.filterButtonUniqueCode.listItems = this.reduceFilterEntities(this.uniquecodes, entities, 'uniquecodes');
+    this.filterButtonExpeditions.listItems = this.reduceFilterEntities(this.expeditions, entities, 'expeditions');
+    this.filterButtonShops.listItems = this.reduceFilterEntities(this.shops, entities, 'shops');
+
   }
+
 
   private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
     if (this.lastUsedFilter !== entityName) {
@@ -223,17 +233,24 @@ export class PackageCollectedComponent {
     }
   }
 
-  async sortData(event: Sort) {
-    this.form.value.orderby.type = this.columns[event.active];
-    this.form.value.orderby.order = event.direction !== '' ? event.direction : 'asc';
+  async sortData($event: Sort) {
+    if($event.active == "uniquecodes"){
+      this.form.value.orderby.type = 1;
+    }else if($event.active == "expeditions"){
+      this.form.value.orderby.type = 2;
+    }else if($event.active == "shops"){
+      this.form.value.orderby.type = 3;
+    }
+    this.form.value.orderby.order = $event.direction !== '' ? $event.direction : 'asc';
 
     this.getList(this.form);
   }
 
-  // async getList(form?: FormGroup) {
+ 
+
   async getList(form) {
     this.intermediaryService.presentLoading("Cargando paquetes recogidos..");
-    await this.expeditionCollectedService.getPackages(form.value).subscribe((resp: any) => {
+    await this.expeditionCollectedService.getPackages(form.value).subscribe((resp: any) => {   
       this.intermediaryService.dismissLoading();
       if (resp.results) {
         this.dataSource = new MatTableDataSource<any>(resp.results);
@@ -274,26 +291,64 @@ export class PackageCollectedComponent {
   applyFilters(filtersResult, filterType) {
     const filters = filtersResult.filters;
     switch (filterType) {
-      case 'uniquecode':
+      case 'uniquecodes':
         let uniquecodeFiltered: string[] = [];
-        for (let uniquecode of filters) {
+        for (let uniquecodes of filters) {
 
-          if (uniquecode.checked) uniquecodeFiltered.push(uniquecode.id);
+          if (uniquecodes.checked) uniquecodeFiltered.push(uniquecodes.id);
         }
-
-        if (uniquecodeFiltered.length >= this.uniquecode.length) {
-          this.form.value.id = [];
-          this.isFilteringUniqueCode = this.uniquecode.length;
+        if (uniquecodeFiltered.length >= this.uniquecodes.length) {
+          this.form.value.uniquecodes = [];
+          this.isFilteringUniqueCode = this.uniquecodes.length;
         } else {
           if (uniquecodeFiltered.length > 0) {
-            this.form.value.id = uniquecodeFiltered;
+            this.form.value.uniquecodes = uniquecodeFiltered;
             this.isFilteringUniqueCode = uniquecodeFiltered.length;
           } else {
-            this.form.value.id = ['99999'];
-            this.isFilteringUniqueCode = this.uniquecode.length;
+            this.form.value.uniquecodes = ["99999"];
+            this.isFilteringUniqueCode = this.uniquecodes.length;
           }
         }
         break;
+        case 'expeditions':
+          let expeditionsFiltered: string[] = [];
+          for (let expeditions of filters) {
+  
+            if (expeditions.checked) expeditionsFiltered.push(expeditions.id);
+          }
+  
+          if (expeditionsFiltered.length >= this.expeditions.length) {
+            this.form.value.expeditions = [];
+            this.isFilteringExpeditions = this.expeditions.length;
+          } else {
+            if (expeditionsFiltered.length > 0) {
+              this.form.value.expeditions = expeditionsFiltered;
+              this.isFilteringExpeditions = expeditionsFiltered.length;
+            } else {
+              this.form.value.expeditions = ["99999"];
+              this.isFilteringExpeditions = this.expeditions.length;
+            }
+          }
+          break;
+          case 'shops':
+          let shopsFiltered: string[] = [];
+          for (let shops of filters) {
+  
+            if (shops.checked) shopsFiltered.push(shops.id);
+          }
+  
+          if (shopsFiltered.length >= this.shops.length) {
+            this.form.value.shops = [];
+            this.isFilteringShops = this.shops.length;
+          } else {
+            if (shopsFiltered.length > 0) {
+              this.form.value.shops = shopsFiltered;
+              this.isFilteringShops = shopsFiltered.length;
+            } else {
+              this.form.value.shops = ["99999"];
+              this.isFilteringShops = this.shops.length;
+            }
+          }
     }
 
     this.lastUsedFilter = filterType;
@@ -312,10 +367,8 @@ export class PackageCollectedComponent {
       return rObj;
     });
     await this.intermediaryService.presentLoading();
-    console.log(data);
     const transport = data[0].expedition
     this.expeditionCollectedService.updatePackage(data).subscribe(data => {
-      console.log(data);
       
       this.selection.clear();
       this.ngOnInit();
