@@ -31,39 +31,39 @@
   </ng-container>
   
    
-   <ng-container matColumnDef="expedition">
+   <ng-container matColumnDef="expeditions">
     <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Expediciones
-      <!-- <suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'UNIQUECODE'"
-                            [listItems]="entities.uniquecode
-                            [isFiltering]="isFilteringUniqueCode != entities.uniquecode.length"
-                            (applyFilters)="applyFilters($event, 'uniquecode')">
-      </suite-filter-button> -->
+      <suite-filter-button class="ion-margin-vertical filter" #filterButtonExpeditions [title]="'Expediciones'"
+                            [listItems]="entities.expeditions"
+                            [isFiltering]="isFilteringExpeditions != entities.expeditions.length" 
+                            (applyFilters)="applyFilters($event, 'expeditions')">
+      </suite-filter-button> 
     </mat-header-cell>
     <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.expedition}} </mat-cell>
   </ng-container>
-   <ng-container matColumnDef="uniquecode">
+   <ng-container matColumnDef="uniquecodes">
     <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Código
-      <!-- <suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'UNIQUECODE'"
-                            [listItems]="entities.uniquecode
-                            [isFiltering]="isFilteringUniqueCode != entities.uniquecode.length"
-                            (applyFilters)="applyFilters($event, 'uniquecode')">
-      </suite-filter-button> -->
+       <suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'Código'"
+                            [listItems]="entities.uniquecodes"
+                            [isFiltering]="isFilteringUniqueCode != entities.uniquecodes.length"
+                            (applyFilters)="applyFilters($event, 'uniquecodes')">
+      </suite-filter-button>
     </mat-header-cell>
     <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.trackingPackage.uniqueCode}} </mat-cell>
   </ng-container>
-   <ng-container matColumnDef="warehouse">
+   <ng-container matColumnDef="shops">
     <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Almacén
-      <!-- <suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'UNIQUECODE'"
-                            [listItems]="entities.uniquecode
-                            [isFiltering]="isFilteringUniqueCode != entities.uniquecode.length"
-                            (applyFilters)="applyFilters($event, 'uniquecode')">
-      </suite-filter-button> -->
+       <suite-filter-button class="ion-margin-vertical filter" #filterButtonShops [title]="'Almacén'"
+                            [listItems]="entities.shops"
+                            [isFiltering]="isFilteringShops != entities.shops.length"
+                            (applyFilters)="applyFilters($event, 'shops')">
+      </suite-filter-button>
     </mat-header-cell>
     <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{ element.warehouse.reference +" "+ element.warehouse.name}} </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="products">
-    <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Productos
+    <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>Productos
     </mat-header-cell>
     <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.products}} </mat-cell>
   </ng-container>
@@ -79,16 +79,7 @@
   </ion-col>
 </ion-row>
 </ion-grid>
-
-
-  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-button [disabled]="(stateUpdate() == false)" (click)="update()" matTooltip="Agregar Incidencia" matTooltipClass="tooltip">
-      <!-- <ion-icon name="md-add"></ion-icon> -->
-      Enviar
-    </ion-button>
-    <ion-button (click)="refresh()" matTooltip="Actualizar" matTooltipClass="tooltip">
-      <!-- <ion-icon name="md-add"></ion-icon> -->
-      Actualizar
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab" class="buttonDismiss">
+    <ion-button  [disabled]="(stateUpdate() == false)">
     </ion-button>
   </ion-fab>
-
