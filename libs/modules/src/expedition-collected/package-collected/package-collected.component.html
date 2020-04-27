@@ -33,21 +33,21 @@
    
    <ng-container matColumnDef="expedition">
     <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Expediciones
-      <!-- <suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'UNIQUECODE'"
-                            [listItems]="entities.uniquecode
-                            [isFiltering]="isFilteringUniqueCode != entities.uniquecode.length"
+      <suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'UNIQUECODE'"
+                            [listItems]="entities.uniquecode"
+                            [isFiltering]="isFilteringUniqueCode != entities.uniquecode.length" 
                             (applyFilters)="applyFilters($event, 'uniquecode')">
-      </suite-filter-button> -->
+      </suite-filter-button> 
     </mat-header-cell>
     <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.expedition}} </mat-cell>
   </ng-container>
    <ng-container matColumnDef="uniquecode">
     <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Código
-      <!-- <suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'UNIQUECODE'"
-                            [listItems]="entities.uniquecode
+       <!--<suite-filter-button class="ion-margin-vertical filter" #filterButtonUniqueCode [title]="'UNIQUECODE'"
+                            [listItems]="entities.uniquecode"
                             [isFiltering]="isFilteringUniqueCode != entities.uniquecode.length"
                             (applyFilters)="applyFilters($event, 'uniquecode')">
-      </suite-filter-button> -->
+      </suite-filter-button>-->
     </mat-header-cell>
     <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.trackingPackage.uniqueCode}} </mat-cell>
   </ng-container>
@@ -79,20 +79,7 @@
   </ion-col>
 </ion-row>
 </ion-grid>
-
-
-  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-button [disabled]="(stateUpdate() == false)" (click)="update()" matTooltip="Agregar Incidencia" matTooltipClass="tooltip">
-      <!-- <ion-icon name="md-add"></ion-icon> -->
-      Enviar
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab" class="buttonDismiss">
+    <ion-button  [disabled]="(stateUpdate() == false)">
     </ion-button>
-    <ion-button (click)="refresh()" matTooltip="Actualizar" matTooltipClass="tooltip">
-      <!-- <ion-icon name="md-add"></ion-icon> -->
-      Actualizar
-    </ion-button>
-  </ion-fab>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="refresh()">
-      <ion-icon name="refresh"></ion-icon>
-    </ion-fab-button>
   </ion-fab>

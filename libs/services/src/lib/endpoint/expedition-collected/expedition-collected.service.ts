@@ -24,7 +24,10 @@ export class ExpeditionCollectedService {
   private id = this.$id.asObservable();
   private emitData = new BehaviorSubject({});
   private getData$ = this.emitData.asObservable();
+  private sendButtonEmit = new BehaviorSubject({});
+  private getDataUpdateButton$ = this.sendButtonEmit.asObservable();
   private idTab;
+  private idTab_;
 
   constructor(private http: HttpClient) {
     this.baseUrl = environment.apiSorter;

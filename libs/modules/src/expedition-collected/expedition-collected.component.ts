@@ -22,6 +22,7 @@ import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { parseDate } from '@ionic/core/dist/types/components/datetime/datetime-util';
 import { ExpeditionCollectedService } from '../../../services/src/lib/endpoint/expedition-collected/expedition-collected.service';
 import { PackageCollectedComponent } from './package-collected/package-collected.component';
+
 @Component({
   selector: 'suite-expedition-collected',
   templateUrl: './expedition-collected.component.html',
@@ -31,11 +32,12 @@ import { PackageCollectedComponent } from './package-collected/package-collected
 export class ExpeditionCollectedComponent {
   selectedIndex = 0;
   indexTab;
-  
+  indexToIdTranport=[];
+  sendEvent:boolean=false;
   dataTransport: any;
+  buttonSend:boolean;
   @ViewChild('#tabGroup') private tabGroup: MatTabsModule;
   @ViewChild('#selected') private tabSelected: PackageCollectedComponent;
-  @Output()refreshTab = new EventEmitter<boolean>();
 
   constructor(
     private defectiveRegistryService: DefectiveRegistryService,
@@ -45,7 +47,6 @@ export class ExpeditionCollectedComponent {
     private intermediary: IntermediaryService,
     private expeditionCollectedService: ExpeditionCollectedService,
     private navCtrl: NavController,
-    
     ){
       
   }
@@ -53,36 +54,44 @@ export class ExpeditionCollectedComponent {
     this.getTranports();
   }
 
-  refresh(){
-    // await this.intermediaryService.presentLoading();
-    // await this.tabSelected.ngOnInit();
-    // this.intermediaryService.dismissLoading();
-    console.log("cambio de tab...");
-    //console.log(this.indexTab);
-    //evento emmiter llamando al componente hijo
-     console.log("referencia: "); 
-     console.log(this.dataTransport); 
-     this.expeditionCollectedService.setEmitTabId(2);
+ public async refresh(){
+    let tab= this.indexToIdTranport.find(element => element.index == this.indexTab);
+     this.expeditionCollectedService.setEmitTabId(tab.idTransport);
   }
 
-  refreshTabById($event){
-    console.log($event);
+ public async send(){
+    //let tabs= this.indexToIdTranport.find(element => element.index == this.indexTab);
+    //this.expeditionCollectedEmiterService.sendButtonEmmit(tabs.idTransport);
+    this.sendEvent == true ? this.sendEvent = false:this.sendEvent = true;
   }
-
 
   tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    // console.log('tabChangeEvent => ', tabChangeEvent);
-    // console.log('index => ', tabChangeEvent.index);
     this.indexTab = tabChangeEvent.index;
+    tabChangeEvent.tab.ngOnDestroy();
   }
 
   async getTranports(){
      this.expeditionCollectedService.getTrasnport().subscribe((result)=>{
-      console.log(result);
       this.dataTransport = result;
+      this.assignIdTransportToIndex();
     },
     async (err) => {
       console.log(err);
     });
+  }
+
+  assignIdTransportToIndex(){
+    let i=0;
+    this.dataTransport.forEach(element => {
+      this.indexToIdTranport.push(
+        {
+          index:i,
+          idTransport: element.id
+        });
+      i++;
+    });
+  }
+  buttonState($event){
+    this.buttonSend = $event;
   }
 }

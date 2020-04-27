@@ -1,5 +1,5 @@
 import { BehaviorSubject, of, Observable, Subscription } from 'rxjs';
-import { Component, OnInit, ViewChild, AfterViewInit, Query, Input,Output,EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Query, Input,Output,EventEmitter, SimpleChange } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange, Sort } from '@angular/material';
 import * as Filesave from 'file-saver';
 import * as _ from 'lodash';
@@ -45,22 +45,29 @@ export class PackageCollectedComponent {
   ) {
   }
   @Input() id: any;
+  @Input() sendEvent:boolean;
+  @Output()buttonState = new EventEmitter<boolean>();
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  flagEmmiter:boolean = false;
-state
+  @ViewChild('filterButtonUniqueCode') filterButtonUniqueCode: FilterButtonComponent;
+
+
+  /**Filters */
+  uniquecode: Array<TagsInputOption> = [];
+
   displayedColumns: string[] = ['select', 'expedition', 'uniquecode', 'warehouse', 'products'];
   dataSource;
+  button:boolean = false;
+  subscriptionRefresh: Subscription;
+  buttonSendEmiter: Subscription;
   selection = new SelectionModel<any>(true, []);
   columns = {};
   toDelete: FormGroup = this.formBuilder.group({
     jails: this.formBuilder.array([])
   });
 
-  @ViewChild('filterButtonUniqueCode') filterButtonUniqueCode: FilterButtonComponent;
   isFilteringUniqueCode: number = 0;
   /**Filters */
-  uniquecode: Array<TagsInputOption> = [];
 
 
   entities;
@@ -82,39 +89,51 @@ state
   });
   length: any;
 
-  ionViewWillEnter(){
-    console.log("ionViewEnter");
-    this.flagEmmiter = true;
-  }
 
   ngOnInit() {
-    console.log("ngOninit");
-    this.flagEmmiter = true;
-    this.form.get('idTransport').setValue(this.id);
+    this.initEntity();
+    this.form.get('idTransport').patchValue(this.id);
     this.getList(this.form);
+    this.initEventsEmmiter();
+  }
+  ngOnChanges(changes: { [property: string]: SimpleChange }){
+    console.log("......");
+    let change: SimpleChange = changes['sendEvent'];
+    console.log(changes);
+    if(this.sendEvent == true){
+      console.log("actualizar");
+      if(this.stateUpdate() == true){
+        console.log("si se puede actualizar...");
+        this.update();
+      }
+    } 
+  }
+  initEventsEmmiter(){
     this.getRefreshStatus();
   }
 
-  async getRefreshStatus() {
-   
-
-    
-      console.log("entre");
-    await  this.expeditionCollectedService.getData().subscribe((id: any) => {
-         console.log(id);
-        this.form.get('idTransport').setValue(this.id);
-        this.getList(this.form);
-      
+  public async getRefreshStatus() {
+    this.subscriptionRefresh =  await this.expeditionCollectedService.getData().subscribe((id: any) => {
+      console.log("aqui ")
+      console.log(this.id);
+      if(this.id == id){
+        this.id = id;
+        this.form.get('idTransport').patchValue(this.id);
+        this.refresh();
+      }
         },(error)=>{
           console.log(error);
         });
-    
-
   }
+
+
+
+
 
   initEntity() {
     this.entities = {
       id: [],
+      uniquecode:[],
       orderby: this.formBuilder.group({
         type: 1,
         order: "asc"
@@ -154,9 +173,6 @@ state
     this.expeditionCollectedService.getFiltersPackage(id).subscribe((entities) => {
       console.log(entities);
       this.uniquecode = this.updateFilterSource(entities.uniquecode, 'id');
-
-
-
       this.reduceFilters(entities);
       setTimeout(() => {
         this.pauseListenFormChange = false;
@@ -334,8 +350,16 @@ state
 
   stateUpdate() {
     if (this.selection.selected.length > 0) {
+      this.buttonState.emit(true);
       return true
+    }else{
+      this.buttonState.emit(false);
     }
     return false;
+  }
+
+  ngOnDestroy(){
+    //this.buttonSendEmiter.unsubscribe();
+    this.subscriptionRefresh.unsubscribe();
   }
 }
