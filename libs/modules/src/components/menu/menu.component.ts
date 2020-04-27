@@ -650,13 +650,13 @@ export class MenuComponent implements OnInit {
           id: 'positioning-manual',
           tooltip: 'Escanear artículos mediante láser para ubicar'
         },
-        {
+/*        {
           title: 'Ubicar no aptos online',
           icon: 'locate',
           url: '/positioning/manual-online',
           id: 'positioning-manual-online',
           tooltip: 'Ubicar productos no aptos online'
-        },
+        },*/
         {
           title: 'Traspasos',
           id: 'picking-task-store',
