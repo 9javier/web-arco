@@ -162,7 +162,7 @@
       </mat-grid-tile>
 
       <mat-grid-tile class="type border-right" colspan="4">
-        <div class="tile-value">{{requestOrder.preparationLinesTypes.name}}</div>
+        <div class="tile-value">{{requestOrder.typeShippingOrder == '2' ? 'Distribución' : 'Reposición' }}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="quantity border-right" colspan="2">

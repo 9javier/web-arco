@@ -112,6 +112,7 @@ export namespace WorkwaveModel {
     avelonNotificationAttemptFinished: boolean,
     quantityMatchWarehouse: number,
     quantityOrder: string,
+    typeShippingOrder?: string,
     request: {
       id: number,
       requestId: number,
