@@ -52,3 +52,30 @@ div.content-ta {
     font-weight: bold;
   }
 }
+
+.align-right{
+  position: absolute;
+  right: 0;
+  margin-right: 25px;
+}
+
+.next-product-picking{
+  font-size: 7.97916611035vw !important; //Maximizes font-size for a screen 480px wide without occupying more than 1 row.
+  line-height: 8vh;
+}
+
+ion-fab-list {
+  right: 0;
+  align-items: flex-end;
+  div{
+    display: flex;
+    align-items: center;
+    ion-button {
+      --height: 25px;
+      text-transform: none;
+    }
+    ion-fab-button {
+      --size: 32px;
+    }
+  }
+}
