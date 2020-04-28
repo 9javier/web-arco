@@ -1,6 +1,7 @@
-import {ModelModel, ProductModel, SizeModel, WarehouseModel} from "@suite/services";
+import {FiltersModel, ModelModel, ProductModel, SizeModel, WarehouseModel} from "@suite/services";
 import {FilterPriceModel} from "./FilterPrice";
 import {HttpRequestModel} from "./HttpRequest";
+import {Request} from "./request";
 
 export namespace PickingNewProductsModel {
 
@@ -13,6 +14,24 @@ export namespace PickingNewProductsModel {
     numRange: number,
     model: ModelModel.Model,
     productShoesUnit: ProductModel.ProductShoesUnit
+  }
+
+  export interface ProductReceivedSearch extends Request.Success {
+      id: number,
+      attended: boolean,
+      date: string,
+      product: {
+        id: number,
+        reference: string,
+        model: {
+          reference: string,
+          brand: string,
+          family: string,
+          lifestyle: string,
+          photos: {urn: string}[]
+        },
+        size: string
+      }
   }
 
   export interface ProductReceived extends ProductReceivedBase {
@@ -103,20 +122,19 @@ export namespace PickingNewProductsModel {
 
   //region get received items requested
   export interface ReceivedProductsRequested {
-    id: number,
-    attended: boolean,
-    product: {
-      id: number,
-      reference: string,
-      model: {
-        reference: string,
-        brand: string,
-        family: string,
-        lifestyle: string,
-        photos: {urn: string}[]
-      },
-      size: string
-    }
+      results: Array<ProductReceivedSearch>
+      pagination:Request.Paginator;
+      filters: {
+        brands: FiltersModel.Brand[],
+        colors: FiltersModel.Color[],
+        references: FiltersModel.Reference[],
+        dates: FiltersModel.Date[],
+        families: FiltersModel.Family[],
+        models: FiltersModel.Model[],
+        sizes: FiltersModel.Size[],
+        lifestyles: FiltersModel.Lifestyle[],
+        ordertypes: FiltersModel.Group[],
+      }
   }
   export interface ResponseListReceivedProductsRequested extends HttpRequestModel.Response {
     data: ReceivedProductsRequested[]
