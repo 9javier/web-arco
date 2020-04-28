@@ -37,7 +37,7 @@ export class OrderPackageComponent implements OnInit {
     'barcode',
     'package',
   ];
-  pagerValues = [50, 100, 1000];
+  pagerValues = [20, 80, 100];
   pauseListenFormChange: boolean;
   selection = new SelectionModel<any>(true, []);
   form: FormGroup = this.formBuilder.group({
@@ -52,7 +52,7 @@ export class OrderPackageComponent implements OnInit {
     }),
     pagination: this.formBuilder.group({
       page: 1,
-      limit: 50
+      limit: this.pagerValues[0]
     })
   })
 
@@ -67,7 +67,9 @@ export class OrderPackageComponent implements OnInit {
   isFilteringOrder: number = 0;
   isFilteringWarehouse: number = 0;
   isFilteringDate: number = 0;
-  lastUsedFilter: string = 'warehouses';
+  lastUsedFilter: string;
+  isApplyFilter:boolean = false;
+  isApplyPagination:boolean = false;
   lastOrder = [true, true, true];
 
   orders: Array<TagsInputOption> = [];
@@ -108,34 +110,40 @@ getFiltersWarehouse(){
       resp => {
         console.log(resp);
         this.dataSource = resp.results;
-        this.orders = this.dataSource.map(elem => {
-          return {
-            id: elem.id,
-            name: elem.id
-          }
-        })
-        this.updateFilterOrders(this.orders)
-        let whsTemp = this.dataSource.map(elem => {      
+        if(this.isApplyFilter == false){
+          this.orders = this.dataSource.map(elem => {
             return {
-              id: elem.shops.id,
-              name: `${elem.shops.reference} - ${elem.shops.name}`
-            }
-        });
-       this.warehouses = this.uniqueArray(whsTemp);
-        this.updateFilterSourceWarehouses(this.warehouses)
-
-        let datesTemp = this.dataSource.map(elem => {
-          return {
-            name: elem.date
-          }
-        });
+              id: elem.id,
+              name: elem.id
+            } 
+          })
+          this.updateFilterOrders(this.orders)
+          let whsTemp = this.dataSource.map(elem => {      
+              return {
+                id: elem.shops.id,
+                name: `${elem.shops.reference} - ${elem.shops.name}`
+              }
+          });
+         this.warehouses = this.uniqueArray(whsTemp);
+          this.updateFilterSourceWarehouses(this.warehouses)
   
-        this.dates = this.uniqueDatesArray(datesTemp);
-        console.log(this.dates);
-        this.updateFilterDates(this.dates);
-        const pagination = resp.pagination
-        this.paginator.length = pagination.totalResults;
-        this.paginator.lastPage = pagination.lastPage;
+          let datesTemp = this.dataSource.map(elem => {
+            return {
+              name: elem.date
+            }
+          });
+    
+          this.dates = this.uniqueDatesArray(datesTemp);
+          this.updateFilterDates(this.dates);
+        }
+        this.isApplyFilter = false;
+        if(this.isApplyPagination == false){
+          const pagination = resp.pagination;
+          this.paginator.length = pagination.totalResults;
+          this.paginator.lastPage = pagination.lastPage;
+        }
+        this.isApplyPagination = false;
+        
         this.intermediaryService.dismissLoading()
       },
       e => {
@@ -199,6 +207,7 @@ getFiltersWarehouse(){
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
       };
+      this.isApplyPagination = true;
       this.getList(this.form.value)
     });
 
@@ -386,6 +395,8 @@ getFiltersWarehouse(){
         break;
 
     }
+    this.lastUsedFilter = filterType;
+    this.isApplyFilter = true;
     this.getList(this.form.value)
   }
   print(id) {
