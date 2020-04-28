@@ -130,6 +130,7 @@ export class PackageCollectedComponent {
         this.id = id;
         this.form.get('idTransport').patchValue(this.id);
         this.refresh();
+        this.getFilters(this.id);
       }
         },(error)=>{
           console.log(error);
@@ -203,6 +204,7 @@ export class PackageCollectedComponent {
       entity.hide = false;
       return entity;
     }) : [];
+   
     if (dataValue && dataValue.length) {
       this.form.get(entityName).patchValue(dataValue, { emitEvent: false });
     }
@@ -313,7 +315,6 @@ export class PackageCollectedComponent {
         case 'expeditions':
           let expeditionsFiltered: string[] = [];
           for (let expeditions of filters) {
-  
             if (expeditions.checked) expeditionsFiltered.push(expeditions.id);
           }
   
@@ -413,7 +414,6 @@ export class PackageCollectedComponent {
   }
 
   ngOnDestroy(){
-    //this.buttonSendEmiter.unsubscribe();
     this.subscriptionRefresh.unsubscribe();
   }
 }
