@@ -21,6 +21,9 @@ export class RulesComponent implements OnInit {
   private displayedEnablingColumns;
 
   private market;
+  private marketExternalId;
+
+  private static readonly MINIPRECIOS_MARKET_ID = '406A51C8-EA12-4D6D-B05D-C2EA70A1A609';
 
   constructor(
     private route: ActivatedRoute,
@@ -46,6 +49,7 @@ export class RulesComponent implements OnInit {
           switch (this.route.snapshot.data['name']) {
             case "Miniprecios":
               this.market = market.id;
+              this.marketExternalId = RulesComponent.MINIPRECIOS_MARKET_ID;
               break;
           }
 
@@ -64,45 +68,37 @@ export class RulesComponent implements OnInit {
   getValues() {
     this.dataSourceEnabling = [];
     this.dataSourceCategories = [];
-    this.marketplacesService.getRulesConfigurations(this.market).subscribe((data: any) => {
+    this.marketplacesService.getRulesConfigurations(this.marketExternalId).subscribe((data: any) => {
       if (data && data.length) {
         for (let ruleConfiguration of data) {
-          let type = "enabling";
+          let type = "";
           let categories = [];
-          if(ruleConfiguration.ruleType) {
-            switch (ruleConfiguration.ruleType) {
-              case 0:
-                break;
-              case 1:
-                type = "enabling";
-                break;
-              case 2:
-                type = "categories";
-                categories = ruleConfiguration.categories;
-                break;
-            }
-          } else {
-            if(ruleConfiguration.categories && ruleConfiguration.categories.length) {
+          switch (ruleConfiguration.ruleType) {
+            case 0:
+              break;
+            case 1:
+              type = "enabling";
+              break;
+            case 2:
               type = "categories";
               categories = ruleConfiguration.categories;
-            }
+              break;
           }
           let rule = {
             id: ruleConfiguration.id,
             name: ruleConfiguration.name,
             filterType: type,
             categoriesFilter: [],
-            minPriceFilter: "0.00",
-            maxPriceFilter: "0.00",
-            products: 132824,
-            destinationCategories: [],
+            minPriceFilter: ruleConfiguration.minPriceFilter,
+            maxPriceFilter: ruleConfiguration.maxPriceFilter,
+            products: ruleConfiguration.products,
             referencesExceptions: [],
             description: ruleConfiguration.description,
             categories: categories
           };
 
-          if (ruleConfiguration.rulesFilters) {
-            for (let ruleFilter of ruleConfiguration.rulesFilters) {
+          if (ruleConfiguration.ruleFilters) {
+            for (let ruleFilter of ruleConfiguration.ruleFilters) {
               let category = {
                 id: ruleFilter.id,
                 name: ruleFilter.name,
@@ -163,7 +159,8 @@ export class RulesComponent implements OnInit {
       componentProps: {
         ruleFilterType,
         mode: 'create',
-        market: this.market
+        market: this.market,
+        marketExternalId: this.marketExternalId
       }
     });
 
@@ -177,12 +174,15 @@ export class RulesComponent implements OnInit {
           status: 1,
           rulesFilterIds: [],
           marketsIds: [
-            this.market
+            this.marketExternalId
           ],
-          referenceExceptions: {},
+          referenceException: {},
           ruleDataValidactionAttributes: [
           ],
-          categories: data.data.destinationCategories
+          categories: data.data.destinationCategories,
+          minPriceFilter: data.data.minPriceFilter,
+          maxPriceFilter: data.data.maxPriceFilter,
+          products: data.data.products
         };
 
         switch (data.data.filterType) {
@@ -256,10 +256,8 @@ export class RulesComponent implements OnInit {
             exceptions[item.reference] = 0;
           }
         });
-        
-        ruleConfiguration.referenceExceptions = exceptions;
 
-        console.log(ruleConfiguration)
+        ruleConfiguration.referenceException = exceptions;
 
         this.marketplacesService.postRulesConfigurations(ruleConfiguration).subscribe(data => {
           this.getValues();
@@ -285,7 +283,8 @@ export class RulesComponent implements OnInit {
         referencesExceptions: rule.referencesExceptions,
         id: rule.id,
         mode: 'edit',
-        market: this.market
+        market: this.market,
+        marketExternalId: this.marketExternalId
       }
     });
     modal.onDidDismiss().then((data) => {
@@ -299,12 +298,15 @@ export class RulesComponent implements OnInit {
           status: 1,
           rulesFilterIds: [],
           marketsIds: [
-            this.market
+            this.marketExternalId
           ],
-          referenceExceptions: {},
+          referenceException: {},
           ruleDataValidactionAttributes: [
           ],
-          categories: data.data.destinationCategories
+          categories: data.data.destinationCategories,
+          minPriceFilter: data.data.minPriceFilter,
+          maxPriceFilter: data.data.maxPriceFilter,
+          products: data.data.products
         };
 
         switch (data.data.filterType) {
@@ -376,7 +378,7 @@ export class RulesComponent implements OnInit {
           }
         });
 
-        ruleConfiguration.referenceExceptions = exceptions;
+        ruleConfiguration.referenceException = exceptions;
 
         this.marketplacesService.updateRulesConfigurations(ruleToEdit.id, ruleConfiguration).subscribe(data => {
           this.getValues();

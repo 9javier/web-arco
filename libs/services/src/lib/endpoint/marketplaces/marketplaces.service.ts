@@ -12,10 +12,10 @@ export class MarketplacesService {
 
   private apiBase = environment.apiRule;
   private apiMiddleware = environment.apiMiddleware;
-  private getMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
-  private postMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
-  private updateMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
-  private deleteMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
+  private getMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap/marketId/";
+  private postMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap";
+  private updateMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap/";
+  private deleteMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap/";
   private getMapEntitiesUrl = this.apiBase + "/api/EnumMetadata/get/mapentity";
   private getRulesFilterTypesUrl = this.apiBase + "/api/EnumMetadata/get/rulefiltertype";
   private getRulesFilterUrl = this.apiBase + "/api/RuleFilter";
@@ -23,49 +23,19 @@ export class MarketplacesService {
   private updateRulesFilterUrl = this.apiBase + "/api/RuleFilter/{{id}}";
   private getRulesFilterByTypeUrl = this.apiBase + "/api/RuleFilter/{{type}}";
   private getMarketsUrl = this.apiMiddleware + "/api/v1/market";
-  private getRulesConfigurationsUrl = this.apiBase + "/rc/bymarket/";
-  private postRulesConfigurationsUrl = this.apiBase + "/api/RuleConfiguration";
-  private updateRulesConfigurationsUrl = this.apiBase + "/api/RuleConfiguration/{{id}}";
-  private getRulesConfigurationsByIdUrl = this.apiBase + "/api/RuleConfiguration/{{id}}";
-  private getBrandsRuleFilters = this.apiBase + "/api/RuleFilter/5";
-  private getColorsRuleFilters = this.apiBase + "/api/RuleFilter/3";
-  private getFeaturesRuleFilters = this.apiBase + "/api/RuleFilter/2";
-  private getSizesRuleFilters = this.apiBase + "/api/RuleFilter/4";
-  private postProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
-  private getProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
-  private getProductCatalogUrl = this.apiMiddleware + "/api/v1/product";
-  private getCategories = this.apiBase + "/api/ProductCategory";
-
-
-  /*
-  private getMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap";
-  private postMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap";
-  private updateMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap/";
-  private getMarketsUrl = this.apiMiddleware + "/api/v1/market";
-  private getRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration";
-  private getRulesConfigurationsByMarketUrl = this.apiMiddleware + "/api/v1/ruleConfiguration/byMarket/{{id}}";
+  private getRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration/byMarket/";
   private postRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration";
-  private updateRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration/{{id}}";
-  private getRulesConfigurationsByIdUrl = this.apiMiddleware + "/api/v1/ruleConfiguration/{{id}}";
-  private getProductCatalogUrl = this.apiMiddleware + "/api/v1/product";
-
+  private updateRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration/";
+  private getRulesConfigurationsByIdUrl = this.apiBase + "/api/RuleConfiguration/{{id}}";
   private getBrandsRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/5";
   private getColorsRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/3";
   private getFeaturesRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/2";
   private getSizesRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/4";
+  private postProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
+  private getProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
+  private getProductCatalogUrl = this.apiMiddleware + "/api/v1/product";
+  private getCategories = this.apiMiddleware + "/api/v1/marketCategory/byMarket/";
 
-  private postProductCategoryUrl = this.apiMiddleware + "/api/v1/productCategory";
-  private getCategoriesUrl = this.apiMiddleware + "/api/v1/productCategory/byMarket/{{id}}";
-
-  private getRulesFilterTypesUrl = this.apiBase + "/api/EnumMetadata/get/rulefiltertype";
-  private getRulesFilterUrl = this.apiBase + "/api/RuleFilter";
-  private postRulesFilterUrl = this.apiBase + "/api/RuleFilter";
-  private updateRulesFilterUrl = this.apiBase + "/api/RuleFilter/{{id}}";
-  private getRulesFilterByTypeUrl = this.apiBase + "/api/RuleFilter/{{type}}";
-
-  private deleteMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
-  private getMapEntitiesUrl = this.apiBase + "/api/EnumMetadata/get/mapentity";
-  */
   constructor(
     private http: HttpClient
   ) {
@@ -78,8 +48,8 @@ export class MarketplacesService {
     }));
   }
 
-  getMapDataRules(): Observable<any> {
-    return this.http.get<any>(this.getMapDataRulesUrl, {}).pipe(map(response => {
+  getMapDataRules(market): Observable<any> {
+    return this.http.get<any>(this.getMapDataRulesUrl + market , {}).pipe(map(response => {
       return response;
     }));
   }
@@ -95,12 +65,6 @@ export class MarketplacesService {
       return response;
     }));
   }
-
-  /*updateMapDataRules(mapDataId: number, data) {
-    return this.http.put(this.updateMapDataRulesUrl + mapDataId.toString(), data).pipe(map(response => {
-      return response;
-    }));
-  }*/
 
   deleteMapDataRules(mapDataId: number): Observable<any> {
     return this.http.delete<any>(this.deleteMapDataRulesUrl + mapDataId.toString(), {}).pipe(map(response => {
@@ -195,13 +159,13 @@ export class MarketplacesService {
   }
 
   updateRulesConfigurations(ruleConfigurationId, data): Observable<any> {
-    return this.http.put<any>(this.updateRulesConfigurationsUrl.replace('{{id}}', ruleConfigurationId.toString()), data, {}).pipe(map(response => {
+    return this.http.put<any>(this.updateRulesConfigurationsUrl + ruleConfigurationId, data, {}).pipe(map(response => {
       return response;
     }));
   }
 
-  getMarketCategories(): Observable<any> {
-    return this.http.get<any>(this.getCategories, {}).pipe(map(response => {
+  getMarketCategories(market): Observable<any> {
+    return this.http.get<any>(this.getCategories + market, {}).pipe(map(response => {
       return response;
     }));
   }
