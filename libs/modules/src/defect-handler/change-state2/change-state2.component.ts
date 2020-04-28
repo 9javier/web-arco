@@ -17,6 +17,9 @@ import { FileUploadOptions, FileTransferObject, FileUploadResult, FileTransfer }
 import { Router } from '@angular/router';
 import { DefectiveRegistryService } from '../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
 import { PrintTicketService } from '../../../../services/src/lib/print-ticket/print-ticket.service';
+import {SelectScrollbarComponent} from "../../incidents/components/select-scrollbar/select-scrollbar.component";
+import {SelectScrollbarProvider} from "../../../../services/src/providers/select-scrollbar/select-scrollbar.provider";
+import {PopoverController} from "@ionic/angular";
 
 @Component({
   selector: 'suite-change-state2',
@@ -25,6 +28,7 @@ import { PrintTicketService } from '../../../../services/src/lib/print-ticket/pr
 })
 export class ChangeState2Component implements OnInit {
   allDefectType = [];
+  allOptions = [];
   ticketEmit: boolean;
   passHistory: boolean;
   requirePhoto: boolean;
@@ -62,6 +66,12 @@ export class ChangeState2Component implements OnInit {
   signatureId;
   pagerValues = [10, 20, 80];
   signaturesSubscription: Subscription;
+
+  state: boolean;
+  color: string;
+
+  defectStatus: any;
+
   form: FormGroup = this.formBuilder.group({
     product: [],
     model: [],
@@ -98,6 +108,8 @@ export class ChangeState2Component implements OnInit {
     private formBuilder: FormBuilder,
     private defectiveRegistryService: DefectiveRegistryService,
     private printTicketService: PrintTicketService,
+    private popoverController: PopoverController,
+    private selectScrollbarProvider: SelectScrollbarProvider
 
   ) {
     this.registry = this.navParams.get("registry");
@@ -476,7 +488,7 @@ export class ChangeState2Component implements OnInit {
 
 
   gestionChange(e) {
-    let id = e.detail.value;
+    let id = e.id;
     console.log("this.statusManagament", this.statusManagement);
     let res;
 
@@ -639,6 +651,32 @@ export class ChangeState2Component implements OnInit {
       }
   }
 
+  clickSelectPopover(ev: any) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    this.openSelectPopover(ev, null, this.allDefectType);
+  }
 
+  public async openSelectPopover(ev: any, typedValue, allOptions) {
+    this.selectScrollbarProvider.allOptions = allOptions;
+    this.allOptions = allOptions;
+
+    const popover = await this.popoverController.create({
+      cssClass: 'select-scrollbar',
+      component: SelectScrollbarComponent,
+      componentProps: { typedValue, allOptions }
+    });
+
+    popover.onDidDismiss().then((data) => {
+          this.selectChangeStatus(data);
+    });
+    await popover.present();
+  }
+
+  selectChangeStatus(defectStatus) {
+    this.defectStatus = defectStatus.data;
+    this.managementId = defectStatus.data;
+    this.gestionChange(this.defectStatus);
+  }
 
 }

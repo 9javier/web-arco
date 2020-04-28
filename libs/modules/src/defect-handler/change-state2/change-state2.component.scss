@@ -127,3 +127,27 @@ ion-slides, ion-slide,scanner-manual, form {
 .label-text{
   font-weight: bold;
 }
+
+.select{
+  padding-left: 20px;
+  border: none;
+  text-align: end;
+  height: 40px;
+  width: 150px;
+  overflow:scroll;
+}
+
+.content-select i{
+  position: absolute;
+  margin-top: 8px;
+  margin-right: 8px;
+  right: 20px;
+  top: calc(50% - 13px);
+  width: 8px;
+  height: 8px;
+  display: block;
+  border-left:4px solid #808080;
+  border-bottom:4px solid #808080;
+  transform: rotate(-45deg); /* Giramos el cuadrado */
+  transition: all 0.25s ease;
+}
