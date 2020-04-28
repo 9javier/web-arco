@@ -108,15 +108,14 @@ export class PackageCollectedComponent {
     this.form.get('idTransport').patchValue(this.id);
     this.getList(this.form);
     this.initEventsEmmiter();
+    this.listenChanges();
+  
     
   }
   ngOnChanges(changes: { [property: string]: SimpleChange }){
     let change: SimpleChange = changes['sendEvent'];
-    if(this.sendEvent == true){
-      console.log("actualizar");
       if(this.stateUpdate() == true){
         this.update();
-      }
     } 
   }
 
@@ -130,6 +129,7 @@ export class PackageCollectedComponent {
         this.id = id;
         this.form.get('idTransport').patchValue(this.id);
         this.refresh();
+        this.getFilters(this.id);
       }
         },(error)=>{
           console.log(error);
@@ -176,7 +176,7 @@ export class PackageCollectedComponent {
   getFilters(id) {
     this.expeditionCollectedService.getFiltersPackage(id).subscribe((entities) => {
       this.uniquecodes = this.updateFilterSource(entities.uniquecodes, 'uniquecodes');
-      this.expeditions = this.updateFilterSource(entities.expeditions,'expeditions');
+      this.expeditions = this.updateFilterExpedition(entities.expeditions,'expeditions');
       this.shops = this.updateFilterSource(entities.shops,'shops');
       this.reduceFilters(entities);
       
@@ -203,6 +203,7 @@ export class PackageCollectedComponent {
       entity.hide = false;
       return entity;
     }) : [];
+   
     if (dataValue && dataValue.length) {
       this.form.get(entityName).patchValue(dataValue, { emitEvent: false });
     }
@@ -212,6 +213,28 @@ export class PackageCollectedComponent {
     return resultEntity;
   }
 
+  private updateFilterExpedition(dataEntity: FiltersModel.Default[], entityName: string) {
+    let resultEntity;
+    
+    this.pauseListenFormChange = true;
+    let dataValue = this.form.get(entityName).value;
+
+    resultEntity = dataEntity ? dataEntity.map(entity => {
+      entity.id = <number>(<unknown>entity.id);
+      entity.name = entity.id+"";
+      entity.value = entity.id+"";
+      entity.checked = true;
+      entity.hide = false;
+      return entity;
+    }) : [];
+
+    if (dataValue && dataValue.length) {
+      this.form.get(entityName).patchValue(dataValue, { emitEvent: false });
+    }
+
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+    return resultEntity;
+  }
 
   private reduceFilters(entities) {
     this.filterButtonUniqueCode.listItems = this.reduceFilterEntities(this.uniquecodes, entities, 'uniquecodes');
@@ -313,7 +336,6 @@ export class PackageCollectedComponent {
         case 'expeditions':
           let expeditionsFiltered: string[] = [];
           for (let expeditions of filters) {
-  
             if (expeditions.checked) expeditionsFiltered.push(expeditions.id);
           }
   
@@ -413,7 +435,6 @@ export class PackageCollectedComponent {
   }
 
   ngOnDestroy(){
-    //this.buttonSendEmiter.unsubscribe();
     this.subscriptionRefresh.unsubscribe();
   }
 }
