@@ -18,6 +18,14 @@ export namespace FiltersModel{
       hide:boolean;
     }
 
+  export interface Date extends Enum {
+    id:number;
+    reference:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
     export interface CommercialField extends Enum {
       id:number;
       reference:string;
@@ -126,6 +134,24 @@ export namespace FiltersModel{
       checked:boolean;
       hide:boolean;
     }
+
+  export interface Family extends Enum {
+    id:number;
+    name:string;
+    reference:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
+  export interface Lifestyle extends Enum {
+    id:number;
+    name:string;
+    reference:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
 
     export interface Group extends Enum {
       id:number;
