@@ -12,7 +12,8 @@ import { PackagesComponent } from '../packages/packages.component';
 import { TagsInputOption } from '../../components/tags-input/models/tags-input-option.model';
 import { environment } from '../../../../services/src/environments/environment';
 import { saveAs } from "file-saver";
-
+import { formatDate } from '@angular/common';
+import * as moment from 'moment';
 @Component({
   selector: 'suite-order-package',
   templateUrl: './order-package.component.html',
@@ -96,6 +97,11 @@ export class OrderPackageComponent implements OnInit {
 
     })
   }
+
+getFiltersWarehouse(){
+  this.dataSource.shops
+}
+
   getList(body: OplTransportsModel.OrderExpeditionFilterRequest) {
     this.intermediaryService.presentLoading();
     this.oplTransportsService.getList(body).subscribe(
@@ -109,25 +115,24 @@ export class OrderPackageComponent implements OnInit {
           }
         })
         this.updateFilterOrders(this.orders)
-        this.warehouses = this.dataSource.map(elem => {
-          return {
-            id: elem.shops.id,
-            name: `${elem.shops.reference} - ${elem.shops.name}`
-          }
-        })
-
-        console.log(this.warehouses);
-
+        let whsTemp = this.dataSource.map(elem => {      
+            return {
+              id: elem.shops.id,
+              name: `${elem.shops.reference} - ${elem.shops.name}`
+            }
+        });
+       this.warehouses = this.uniqueArray(whsTemp);
         this.updateFilterSourceWarehouses(this.warehouses)
-        // console.log('dataSource',this.dataSource);
 
-        this.dates = this.dataSource.map(elem => {
+        let datesTemp = this.dataSource.map(elem => {
           return {
             name: elem.date
           }
-        })
-
-        this.updateFilterDates(this.dates)
+        });
+  
+        this.dates = this.uniqueDatesArray(datesTemp);
+        console.log(this.dates);
+        this.updateFilterDates(this.dates);
         const pagination = resp.pagination
         this.paginator.length = pagination.totalResults;
         this.paginator.lastPage = pagination.lastPage;
@@ -258,20 +263,21 @@ export class OrderPackageComponent implements OnInit {
   private updateFilterSourceWarehouses(warehouses: Array<any>) {
     this.pauseListenFormChange = true;
     let value = this.form.get("warehouses").value;
-    this.warehouses = warehouses.map(warehouse => {
+    this.warehouses = warehouses ? warehouses.map(warehouse => {
       warehouse.id = warehouse.id
       warehouse.name = warehouse.name;
       warehouse.value = warehouse.name;
       warehouse.checked = true;
       warehouse.hide = false;
       return warehouse;
-    });
+    }): [];
     if (value && value.length) {
       this.form.get("warehouses").patchValue(value, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
   private updateFilterOrders(orders: Array<any>) {
+  
     this.pauseListenFormChange = true;
     let value = this.form.get("orders").value;
     this.orders = <any>orders.map(order => {
@@ -359,9 +365,11 @@ export class OrderPackageComponent implements OnInit {
         }
         break;
       case 'dates':
-        let datesFiltered: number[] = [];
+        let datesFiltered: string[] = [];
+
         for (let date of filters) {
-          if (date.checked) datesFiltered.push(date.id);
+        let data = moment(date.id).format('YYYY-MM-DD');
+          if (date.checked) datesFiltered.push(data);
         }
         if (datesFiltered.length >= this.dates.length) {
           this.form.value.date = [];
@@ -371,7 +379,7 @@ export class OrderPackageComponent implements OnInit {
             this.form.value.date = datesFiltered;
             this.isFilteringDate = datesFiltered.length;
           } else {
-            this.form.value.date = [99999];
+            this.form.value.date = ["2090-11-03"];
             this.isFilteringDate = this.dates.length;
           }
         }
@@ -468,4 +476,48 @@ export class OrderPackageComponent implements OnInit {
     })
     this.getList(this.form.value)
   }
+
+  uniqueArray(listArray: Array<any>) {
+    let uniquesArray = [];
+    let counting = 0;
+    let found = false;
+
+    for (let i = 0; i < listArray.length; i++) {
+      for (let y = 0; y < uniquesArray.length; y++) {
+        if (listArray[i].id == uniquesArray[y].id) {
+          found = true;
+        }
+      }
+      counting++;
+      if (counting == 1 && found == false) {
+        uniquesArray.push(listArray[i]);
+      }
+      found = false;
+      counting = 0;
+    }
+    return uniquesArray;
+  }
+
+  uniqueDatesArray(listArray: Array<any>) {
+    let uniquesArray = [];
+    let counting = 0;
+    let found = false;
+
+    for (let i = 0; i < listArray.length; i++) {
+      for (let y = 0; y < uniquesArray.length; y++) {
+        if (listArray[i].name == uniquesArray[y].name) {
+          found = true;
+        }
+      }
+      counting++;
+      if (counting == 1 && found == false) {
+          uniquesArray.push(listArray[i]);
+      }
+      found = false;
+      counting = 0;
+    }
+    return uniquesArray;
+  }
+
+  
 }
