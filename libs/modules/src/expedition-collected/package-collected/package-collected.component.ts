@@ -114,10 +114,8 @@ export class PackageCollectedComponent {
   }
   ngOnChanges(changes: { [property: string]: SimpleChange }){
     let change: SimpleChange = changes['sendEvent'];
-    if(this.sendEvent == true){
       if(this.stateUpdate() == true){
         this.update();
-      }
     } 
   }
 
@@ -160,7 +158,6 @@ export class PackageCollectedComponent {
   }
 
   listenChanges() {
-    console.log("cambio");
     let previousPageSize = this.form.value.pagination.limit;
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page => {
