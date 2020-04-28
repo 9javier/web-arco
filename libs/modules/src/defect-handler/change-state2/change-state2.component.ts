@@ -17,7 +17,7 @@ import { FileUploadOptions, FileTransferObject, FileUploadResult, FileTransfer }
 import { Router } from '@angular/router';
 import { DefectiveRegistryService } from '../../../../services/src/lib/endpoint/defective-registry/defective-registry.service';
 import { PrintTicketService } from '../../../../services/src/lib/print-ticket/print-ticket.service';
-import {SelectScrollbarComponent} from "../../incidents/components/select-scrollbar/select-scrollbar.component";
+import {SelectScrollbarStateComponent} from '../../defect-handler/change-state2/select-scrollbar-state/select-scrollbar-state.component';
 import {SelectScrollbarProvider} from "../../../../services/src/providers/select-scrollbar/select-scrollbar.provider";
 import {PopoverController} from "@ionic/angular";
 
@@ -662,8 +662,8 @@ export class ChangeState2Component implements OnInit {
     this.allOptions = allOptions;
 
     const popover = await this.popoverController.create({
-      cssClass: 'select-scrollbar',
-      component: SelectScrollbarComponent,
+      cssClass: 'select-scrollbar-state',
+      component: SelectScrollbarStateComponent,
       componentProps: { typedValue, allOptions }
     });
 
