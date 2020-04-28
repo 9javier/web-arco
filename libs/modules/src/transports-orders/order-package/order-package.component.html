@@ -1,28 +1,31 @@
 <mat-accordion  displayMode="flat" multi class="mat-table tables">
   <section matSort class="mat-elevation-z2 mat-header-row">
-    <span class="mat-header-cell" >
-      <span (click)="setOrderByOrden()">
+    <span class="mat-header-cell">
+      <span>
         Orden
       </span>
       <suite-filter-button #filterButtonOrders class="filter" [title]="'Orden'" [listItems]="orders"
         [isFiltering]="isFilteringOrder != orders.length" (applyFilters)="applyFilters($event, 'orders')">
       </suite-filter-button>
+      <span><th mat-sort-header="expedition" (click)="setOrderByOrden()"><label class="invisible">.</label></th></span>
     </span>
     <span class="mat-header-cell">
-      <span (click)="setOrderByWarehouse()">
+      <span>
         Almacen
       </span>
       <suite-filter-button #filterButtonWarehouse class="filter" [title]="'Almacen'" [listItems]="warehouses"
         [isFiltering]="isFilteringWarehouse != warehouses.length" (applyFilters)="applyFilters($event, 'warehouses')">
       </suite-filter-button>
+      <span><th mat-sort-header="barcode" (click)="setOrderByWarehouse()"><label class="invisible">.</label></th></span>
     </span>
     <span class="mat-header-cell">
-      <span (click)="setOrderByDate()">
+      <span>
         Fecha
       </span>
       <suite-filter-button #filterButtonDate class="filter" [title]="'Fechas'" [listItems]="dates"
         [isFiltering]="isFilteringDate != dates.length" (applyFilters)="applyFilters($event, 'dates')">
       </suite-filter-button>
+      <span><th mat-sort-header="package" (click)="setOrderByDate()"><label class="invisible">.</label></th></span>
     </span>
     <span class="mat-header-cell">
       Imprimir

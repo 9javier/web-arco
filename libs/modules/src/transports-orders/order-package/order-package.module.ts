@@ -6,7 +6,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule, MatCheckboxModule, MatListModule, MatTableModule, MatPaginatorModule, MatExpansionModule } from '@angular/material';
 import { FilterButtonModule } from '../../components/filter-button/filter-button.module';
 import { PaginatorComponentModule } from '../../components/paginator/paginator.component.module';
-
+import {
+  MatRippleModule,
+  MatSortModule,
+} from '@angular/material';
 @NgModule({
   declarations: [OrderPackageComponent],
   imports: [
@@ -20,7 +23,9 @@ import { PaginatorComponentModule } from '../../components/paginator/paginator.c
     MatListModule,
     MatTableModule,
     MatPaginatorModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatRippleModule,
+    MatSortModule,
   ], 
   exports: [OrderPackageComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
