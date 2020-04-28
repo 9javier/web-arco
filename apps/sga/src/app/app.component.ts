@@ -146,7 +146,7 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   displaySmallSidebar = false;
   iconsDirection = 'start';
-  currentRoute: string = "Productos";
+  currentRoute: string = "Inicio";
   deploySidebarSmallDevices = false;
 
 
@@ -233,7 +233,7 @@ export class AppComponent implements OnInit {
               )
               .catch((possibleMainWarehouse404Error) => {})
               .then(() => this.router.navigate(
-                [this.dictionary['products']?'/products':'/products']
+                [this.dictionary['welcome']?'/welcome':'/welcome']
                 ).then(sucess => {
                   this.mainHeaderShowHide(true);
                   this.menu.enable(true, 'sidebar');
