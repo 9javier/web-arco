@@ -1,6 +1,6 @@
 <ion-header>
   <div class="cp-modal-header-wrapper">
-    <div style="visibility: hidden;">
+    <div>
       {{numberOfProducts}}&nbsp;
       <span *ngIf="numberOfProducts.length == 1">producto seleccionado</span>
       <span *ngIf="numberOfProducts.length != 1">productos seleccionados</span>
@@ -75,7 +75,7 @@
         <div class="nr-filter-list no-filters" *ngIf="filterDescription == ''">
           Sin filtros
         </div>
-        <div style="visibility: hidden;">
+        <div>
           {{numberOfProducts}}
           <span *ngIf="numberOfProducts.length == 1">producto seleccionado</span>
           <span *ngIf="numberOfProducts.length != 1">productos seleccionados</span>
@@ -97,7 +97,7 @@
                   <ion-checkbox [checked]="checkCategorySelected(category)" (ionChange)="selectCategoryRow(category)"></ion-checkbox>
                 </div>
                 <div class="destination-category-id">
-                  {{category.market_category_id}}
+                  {{category.externalId}}
                 </div>
                 <div>
                   {{category.name}}

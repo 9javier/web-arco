@@ -24,6 +24,7 @@ export class MappingsComponent implements OnInit {
   @ViewChild('paginatorColors') paginatorColors: MatPaginator;
   @ViewChild('paginatorSizes') paginatorSizes: MatPaginator;
 
+  private username;
 
   private dataSourceBrands;
   private dataSourceMappingBrands;
@@ -56,6 +57,9 @@ export class MappingsComponent implements OnInit {
   private sizeSearched;
 
   private market;
+  private marketExternalId;
+
+  private static readonly MINIPRECIOS_MARKET_ID = '406A51C8-EA12-4D6D-B05D-C2EA70A1A609';
 
   constructor(
     private route: ActivatedRoute,
@@ -67,6 +71,7 @@ export class MappingsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.username = localStorage.getItem("username");
 
     this.dataSourceBrands = [];
     this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
@@ -89,11 +94,13 @@ export class MappingsComponent implements OnInit {
 
     this.marketplacesService.getMarkets().subscribe((data: any) => {
       this.market = null;
+      this.marketExternalId = '';
       if (data && data.length) {
         for (let market of data) {
           switch (this.route.snapshot.data['name']) {
             case "Miniprecios":
               this.market = market.id;
+              this.marketExternalId = MappingsComponent.MINIPRECIOS_MARKET_ID;
               break;
           }
 
@@ -120,10 +127,12 @@ export class MappingsComponent implements OnInit {
 
       if (results[0] && results[0].length) {
         results[0].forEach(brand => {
-          this.dataSourceBrands.push({
-            avelonData: {id: brand.externalId, name: brand.name.trim()},
-            marketData: {id: -1, name: null}
-          });
+          if (brand.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
+            this.dataSourceBrands.push({
+              avelonData: {id: brand.externalId, name: brand.name.trim()},
+              marketData: {id: -1, name: null}
+            });
+          }
         });
         this.dataSourceBrands.sort((a, b) => (a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0));
         this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
@@ -133,10 +142,12 @@ export class MappingsComponent implements OnInit {
 
       if (results[1] && results[1].length) {
         results[1].forEach(color => {
-          this.dataSourceColors.push({
-            avelonData: {id: color.externalId, name: color.name.trim()},
-            marketData: {id: -1, name: null}
-          });
+          if (color.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
+            this.dataSourceColors.push({
+              avelonData: {id: color.externalId, name: color.name.trim()},
+              marketData: {id: -1, name: null}
+            });
+          }
         });
         this.dataSourceColors.sort((a, b) => (a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0));
         this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
@@ -146,20 +157,22 @@ export class MappingsComponent implements OnInit {
 
       if (results[2] && results[2].length) {
         results[2].forEach(size => {
-          if (this.dataSourceSizes.length) {
-            if (!this.dataSourceSizes.find(searchSize => {
-              return searchSize.avelonData.name.trim() === size.name.trim();
-            })) {
+          if (size.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
+            if (this.dataSourceSizes.length) {
+              if (!this.dataSourceSizes.find(searchSize => {
+                return searchSize.avelonData.name.trim() === size.name.trim();
+              })) {
+                this.dataSourceSizes.push({
+                  avelonData: {id: size.name.trim(), name: size.name.trim()},
+                  marketData: {id: -1, name: null}
+                });
+              }
+            } else {
               this.dataSourceSizes.push({
                 avelonData: {id: size.name.trim(), name: size.name.trim()},
                 marketData: {id: -1, name: null}
               });
             }
-          } else {
-            this.dataSourceSizes.push({
-              avelonData: {id: size.name.trim(), name: size.name.trim()},
-              marketData: {id: -1, name: null}
-            });
           }
         });
 
@@ -199,11 +212,13 @@ export class MappingsComponent implements OnInit {
 
       if (results[3] && results[3].length) {
         results[3].forEach(feature => {
-          if (feature.dataGroup == "2" || feature.dataGroup == "5" || feature.dataGroup == "7" || feature.dataGroup == "9" || feature.dataGroup == "10") {
-            this.dataSourceFeatures.push({
-              avelonData: {id: feature.externalId, name: feature.name.trim(), group: feature.dataGroup},
-              marketData: {id: -1, name: null}
-            });
+          if (feature.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
+            if (feature.dataGroup == "2" || feature.dataGroup == "5" || feature.dataGroup == "7" || feature.dataGroup == "9" || feature.dataGroup == "10") {
+              this.dataSourceFeatures.push({
+                avelonData: {id: feature.externalId, name: feature.name.trim(), group: feature.dataGroup},
+                marketData: {id: -1, name: null}
+              });
+            }
           }
         });
         this.dataSourceFeatures.sort((a, b) => (parseInt(a.avelonData.group) > parseInt(b.avelonData.group)) ? 1 : ((parseInt(b.avelonData.group) > parseInt(a.avelonData.group)) ? -1 : ((a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0))));
@@ -217,7 +232,7 @@ export class MappingsComponent implements OnInit {
   }
 
   updateDataSaved() {
-    this.marketplacesService.getMapDataRules().subscribe(data => {
+    this.marketplacesService.getMapDataRules(this.market).subscribe(data => {
       if (data) {
         this.dataDBsave = data;
       } else {
@@ -463,8 +478,10 @@ export class MappingsComponent implements OnInit {
       originDataId: element.avelonData.id,
       marketDataId,
       typeMapped: 5,
-      marketId: 1,
-      aditionalMapInfo: ""
+      marketId: this.market,
+      aditionalMapInfo: "",
+      creationUsr: "",
+      modificationUsr: ""
     };
 
     let update: boolean = false;
@@ -483,10 +500,12 @@ export class MappingsComponent implements OnInit {
       });
     } else {
       if (update) {
+        dataSend.modificationUsr = this.username;
         this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
           this.updateDataSaved();
         });
       } else {
+        dataSend.creationUsr = this.username;
         this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
           this.updateDataSaved();
         });
@@ -513,8 +532,10 @@ export class MappingsComponent implements OnInit {
       originDataId: element.avelonData.id,
       marketDataId,
       typeMapped: 3,
-      marketId: 1,
-      aditionalMapInfo: ""
+      marketId: this.market,
+      aditionalMapInfo: "",
+      creationUsr: "",
+      modificationUsr: ""
     };
 
     let update: boolean = false;
@@ -533,10 +554,12 @@ export class MappingsComponent implements OnInit {
       });
     } else {
       if (update) {
+        dataSend.modificationUsr = this.username;
         this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
           this.updateDataSaved();
         });
       } else {
+        dataSend.creationUsr = this.username;
         this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
           this.updateDataSaved();
         });
@@ -563,8 +586,10 @@ export class MappingsComponent implements OnInit {
       originDataId: element.avelonData.id,
       marketDataId,
       typeMapped: 4,
-      marketId: 1,
-      aditionalMapInfo: ""
+      marketId: this.market,
+      aditionalMapInfo: "",
+      creationUsr: "",
+      modificationUsr: ""
     };
 
     let update: boolean = false;
@@ -583,10 +608,12 @@ export class MappingsComponent implements OnInit {
       });
     } else {
       if (update) {
+        dataSend.modificationUsr = this.username;
         this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
           this.updateDataSaved();
         });
       } else {
+        dataSend.creationUsr = this.username;
         this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
           this.updateDataSaved();
         });
@@ -613,8 +640,10 @@ export class MappingsComponent implements OnInit {
       originDataId: element.avelonData.id,
       marketDataId,
       typeMapped: 2,
-      marketId: 1,
-      aditionalMapInfo: element.avelonData.group
+      marketId: this.market,
+      aditionalMapInfo: element.avelonData.group,
+      creationUsr: "",
+      modificationUsr: ""
     };
 
     let update: boolean = false;
@@ -633,10 +662,12 @@ export class MappingsComponent implements OnInit {
       });
     } else {
       if (update) {
+        dataSend.modificationUsr = this.username;
         this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
           this.updateDataSaved();
         });
       } else {
+        dataSend.creationUsr = this.username;
         this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
           this.updateDataSaved();
         });

@@ -40,6 +40,7 @@ export class NewRuleComponent implements OnInit {
   private referencesExceptions;
   private categorySearched;
   private market;
+  private marketExternalId;
 
   constructor(
     private modalController: ModalController,
@@ -53,6 +54,7 @@ export class NewRuleComponent implements OnInit {
   ngOnInit() {
     this.mode = this.navParams.get('mode');
     this.market = this.navParams.get('market');
+    this.marketExternalId = this.navParams.get('marketExternalId');
     this.numberOfProducts = 0;
     this.ruleFilterType = this.navParams.get('ruleFilterType');
     this.selectedDestinationCategories = [];
@@ -148,85 +150,93 @@ export class NewRuleComponent implements OnInit {
       if (results && results.length) {
         if (results[0] && results[0].length) {
           results[0].forEach(brand => {
-            let listItem = {
-              id: brand.id,
-              externalId: brand.externalId,
-              type: brand.ruleFilterType,
-              group: "15",
-              name: brand.name.trim()
-            };
-            this.categoryList[7].items.push(listItem);
+            if (brand.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
+              let listItem = {
+                id: brand.id,
+                externalId: brand.externalId,
+                type: brand.ruleFilterType,
+                group: "15",
+                name: brand.name.trim()
+              };
+              this.categoryList[7].items.push(listItem);
+            }
           });
         }
 
         if (results[1] && results[1].length) {
           results[1].forEach(color => {
-            let listItem = {
-              id: color.id,
-              externalId: color.externalId,
-              type: color.ruleFilterType,
-              group: "16",
-              name: color.name.trim()
-            };
-            this.categoryList[8].items.push(listItem);
+            if (color.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
+              let listItem = {
+                id: color.id,
+                externalId: color.externalId,
+                type: color.ruleFilterType,
+                group: "16",
+                name: color.name.trim()
+              };
+              this.categoryList[8].items.push(listItem);
+            }
           });
         }
 
         if (results[2] && results[2].length) {
           results[2].forEach(size => {
-            let listItem = {
-              id: size.id,
-              externalId: size.externalId,
-              type: size.ruleFilterType,
-              group: "17",
-              name: size.name.trim()
-            };
-            this.categoryList[9].items.push(listItem);
+            if (size.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
+              let listItem = {
+                id: size.id,
+                externalId: size.externalId,
+                type: size.ruleFilterType,
+                group: "17",
+                name: size.name.trim()
+              };
+              this.categoryList[9].items.push(listItem);
+            }
           });
         }
 
         if (results[3] && results[3].length) {
           results[3].forEach(feature => {
-            if (feature.dataGroup == "1" || feature.dataGroup == "2" || feature.dataGroup == "5" || feature.dataGroup == "7" || feature.dataGroup == "9" || feature.dataGroup == "10" || feature.dataGroup == "12") {
-              let listItem = {
-                id: feature.id,
-                externalId: feature.externalId,
-                type: feature.ruleFilterType,
-                group: feature.dataGroup,
-                name: feature.name.trim()
-              };
-              let listIndex = -1;
-              switch (listItem.group) {
-                case "1":
-                  listIndex = 0;
-                  break;
+            if (feature.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
+              if (feature.dataGroup == "1" || feature.dataGroup == "2" || feature.dataGroup == "5" || feature.dataGroup == "7" || feature.dataGroup == "9" || feature.dataGroup == "10" || feature.dataGroup == "12") {
+                let listItem = {
+                  id: feature.id,
+                  externalId: feature.externalId,
+                  type: feature.ruleFilterType,
+                  group: feature.dataGroup,
+                  name: feature.name.trim()
+                };
+                let listIndex = -1;
+                switch (listItem.group) {
+                  case "1":
+                    listIndex = 0;
+                    break;
 
-                case "2":
-                  listIndex = 1;
-                  break;
+                  case "2":
+                    listIndex = 1;
+                    break;
 
-                case "5":
-                  listIndex = 2;
-                  break;
+                  case "5":
+                    listIndex = 2;
+                    break;
 
-                case "7":
-                  listIndex = 3;
-                  break;
+                  case "7":
+                    listIndex = 3;
+                    break;
 
-                case "9":
-                  listIndex = 4;
-                  break;
+                  case "9":
+                    listIndex = 4;
+                    break;
 
-                case "10":
-                  listIndex = 5;
-                  break;
+                  case "10":
+                    listIndex = 5;
+                    break;
 
-                case "12":
-                  listIndex = 6;
-                  break;
+                  case "12":
+                    listIndex = 6;
+                    break;
+                }
+
+                this.categoryList[listIndex].items.push(listItem);
               }
-
-              this.categoryList[listIndex].items.push(listItem);
             }
           });
         }
@@ -271,13 +281,13 @@ export class NewRuleComponent implements OnInit {
       this.selectedCategoryGroupFilterObject = {...this.categoryList[0]};
 
       if (this.ruleFilterType == "categories") {
-        this.marketplacesService.getMarketCategories().subscribe(data => {
+        this.marketplacesService.getMarketCategories(this.marketExternalId).subscribe(data => {
           this.destinationCategories = data;
           this.destinationCategories.sort((a, b) => {
-            if (isNaN(a.market_category_id) || isNaN(b.market_category_id)) {
-              return ((a.market_category_id > b.market_category_id) ? 1 : ((b.market_category_id > a.market_category_id) ? -1 : 0));
+            if (isNaN(a.externalId) || isNaN(b.externalId)) {
+              return ((a.externalId > b.externalId) ? 1 : ((b.externalId > a.externalId) ? -1 : 0));
             } else {
-              return ((parseInt(a.market_category_id) > parseInt(b.market_category_id)) ? 1 : ((parseInt(b.market_category_id) > parseInt(a.market_category_id)) ? -1 : 0));
+              return ((parseInt(a.externalId) > parseInt(b.externalId)) ? 1 : ((parseInt(b.externalId) > parseInt(a.externalId)) ? -1 : 0));
             }
           });
         });
@@ -317,6 +327,8 @@ export class NewRuleComponent implements OnInit {
               this.excludeReferenceText += ', ';
             }
           }
+
+          this.referencesExceptions = [];
         }
 
         switch (this.ruleFilterType) {
@@ -369,8 +381,14 @@ export class NewRuleComponent implements OnInit {
             break;
         }
       } else {
-        this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
-          this.numberOfProducts = count;
+        this.marketplacesService.getProductCatalog().subscribe(products => {
+          let marketProducts = [];
+          for (let product of products) {
+            if (product.productsMarkets.find(productMarket => (productMarket.market.externalId == this.marketExternalId))) {
+              marketProducts.push(product);
+            }
+          }
+          this.numberOfProducts = marketProducts.length;
         });
       }
 
