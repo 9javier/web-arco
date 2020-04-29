@@ -8,13 +8,13 @@ import { DropFilesModule } from '../../drop-files/drop-files.module';
 import { SignatureModule } from '../../signature/signature.module';
 import { SignatureComponent } from '../../signature/signature.component';
 import { ReviewImagesComponent } from '../../incidents/components/review-images/review-images.component';
-import {SelectScrollbarComponent} from "../../incidents/components/select-scrollbar/select-scrollbar.component";
+import {SelectScrollbarStateComponent} from "./select-scrollbar-state/select-scrollbar-state.component";
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
 
 @NgModule({
-  declarations: [ChangeState2Component, SelectScrollbarComponent],
-  entryComponents: [ChangeState2Component, SelectScrollbarComponent],
+  declarations: [ChangeState2Component, SelectScrollbarStateComponent],
+  entryComponents: [ChangeState2Component, SelectScrollbarStateComponent],
   exports: [ChangeState2Component],
   imports: [
     CommonModule,
