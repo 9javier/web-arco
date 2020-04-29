@@ -287,14 +287,14 @@ export class TableRequestsOrdersComponent implements OnInit {
           return tempArray;
         }
       }, []);
-      this.listTypeFilters = this.listRequestOrders.map((item) => {
-        return {
-          checked: true,
-          value: item.preparationLinesTypes.name,
-          id: item.preparationLinesTypes.id,
-          type: this.FILTER_TYPE,
-          hide: false
-        };
+      this.listTypeFilters = this.listRequestOrders[0].typesShippingOrders.map((item) => {
+          return {
+            checked: true,
+            value: item.name,
+            id: item.id,
+            type: this.FILTER_TYPE,
+            hide: false
+          };
       }).reduce((tempArray, currentItem) => {
         const x = tempArray.find(item => item.value === currentItem.value);
         if (!x) {
@@ -479,9 +479,8 @@ export class TableRequestsOrdersComponent implements OnInit {
     });
     listRequestOrdersTemp = listRequestOrdersTemp.filter((item) => {
       let isOk = false;
-
       for (let filter in this.listTypeFilters) {
-        if (this.listTypeFilters[filter].value == item.preparationLinesTypes.name && this.listTypeFilters[filter].checked) {
+        if (this.listTypeFilters[filter].id == item.request.typeShippingOrderLineRequest.id && this.listTypeFilters[filter].checked) {
           isOk = true;
           break;
         }

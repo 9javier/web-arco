@@ -59,10 +59,8 @@ export class PickingNewProductsService {
     }));
   }
 
-  postListReceivedProductsRequested(storeId: number, params): Observable<PickingNewProductsModel.ReceivedProductsRequested[]> {
-    return this.http.post<PickingNewProductsModel.ResponseListReceivedProductsRequested>(this.postListReceivedProductsRequestedUrl.replace('${id}', storeId.toString()), params).pipe(map(response => {
-      return response.data;
-    }));
+  postListReceivedProductsRequested(storeId: number, params): Observable<PickingNewProductsModel.ResponseListReceivedProductsRequested> {
+    return this.http.post<PickingNewProductsModel.ResponseListReceivedProductsRequested>(this.postListReceivedProductsRequestedUrl.replace('${id}', storeId.toString()), params);
   }
 
   putAttendReceivedProductsRequested(params: {receivedProductsRequestedIds: number[]}): Observable<PickingNewProductsModel.ReceivedProductsRequested[]> {
