@@ -6,6 +6,8 @@ export namespace DefectiveRegistryModel {
 
   export interface DefectiveRegistry {
     id?: number;
+    autoId?: any;
+    warehouseDefectId: number;
     product?: Product;
     dateDetection?: Date;
     statusManagementDefect?: StatusManagementDefect;

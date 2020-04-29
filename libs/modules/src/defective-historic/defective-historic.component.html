@@ -9,7 +9,7 @@
                                (applyFilters)="applyFilters($event, 'id')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info checkbox"> {{element.id}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info checkbox">{{ element?.autoId }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="user">
