@@ -666,6 +666,22 @@ export class TextareaComponent implements OnInit {
     }
   }
 
+  private fullPacking(){
+    if (this.listProducts && this.listProducts.length > 0) {
+      if (this.typePicking === 1) {
+        this.alertSealPackingIntermediate(this.lastCarrierScanned);
+      } else {
+        this.endProcessIntermediate(this.lastCarrierScanned);
+      }
+    } else {
+      if (this.typePicking === 1) {
+        this.alertSealPackingFinal(this.lastCarrierScanned);
+      } else {
+        this.endProcessPacking(this.lastCarrierScanned);
+      }
+    }
+  }
+
   private postVerifyPacking(packing): Observable<any> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
