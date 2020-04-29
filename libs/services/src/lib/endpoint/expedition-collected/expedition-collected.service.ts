@@ -22,6 +22,13 @@ export class ExpeditionCollectedService {
   private getTransports: string;
   private $id = new BehaviorSubject({});
   private id = this.$id.asObservable();
+  private emitData = new BehaviorSubject({});
+  private getData$ = this.emitData.asObservable();
+  private sendButtonEmit = new BehaviorSubject({});
+  private getDataUpdateButton$ = this.sendButtonEmit.asObservable();
+  private idTab;
+  private idTab_;
+
   constructor(private http: HttpClient) {
     this.baseUrl = environment.apiSorter;
     this.getExpeditionsUrl = `${this.baseUrl}/opl-expedition/transports`;
@@ -61,7 +68,7 @@ export class ExpeditionCollectedService {
 
   getFiltersPackage(id){
     const body = {
-      idExpedition:id
+      idTransport:id
     };
     return this.http.post<HttpRequestModel.Response>(this.getFiltersPackages, body).pipe(
       map(resp => {
@@ -101,6 +108,18 @@ export class ExpeditionCollectedService {
     return this.http.get<HttpRequestModel.Response>(this.getTransports).pipe(
       map(resp => resp.data)
     )
+  }
+
+  refreshTabTransport() {
+    this.emitData.next(this.idTab);
+  }
+  setEmitTabId(idTab) {
+    this.idTab = idTab;
+    this.emitData.next(this.idTab);
+  }
+
+  getData(){
+    return this.getData$;
   }
 
 }

@@ -10,8 +10,10 @@ import { PaginatorComponent } from '../../components/paginator/paginator.compone
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { PackagesComponent } from '../packages/packages.component';
 import { TagsInputOption } from '../../components/tags-input/models/tags-input-option.model';
-
-
+import { environment } from '../../../../services/src/environments/environment';
+import { saveAs } from "file-saver";
+import { formatDate } from '@angular/common';
+import * as moment from 'moment';
 @Component({
   selector: 'suite-order-package',
   templateUrl: './order-package.component.html',
@@ -35,31 +37,39 @@ export class OrderPackageComponent implements OnInit {
     'barcode',
     'package',
   ];
-  pagerValues = [50, 100, 1000];
+  pagerValues = [20, 80, 100];
   pauseListenFormChange: boolean;
   selection = new SelectionModel<any>(true, []);
   form: FormGroup = this.formBuilder.group({
-      expeditions: [[]],
-      orders: [[]],
-      date: [[]],
-      warehouses: [[]],
-      transports: [[]],
-      orderby: this.formBuilder.group({
-        type: 1,
-        order: "asc"
-      }),
-      pagination: this.formBuilder.group({
-        page: 1,
-        limit: 50
-      })
+    expeditions: [[]],
+    orders: [[]],
+    date: [[]],
+    warehouses: [[]],
+    transports: [[]],
+    orderby: this.formBuilder.group({
+      type: 1,
+      order: "asc"
+    }),
+    pagination: this.formBuilder.group({
+      page: 1,
+      limit: this.pagerValues[0]
+    })
   })
+
+  orderByOrden: boolean
+  orderByWarehouse: boolean
+  orderByDate: boolean
+
+
   columns: any;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   isFilteringOrder: number = 0;
   isFilteringWarehouse: number = 0;
   isFilteringDate: number = 0;
-  lastUsedFilter: string = 'warehouses';
+  lastUsedFilter: string;
+  isApplyFilter:boolean = false;
+  isApplyPagination:boolean = false;
   lastOrder = [true, true, true];
 
   orders: Array<TagsInputOption> = [];
@@ -82,47 +92,64 @@ export class OrderPackageComponent implements OnInit {
     this.getList(this.form.value);
     this.listenChanges();
   }
-  
+
   getFilters() {
     this.oplTransportsService.getFilters().subscribe((resp: OplTransportsModel.OrderExpeditionFilters) => {
-      // console.log(resp);
       this.filters = resp
 
     })
   }
-  getList(body: OplTransportsModel.OrderExpeditionFilterRequest){
+
+getFiltersWarehouse(){
+  this.dataSource.shops
+}
+
+  getList(body: OplTransportsModel.OrderExpeditionFilterRequest) {
     this.intermediaryService.presentLoading();
     this.oplTransportsService.getList(body).subscribe(
       resp => {
-        // console.log(resp);
+        console.log(resp);
         this.dataSource = resp.results;
-        this.orders = this.dataSource.map(elem => {
-          return {
-            id: elem.id,
-            name: elem.id
-          }
-        })
-        this.updateFilterSourceWarehouses(this.orders)
-        this.warehouses = this.dataSource.map(elem => {
-          return {
-            id: elem.shops.id,
-            name: `${elem.shops.reference} - ${elem.shops.name}` 
-          }
-        })
-        console.log(this.warehouses);
+        if(this.isApplyFilter == false){
+          this.orders = this.dataSource.map(elem => {
+            return {
+              id: elem.id,
+              name: elem.id
+            } 
+          })
+          this.updateFilterOrders(this.orders)
+          let whsTemp = this.dataSource.map(elem => {      
+              return {
+                id: elem.shops.id,
+                name: `${elem.shops.reference} - ${elem.shops.name}`
+              }
+          });
+         this.warehouses = this.uniqueArray(whsTemp);
+          this.updateFilterSourceWarehouses(this.warehouses)
+  
+          let datesTemp = this.dataSource.map(elem => {
+            return {
+              name: elem.date
+            }
+          });
+    
+          this.dates = this.uniqueDatesArray(datesTemp);
+          this.updateFilterDates(this.dates);
+        }
+        this.isApplyFilter = false;
+        if(this.isApplyPagination == false){
+          const pagination = resp.pagination;
+          this.paginator.length = pagination.totalResults;
+          this.paginator.lastPage = pagination.lastPage;
+        }
+        this.isApplyPagination = false;
         
-        this.updateFilterSourceWarehouses(this.warehouses)
-        // console.log('dataSource',this.dataSource);
-        
-        const pagination = resp.pagination
-        this.paginator.length = pagination.totalResults;
-        this.paginator.lastPage = pagination.lastPage;
         this.intermediaryService.dismissLoading()
       },
       e => {
         this.intermediaryService.presentToastError('Ocurrio un error al cargar el listado')
         this.intermediaryService.dismissLoading()
-      }, 
+      },
       () => {
         this.intermediaryService.dismissLoading()
       }
@@ -180,6 +207,7 @@ export class OrderPackageComponent implements OnInit {
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
       };
+      this.isApplyPagination = true;
       this.getList(this.form.value)
     });
 
@@ -187,14 +215,14 @@ export class OrderPackageComponent implements OnInit {
 
   async presentModal(packages) {
     console.log(packages);
-    
+
     const modal = await this.modalController.create({
-    component: PackagesComponent,
-    componentProps: { packages }
+      component: PackagesComponent,
+      componentProps: { packages }
     });
-  
+
     await modal.present();
-  
+
   }
   sort(column: string) {
     for (let i = 0; i < document.getElementsByClassName('title').length; i++) {
@@ -235,7 +263,7 @@ export class OrderPackageComponent implements OnInit {
         this.lastOrder[2] = !this.lastOrder[2];
         break;
       }
-      
+
     }
     this.getList(this.form.value)
   }
@@ -244,20 +272,21 @@ export class OrderPackageComponent implements OnInit {
   private updateFilterSourceWarehouses(warehouses: Array<any>) {
     this.pauseListenFormChange = true;
     let value = this.form.get("warehouses").value;
-    this.warehouses = warehouses.map(warehouse => { 
-      warehouse.id = warehouse.id  
+    this.warehouses = warehouses ? warehouses.map(warehouse => {
+      warehouse.id = warehouse.id
       warehouse.name = warehouse.name;
       warehouse.value = warehouse.name;
       warehouse.checked = true;
       warehouse.hide = false;
       return warehouse;
-    });
+    }): [];
     if (value && value.length) {
       this.form.get("warehouses").patchValue(value, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
   private updateFilterOrders(orders: Array<any>) {
+  
     this.pauseListenFormChange = true;
     let value = this.form.get("orders").value;
     this.orders = <any>orders.map(order => {
@@ -269,7 +298,36 @@ export class OrderPackageComponent implements OnInit {
       return order;
     });
     // console.log(this.orders);
-    
+
+    if (value && value.length) {
+      this.form.get("orders").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+  formatDate(data: string): string {
+    const date = new Date(data);
+    const day = date.getDate()
+    let month: any = date.getMonth() + 1
+    if (month < 10) {
+      month = `0${month}`
+    }
+    const year = date.getFullYear()
+    const formatedDate = `${day}-${month}-${year}`
+    return formatedDate
+  }
+  private updateFilterDates(dates: Array<any>) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("date").value;
+    this.dates = <any>dates.map(date => {
+      date.id = date.name
+      date.name = this.formatDate(date.name)
+      date.value = date.name;
+      date.checked = true;
+      date.hide = false;
+      return date;
+    });
+    // console.log(this.orders);
+
     if (value && value.length) {
       this.form.get("orders").patchValue(value, { emitEvent: false });
     }
@@ -315,26 +373,162 @@ export class OrderPackageComponent implements OnInit {
           }
         }
         break;
+      case 'dates':
+        let datesFiltered: string[] = [];
+
+        for (let date of filters) {
+        let data = moment(date.id).format('YYYY-MM-DD');
+          if (date.checked) datesFiltered.push(data);
+        }
+        if (datesFiltered.length >= this.dates.length) {
+          this.form.value.date = [];
+          this.isFilteringDate = this.dates.length;
+        } else {
+          if (datesFiltered.length > 0) {
+            this.form.value.date = datesFiltered;
+            this.isFilteringDate = datesFiltered.length;
+          } else {
+            this.form.value.date = ["2090-11-03"];
+            this.isFilteringDate = this.dates.length;
+          }
+        }
+        break;
+
     }
+    this.lastUsedFilter = filterType;
+    this.isApplyFilter = true;
     this.getList(this.form.value)
   }
   print(id) {
     this.intermediaryService.presentLoading()
     this.oplTransportsService.print(id).subscribe(
       resp => {
+        console.log(resp);
+
         this.intermediaryService.presentToastSuccess('Impresion realizada correctamente')
-      }, 
+      },
       e => {
         this.intermediaryService.dismissLoading()
         this.intermediaryService.presentToastError('Ocurrio un error al imprimir')
       },
       () => {
-        this.intermediaryService.dismissLoading()
+        this.oplTransportsService.downloadPdfTransortOrders(id).subscribe(
+          resp => {
+            console.log(resp);
+            const blob = new Blob([resp], { type: 'application/pdf' });
+            saveAs(blob, 'documento.pdf')
+          },
+          e => {
+            console.log(e.error.text);
+          },
+          () => {
+            this.intermediaryService.dismissLoading()
+
+          }
+        )
+
       }
     );
-  } 
- refresh() {
-   this.clearFilters()
-   this.getList(this.form.value)
- }
+  }
+  refresh(transportId: number) {
+    this.clearFilters()
+    this.form.patchValue({
+      transports: [transportId]
+    })
+    this.getList(this.form.value)
+  }
+
+  setOrder(data:boolean) {
+    let order: string;
+    if (data) {
+      order = 'asc';
+    } else {
+      order = 'desc';
+    }
+    return order
+  }
+
+  setOrderByOrden(){
+    const type = 5;
+    let order: string;
+    this.orderByOrden = !this.orderByOrden;
+    order = this.setOrder(this.orderByOrden)
+    this.form.patchValue({
+      orderby: {
+        type,
+        order
+      },
+    })
+    this.getList(this.form.value)
+  }
+  setOrderByWarehouse(){
+    const type: number = 3;
+    let order
+    this.orderByOrden = !this.orderByOrden;
+    order = this.setOrder(this.orderByWarehouse)
+    this.form.patchValue({
+      orderby: {
+        type,
+        order
+      },
+    })
+    this.getList(this.form.value)
+  }
+  setOrderByDate(){
+    const type: number = 1;
+    let order
+    this.orderByDate = !this.orderByDate;
+    order = this.setOrder(this.orderByDate)
+    this.form.patchValue({
+      orderby: {
+        type,
+        order
+      },
+    })
+    this.getList(this.form.value)
+  }
+
+  uniqueArray(listArray: Array<any>) {
+    let uniquesArray = [];
+    let counting = 0;
+    let found = false;
+
+    for (let i = 0; i < listArray.length; i++) {
+      for (let y = 0; y < uniquesArray.length; y++) {
+        if (listArray[i].id == uniquesArray[y].id) {
+          found = true;
+        }
+      }
+      counting++;
+      if (counting == 1 && found == false) {
+        uniquesArray.push(listArray[i]);
+      }
+      found = false;
+      counting = 0;
+    }
+    return uniquesArray;
+  }
+
+  uniqueDatesArray(listArray: Array<any>) {
+    let uniquesArray = [];
+    let counting = 0;
+    let found = false;
+
+    for (let i = 0; i < listArray.length; i++) {
+      for (let y = 0; y < uniquesArray.length; y++) {
+        if (listArray[i].name == uniquesArray[y].name) {
+          found = true;
+        }
+      }
+      counting++;
+      if (counting == 1 && found == false) {
+          uniquesArray.push(listArray[i]);
+      }
+      found = false;
+      counting = 0;
+    }
+    return uniquesArray;
+  }
+
+  
 }

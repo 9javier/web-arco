@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { HttpRequestModel } from '../../../models/endpoints/HttpRequest';
 import { map } from 'rxjs/operators';
@@ -14,12 +14,17 @@ export class OplTransportsService {
   private filtersTransportUrl: string;
   private orderExpeditionUrl: string
   private printOrderUrl: string;
+  private dowloadPdf: string;
+  private printOrderTransportUrl: string
 
   constructor(private http: HttpClient) { 
     this.filtersUrl = `${environment.apiBase}/opl-expedition/order-expedition/get-filters`;
     this.filtersTransportUrl = `${environment.apiBase}/opl-expedition/order-expedition/get-tranports-filters`;
     this.orderExpeditionUrl = `${environment.apiBase}/opl-expedition/order-expedition/filter`;
     this.printOrderUrl = `${environment.apiBase}/opl-expedition/order-expedition/print`
+    this.dowloadPdf = `${environment.downloadFiles}/api/opl-expedition/order-expedition/transport/download/pdf`
+    this.printOrderTransportUrl = `${environment.apiBase}/opl-expedition/order/print`
+
   }
 
   getFilters(){
@@ -38,6 +43,22 @@ export class OplTransportsService {
       "expeditionOrderId": id
     }
     return this.http.post<HttpRequestModel.Response>(this.printOrderUrl, body).pipe(map(res => res.data));
+  }
+
+  downloadPdf(path?:string) {
+    const body = {
+      path: path || '/pdf/documento1.pdf'
+    }
+    let headers: HttpHeaders = new HttpHeaders({ Accept: 'application/pdf' });
+    return this.http.post(this.dowloadPdf, body,{headers, responseType:'blob'})
+  }
+
+  downloadPdfTransortOrders(expeditionOrderId: number) {
+    const body = {
+      expeditionOrderId
+    }
+    let headers: HttpHeaders = new HttpHeaders({ Accept: 'application/pdf' });
+    return this.http.post(this.printOrderTransportUrl, body, { headers, responseType: 'blob' })
   }
 
 }
