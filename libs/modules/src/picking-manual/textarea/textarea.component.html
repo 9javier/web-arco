@@ -20,7 +20,7 @@
     </ion-row>
     <ion-row>
       <span>
-        <b>1/126</b>
+        <b>{{pickingSelected.quantity-listProducts.length+1}}/{{pickingSelected.quantity}}</b>
       </span>
     </ion-row>
   </p>
@@ -51,7 +51,7 @@
       </div>
       <div>
         <ion-button>Ubicar</ion-button>
-        <ion-fab-button size="small" color="dark">
+        <ion-fab-button size="small" color="dark" routerLink="/positioning/manual" (click)="toolbarProvider.currentPage.next('Ubicar/escanear con láser');">
           <ion-icon name="locate"></ion-icon>
         </ion-fab-button>
       </div>

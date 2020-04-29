@@ -23,6 +23,8 @@ import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
 import { LoadingMessageComponent } from "../../components/loading-message/loading-message.component";
+import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
+import * as toolbarProvider from "../../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'suite-textarea',
@@ -53,6 +55,7 @@ export class TextareaComponent implements OnInit {
   literalsJailPallet: any = null;
   scanContainerToNotFound: string = null;
   intervalCleanLastCodeScanned = null;
+  pickingSelected: PickingModel.Picking;
 
   private postVerifyPackingUrl = environment.apiBase + "/processes/picking-main/packing";
   private getPendingListByPickingUrl = environment.apiBase + "/processes/picking-main/shoes/{{id}}/pending";
@@ -79,12 +82,14 @@ export class TextareaComponent implements OnInit {
     private keyboardService: KeyboardService,
     private carrierService: CarrierService,
     private modalCtrl: ModalController,
+    private toolbarProvider: toolbarProvider.ToolbarProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.focusToInput();
   }
 
   ngOnInit() {
+    this.pickingSelected = this.pickingProvider.pickingSelectedToStart;
     this.pickingId = this.pickingProvider.pickingId;
     this.listProducts = this.pickingProvider.listProducts;
 
