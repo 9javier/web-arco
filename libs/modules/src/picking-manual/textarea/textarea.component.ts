@@ -25,6 +25,7 @@ import { ListProductsCarrierComponent } from '../../components/list-products-car
 import { LoadingMessageComponent } from "../../components/loading-message/loading-message.component";
 import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import * as toolbarProvider from "../../../../services/src/providers/toolbar/toolbar.provider";
+import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
 
 @Component({
   selector: 'suite-textarea',
@@ -82,6 +83,7 @@ export class TextareaComponent implements OnInit {
     private keyboardService: KeyboardService,
     private carrierService: CarrierService,
     private modalCtrl: ModalController,
+    private scanditService: ScanditService,
     private toolbarProvider: toolbarProvider.ToolbarProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
@@ -89,6 +91,7 @@ export class TextareaComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.addCameraButton();
     this.pickingSelected = this.pickingProvider.pickingSelectedToStart;
     this.pickingId = this.pickingProvider.pickingId;
     this.listProducts = this.pickingProvider.listProducts;
@@ -115,6 +118,17 @@ export class TextareaComponent implements OnInit {
       this.processInitiated = true;
       this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
     }
+  }
+
+  addCameraButton(){
+    const buttons = [{
+      icon: 'camera',
+      label: 'Cámara',
+      action: () => {
+        this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, this.pickingProvider.listProducts, this.pickingProvider.pickingSelectedToStart.packingType, this.pickingProvider.typePicking);
+      }
+    }];
+    this.toolbarProvider.optionsActions.next(buttons);
   }
 
   private async modalList(jaula: string) {

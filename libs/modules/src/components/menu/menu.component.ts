@@ -674,18 +674,11 @@ export class MenuComponent implements OnInit {
           tooltip: 'Asociar pares procesados para traspasos a embalajes y precintarlos'
         },
         {
-          title: 'Tareas de picking con cámara',
+          title: 'Tareas de Picking',
           id: 'picking-task',
           icon: 'qr-scanner',
           url: '/picking-tasks',
-          tooltip: 'Tareas de picking asignadas para realizarlas con el escáner de la cámara'
-        },
-        {
-          title: 'Tareas de picking con láser',
-          icon: 'qr-scanner',
-          url: '/picking-tasks/manual',
-          id: 'picking-tasks-manual',
-          tooltip: 'Tareas de picking asignadas para realizarlas con el láser'
+          tooltip: 'Tareas de picking asignadas'
         },
         {
           title: 'Verificación de artículos',
