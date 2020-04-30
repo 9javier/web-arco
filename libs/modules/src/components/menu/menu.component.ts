@@ -62,12 +62,12 @@ export class MenuComponent implements OnInit {
   pickingTasksStoresAmount: number = 0;
 
   sgaPages: MenuItemList = [
-    {
+/*    {
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
       icon: 'time'
-    },
+    },*/
     {
       title: 'Logística',
       open: true,
@@ -498,13 +498,13 @@ export class MenuComponent implements OnInit {
   ];
 
   alPages: MenuItemList = [
-    {
+/*    {
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
       icon: 'time',
       tooltip: 'Registrar hora de entrada y salida'
-    },
+    },*/
     {
       title: 'Productos',
       open: true,

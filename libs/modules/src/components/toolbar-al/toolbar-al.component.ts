@@ -20,7 +20,7 @@ export class ToolbarAlComponent implements OnInit {
   @Output() toggleSideMenuSga = new EventEmitter();
   @Output() toggleSideMenuAl = new EventEmitter();
 
-  public currentPage: string = 'Registro horario';
+  public currentPage: string = 'Inicio';
   public optionsActions: ActionToolbarModel.ActionToolbar[] = [];
   color: string
   isAndroid: boolean;

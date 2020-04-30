@@ -104,7 +104,7 @@ export class AppComponent implements OnInit {
   showMainHeader = false;
   deploySidebarSmallDevices = false;
   iconsDirection = 'start';
-  currentRoute: string = "Registro horario";
+  currentRoute: string = "Inicio";
 
   constructor(
     private platform: Platform,
@@ -182,7 +182,7 @@ export class AppComponent implements OnInit {
               })
             )
             .catch((possibleMainWarehouse404Error) => {})
-            .then(() => this.router.navigate([this.dictionary['user-time']?'user-time/products':'/welcome'])
+            .then(() => this.router.navigate([this.dictionary['welcome']?'/welcome':'/welcome'])
               .then(success => {
                 this.mainHeaderShowHide(true);
                 this.menu.enable(true, 'sidebar');
