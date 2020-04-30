@@ -187,15 +187,19 @@ export class MultipleDestinationsComponent implements OnInit {
   async postPrecintar(listToSeal) {
     this.intermediaryService.presentLoading('Precintando embalajes...').then(() => {
       this.carrierService.postSeals(listToSeal).subscribe((res: any) => {
+        let errorText = res && res.errors ? res.errors : "Ha ocurrido un error al intentar precintar los embalajes.";
         if (res.code == 200) {
           this.intermediaryService.dismissLoading();
           this.intermediaryService.presentToastSuccess("Los embalajes han sido precintados.");
           this.close(true);
         } else {
-          this.intermediaryService.presentToastError("Ha ocurrido un error al intentar precintar los embalajes.");
+          this.intermediaryService.presentToastError(errorText);
+          this.intermediaryService.dismissLoading();
         }
       }, (err) => {
-        this.intermediaryService.presentToastError("Ha ocurrido un error al intentar precintar los embalajes.");
+        let errorText = err && err.error && err.error.errors ? err.error.errors : "Ha ocurrido un error al intentar precintar los embalajes.";
+        this.intermediaryService.presentToastError(errorText);
+        this.intermediaryService.dismissLoading();
       })
     });
   }
