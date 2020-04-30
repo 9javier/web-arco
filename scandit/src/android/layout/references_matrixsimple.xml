@@ -5,48 +5,64 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <FrameLayout
-    android:id="@+id/picker"
+  <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:orientation="horizontal"></LinearLayout>
+
+    <FrameLayout
+      android:id="@+id/picker"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_weight="1">
+
+    </FrameLayout>
+  </LinearLayout>
 
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="10"
     android:orientation="vertical"
-    >
+  >
+
     <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="3"
-      android:orientation="vertical"
-      android:background="@color/transparentScanner">
+      android:layout_weight="5"
+      android:background="@color/transparentScanner"
+      android:orientation="vertical">
 
       <TextView
         android:id="@+id/tvPackingStart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="gone"
         android:padding="16dp"
+        android:textColor="@color/transparentWhite"
         android:textSize="18sp"
-        android:textColor="@color/transparentWhite"/>
+        android:visibility="gone" />
 
       <TextView
         android:id="@+id/tvPackingEnd"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="gone"
         android:padding="16dp"
+        android:textColor="@color/transparentWhite"
         android:textSize="18sp"
-        android:textColor="@color/transparentWhite"/>
+        android:visibility="gone" />
 
       <include
         android:id="@+id/rlInfoProduct"
         layout="@layout/next_product_info"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     </LinearLayout>
     <LinearLayout
@@ -54,54 +70,33 @@
       android:layout_height="0dp"
       android:layout_weight="4"
       android:orientation="horizontal"
-      >
+    />
 
-      <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@color/transparentScanner"
-        >
-      </LinearLayout>
-      <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="8"
-        >
-      </LinearLayout>
-      <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@color/transparentScanner"
-        >
-      </LinearLayout>
-
-    </LinearLayout>
     <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="3"
-      android:orientation="vertical"
-      android:background="@color/transparentScanner"
-      android:gravity="center_horizontal|bottom">
+      android:layout_weight="1"
+      android:gravity="center_horizontal|bottom"
+      android:orientation="vertical">
+
       <TextView
         android:id="@+id/tvBottomText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:visibility="gone"
         android:padding="16dp"
+        android:textColor="@color/transparentWhite"
         android:textSize="18sp"
-        android:textColor="@color/transparentWhite"/>
+        android:visibility="gone" />
+
       <Button
         android:id="@+id/btnFinishReception"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:visibility="gone"
         android:background="@color/black"
+        android:text="Finalizar recepción"
         android:textColor="@color/white"
-        android:text="Finalizar recepción"/>
+        android:visibility="gone" />
     </LinearLayout>
   </LinearLayout>
 
@@ -115,7 +110,7 @@
     android:layout_alignParentBottom="true"
     android:orientation="vertical"
     android:visibility="gone"
-    >
+  >
 
     <TextView
       android:id="@+id/tvScanInfo"

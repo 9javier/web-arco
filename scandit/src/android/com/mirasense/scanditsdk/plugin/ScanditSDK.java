@@ -917,30 +917,30 @@ public class ScanditSDK extends CordovaPlugin {
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
           LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", packageName));
-          TextView tvLocationText = rlInfoProduct.findViewById(resources.getIdentifier("tvLocationText", "id", packageName));
           TextView tvLocation = rlInfoProduct.findViewById(resources.getIdentifier("tvLocation", "id", packageName));
-          TextView tvManufacturerText = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturerText", "id", packageName));
           TextView tvManufacturer = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturer", "id", packageName));
-          TextView tvModelText = rlInfoProduct.findViewById(resources.getIdentifier("tvModelText", "id", packageName));
           TextView tvModel = rlInfoProduct.findViewById(resources.getIdentifier("tvModel", "id", packageName));
           TextView tvSizeText = rlInfoProduct.findViewById(resources.getIdentifier("tvSizeText", "id", packageName));
           TextView tvSize = rlInfoProduct.findViewById(resources.getIdentifier("tvSize", "id", packageName));
-          Button btnNotFound = rlInfoProduct.findViewById(resources.getIdentifier("btnNotFound", "id", packageName));
+          TextView tvQuantityActual = rlInfoProduct.findViewById(resources.getIdentifier("tvQuantityActual", "id", packageName));
+          TextView tvQuantityText = rlInfoProduct.findViewById(resources.getIdentifier("tvQuantityText", "id", packageName));
+          TextView tvQuantityTotal = rlInfoProduct.findViewById(resources.getIdentifier("tvQuantityTotal", "id", packageName));
+//          Button btnNotFound = rlInfoProduct.findViewById(resources.getIdentifier("btnNotFound", "id", packageName));
 
           if (actionBarMatrixSimple != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionBarMatrixSimple.setElevation(0);
           }
           rlInfoProduct.setVisibility(View.VISIBLE);
           rlInfoProduct.setBackgroundDrawable(new ColorDrawable(Color.parseColor(fBackground)));
-          tvLocationText.setTextColor(Color.parseColor(fColor));
           tvLocation.setTextColor(Color.parseColor(fColor));
-          tvManufacturerText.setTextColor(Color.parseColor(fColor));
           tvManufacturer.setTextColor(Color.parseColor(fColor));
-          tvModelText.setTextColor(Color.parseColor(fColor));
           tvModel.setTextColor(Color.parseColor(fColor));
           tvSizeText.setTextColor(Color.parseColor(fColor));
           tvSize.setTextColor(Color.parseColor(fColor));
-          btnNotFound.setTextColor(Color.parseColor(fColor));
+          tvQuantityActual.setTextColor(Color.parseColor(fColor));
+          tvQuantityText.setTextColor(Color.parseColor(fColor));
+          tvQuantityTotal.setTextColor(Color.parseColor(fColor));
+//          btnNotFound.setTextColor(Color.parseColor(fColor));
 
           try {
             String location = "";
@@ -948,6 +948,8 @@ public class ScanditSDK extends CordovaPlugin {
             String modelProduct = fProduct.getJSONObject("product").getJSONObject("model").getString("reference");
             String brandProduct = fProduct.getJSONObject("product").getJSONObject("model").getJSONObject("brand").getString("name");
             String sizeProduct = fProduct.getJSONObject("product").getJSONObject("size").getString("name");
+            String actualQuantity = fProduct.getJSONObject("quantity").getString("actual");
+            String totalQuantity = fProduct.getJSONObject("quantity").getString("total");
             if (fProduct.getJSONObject("inventory").has("rack") && !fProduct.getJSONObject("inventory").isNull("rack") && fProduct.getJSONObject("inventory").has("container") && !fProduct.getJSONObject("inventory").isNull("container")) {
               location = fProduct.getJSONObject("inventory").getJSONObject("container").getString("reference");
 
@@ -964,56 +966,58 @@ public class ScanditSDK extends CordovaPlugin {
             tvManufacturer.setText(brandProduct);
             tvModel.setText(modelProduct);
             tvSize.setText(sizeProduct);
+            tvQuantityActual.setText(actualQuantity);
+            tvQuantityTotal.setText(totalQuantity);
 
             final String fLocation = location;
-            btnNotFound.setOnClickListener(view -> {
-              AlertDialog.Builder builderWarningProduct404 = new AlertDialog.Builder(MatrixSimpleActivity.matrixSimple);
-              builderWarningProduct404
-                .setTitle("Atención")
-                .setMessage("¿Está seguro de querer reportar como no encontrado el producto " + modelProduct + " en la ubicación " + fLocation + "? (tendrá que escanear la ubicación para confirmar el reporte).")
-                .setCancelable(false)
-                .setPositiveButton("Reportar", (dialog, id) -> {
-                  JSONObject jsonObject = new JSONObject();
-                  try {
-                    jsonObject.put("result", true);
-                    jsonObject.put("product_id", fProduct.getJSONObject("product").getInt("id"));
-                    jsonObject.put("action", "product_not_found");
-                    jsonObject.put("found", true);
-                  } catch (JSONException e) {
-
-                  }
-                  PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
-                  pResult.setKeepCallback(true);
-                  mCallbackContextMatrixSimple.sendPluginResult(pResult);
-                })
-                .setNegativeButton("Cancelar", (dialog, id) -> {
-                  JSONObject jsonObject = new JSONObject();
-                  try {
-                    jsonObject.put("result", true);
-                    jsonObject.put("product_id", fProduct.getJSONObject("product").getInt("id"));
-                    jsonObject.put("action", "product_not_found");
-                    jsonObject.put("found", false);
-                  } catch (JSONException e) {
-
-                  }
-                  PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
-                  pResult.setKeepCallback(true);
-                  mCallbackContextMatrixSimple.sendPluginResult(pResult);
-                });
-              builderWarningProduct404.create();
-              builderWarningProduct404.show();
-
-              JSONObject jsonObject = new JSONObject();
-              try {
-                jsonObject.put("result", true);
-                jsonObject.put("action", "warning_product_not_found");
-              } catch (JSONException e) {
-
-              }
-              PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
-              pResult.setKeepCallback(true);
-              mCallbackContextMatrixSimple.sendPluginResult(pResult);
-            });
+//            btnNotFound.setOnClickListener(view -> {
+//              AlertDialog.Builder builderWarningProduct404 = new AlertDialog.Builder(MatrixSimpleActivity.matrixSimple);
+//              builderWarningProduct404
+//                .setTitle("Atención")
+//                .setMessage("¿Está seguro de querer reportar como no encontrado el producto " + modelProduct + " en la ubicación " + fLocation + "? (tendrá que escanear la ubicación para confirmar el reporte).")
+//                .setCancelable(false)
+//                .setPositiveButton("Reportar", (dialog, id) -> {
+//                  JSONObject jsonObject = new JSONObject();
+//                  try {
+//                    jsonObject.put("result", true);
+//                    jsonObject.put("product_id", fProduct.getJSONObject("product").getInt("id"));
+//                    jsonObject.put("action", "product_not_found");
+//                    jsonObject.put("found", true);
+//                  } catch (JSONException e) {
+//
+//                  }
+//                  PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+//                  pResult.setKeepCallback(true);
+//                  mCallbackContextMatrixSimple.sendPluginResult(pResult);
+//                })
+//                .setNegativeButton("Cancelar", (dialog, id) -> {
+//                  JSONObject jsonObject = new JSONObject();
+//                  try {
+//                    jsonObject.put("result", true);
+//                    jsonObject.put("product_id", fProduct.getJSONObject("product").getInt("id"));
+//                    jsonObject.put("action", "product_not_found");
+//                    jsonObject.put("found", false);
+//                  } catch (JSONException e) {
+//
+//                  }
+//                  PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+//                  pResult.setKeepCallback(true);
+//                  mCallbackContextMatrixSimple.sendPluginResult(pResult);
+//                });
+//              builderWarningProduct404.create();
+//              builderWarningProduct404.show();
+//
+//              JSONObject jsonObject = new JSONObject();
+//              try {
+//                jsonObject.put("result", true);
+//                jsonObject.put("action", "warning_product_not_found");
+//              } catch (JSONException e) {
+//
+//              }
+//              PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+//              pResult.setKeepCallback(true);
+//              mCallbackContextMatrixSimple.sendPluginResult(pResult);
+//            });
           } catch (JSONException e) {
             e.printStackTrace();
           }
