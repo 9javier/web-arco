@@ -39,10 +39,7 @@ export class PrintTicketService {
     const observations = defective ? defective.observations : '';
     const updatedAt = defective ? moment(defective.updatedAt).format('DD/MM/YYYY  HH:mm') : '';
     const incidenceDate = defective ? moment(defective.dateDetection).format('DD/MM/YYYY  HH:mm') : '';
-    let warehouseIdentifier = defective && defective.warehouseDefectIdentifier ? defective.warehouseDefectIdentifier : '';
-    warehouseIdentifier = warehouseIdentifier.toString();
-    warehouseIdentifier = warehouseIdentifier.padStart(10,0);
-    const incidenceId = defective && defective.warehouse ? defective.warehouse.reference + ' / ' + warehouseIdentifier: '';
+    const incidenceId = defective && defective.warehouse ? ''+ defective.warehouse.reference +'/'+ defective.warehouseDefectIdentifier +'' : '';
     const warehouseName = defective && defective.warehouse ? defective.warehouse.name : '';
     const warehouseSocialName = defective && defective.warehouse && defective.warehouse.companyName ? defective.warehouse.companyName : '';
     let warehouseDirection = '';
