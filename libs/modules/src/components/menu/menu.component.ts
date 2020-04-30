@@ -954,12 +954,7 @@ export class MenuComponent implements OnInit {
         }, 5 * 60 * 1000);
       });
     }
-    let logoutItem = dictionary['user-time'] ? ({
-      title: 'Cerrar sesión',
-      id: 'logout',
-      url: '/user-time/logout',
-      icon: 'log-out'
-    }) : ({
+    let logoutItem = ({
       title: 'Cerrar sesión',
       id: 'logout',
       url: '/logout',
