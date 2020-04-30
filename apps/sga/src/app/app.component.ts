@@ -177,7 +177,7 @@ export class AppComponent implements OnInit {
   }
 
   changeMenutTitle(title:string){
-    this.currentRoute = title;
+    this.currentRoute = title != 'Cerrar sesión' ? title : 'Inicio';
   }
 
   initializeApp() {
