@@ -524,7 +524,15 @@ const routes: Routes = [
     data: {
       name: 'Ordenes de Transporte Opl'
     }
-  }
+  },
+  {
+    path: 'transports',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/transports-expeditions/transports-expeditions.module#TransportsExpeditionsModule',
+    data:{
+      name:'Transportes de expediciones'
+    }
+  },
 ];
 
 @NgModule({

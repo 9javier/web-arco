@@ -429,3 +429,7 @@ export * from './unlock-expeditions/unlock-expeditions.module'
 
 export * from './transports-orders/transports-orders.component'
 export * from './transports-orders/transports-orders.module'
+
+/**Transportes */
+export * from './transports-expeditions/transports-expeditions.component'
+export * from './transports-expeditions/transports-expeditions.module'

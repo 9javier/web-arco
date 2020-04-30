@@ -1,0 +1,105 @@
+<ion-content>
+  <div class="incidences-container">
+    <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
+     <mat-row  *matRowDef="let row; columns: displayedColumns;" (click)="openRow(row)"></mat-row>
+      <ng-container matColumnDef="select">
+        <mat-header-cell class="my-sticky-col info  checkbox header-checkbox" *matHeaderCellDef>
+          <div class="content-checkbox">
+            <ng-container *ngIf="dataSource !== undefined" >
+              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()"
+                            [aria-label]="checkboxLabel()">
+              </mat-checkbox>
+            </ng-container>
+          </div>
+          <div>Todas</div>
+        </mat-header-cell>
+        <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
+          <ng-container *ngIf="dataSource !== undefined" >
+            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                          [matRippleColor]="'black'" (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(row) : null"
+                          [checked]="selection.isSelected(row)"
+                          [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+
+
+
+
+
+      <ng-container matColumnDef="id">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Id
+         <!-- <suite-filter-button class="ion-margin-vertical filter" #filterButtonExpedition [title]="'Expediciones'"
+                               [listItems]="entities.expedition"
+                               [isFiltering]="isFilteringExpedition != entities.expedition.length"
+                               (applyFilters)="applyFilters($event, 'expedition')">
+          </suite-filter-button>-->
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.id}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Nombre
+         <!-- <suite-filter-button class="ion-margin-vertical filter" #filterButtonBarcode [title]="'Nombre'"
+                               [listItems]="entities.barcode"
+                               [isFiltering]="isFilteringBarcode != entities.barcode.length"
+                               (applyFilters)="applyFilters($event, 'barcode')">
+          </suite-filter-button>-->
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.name}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="reference">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Referencia
+          <!--<suite-filter-button class="ion-margin-vertical filter" #filterButtonDate [title]="'Referencia'"
+                               [listItems]="entities.date"
+                               [isFiltering]="isFilteringDate != entities.date.length"
+                               (applyFilters)="applyFilters($event, 'date')">
+          </suite-filter-button>-->
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{ element.reference }} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="log_internal">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Logistica interna
+          <!--<suite-filter-button class="ion-margin-vertical filter" #filterButtonDate [title]="'Logistica interna'"
+                               [listItems]="entities.date"
+                               [isFiltering]="isFilteringDate != entities.date.length"
+                               (applyFilters)="applyFilters($event, 'date')">
+          </suite-filter-button>-->
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{ log_internal(element.logistic_internal) }} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+     
+    </mat-table>
+  </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col size='8'>
+        <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+      </ion-col>
+      <ion-col>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-footer class="footer-transport">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button *ngIf="selection.selected.length > 0" (click)="delete()" color="danger" matTooltip="Eliminar transporte" matTooltipClass="tooltip">
+      <ion-icon name="trash"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="refresh()" matTooltip="Actualizar" matTooltipClass="tooltip">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="createTransport()" matTooltip="Agregar transporte" matTooltipClass="tooltip">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>

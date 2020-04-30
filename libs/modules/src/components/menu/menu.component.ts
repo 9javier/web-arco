@@ -492,9 +492,16 @@ export class MenuComponent implements OnInit {
           icon: 'car',
           tooltip: 'Ordenes'
         },
+        {
+          title: 'Transportes de expediciones',
+          id: 'transports',
+          url: '/transports',
+          icon: 'bus',
+          tooltip: 'Transportes de expediciones'
+        },
       ]
     },
-
+   
   ];
 
   alPages: MenuItemList = [
