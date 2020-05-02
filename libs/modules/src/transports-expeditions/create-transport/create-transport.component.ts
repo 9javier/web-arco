@@ -70,7 +70,7 @@ export class CreateTransportComponent implements OnInit {
 
   submit(){
     if(this.update == true){
-      let body={id: this.transport.id,name:this.name, logistic_internal:this.check};
+      let body={id: this.transport.id,name:this.name.toUpperCase(), logistic_internal:this.check};
       this.updateTransport(body);
     }else{
       if(this.name.length>0){

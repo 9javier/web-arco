@@ -17,6 +17,7 @@ export class OplTransportExpeditionService {
   private postGetOpTransportsUrl: string = environment.apiBase + "/opl-expedition/expedition/transport";
   private deleteTransportUrl: string = environment.apiBase + "/opl-expedition/expedition/transport/";
   private putUpdateTrasnportUrl: string = environment.apiBase + "/opl-expedition/expedition/transport/";
+  private postGetFiltersOpTransportsUrl: string = environment.apiBase + "/opl-expedition/expedition/transport/filters";
 
   constructor(
     private http: HttpClient,
@@ -25,8 +26,14 @@ export class OplTransportExpeditionService {
   ) {}
 
 
-  getOpTransports(): Observable<any> {
-    return this.http.get<HttpRequestModel.Response>(this.postGetOpTransportsUrl).pipe(
+  getOpTransports(body): Observable<any> {
+    return this.http.post<HttpRequestModel.Response>(this.postGetOpTransportsUrl,body).pipe(
+      map(resp => resp.data)
+    )
+  }
+
+  getFiltersOpTransport(): Observable<any> {
+    return this.http.get<HttpRequestModel.Response>(this.postGetFiltersOpTransportsUrl).pipe(
       map(resp => resp.data)
     )
   }

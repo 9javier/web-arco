@@ -10,10 +10,15 @@
 </ion-header>
 <ion-content padding="true">
     <mat-form-field>
-        <div class="items-center">
-            <ion-input type="text" class="input-name" placeholder="Nombre" (keyup)="onKey($event)" [(ngModel)]="name"></ion-input><br>
-            <mat-checkbox [(ngModel)]="check">Logística interna</mat-checkbox>
-        </div>
+        <ion-item>
+            <ion-input type="text" class="input-name" placeholder="Nombre" (keyup)="onKey($event)" [(ngModel)]="name"></ion-input>
+        </ion-item>
+        <ion-item>
+            <div class="items-center">
+                <mat-checkbox [(ngModel)]="check">Logística interna</mat-checkbox>
+            </div>
+        </ion-item>
+      
     </mat-form-field>
 </ion-content>
 <ion-footer>

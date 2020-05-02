@@ -9,9 +9,9 @@ import { IntermediaryService } from '@suite/services';
 import { SelectionModel } from '@angular/cdk/collections';
 import { OplTransportExpeditionService } from '../../../services/src/lib/endpoint/opl-transport-expedition/opl-transport-expedition.service';
 import {CreateTransportComponent} from './create-transport/create-transport.component';
-import {ModalController, AlertController, LoadingController} from '@ionic/angular';
-import { response } from 'express';
-
+import {ModalController, AlertController} from '@ionic/angular';
+import {Observable} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'transports-expeditions',
@@ -21,38 +21,28 @@ import { response } from 'express';
 export class TransportsExpeditionsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select','id', 'name', 'reference', 'log_internal'];
+  displayedColumns: string[] = ['select', 'name','log_internal'];
   dataSource: MatTableDataSource<any>;
   pagerValues = [10, 20, 80];
   selection = new SelectionModel<any>(true, []);
   originalTableStatus: any[];
   columns = {};
 
-  //@ViewChild('filterButtonExpedition') filterButtonExpedition: FilterButtonComponent;
-  //@ViewChild('filterButtonBarcode') filterButtonBarcode: FilterButtonComponent;
-  //@ViewChild('filterButtonDate') filterButtonDate: FilterButtonComponent;
-  //@ViewChild('filterButtonWarehouse') filterButtonWarehouse: FilterButtonComponent;
+  @ViewChild('filterButtonName') filterButtonName: FilterButtonComponent;
+  @ViewChild('filterButtonLogistic_internal') filterButtonLogistic_internal: FilterButtonComponent;
 
-  /*isFilteringExpedition: number = 0;
-  isFilteringBarcode: number = 0;
-  isFilteringDate: number = 0;
-  isFilteringWarehouse: number = 0;
+  isFilteringName: number = 0;
+  isFilteringLogistic_internal: number = 0;
 
-  expedition: Array<TagsInputOption> = [];
-  barcode: Array<TagsInputOption> = [];
-  date: Array<TagsInputOption> = [];
-  warehouse: Array<TagsInputOption> = [];
-  locked: Array<TagsInputOption> = [];
+  name: Array<TagsInputOption> = [];
+  logistic_internal: Array<TagsInputOption> = [];
 
   entities;
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
  
-
- */
 form: FormGroup = this.formBuilder.group({
   name: [],
-  reference: [],
   logistic_internal: [],
   pagination: this.formBuilder.group({
     page: 1,
@@ -70,50 +60,156 @@ length: any;
     private opTransportService: OplTransportExpeditionService,
     private formBuilder: FormBuilder,
     private intermediaryService: IntermediaryService,
-    private alertController: AlertController,
     private modalCtrl: ModalController,
 
   ) { }
 
   ngOnInit() {
     this.getList(this.form);
-    /*this.initEntity();
+    this.initEntity();
     this.initForm();
     this.getFilters();
-    this.getList(this.form);
-    this.listenChanges();*/
+    this.listenChanges();
   }
 
   async getList(form?: FormGroup) {
     this.intermediaryService.presentLoading("Cargando Transportes...");
-   await  this.opTransportService.getOpTransports().subscribe((resp: any) => {
-        
-           console.log(resp);
-           this.intermediaryService.dismissLoading()
-           this.dataSource = new MatTableDataSource<any>(resp);
-           //this.originalTableStatus = JSON.parse(JSON.stringify(resp.statuses));
-          /* const paginator = resp.pagination;
- 
-           this.paginator.length = paginator.totalResults;
-           this.paginator.pageIndex = paginator.selectPage;
-           this.paginator.lastPage = paginator.lastPage;
-         */
- 
-         /*if (resp.filters) {
-           resp.filters.forEach(element => {
-             this.columns[element.name] = element.id;
-           });
-         }*/
-       },
-       async err => {
-         await this.intermediaryService.dismissLoading()
-       },
-       async () => {
-         await this.intermediaryService.dismissLoading()
-       })
-   }
+    await this.opTransportService.getOpTransports(this.form.value).subscribe((resp: any) => {
 
-   async newTransport(transport,update){
+      this.intermediaryService.dismissLoading()
+      this.dataSource = new MatTableDataSource<any>(resp.results);
+      const paginator = resp.pagination;
+
+      this.paginator.length = paginator.totalResults;
+      this.paginator.pageIndex = paginator.selectPage;
+      this.paginator.lastPage = paginator.lastPage;
+
+
+      if (resp.filters) {
+        resp.filters.forEach(element => {
+          this.columns[element.name] = element.id;
+        });
+      }
+    },
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      })
+  }
+
+  private reduceFilters(entities) {
+    this.filterButtonName.listItems = this.reduceFilterEntities(this.name, entities, 'name');
+  }
+
+  getFilters() {
+    this.opTransportService.getFiltersOpTransport().subscribe((entities) => {
+      this.name = this.updateFilterSource(entities.name, 'name');
+      this.reduceFilters(entities);
+
+      setTimeout(() => {
+        this.pauseListenFormChange = false;
+        this.pauseListenFormChange = true;
+      }, 0);
+    }, (error) => {
+      console.log(error);
+    })
+  }
+
+
+  private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
+    let resultEntity;
+    this.pauseListenFormChange = true;
+    let dataValue = this.form.get(entityName).value;
+
+    resultEntity = dataEntity ? dataEntity.map(entity => {
+      entity.id = <number>(<unknown>entity.id);
+      entity.name = entity.name;
+      entity.value = entity.name;
+      entity.checked = true;
+      entity.hide = false;
+      return entity;
+    }) : [];
+
+    if (dataValue && dataValue.length) {
+      this.form.get(entityName).patchValue(dataValue, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+    return resultEntity;
+  }
+
+  private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
+    if (this.lastUsedFilter !== entityName) {
+      let filteredEntity = entities[entityName] as unknown as string[];
+
+      arrayEntity.forEach((item) => {
+        item.hide = filteredEntity.includes(item.value);
+      });
+
+      return arrayEntity;
+    }
+  }
+
+  initEntity() {
+    this.entities = {
+      name: [],
+      logistic_internal: [],
+    }
+  }
+
+  initForm() {
+    this.form.patchValue({
+      name: [],
+      logistic_internal: [],
+    })
+  }
+
+  listenChanges() {
+    let previousPageSize = this.form.value.pagination.limit;
+    /**detect changes in the paginator */
+    this.paginator.page.subscribe(page => {
+      /**true if only change the number of results */
+      let flag = previousPageSize === page.pageSize;
+      previousPageSize = page.pageSize;
+      this.form.value.pagination = {
+        limit: page.pageSize,
+        page: flag ? page.pageIndex : 1
+      };
+      this.getList(this.form)
+    });
+
+  }
+
+  applyFilters(filtersResult, filterType) {
+    const filters = filtersResult.filters;
+    switch (filterType) {
+      case 'name':
+        let nameFiltered: string[] = [];
+        for (let name of filters) {
+
+          if (name.checked) nameFiltered.push(name.name);
+        }
+        if (nameFiltered.length >= this.name.length) {
+          this.form.value.name = [];
+          this.isFilteringName = this.name.length;
+        } else {
+          if (nameFiltered.length > 0) {
+            this.form.value.name = nameFiltered;
+            this.isFilteringName = nameFiltered.length;
+          } else {
+            this.form.value.name = ["99999"];
+            this.isFilteringName = this.name.length;
+          }
+        }
+        break;
+    }
+
+    this.lastUsedFilter = filterType;
+    this.getList(this.form);
+  }
+
+  async newTransport(transport, update) {
     let modal = (await this.modalCtrl.create({
       component: CreateTransportComponent,
       componentProps: {
@@ -127,87 +223,80 @@ length: any;
     });
 
     modal.present();
-   }
-   
-
-masterToggle() {
-  this.isAllSelected() ?
-    this.selection.clear() :
-    this.dataSource.data.forEach(row => this.selection.select(row));
-}
-
-isAllSelected() {
-  const numSelected = this.selection.selected.length;
-  const numRows = this.dataSource.data.length;
-  return numSelected === numRows;
-}
-
-checkboxLabel(row?): string {
-  if (!row) {
-    return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
   }
-  return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
-}
 
-log_internal(logInt){
-  if(logInt == 1 || logInt == true){
-    return "SI"
-  }else{
-  return "NO"
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
   }
-}
 
-createTransport(){
-  let body=[];
-  this.newTransport(body,false);
-}
-openRow(row){
-  this.newTransport(row,true);
-}
-refresh(){
-  this.getList(this.form);
-  this.selection.clear();
-} 
-async delete(){
-  console.log(this.selection.selected.length);
-  if(this.selection.selected.length == 1){
-    console.log(this.selection.selected);
-    await this.deleteOneTransport(this.selection.selected[0].id);
-  }else{
-    this.selection.selected.forEach((element, index, array)=> {
-      this.deleteTransport(element.id);
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  checkboxLabel(row?): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+  }
+
+  log_internals(logInt) {
+    if (logInt == 1 || logInt == true) {
+      return "SI"
+    } else {
+      return "NO"
+    }
+  }
+
+  createTransport() {
+    let body = [];
+    this.newTransport(body, false);
+  }
+
+  openRow(row) {
+    this.newTransport(row, true);
+  }
+
+  refresh() {
+    this.getList(this.form);
+    this.selection.clear();
+    this.getFilters();
+  }
+
+  async delete() {
+    let observable = new Observable(observer => observer.next());
+    this.selection.selected.forEach(trasnport => {
+      observable = observable.pipe(switchMap(response => {
+        return this.opTransportService.deleteTransport(trasnport.id);
+      }))
     });
-    this.refresh();
+    this.intermediaryService.presentLoading();
+    observable.subscribe(
+      () => {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastSuccess(
+          'Transportes borrados con exito'
+        );
+        this.refresh();
+      },
+      () => {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError('No se puede borrar el transporte, por que esta asignado a una expedición');
+      }
+    );
   }
 
+  async sortData($event: Sort) {
+    if ($event.active == "name") {
+      this.form.value.orderby.type = 1;
+    }
+    this.form.value.orderby.order = $event.direction !== '' ? $event.direction : 'asc';
 
-}
-
-public async deleteTransport(id){
-  this.intermediaryService.presentLoading("Eliminar Transportes...");
-  await this.opTransportService.deleteTransport(id).subscribe((resp: any) => {
-    this.intermediaryService.dismissLoading();
-    this.intermediaryService.presentToastSuccess("Transportes borrados exitosamente");
-    console.log(resp);
-  },(error)=>{
-    this.intermediaryService.presentToastError("No se puede borrar el transporte");
-    this.intermediaryService.dismissLoading();
-    console.log(error);
-  });
-}
-
-public async deleteOneTransport(id){
-  this.intermediaryService.presentLoading("Eliminar Transportes...");
-  await this.opTransportService.deleteTransport(id).subscribe((resp: any) => {
-    this.intermediaryService.dismissLoading();
-    this.intermediaryService.presentToastSuccess("Transportes borrados exitosamente");
-    console.log(resp);
-    this.refresh();
-  },(error)=>{
-    this.intermediaryService.presentToastError("No se puede borrar el transporte");
-    this.intermediaryService.dismissLoading();
-    console.log(error);
-  });
-}
+    this.getList(this.form);
+  }
 
 }
