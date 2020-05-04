@@ -13,10 +13,12 @@
     android:orientation="vertical">
 
     <LinearLayout
+      android:id="@+id/forceCameraBottomHalf"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_weight="1"
-      android:orientation="horizontal"></LinearLayout>
+      android:orientation="horizontal"
+      android:visibility="gone"></LinearLayout>
 
     <FrameLayout
       android:id="@+id/picker"
@@ -72,12 +74,46 @@
       android:layout_height="0dp"
       android:layout_weight="4"
       android:orientation="horizontal"
-    />
+    >
+
+      <LinearLayout
+        android:id="@+id/sideCameraOcclusion"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_weight="1"
+          android:background="@color/transparentScanner">
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_weight="8">
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_weight="1"
+          android:background="@color/transparentScanner">
+
+        </LinearLayout>
+      </LinearLayout>
+
+    </LinearLayout>
 
     <LinearLayout
+      android:id="@+id/bottomCameraOcclusion"
       android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_weight="1"
+      android:background="@color/transparentScanner"
       android:gravity="center_horizontal|bottom"
       android:orientation="vertical">
 
@@ -144,13 +180,15 @@
   </LinearLayout>
 
   <LinearLayout
+    android:id="@+id/fabOptions"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:visibility="gone">
 
     <LinearLayout
-      android:id="@+id/fabOptions"
+      android:id="@+id/fabSubOptions"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="right"
@@ -267,7 +305,7 @@
       android:src="@drawable/ic_md_menu"
       android:theme="@style/Theme.AppCompat"
       android:tint="#FFFFFF"
-      android:visibility="gone"
+      android:visibility="visible"
       app:backgroundTint="#000000"
       app:fabSize="normal" />
 

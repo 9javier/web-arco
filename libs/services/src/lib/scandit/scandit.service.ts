@@ -14,6 +14,8 @@ import {environment as al_environment} from "../../../../../apps/al/src/environm
 import {RequestsProvider} from "../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../models/endpoints/HttpRequest";
 import {PickingProvider} from "../../providers/picking/picking.provider";
+import {Router} from "@angular/router";
+import * as toolbarProvider from "../../providers/toolbar/toolbar.provider";
 
 declare let Scandit;
 declare let GScandit;
@@ -52,6 +54,8 @@ export class ScanditService {
     private events: Events,
     private auth: AuthenticationService,
     private inventoryService: InventoryService,
+    private router: Router,
+    private toolbarProvider: toolbarProvider.ToolbarProvider,
     private warehouseService: WarehouseService,
     private authenticationService: AuthenticationService,
     private scanditProvider: ScanditProvider,
@@ -390,6 +394,7 @@ export class ScanditService {
                           actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
                           total: String(this.pickingProvider.pickingSelectedToStart.quantity)
                         };
+                        productsToScan[0]['packing'] = { reference: packingReference };
                         ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                         ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_started}${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
                         this.hideTextMessage(2000);
@@ -566,6 +571,7 @@ export class ScanditService {
                     actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
                     total: String(this.pickingProvider.pickingSelectedToStart.quantity)
                   };
+                  productsToScan[0]['packing'] = { reference: packingReference };
                   ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                 } else {
                   this.pickingLog(2, "34", "} else {");
@@ -595,6 +601,7 @@ export class ScanditService {
                           actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
                           total: String(this.pickingProvider.pickingSelectedToStart.quantity)
                         };
+                        productsToScan[0]['packing'] = { reference: packingReference };
                         ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                       } else {
                         this.pickingLog(2, "40", "} else {");
@@ -629,6 +636,7 @@ export class ScanditService {
                         actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
                         total: String(this.pickingProvider.pickingSelectedToStart.quantity)
                       };
+                      productsToScan[0]['packing'] = { reference: packingReference };
                       ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                     } else {
                       this.pickingLog(2, "46", "} else {");
@@ -695,6 +703,7 @@ export class ScanditService {
                                 actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
                                 total: String(this.pickingProvider.pickingSelectedToStart.quantity)
                               };
+                              productsToScan[0]['packing'] = { reference: packingReference };
                               ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                             } else {
                               this.pickingLog(2, "57", "} else {");
@@ -773,6 +782,11 @@ export class ScanditService {
             processInitiated = true;
             ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
           }
+        } else if(response.action == 'redirect_positioning') {
+          ScanditMatrixSimple.finish();
+          this.toolbarProvider.optionsActions.next([]);
+          this.toolbarProvider.currentPage.next("Ubicar/escanear");
+          this.positioning();
         }
       }
     }, 'Escanear', HEADER_BACKGROUND, HEADER_COLOR);
