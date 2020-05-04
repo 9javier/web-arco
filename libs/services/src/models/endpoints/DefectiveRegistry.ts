@@ -16,6 +16,7 @@ export namespace DefectiveRegistryModel {
     photos?: (any)[];
     warehouse?: Warehouse;
     factoryReturn?: boolean;
+    sold?: boolean;
   }
 
   export interface StatusManagementDefect {
