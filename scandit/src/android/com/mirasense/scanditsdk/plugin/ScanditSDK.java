@@ -1105,11 +1105,24 @@ public class ScanditSDK extends CordovaPlugin {
         if (viewDataMatrixSimpleFinal != null) {
           ImageButton arrowBack = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("arrow_back_button", "id", packageName));
           ImageView laserButton = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("laserButton", "id", packageName));
+          TextView title = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("action_bar_title", "id", packageName));
           LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", packageName));
           LinearLayout fabOptions = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("fabOptions", "id", packageName));
           LinearLayout forceCameraBottomHalf = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("forceCameraBottomHalf", "id", packageName));
           LinearLayout sideCameraOcclusion = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("sideCameraOcclusion", "id", packageName));
           LinearLayout bottomCameraOcclusion = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("bottomCameraOcclusion", "id", packageName));
+
+          laserButton.setOnClickListener(view -> {
+            JSONObject jsonObject = new JSONObject();
+            try {
+              jsonObject.put("result", true);
+              jsonObject.put("action", "laser_mode");
+            } catch (JSONException e) {}
+            PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+            pResult.setKeepCallback(true);
+            mCallbackContextMatrixSimple.sendPluginResult(pResult);
+          });
+
           if (fShow) {
             rlInfoProduct.setVisibility(View.VISIBLE);
             fabOptions.setVisibility(View.VISIBLE);
@@ -1122,10 +1135,15 @@ public class ScanditSDK extends CordovaPlugin {
             rlInfoProduct.setVisibility(View.GONE);
             fabOptions.setVisibility(View.GONE);
             forceCameraBottomHalf.setVisibility(View.GONE);
-            laserButton.setVisibility(View.GONE);
             sideCameraOcclusion.setVisibility(View.VISIBLE);
             bottomCameraOcclusion.setBackgroundColor(0xa6000000);
-            arrowBack.setVisibility(View.VISIBLE);
+            if(title.getText().equals("Tareas de Picking")){
+              arrowBack.setVisibility(View.GONE);
+              laserButton.setVisibility(View.VISIBLE);
+            }else{
+              arrowBack.setVisibility(View.VISIBLE);
+              laserButton.setVisibility(View.GONE);
+            }
           }
         }
       });
