@@ -122,6 +122,7 @@ export class DefectiveHistoricComponent implements OnInit {
     this.initEntity();
     this.initForm();
     this.getFilters();
+    this.getColumns(this.form)
     this.getList(this.form);
     this.listenChanges();
   }
@@ -280,6 +281,22 @@ export class DefectiveHistoricComponent implements OnInit {
 
       return arrayEntity;
     }
+  }
+
+  async getColumns(form?: FormGroup) {
+    this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe(
+      (resp: any) => {
+        resp.filters.forEach(element => {
+          this.columns[element.name] = element.id;
+        });
+      },
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      }
+    )
   }
 
   async sortData(event: Sort) {
