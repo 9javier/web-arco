@@ -230,6 +230,11 @@
     <source-file src="src/android/drawable/bg_transparent_black.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/bg_triangle.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/ic_launcher_background.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/ic_md_alert.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/ic_md_cube.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/ic_md_locate.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/ic_md_menu.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/ic_md_qr_scanner.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/ic_product.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/ic_close.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/ic_search.xml" target-dir="res/drawable"/>
