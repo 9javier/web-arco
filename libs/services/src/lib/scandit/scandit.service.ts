@@ -355,166 +355,84 @@ export class ScanditService {
       //Check Jail/Pallet or product
       if (!this.scannerPaused && this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PACKING) {
         this.pickingLog(2, "3", "if (!this.scannerPaused && this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PACKING) {");
-        if(processInitiated && lastCarrierScanned == code){
-          if (productsToScan && productsToScan.length > 0) {
-            processInitiated = false;
-            packingReference = code;
-            packingReference = '';
-            ScanditMatrixSimple.showNexProductToScan(false);
-            ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_end_packing}${code}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
-            this.hideTextMessage(2000);
-            ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, '');
+        if (productsToScan.length != 0) {
+          this.pickingLog(2, "4", "if (productsToScan.length != 0) {");
+          let typePackingScanned = 0;
+          if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.JAIL)) {
+            typePackingScanned = 1;
+          } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PALLET)) {
+            typePackingScanned = 2;
           } else {
-            this.scannerPaused = true;
-            const scanUnlockTimeout = setTimeout(() => { this.scannerPaused = false; }, 10 * 1000);
-            try {
-              ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje...');
-              this.postVerifyPacking({
-                status: 3,
-                pickingId: pickingId,
-                packingReference: code
-              })
-                .then((res) => {
-                  ScanditMatrixSimple.hideLoadingDialog();
-                  this.pickingLog(2, "21", ".subscribe((res) => {");
-                  ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
-                  this.hideTextMessage(1500);
-                  ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference ? jailReference : lastCarrierScanned);
-                  this.clearTimeoutCleanLastCodeScanned();
-                  setTimeout(() => {
-                    this.pickingLog(2, "22", "setTimeout(() => {");
-                    ScanditMatrixSimple.finish();
-                    this.events.publish('picking:remove');
-                  }, 1.5 * 1000);
-                }, (error) => {
-                  ScanditMatrixSimple.hideLoadingDialog();
-                  this.pickingLog(2, "23", "}, (error) => {");
-                  this.scannerPaused = false;
-                  clearTimeout(scanUnlockTimeout);
-                  this.clearTimeoutCleanLastCodeScanned();
-                  if (error.error.code == 404) {
-                    this.pickingLog(2, "24", "if (error.error.code == 404) {");
-                    ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                    this.hideTextMessage(2000);
-                  } else {
-                    this.pickingLog(2, "25", "} else {");
-                    ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                    this.hideTextMessage(2000);
-                  }
-                })
-                .catch((error) => {
-                  ScanditMatrixSimple.hideLoadingDialog();
-                  this.pickingLog(2, "23", "}, (error) => {");
-                  this.scannerPaused = false;
-                  clearTimeout(scanUnlockTimeout);
-                  this.clearTimeoutCleanLastCodeScanned();
-                  if (error.error.code == 404) {
-                    this.pickingLog(2, "24", "if (error.error.code == 404) {");
-                    ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                    this.hideTextMessage(2000);
-                  } else {
-                    this.pickingLog(2, "25", "} else {");
-                    ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                    this.hideTextMessage(2000);
-                  }
-                });
-            } catch (e) {
-              ScanditMatrixSimple.hideLoadingDialog();
-              this.scannerPaused = false;
-              clearTimeout(scanUnlockTimeout);
-              this.clearTimeoutCleanLastCodeScanned();
-              throw e;
-            }
+            typePackingScanned = 3;
           }
-        }else{
-          if (productsToScan.length != 0) {
-            this.pickingLog(2, "4", "if (productsToScan.length != 0) {");
-            let typePackingScanned = 0;
-            if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.JAIL)) {
-              typePackingScanned = 1;
-            } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PALLET)) {
-              typePackingScanned = 2;
-            } else {
-              typePackingScanned = 3;
-            }
 
-            if ((packingReference && packingReference == code) || !packingReference) {
-              timeLastCodeScanned = new Date().getTime();
-              lastCarrierScanned = code;
-              this.pickingLog(2, "7", "if ((packingReference && packingReference == code) || !packingReference) {");
-              if (typePackingScanned == typePacking) {
-                this.pickingLog(2, "8", "if (typePackingScanned == typePacking) {");
-                ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje...');
-                if(!packingReference && code == packingRef){
-                  ScanditMatrixSimple.hideLoadingDialog();
-                  if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.JAIL)) {
-                    typePacking = 1;
-                  } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PALLET)) {
-                    typePacking = 2;
-                  } else {
-                    typePacking = 3;
-                  }
-                  processInitiated = true;
-                  jailReference = code;
-                  packingReference = code;
-                  productsToScan[0]['quantity'] = {
-                    actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
-                    total: String(this.pickingProvider.pickingSelectedToStart.quantity)
-                  };
-                  productsToScan[0]['packing'] = { reference: packingReference };
-                  ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
-                  ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_started}${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
-                  this.hideTextMessage(2000);
-                  ScanditMatrixSimple.showTextStartScanPacking(false, typePacking, '');
-                }else{
-                  this.postVerifyPacking({
-                    status: 2,
-                    pickingId: pickingId,
-                    packingReference: code
-                  })
-                    .then((res) => {
-                      ScanditMatrixSimple.hideLoadingDialog();
-                      this.pickingLog(2, "9", ".subscribe((res) => {");
-                      if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.JAIL)) {
-                        typePacking = 1;
-                      } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PALLET)) {
-                        typePacking = 2;
-                      } else {
-                        typePacking = 3;
-                      }
-                      if(res){
-                        if (res.code == 200 || res.code == 201) {
-                          if(res.data.packingStatus == 2){
-                            processInitiated = true;
-                            jailReference = code;
-                            packingReference = code;
-                            productsToScan[0]['quantity'] = {
-                              actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
-                              total: String(this.pickingProvider.pickingSelectedToStart.quantity)
-                            };
-                            productsToScan[0]['packing'] = { reference: packingReference };
-                            ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
-                            ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_started}${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
-                            this.hideTextMessage(2000);
-                            ScanditMatrixSimple.showTextStartScanPacking(false, typePacking, '');
-                          } else if(res.data.packingStatus == 3){
-                            processInitiated = false;
-                            packingReference = code;
-                            packingReference = '';
-                            ScanditMatrixSimple.showNexProductToScan(false);
-                            ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_end_packing}${code}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
-                            this.hideTextMessage(2000);
-                            ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, '');
-                          } else {
-                            processInitiated = false;
-                            console.error('Error Subscribe::Check Packing Reference::', res);
-                            ScanditMatrixSimple.setText(
-                              res.message,
-                              this.scanditProvider.colorsMessage.error.color,
-                              this.scanditProvider.colorText.color,
-                              16);
-                            this.hideTextMessage(1500);
-                          }
+          if ((packingReference && packingReference == code) || !packingReference) {
+            timeLastCodeScanned = new Date().getTime();
+            lastCarrierScanned = code;
+            this.pickingLog(2, "7", "if ((packingReference && packingReference == code) || !packingReference) {");
+            if (typePackingScanned == typePacking) {
+              this.pickingLog(2, "8", "if (typePackingScanned == typePacking) {");
+              ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje...');
+              if(!packingReference && code == packingRef){
+                ScanditMatrixSimple.hideLoadingDialog();
+                if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.JAIL)) {
+                  typePacking = 1;
+                } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PALLET)) {
+                  typePacking = 2;
+                } else {
+                  typePacking = 3;
+                }
+                processInitiated = true;
+                jailReference = code;
+                packingReference = code;
+                productsToScan[0]['quantity'] = {
+                  actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
+                  total: String(this.pickingProvider.pickingSelectedToStart.quantity)
+                };
+                productsToScan[0]['packing'] = { reference: packingReference };
+                ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+                ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_started}${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                this.hideTextMessage(2000);
+                ScanditMatrixSimple.showTextStartScanPacking(false, typePacking, '');
+              }else{
+                this.postVerifyPacking({
+                  status: 2,
+                  pickingId: pickingId,
+                  packingReference: code
+                })
+                  .then((res) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.pickingLog(2, "9", ".subscribe((res) => {");
+                    if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.JAIL)) {
+                      typePacking = 1;
+                    } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PALLET)) {
+                      typePacking = 2;
+                    } else {
+                      typePacking = 3;
+                    }
+                    if(res){
+                      if (res.code == 200 || res.code == 201) {
+                        if(res.data.packingStatus == 2){
+                          processInitiated = true;
+                          jailReference = code;
+                          packingReference = code;
+                          productsToScan[0]['quantity'] = {
+                            actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
+                            total: String(this.pickingProvider.pickingSelectedToStart.quantity)
+                          };
+                          productsToScan[0]['packing'] = { reference: packingReference };
+                          ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+                          ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_started}${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                          this.hideTextMessage(2000);
+                          ScanditMatrixSimple.showTextStartScanPacking(false, typePacking, '');
+                        } else if(res.data.packingStatus == 3){
+                          processInitiated = false;
+                          packingReference = code;
+                          packingReference = '';
+                          ScanditMatrixSimple.showNexProductToScan(false);
+                          ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_end_packing}${code}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                          this.hideTextMessage(2000);
+                          ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, '');
                         } else {
                           processInitiated = false;
                           console.error('Error Subscribe::Check Packing Reference::', res);
@@ -525,118 +443,135 @@ export class ScanditService {
                             16);
                           this.hideTextMessage(1500);
                         }
-                      } else {
+                      } else if(res.error == 'Error to make POST Request'){
                         processInitiated = false;
+                        packingReference = code;
                         packingReference = '';
                         ScanditMatrixSimple.showNexProductToScan(false);
-                        ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_packing_empty}${code}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                        ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_end_packing}${code}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                        this.hideTextMessage(2000);
                         ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, '');
-                        this.hideTextMessage(2000);
-                      }
-                    }, (error) => {
-                      ScanditMatrixSimple.hideLoadingDialog();
-                      this.pickingLog(2, "13", "}, (error) => {");
-                      if (error.error.code == 404) {
-                        this.pickingLog(2, "14", "if (error.error.code == 404) {");
-                        ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                        this.hideTextMessage(2000);
                       } else {
-                        this.pickingLog(2, "15", "} else {");
-                        ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                        this.hideTextMessage(2000);
+                        processInitiated = false;
+                        console.error('Error Subscribe::Check Packing Reference::', res);
+                        ScanditMatrixSimple.setText(
+                          res.message,
+                          this.scanditProvider.colorsMessage.error.color,
+                          this.scanditProvider.colorText.color,
+                          16);
+                        this.hideTextMessage(1500);
                       }
-                    })
-                    .catch((error) => {
-                      ScanditMatrixSimple.hideLoadingDialog();
-                      this.pickingLog(2, "13", "}, (error) => {");
-                      if (error.error.code == 404) {
-                        this.pickingLog(2, "14", "if (error.error.code == 404) {");
-                        ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                        this.hideTextMessage(2000);
-                      } else {
-                        this.pickingLog(2, "15", "} else {");
-                        ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                        this.hideTextMessage(2000);
-                      }
-                    });
-                }
-              } else {
-                this.pickingLog(2, "16", "} else {");
-                ScanditMatrixSimple.setText(literalsJailPallet[typePacking].wrong_packing, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-                this.hideTextMessage(2000);
+                    } else {
+                      processInitiated = false;
+                      packingReference = '';
+                      ScanditMatrixSimple.showNexProductToScan(false);
+                      ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_packing_empty}${code}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                      ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, '');
+                      this.hideTextMessage(2000);
+                    }
+                  }, (error) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.pickingLog(2, "13", "}, (error) => {");
+                    if (error.error.code == 404) {
+                      this.pickingLog(2, "14", "if (error.error.code == 404) {");
+                      ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                      this.hideTextMessage(2000);
+                    } else {
+                      this.pickingLog(2, "15", "} else {");
+                      ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                      this.hideTextMessage(2000);
+                    }
+                  })
+                  .catch((error) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.pickingLog(2, "13", "}, (error) => {");
+                    if (error.error.code == 404) {
+                      this.pickingLog(2, "14", "if (error.error.code == 404) {");
+                      ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                      this.hideTextMessage(2000);
+                    } else {
+                      this.pickingLog(2, "15", "} else {");
+                      ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                      this.hideTextMessage(2000);
+                    }
+                  });
               }
             } else {
-              this.pickingLog(2, "17", "} else {");
-              ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_resumed}${packingReference}.`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+              this.pickingLog(2, "16", "} else {");
+              ScanditMatrixSimple.setText(literalsJailPallet[typePacking].wrong_packing, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
               this.hideTextMessage(2000);
             }
-          } else if (jailReference && jailReference != code) {
-            this.pickingLog(2, "19", "} else if (jailReference != code) {");
-            ScanditMatrixSimple.setText(literalsJailPallet[typePacking].wrong_process_finished, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-            this.hideTextMessage(2000);
           } else {
-            this.pickingLog(2, "20", "} else {");
-            // lock scanner in order to avoid double jail or pallet reading, requesting the server twice and thus sending two dispatchnote to Avelon
-            this.scannerPaused = true;
-            const scanUnlockTimeout = setTimeout(() => { this.scannerPaused = false; }, 10 * 1000);
-            try {
-              ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje...');
-              this.postVerifyPacking({
-                status: 3,
-                pickingId: pickingId,
-                packingReference: code
+            this.pickingLog(2, "17", "} else {");
+            ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_resumed}${packingReference}.`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+            this.hideTextMessage(2000);
+          }
+        } else if (jailReference && jailReference != code) {
+          this.pickingLog(2, "19", "} else if (jailReference != code) {");
+          ScanditMatrixSimple.setText(literalsJailPallet[typePacking].wrong_process_finished, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+        } else {
+          this.pickingLog(2, "20", "} else {");
+          // lock scanner in order to avoid double jail or pallet reading, requesting the server twice and thus sending two dispatchnote to Avelon
+          this.scannerPaused = true;
+          const scanUnlockTimeout = setTimeout(() => { this.scannerPaused = false; }, 10 * 1000);
+          try {
+            ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje...');
+            this.postVerifyPacking({
+              status: 3,
+              pickingId: pickingId,
+              packingReference: code
+            })
+              .then((res) => {
+                ScanditMatrixSimple.hideLoadingDialog();
+                this.pickingLog(2, "21", ".subscribe((res) => {");
+                ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
+                this.hideTextMessage(1500);
+                ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference ? jailReference : lastCarrierScanned);
+                this.clearTimeoutCleanLastCodeScanned();
+                setTimeout(() => {
+                  this.pickingLog(2, "22", "setTimeout(() => {");
+                  ScanditMatrixSimple.finish();
+                  this.events.publish('picking:remove');
+                }, 1.5 * 1000);
+              }, (error) => {
+                ScanditMatrixSimple.hideLoadingDialog();
+                this.pickingLog(2, "23", "}, (error) => {");
+                this.scannerPaused = false;
+                clearTimeout(scanUnlockTimeout);
+                this.clearTimeoutCleanLastCodeScanned();
+                if (error.error.code == 404) {
+                  this.pickingLog(2, "24", "if (error.error.code == 404) {");
+                  ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                  this.hideTextMessage(2000);
+                } else {
+                  this.pickingLog(2, "25", "} else {");
+                  ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                  this.hideTextMessage(2000);
+                }
               })
-                .then((res) => {
-                  ScanditMatrixSimple.hideLoadingDialog();
-                  this.pickingLog(2, "21", ".subscribe((res) => {");
-                  ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
-                  this.hideTextMessage(1500);
-                  ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference ? jailReference : lastCarrierScanned);
-                  this.clearTimeoutCleanLastCodeScanned();
-                  setTimeout(() => {
-                    this.pickingLog(2, "22", "setTimeout(() => {");
-                    ScanditMatrixSimple.finish();
-                    this.events.publish('picking:remove');
-                  }, 1.5 * 1000);
-                }, (error) => {
-                  ScanditMatrixSimple.hideLoadingDialog();
-                  this.pickingLog(2, "23", "}, (error) => {");
-                  this.scannerPaused = false;
-                  clearTimeout(scanUnlockTimeout);
-                  this.clearTimeoutCleanLastCodeScanned();
-                  if (error.error.code == 404) {
-                    this.pickingLog(2, "24", "if (error.error.code == 404) {");
-                    ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                    this.hideTextMessage(2000);
-                  } else {
-                    this.pickingLog(2, "25", "} else {");
-                    ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                    this.hideTextMessage(2000);
-                  }
-                })
-                .catch((error) => {
-                  ScanditMatrixSimple.hideLoadingDialog();
-                  this.pickingLog(2, "23", "}, (error) => {");
-                  this.scannerPaused = false;
-                  clearTimeout(scanUnlockTimeout);
-                  this.clearTimeoutCleanLastCodeScanned();
-                  if (error.error.code == 404) {
-                    this.pickingLog(2, "24", "if (error.error.code == 404) {");
-                    ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                    this.hideTextMessage(2000);
-                  } else {
-                    this.pickingLog(2, "25", "} else {");
-                    ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                    this.hideTextMessage(2000);
-                  }
-                });
-            } catch (e) {
-              ScanditMatrixSimple.hideLoadingDialog();
-              this.scannerPaused = false;
-              clearTimeout(scanUnlockTimeout);
-              this.clearTimeoutCleanLastCodeScanned();
-              throw e;
-            }
+              .catch((error) => {
+                ScanditMatrixSimple.hideLoadingDialog();
+                this.pickingLog(2, "23", "}, (error) => {");
+                this.scannerPaused = false;
+                clearTimeout(scanUnlockTimeout);
+                this.clearTimeoutCleanLastCodeScanned();
+                if (error.error.code == 404) {
+                  this.pickingLog(2, "24", "if (error.error.code == 404) {");
+                  ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                  this.hideTextMessage(2000);
+                } else {
+                  this.pickingLog(2, "25", "} else {");
+                  ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                  this.hideTextMessage(2000);
+                }
+              });
+          } catch (e) {
+            ScanditMatrixSimple.hideLoadingDialog();
+            this.scannerPaused = false;
+            clearTimeout(scanUnlockTimeout);
+            this.clearTimeoutCleanLastCodeScanned();
+            throw e;
           }
         }
       } else if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PRODUCT && !this.scannerPaused && code) {
