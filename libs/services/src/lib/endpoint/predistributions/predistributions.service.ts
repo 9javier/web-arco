@@ -97,7 +97,9 @@ export class PredistributionsService {
       colors: [],
       category: [],
       family: [],
-      lifestyle: []
+      lifestyle: [],
+      products: [],
+      locations: []
     };
 
     return this.http.post<HttpRequestModel.Response>(this.entitiesBlockedUrl,body).pipe(

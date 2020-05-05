@@ -149,16 +149,23 @@
     
     .my-sticky-col.info.type-120 {
       left: 240px;
+      min-width: 90px;
+      max-width: 90px;
     }
     .my-sticky-col.info.type-240 {
-      left: 360px;
+      left: 330px;
+      min-width: 150px;
+      max-width: 150px;
     }
     .my-sticky-col.info.type-360 {
       left: 480px;
     }
+    .my-sticky-col.info.type-480 {
+      left: 480px;
+    }
 
     .my-sticky-col.info.process {
-      left: 480px;
+      left: 600px;
       border-right-width: 1px;
       border-right-color: var(--ion-color-primary);
       border-right-style: solid;

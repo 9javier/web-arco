@@ -78,12 +78,20 @@ const routes: Routes = [
       name: 'Registro horario'
     }
   },
-  {
+/*  {
     path: 'user-time',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
     data: {
       name: 'Registro horario'
+    }
+  },*/
+  {
+    path: 'welcome',
+    canActivate: [AuthGuard],
+    loadChildren: './welcome/welcome.module#WelcomePageModule',
+    data: {
+      name: 'Bienvenido'
     }
   },
   {

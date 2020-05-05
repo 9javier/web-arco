@@ -25,7 +25,7 @@ import { BehaviorSubject, of, Observable } from 'rxjs';
 export class DefectiveHistoricComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['id','user','statusManagementDefect','warehouse','product','model','size','brand','color','dateDetection','defectTypeParent','defectTypeChild', 'defectZoneParent','defectZoneChild'];
+  displayedColumns: string[] = ['id','user','statusManagementDefect','warehouse','product','model','size','brand','color','dateDetection','defectTypeParent','defectTypeChild', 'defectZoneParent','defectZoneChild', 'sold'];
   dataSource;
   selection = new SelectionModel<DefectiveRegistry>(true, []);
   columns = {};
@@ -44,6 +44,7 @@ export class DefectiveHistoricComponent implements OnInit {
   @ViewChild('filterButtonDefectZoneParent') filterButtonDefectZoneParent: FilterButtonComponent;
   @ViewChild('filterButtonDefectZoneChild') filterButtonDefectZoneChild: FilterButtonComponent;
   @ViewChild('filterButtonWarehouse') filterButtonWarehouse: FilterButtonComponent;
+  @ViewChild('filterButtonSold') filterButtonSold: FilterButtonComponent;
 
   isFilteringId: number = 0;
   isFilteringUser: number = 0;
@@ -59,6 +60,7 @@ export class DefectiveHistoricComponent implements OnInit {
   isFilteringDefectZoneParent: number = 0;
   isFilteringDefectZoneChild: number = 0;
   isFilteringWarehouse: number = 0;
+  isFilteringSold: number = 0;
 
   /**Filters */
   id: Array<TagsInputOption> = [];
@@ -75,6 +77,7 @@ export class DefectiveHistoricComponent implements OnInit {
   defectZoneParent: Array<TagsInputOption> = [];
   defectZoneChild: Array<TagsInputOption> = [];
   warehouse: Array<TagsInputOption> = [];
+  sold: Array<TagsInputOption> = [];
 
   entities;
   pauseListenFormChange: boolean;
@@ -96,6 +99,7 @@ export class DefectiveHistoricComponent implements OnInit {
     defectZoneParent: [],
     defectZoneChild: [],
     warehouse: [],
+    sold: [],
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
@@ -118,6 +122,7 @@ export class DefectiveHistoricComponent implements OnInit {
     this.initEntity();
     this.initForm();
     this.getFilters();
+    this.getColumns(this.form)
     this.getList(this.form);
     this.listenChanges();
   }
@@ -138,6 +143,7 @@ export class DefectiveHistoricComponent implements OnInit {
       defectZoneParent: [],
       defectZoneChild: [],
       warehouse: [],
+      sold: [],
       orderby: this.formBuilder.group({
         type: 1,
         order: "asc"
@@ -161,6 +167,7 @@ export class DefectiveHistoricComponent implements OnInit {
       defectZoneParent: [],
       defectZoneChild: [],
       warehouse: [],
+      sold: [],
       orderby: this.formBuilder.group({
         type: 1,
         order: "asc"
@@ -203,6 +210,7 @@ export class DefectiveHistoricComponent implements OnInit {
       this.defectZoneParent = this.updateFilterSource(entities.defectZoneParent, 'defectZoneParent');
       this.defectZoneChild = this.updateFilterSource(entities.defectZoneChild, 'defectZoneChild');
       this.warehouse = this.updateFilterSource(entities.warehouse, 'warehouse');
+      this.sold = this.updateFilterSource(entities.sold, 'sold');
 
       this.reduceFilters(entities);
       setTimeout(() => {
@@ -217,11 +225,20 @@ export class DefectiveHistoricComponent implements OnInit {
 
     this.pauseListenFormChange = true;
     let dataValue = this.form.get(entityName).value;
-
     resultEntity = dataEntity.map(entity => {
       entity.id = <number>(<unknown>entity.id);
-      entity.name = entity.name;
-      entity.value = entity.name;
+      if(entity.name.toString()=='false'){
+        entity.name = 'No';
+        entity.value = 'No';
+      }else{
+        if(entity.name.toString()=='true'){
+          entity.name = 'Sí';
+          entity.value = 'Sí';
+        }else{
+          entity.name = entity.name;
+          entity.value = entity.name;
+        }
+      }
       entity.checked = true;
       entity.hide = false;
       return entity;
@@ -251,6 +268,7 @@ export class DefectiveHistoricComponent implements OnInit {
     this.filterButtonDefectZoneParent.listItems = this.reduceFilterEntities(this.defectZoneParent, entities,'defectZoneParent');
     this.filterButtonDefectZoneChild.listItems = this.reduceFilterEntities(this.defectZoneChild, entities,'defectZoneChild');
     this.filterButtonWarehouse.listItems = this.reduceFilterEntities(this.warehouse, entities,'warehouse');
+    this.filterButtonSold.listItems = this.reduceFilterEntities(this.sold, entities,'sold');
   }
 
   private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
@@ -263,6 +281,22 @@ export class DefectiveHistoricComponent implements OnInit {
 
       return arrayEntity;
     }
+  }
+
+  async getColumns(form?: FormGroup) {
+    this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe(
+      (resp: any) => {
+        resp.filters.forEach(element => {
+          this.columns[element.name] = element.id;
+        });
+      },
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      }
+    )
   }
 
   async sortData(event: Sort) {
@@ -592,6 +626,26 @@ export class DefectiveHistoricComponent implements OnInit {
           } else {
             this.form.value.warehouse = ['99999'];
             this.isFilteringWarehouse = this.warehouse.length;
+          }
+        }
+        break;
+      case 'sold':
+        let soldFiltered: string[] = [];
+        for (let sold of filters) {
+
+          if (sold.checked) soldFiltered.push(sold.id);
+        }
+
+        if (soldFiltered.length >= this.sold.length) {
+          this.form.value.sold = [];
+          this.isFilteringSold = this.sold.length;
+        } else {
+          if (soldFiltered.length > 0) {
+            this.form.value.sold = soldFiltered;
+            this.isFilteringSold = soldFiltered.length;
+          } else {
+            this.form.value.sold = ['99999'];
+            this.isFilteringSold = this.sold.length;
           }
         }
         break;

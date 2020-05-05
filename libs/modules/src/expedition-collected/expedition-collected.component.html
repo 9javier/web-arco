@@ -4,17 +4,21 @@
     <div *ngFor="let transport of dataTransport">
       <mat-tab label="{{ transport.name }}">
         <ng-template matTabContent>
-          <suite-package-collected #selected [id]="transport.reference"></suite-package-collected>
+          <suite-package-collected #selected [id]="transport.reference" [sendEvent]="sendEvent" (buttonState)="buttonState($event)" ></suite-package-collected>
         </ng-template>
       </mat-tab>
     </div>
   </mat-tab-group>
 
 </ion-content>
-<!--<ion-footer>
-  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button (click)="refresh()" matTooltip="Actualizar" matTooltipClass="tooltip">
+
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab" slot="fixed">
+    <ion-fab-button (click)="refresh()">
       <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
+    <ion-fab-button (click)="send()" [disabled]="(buttonSend == false)">
+      <ion-icon name="send"></ion-icon>
+    </ion-fab-button>
   </ion-fab>
-</ion-footer>-->
+</ion-footer>

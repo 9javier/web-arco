@@ -148,8 +148,8 @@ export class ChangeStateComponent implements OnInit {
       observations: [this.registry.data.observations],
       factoryReturn: [false],
       statusManagementDefectId: [this.registry.data.statusManagementDefect.id],
-      defectTypeChildId: [this.registry.data.defectTypeChild.id],
-      defectTypeZoneChildId: [this.registry.data.defectZoneChild.id],
+      defectTypeChildId: this.registry.data && this.registry.data.defectTypeChild && this.registry.data.defectTypeChild.id > 0 ? [this.registry.data.defectTypeChild.id] : [0],
+      defectTypeZoneChildId: this.registry.data && this.registry.data.defectZoneChild && this.registry.data.defectZoneChild.id > 0 ? [this.registry.data.defectZoneChild.id] : [0],
       signFileId: [0],
       contact: this.fb.group({
         name: [this.registry.data.contact.name],

@@ -1,5 +1,5 @@
 import { BehaviorSubject, of, Observable } from 'rxjs';
-import { Component, OnInit, ViewChild, AfterViewInit, Query, NgModule, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Query, NgModule, Input,Output,EventEmitter } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange, Sort } from '@angular/material';
 import * as Filesave from 'file-saver';
 import * as _ from 'lodash';
@@ -22,6 +22,7 @@ import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { parseDate } from '@ionic/core/dist/types/components/datetime/datetime-util';
 import { ExpeditionCollectedService } from '../../../services/src/lib/endpoint/expedition-collected/expedition-collected.service';
 import { PackageCollectedComponent } from './package-collected/package-collected.component';
+
 @Component({
   selector: 'suite-expedition-collected',
   templateUrl: './expedition-collected.component.html',
@@ -31,9 +32,13 @@ import { PackageCollectedComponent } from './package-collected/package-collected
 export class ExpeditionCollectedComponent {
   selectedIndex = 0;
   indexTab;
+  indexToIdTranport=[];
+  sendEvent:boolean=false;
   dataTransport: any;
+  buttonSend:boolean;
   @ViewChild('#tabGroup') private tabGroup: MatTabsModule;
   @ViewChild('#selected') private tabSelected: PackageCollectedComponent;
+
   constructor(
     private defectiveRegistryService: DefectiveRegistryService,
     private formBuilder: FormBuilder,
@@ -42,7 +47,6 @@ export class ExpeditionCollectedComponent {
     private intermediary: IntermediaryService,
     private expeditionCollectedService: ExpeditionCollectedService,
     private navCtrl: NavController,
-    
     ){
       
   }
@@ -50,26 +54,44 @@ export class ExpeditionCollectedComponent {
     this.getTranports();
   }
 
-  refresh(){
-    // await this.intermediaryService.presentLoading();
-    // await this.tabSelected.ngOnInit();
-    // this.intermediaryService.dismissLoading();
-    console.log(this.indexTab);
+ public async refresh(){
+    let tab= this.indexToIdTranport.find(element => element.index == this.indexTab);
+     this.expeditionCollectedService.setEmitTabId(tab.idTransport);
+  }
+
+ public async send(){
+    //let tabs= this.indexToIdTranport.find(element => element.index == this.indexTab);
+    //this.expeditionCollectedEmiterService.sendButtonEmmit(tabs.idTransport);
+    this.sendEvent == true ? this.sendEvent = false:this.sendEvent = true;
   }
 
   tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    // console.log('tabChangeEvent => ', tabChangeEvent);
-    // console.log('index => ', tabChangeEvent.index);
     this.indexTab = tabChangeEvent.index;
+    tabChangeEvent.tab.ngOnDestroy();
   }
 
   async getTranports(){
      this.expeditionCollectedService.getTrasnport().subscribe((result)=>{
-      console.log(result);
       this.dataTransport = result;
+      this.assignIdTransportToIndex();
     },
     async (err) => {
       console.log(err);
     });
+  }
+
+  assignIdTransportToIndex(){
+    let i=0;
+    this.dataTransport.forEach(element => {
+      this.indexToIdTranport.push(
+        {
+          index:i,
+          idTransport: element.id
+        });
+      i++;
+    });
+  }
+  buttonState($event){
+    this.buttonSend = $event;
   }
 }
