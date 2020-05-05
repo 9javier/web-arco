@@ -13,6 +13,9 @@ var ScanditMatrixSimple = {
   init: function (successCallback, title, titleBackground, titleColor) {
     exec(successCallback, null, PLUGIN_NAME, "matrixSimple", [title, titleBackground, titleColor]);
   },
+  initWithPacking: function (successCallback, title, titleBackground, titleColor, packingReference) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixSimple", [title, titleBackground, titleColor, packingReference]);
+  },
   /**
    *
    * @param successCallback

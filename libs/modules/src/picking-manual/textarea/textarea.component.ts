@@ -118,6 +118,46 @@ export class TextareaComponent implements OnInit {
       this.processInitiated = true;
       this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
     }
+
+    this.scanditService.laserMode.subscribe(pacRef => {
+      this.isScannerBlocked = true;
+      document.getElementById('input-ta').blur();
+      this.lastCodeScanned = pacRef;
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+      this.inputPicking = null;
+      this.timeLastCodeScanned = new Date().getTime();
+      this.lastCarrierScanned = pacRef;
+      this.loadingMessageComponent.show(true);
+      if (this.itemReferencesProvider.checkSpecificCodeValue(pacRef, this.itemReferencesProvider.codeValue.JAIL)) {
+        this.typePacking = 1;
+      } else if (this.itemReferencesProvider.checkSpecificCodeValue(pacRef, this.itemReferencesProvider.codeValue.PALLET)) {
+        this.typePacking = 2;
+      } else {
+        this.typePacking = 3;
+      }
+      this.processInitiated = true;
+      this.jailReference = pacRef;
+      this.dataToWrite = 'PRODUCTO';
+      if (!this.packingReference) {
+        this.packingReference = this.jailReference;
+      }
+      this.isScannerBlocked = false;
+      this.processFinishOk({
+        focusInput: {
+          playSound: true
+        },
+        toast: {
+          duration: TimesToastType.DURATION_SUCCESS_TOAST_2000,
+          position: PositionsToast.BOTTOM,
+          message: `${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`
+        }
+      });
+      this.setNexProductToScan(this.listProducts[0]);
+      this.showTextStartScanPacking(false, this.typePacking, '');
+    });
   }
 
   addCameraButton(){
@@ -125,7 +165,7 @@ export class TextareaComponent implements OnInit {
       icon: 'camera',
       label: 'Cámara',
       action: () => {
-        this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, this.pickingProvider.listProducts, this.pickingProvider.pickingSelectedToStart.packingType, this.pickingProvider.typePicking);
+        this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, this.pickingProvider.listProducts, this.pickingProvider.pickingSelectedToStart.packingType, this.pickingProvider.typePicking, this.lastCarrierScanned);
       }
     }];
     this.toolbarProvider.optionsActions.next(buttons);

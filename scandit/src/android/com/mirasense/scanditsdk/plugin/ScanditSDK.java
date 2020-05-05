@@ -46,6 +46,8 @@ import org.json.JSONException;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.content.res.Resources;
@@ -640,10 +642,12 @@ public class ScanditSDK extends CordovaPlugin {
       String title = "";
       String backgroundTitle = "";
       String colorTitle = "";
+      String packingReference = "";
       try {
         title = args.getString(0);
         backgroundTitle = args.getString(1);
         colorTitle = args.getString(2);
+        packingReference = args.getString(3);
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -651,6 +655,7 @@ public class ScanditSDK extends CordovaPlugin {
       b.putString("title", title);
       b.putString("backgroundTitle", backgroundTitle);
       b.putString("colorTitle", colorTitle);
+      b.putString("packingReference", packingReference);
       Intent intent = new Intent(this.cordova.getActivity(), MatrixSimpleActivity.class);
       intent.putExtras(b);
       this.cordova.startActivityForResult(this, intent, 6);
@@ -917,6 +922,8 @@ public class ScanditSDK extends CordovaPlugin {
 
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
+          ImageButton arrowBack = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("arrow_back_button", "id", packageName));
+          ImageView laserButton = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("laserButton", "id", packageName));
           LinearLayout forceCameraBottomHalf = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("forceCameraBottomHalf", "id", packageName));
           LinearLayout sideCameraOcclusion = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("sideCameraOcclusion", "id", packageName));
           LinearLayout bottomCameraOcclusion = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("bottomCameraOcclusion", "id", packageName));
@@ -940,10 +947,12 @@ public class ScanditSDK extends CordovaPlugin {
           if (actionBarMatrixSimple != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionBarMatrixSimple.setElevation(0);
           }
+          arrowBack.setVisibility(View.GONE);
           forceCameraBottomHalf.setVisibility(View.VISIBLE);
           rlInfoProduct.setVisibility(View.VISIBLE);
           fabOptions.setVisibility(View.VISIBLE);
           sideCameraOcclusion.setVisibility(View.GONE);
+          laserButton.setVisibility(View.VISIBLE);
           bottomCameraOcclusion.setBackgroundColor(0x00000000);
           rlInfoProduct.setBackgroundDrawable(new ColorDrawable(Color.parseColor(fBackground)));
           tvLocation.setTextColor(Color.parseColor(fColor));
@@ -1065,6 +1074,16 @@ public class ScanditSDK extends CordovaPlugin {
               fabCloseOptions.setVisibility(View.GONE);
               fabOpenOptions.setVisibility(View.VISIBLE);
             });
+            laserButton.setOnClickListener(view -> {
+              JSONObject jsonObject = new JSONObject();
+              try {
+                jsonObject.put("result", true);
+                jsonObject.put("action", "laser_mode");
+              } catch (JSONException e) {}
+              PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+              pResult.setKeepCallback(true);
+              mCallbackContextMatrixSimple.sendPluginResult(pResult);
+            });
           } catch (JSONException e) {
             e.printStackTrace();
           }
@@ -1084,6 +1103,8 @@ public class ScanditSDK extends CordovaPlugin {
 
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
+          ImageButton arrowBack = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("arrow_back_button", "id", packageName));
+          ImageView laserButton = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("laserButton", "id", packageName));
           LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", packageName));
           LinearLayout fabOptions = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("fabOptions", "id", packageName));
           LinearLayout forceCameraBottomHalf = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("forceCameraBottomHalf", "id", packageName));
@@ -1093,14 +1114,18 @@ public class ScanditSDK extends CordovaPlugin {
             rlInfoProduct.setVisibility(View.VISIBLE);
             fabOptions.setVisibility(View.VISIBLE);
             forceCameraBottomHalf.setVisibility(View.VISIBLE);
+            laserButton.setVisibility(View.VISIBLE);
             sideCameraOcclusion.setVisibility(View.GONE);
             bottomCameraOcclusion.setBackgroundColor(0x00000000);
+            arrowBack.setVisibility(View.GONE);
           } else {
             rlInfoProduct.setVisibility(View.GONE);
             fabOptions.setVisibility(View.GONE);
             forceCameraBottomHalf.setVisibility(View.GONE);
+            laserButton.setVisibility(View.GONE);
             sideCameraOcclusion.setVisibility(View.VISIBLE);
             bottomCameraOcclusion.setBackgroundColor(0xa6000000);
+            arrowBack.setVisibility(View.VISIBLE);
           }
         }
       });
@@ -2145,6 +2170,19 @@ public class ScanditSDK extends CordovaPlugin {
     PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
     pResult.setKeepCallback(true);
     mCallbackContextMatrixSimple.sendPluginResult(pResult);
+  }
+
+  public static void setPacking(String packingReference) {
+    JSONObject jsonObject = new JSONObject();
+    try {
+      jsonObject.put("result", true);
+      JSONObject jsonObjectBarcode = new JSONObject();
+      jsonObjectBarcode.put("data", packingReference);
+      jsonObject.put("barcode", jsonObjectBarcode);
+    } catch (JSONException e) {}
+    PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+    pResult.setKeepCallback(true);
+    ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
   }
 
   public static void setActivityStarted(Activity activity) {
