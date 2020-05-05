@@ -3,7 +3,6 @@ import {AuthenticationService} from "@suite/services";
 import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import {PickingService} from "../../../../services/src/lib/endpoint/picking/picking.service";
 import {Events, LoadingController} from "@ionic/angular";
-import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
 import {ShoesPickingService} from "../../../../services/src/lib/endpoint/shoes-picking/shoes-picking.service";
 import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
 import {Router} from "@angular/router";
@@ -32,7 +31,6 @@ export class ListPickingTasksTemplateComponent implements OnInit {
     private router: Router,
     private loadingController: LoadingController,
     public pickingService: PickingService,
-    private scanditService: ScanditService,
     private authenticationService: AuthenticationService,
     private shoesPickingService: ShoesPickingService,
     private pickingScanditService: PickingScanditService,
@@ -134,11 +132,7 @@ loadPickings(){
           this.pickingProvider.typePacking = this.pickingProvider.pickingSelectedToStart.packingType;
           this.pickingProvider.typePicking = this.pickingProvider.pickingSelectedToStart.typePicking.id;
           this.pickingProvider.packingReference = this.pickingProvider.pickingSelectedToStart.packingRef;
-          if (this.pickingProvider.method === 'manual') {
-            this.router.navigate(['picking/manual']);
-          } else {
-            this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, listProducts, this.pickingProvider.pickingSelectedToStart.packingType, this.pickingProvider.typePicking);
-          }
+          this.router.navigate(['picking/manual']);
         }, (error) => {
           if (this.loading) {
             this.loading.dismiss();
