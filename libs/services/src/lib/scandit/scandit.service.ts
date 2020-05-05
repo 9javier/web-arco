@@ -824,6 +824,7 @@ export class ScanditService {
           this.positioning();
         } else if(response.action == 'laser_mode') {
           ScanditMatrixSimple.finish();
+          this.pickingProvider.listProducts = productsToScan;
           this.laserMode.next(packingReference);
         }
       }

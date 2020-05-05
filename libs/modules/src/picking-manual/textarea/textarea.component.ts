@@ -120,6 +120,7 @@ export class TextareaComponent implements OnInit {
     }
 
     this.scanditService.laserMode.subscribe(pacRef => {
+      this.listProducts = this.pickingProvider.listProducts;
       this.isScannerBlocked = true;
       document.getElementById('input-ta').blur();
       this.lastCodeScanned = pacRef;
@@ -165,7 +166,7 @@ export class TextareaComponent implements OnInit {
       icon: 'camera',
       label: 'Cámara',
       action: () => {
-        this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, this.pickingProvider.listProducts, this.pickingProvider.pickingSelectedToStart.packingType, this.pickingProvider.typePicking, this.lastCarrierScanned);
+        this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, this.listProducts, this.pickingProvider.pickingSelectedToStart.packingType, this.pickingProvider.typePicking, this.lastCarrierScanned);
       }
     }];
     this.toolbarProvider.optionsActions.next(buttons);
