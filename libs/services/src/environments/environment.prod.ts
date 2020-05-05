@@ -5,6 +5,7 @@ export const environment = {
   apiSorter: 'http://mga.krack.es:8080/api',
   urlBase: 'http://mga.krack.es:8080',
   uploadFiles: 'http://mga.krack.es:8080/api/upload-files',
+  downloadFiles: 'http://mga.krack.es:8080',
   downloadPdf: 'http://mga.krack.es:8080',
   urlDownloadApp: 'https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o',
   sga: {
