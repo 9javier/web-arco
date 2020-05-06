@@ -344,7 +344,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     ScanditMatrixSimple.init((response) => {
       if(response && response.result && response.actionIonic){
         this.executeAction(response.actionIonic, response.params);
-      } else if (response && response.barcode) {
+      } else if (response && response.barcode && response.barcode.data) {
         if(response.barcode != this.lastCodeScanned){
           this.lastCodeScanned = response.barcode;
           ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
