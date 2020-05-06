@@ -648,6 +648,17 @@ export class PrinterService {
   failed = false;
 
 
+  public async toPrintCommands(commandsToPrint) {
+    try {
+      if(cordova.plugins.printer) {
+        cordova.plugins.printer.print(commandsToPrint);
+      }
+    }catch (e) {
+      console.error("Error print commands", e)
+    }
+
+  }
+
   /**
    * Print labels with the zebra printed from string
    * @param textToPrint - string to be printed

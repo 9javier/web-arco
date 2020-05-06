@@ -7,6 +7,7 @@ import {EmployeeService} from "../../../services/src/lib/endpoint/employee/emplo
 import EmployeeReplenishment = EmployeeModel.EmployeeReplenishment;
 import {EmployeeModel} from "../../../services/src/models/endpoints/Employee";
 import {MatPaginator} from "@angular/material";
+import {PrinterService} from "../../../services/src/lib/printer/printer.service";
 
 @Component({
   selector: 'suite-global-variables',
@@ -35,7 +36,8 @@ export class GlobalVariablesComponent implements OnInit {
     private formBuilder: FormBuilder,
     private intermediaryService: IntermediaryService,
     private modalController: ModalController,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private printerService: PrinterService,
   ) { }
 
   ngOnInit() {
@@ -197,6 +199,17 @@ export class GlobalVariablesComponent implements OnInit {
           }).join(', ');
         }
       });
+  }
+
+  async sendZebraCommands(){
+    await this.intermediaryService.presentLoading("Guardando configuración...",() => {
+      console.log("CommandPrint::sendZebraCommands");
+      const commandsToSend = "! U1 setvar \"power.inactivity_timeout\" \"0\"\n" + "! U1 setvar \"power.low_battery_timeout\" \"0\"\"\n" +
+        "! U1 setvar \"\"media.type\"\" \"\"label\"\"\n" + "! U1 setvar \"\"media.sense_mode\"\" \"\"gap\"\"\n" + "~jc^xa^jus^xz";
+      this.printerService.toPrintCommands(commandsToSend).then( () => {
+        this.intermediaryService.dismissLoading();
+      });
+    });
   }
 
 }
