@@ -147,8 +147,6 @@ export class NewIncidenceComponent implements OnInit {
           email: this.form.value.email,
           contactName: this.form.value.name
         }
-      }else{
-        this.intermediaryServiceL.presentToastError('ERROR. Debe rellenar los campos de destino o seleccionar una tienda de destino.');
       }
     }
 
@@ -205,7 +203,7 @@ export class NewIncidenceComponent implements OnInit {
         this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
       });
     }else{
-      this.intermediaryServiceL.presentToastError('ERROR. Debe seleccionar una tienda remitente.');
+      this.intermediaryServiceL.presentToastError('Falta la dirección de destino.');
     }
   }
 
