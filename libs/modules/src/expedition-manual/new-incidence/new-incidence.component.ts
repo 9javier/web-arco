@@ -203,7 +203,7 @@ export class NewIncidenceComponent implements OnInit {
         this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
       });
     }else{
-      this.intermediaryServiceL.presentToastError('Falta la dirección de destino.');
+      this.intermediaryServiceL.presentToastError('ERROR. Debe seleccionar una tienda de origen.');
     }
   }
 
