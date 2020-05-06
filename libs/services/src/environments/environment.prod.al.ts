@@ -5,6 +5,7 @@ export const environment = {
   apiSorter: 'http://conexion1.globalretail.es:57354/api',
   urlBase: 'http://conexion1.globalretail.es:57354',
   uploadFiles: 'http://conexion1.globalretail.es:57354/api/upload-files',
+  downloadFiles: 'http://conexion1.globalretail.es:57354',
   downloadPdf: 'http://conexion1.globalretail.es:57354',
   urlDownloadApp: 'https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o',
   sga: {
