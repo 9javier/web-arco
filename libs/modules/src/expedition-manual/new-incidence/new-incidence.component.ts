@@ -136,69 +136,77 @@ export class NewIncidenceComponent implements OnInit {
         contactName: this.name
       }
     }else{
-      recipient = {
-        name: this.form.value.name,
-        address: this.form.value.direction,
-        country: this.form.value.country.isoCode.toUpperCase(),
-        city: this.form.value.province.name,
-        zipCode: this.form.value.postalcode,
-        phone: this.form.value.phone,
-        email: this.form.value.email,
-        contactName: this.form.value.name
+      if(this.form.value.country !== undefined) {
+        recipient = {
+          name: this.form.value.name,
+          address: this.form.value.direction,
+          country: this.form.value.country.isoCode.toUpperCase(),
+          city: this.form.value.province.name,
+          zipCode: this.form.value.postalcode,
+          phone: this.form.value.phone,
+          email: this.form.value.email,
+          contactName: this.form.value.name
+        }
+      }else{
+        this.intermediaryServiceL.presentToastError('ERROR. Debe rellenar los campos de destino o seleccionar una tienda de destino.');
       }
     }
 
-    const body = {
-      marketId: marketId,
-      operator: operator.toUpperCase(),
-      warehouseReference: this.form.value.warehouseOrigin.warehouseReference,
-      referenceExpedition: this.form.value.referenceExpedition,
-      sender: {
-        warehouseOriginId: warehouseReference.id,
-        name: this.form.value.warehouseOrigin.name,
-        address: this.form.value.warehouseOrigin.address1 + ' ' + this.form.value.warehouseOrigin.address2,
-        country: this.form.value.warehouseOrigin.country.toUpperCase(),
-        city: this.form.value.warehouseOrigin.city,
-        zipCode: this.form.value.warehouseOrigin.postcode,
-        phone: this.form.value.warehouseOrigin.phone.replace(/\(([^)]*)\)/g,'')
-      },
-      recipient,
-      packages: {
-        packagesNum: this.form.value.packages,
-        packageReference: this.form.value.packagesReference,
-        kilos: this.form.value.packagesWeight
-      }
-    };
-    console.log('BODY -> ', body);
-
-    this.expeManSrv.createExpedition(body).subscribe(data => {
-      for(let i = 0; i < data.length; i++){
-        if(data[i].success === true){
-          for(let x = 0; x < data[i]['labels'].length; x++){
-            const byteCharacters = atob(data[i]['labels'][x]['label']);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-              byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-
-            const blob = new Blob([byteArray], {type: "application/pdf"});
-            FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.pdf');
-          }
-          this.intermediaryServiceL.presentToastSuccess('Expedicion guardada con exito');
-          this.close();
-        }else{
-          if(data[i].errorMessage !== undefined || data[i].errorMessage !== ''){
-            this.intermediaryServiceL.presentToastError(data[i].errorMessage);
-          }else{
-            this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
-          }
+    if(this.form.value.warehouseOrigin != '') {
+      const body = {
+        marketId: marketId,
+        operator: operator.toUpperCase(),
+        warehouseReference: this.form.value.warehouseOrigin.warehouseReference,
+        referenceExpedition: this.form.value.referenceExpedition,
+        sender: {
+          warehouseOriginId: warehouseReference.id,
+          name: this.form.value.warehouseOrigin.name,
+          address: this.form.value.warehouseOrigin.address1 + ' ' + this.form.value.warehouseOrigin.address2,
+          country: this.form.value.warehouseOrigin.country.toUpperCase(),
+          city: this.form.value.warehouseOrigin.city,
+          zipCode: this.form.value.warehouseOrigin.postcode,
+          phone: this.form.value.warehouseOrigin.phone.replace(/\(([^)]*)\)/g, '')
+        },
+        recipient,
+        packages: {
+          packagesNum: this.form.value.packages,
+          packageReference: this.form.value.packagesReference,
+          kilos: this.form.value.packagesWeight
         }
-        console.log('RESPONSE -> ',data[i]);
-      }
-    }, error => {
-      this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
-    });
+      };
+      console.log('BODY -> ', body);
+
+      this.expeManSrv.createExpedition(body).subscribe(data => {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].success === true) {
+            for (let x = 0; x < data[i]['labels'].length; x++) {
+              const byteCharacters = atob(data[i]['labels'][x]['label']);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const byteArray = new Uint8Array(byteNumbers);
+
+              const blob = new Blob([byteArray], {type: "application/pdf"});
+              FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.pdf');
+            }
+            this.intermediaryServiceL.presentToastSuccess('Expedicion guardada con exito');
+            this.close();
+          } else {
+            if (data[i].errorMessage !== undefined || data[i].errorMessage !== '') {
+              this.intermediaryServiceL.presentToastError(data[i].errorMessage);
+            } else {
+              this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
+            }
+          }
+          console.log('RESPONSE -> ', data[i]);
+        }
+      }, error => {
+        this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
+      });
+    }else{
+      this.intermediaryServiceL.presentToastError('ERROR. Debe seleccionar una tienda remitente.');
+    }
   }
 
   warehousesSelected(warehouse){
