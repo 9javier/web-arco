@@ -1,10 +1,10 @@
 export const environment = {
   production: false,
-  apiBasePhoto: 'http://localhost:8081',
+  apiBasePhoto: 'http://localhost:8080',
   apiBase: 'http://localhost:8080/api',
   apiSorter: 'http://localhost:8080/api',
   urlBase: 'http://localhost:8080',
-  uploadFiles: 'http://localhost:8081/api/upload-files',
+  uploadFiles: 'http://localhost:8080/api/upload-files',
   downloadFiles: 'http://localhost:8088',
   downloadPdf: 'http://localhost:8080',
   urlDownloadApp: 'https://drive.google.com/open?id=16DZzQ1hIArX5GF5oZtTpx3ltiPfCvw2K',

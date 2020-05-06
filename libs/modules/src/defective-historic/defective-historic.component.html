@@ -9,7 +9,7 @@
                                (applyFilters)="applyFilters($event, 'id')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info checkbox"> {{element.id}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info checkbox">{{ element?.autoId }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="user">
@@ -153,6 +153,17 @@
           </suite-filter-button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{element?.defectZoneChild?.name}}  </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="sold">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Vendido
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonSold [title]="'Vendido'"
+                               [listItems]="entities.sold"
+                               [isFiltering]="isFilteringSold != entities.sold.length"
+                               (applyFilters)="applyFilters($event, 'sold')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element?.sold}} </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
