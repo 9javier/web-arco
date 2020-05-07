@@ -200,7 +200,11 @@ export class NewIncidenceComponent implements OnInit {
           console.log('RESPONSE -> ', data[i]);
         }
       }, error => {
-        this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
+        if(this.form.value.country === undefined || this.form.value.warehouseDestiny === ''){
+          this.intermediaryServiceL.presentToastError('Debe rellenar la tienda de destino.');
+        }else{
+          this.intermediaryServiceL.presentToastError('Faltan campos por rellenar.');
+        }
       });
     }else{
       this.intermediaryServiceL.presentToastError('ERROR. Debe seleccionar una tienda de origen.');
