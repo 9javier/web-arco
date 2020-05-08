@@ -40,7 +40,7 @@ export class GlobalVariableService extends CrudService<
   }
 
   /**acá un ejemplo de como se le pueden añadir métodos adicionales a un crud normal */
-  getTypes():Observable<{id:number,name:string,workwave:boolean,type:string}[]>{
+  getTypes():Observable<{id:number,name:string,workwave:boolean,type:string, tooltip:string}[]>{
       return this.http.get<any>(this.requestTypeUrl).pipe(map(response=>{
         return (<any>response).data;
       }))

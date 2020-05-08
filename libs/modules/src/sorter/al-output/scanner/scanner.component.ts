@@ -49,7 +49,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   alerta:boolean;
 
   listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
-  private listTypesFromDb: Array<{ id: number, name: string }> = [];
+  private listTypesFromDb: Array<{ id: number, name: string, workwave: boolean, type: string, tooltip: string }> = [];
   private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
   private countLoadOfVariables: number = 0;
   private readonly SECONDS_COUNTDOWN_TO_CONFIRM_EMPTY_WAY: number = 3;
@@ -161,7 +161,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   async keyUpInput(event?,test = false) {
     let dataWrote = (this.inputValue || "").trim();
-    
+
     this.ultimaReferenza = dataWrote;
 
     if (event.keyCode === 13 || test && dataWrote) {
@@ -232,7 +232,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           }
         }
         if (!isTypeCreated) {
-          this.listVariables.push({ type: type.id, value: null });
+          this.listVariables.push({ type: type.id, value: null, tooltip: null });
         }
       }
     } else {
@@ -691,7 +691,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         })
         .then(async (res: SorterOutputModel.ResponseEmptyWay) => {
           console.log(res);
-          
+
           if (res.code === 200) {
             this.audioProvider.playDefaultOk();
             this.sorterProvider.colorActiveForUser = null;

@@ -14,7 +14,8 @@ ion-content.variables-list {
         margin-bottom: 8px;
         ion-label {
           width: 60vw;
-          max-width: 60vw;
+          min-width: 60vw;
+          max-width: 60vw !important;
           font-weight: 500;
         }
         ion-button.users {
@@ -51,6 +52,14 @@ ion-content.variables-list {
           --padding-end: 16px;
           font-size: 12px;
           text-overflow: ellipsis;
+        }
+        ion-item.tooltip {
+          width: 90vw !important;
+          max-width: 90vw !important;
+          margin-left: 0 !important;
+          --border-width: 0 !important;
+          border-bottom: 0 !important;
+          --padding-end: 0 !important;
         }
       }
       ion-item.wrong-variable {
