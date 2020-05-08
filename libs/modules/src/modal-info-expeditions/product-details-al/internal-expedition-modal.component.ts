@@ -57,8 +57,6 @@ export class InternalExpeditionModalComponent implements OnInit {
         this.orderPackages = result.orderPackage;
         this.opProducts = result.opProducts;
         this.intermediaryService.dismissLoading();
-
-        console.log(result);
       }else{
         this.intermediaryService.presentToastPrimary("Expedición no encontrada",3500,"bottom")
         this.intermediaryService.dismissLoading();

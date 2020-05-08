@@ -56,28 +56,28 @@
     <!--Products section-->
     <div *ngIf="section == 'bultos'">
         <ion-list>
-            <ion-item *ngFor="let package of orderPackages; let i = index">
+            <ion-item *ngFor="let package of orderPackages;">
                 <div>
                     <mat-accordion multi="false">
-                        <mat-expansion-panel style="width: 100%;">
+                        <mat-expansion-panel>
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
-                                    <p>Tracking: {{ package.tracking }} -- Unique code: {{ package.uniqueCode }} </p>
+                                    <p>Tracking: {{ package.tracking }} - Unique code: {{ package.uniqueCode }} </p>
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                                                                     
-                            <ion-row>
-                                <ion-col *ngFor="let product of package.product">
-                                <ion-item lines="none" style="margin-bottom: -15px;margin-top: -10px;">
-                                    <ion-label>
-                                        Modelo: {{ product.model.name }}
-                                    </ion-label>
-                                </ion-item>       
-                                <ion-item>
-                                    <ion-label>
-                                        Talla: {{ product.size.name }}
-                                    </ion-label>
-                                </ion-item>       
+                            <ion-row style="border-left: 10px solid #efefef;">
+                                <ion-col *ngFor="let product of package.product" size="12">
+                                    <ion-item lines="none" style="margin-bottom: -15px;margin-top: -10px;">
+                                        <ion-label>
+                                            Modelo: {{ product.model.name }}
+                                        </ion-label>
+                                    </ion-item>       
+                                    <ion-item>
+                                        <ion-label>
+                                            Talla: {{ product.size.name }}
+                                        </ion-label>
+                                    </ion-item>       
                                 </ion-col>
                             </ion-row>
                                   
@@ -93,13 +93,10 @@
     <!--Products section-->
     <div *ngIf="section == 'products'">
         <ion-list>
-            <ion-item *ngFor="let product of opProducts; let i = index">
+            <ion-item *ngFor="let product of opProducts">
                 <div>
                     <p>
                         Referencia: {{ product.Product.reference }}
-                    </p>
-                    <p>
-                        Almacén inicial: {{ product.Product.initialWarehouseReference }}                        
                     </p>
                     <p>
                         Modelo: {{ product.Product.model.name }}
