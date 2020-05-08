@@ -694,6 +694,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       .postReloadModelsList({typeVisualization: this.typeModelVisualization, providerId: this.receptionAvelonProvider.expeditionData.providerId})
       .subscribe((res) => {
         this.listModels = res.data;
+        this.listModelsAll = res.data;
         this.brandSelected = null;
         this.modelSelected = null;
         this.modelIdSelected = null;
