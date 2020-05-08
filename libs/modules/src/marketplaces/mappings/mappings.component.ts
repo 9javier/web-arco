@@ -352,11 +352,37 @@ export class MappingsComponent implements OnInit {
   }
 
   getDestinyValues() {
-    this.http.get('assets/data/mapping-prestashop-data.json').subscribe((data: any) => {
-      this.brandsList = data.brands;
+    forkJoin([
+      this.marketplacesService.getMarketSizes(this.marketExternalId),
+      this.marketplacesService.getMarketBrands(this.marketExternalId),
+      this.marketplacesService.getMarketColors(this.marketExternalId),
+      this.marketplacesService.getMarketFeatures(this.marketExternalId)
+    ]).subscribe(results => {
+
+      let sizes = [];
+      for (let size of results[0]) {
+        sizes.push({id: size.externalId, name: size.name});
+      }
+
+      let brands = [];
+      for (let brand of results[1]) {
+        brands.push({id: brand.externalId, name: brand.name});
+      }
+
+      let colors = [];
+      for (let color of results[2]) {
+        colors.push({id: color.externalId, name: color.name});
+      }
+
+      let features = [];
+      for (let feature of results[3]) {
+        features.push({id: feature.externalId, name: feature.name, group: feature.additionalGrouping});
+      }
+
+      this.brandsList = brands;
       this.brandsList.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
 
-      for (let size of data.sizes) {
+      for (let size of sizes) {
         if (this.sizesList.length) {
           if (!this.sizesList.find(searchSize => {
             return searchSize.name.trim() === size.name.trim();
@@ -369,7 +395,7 @@ export class MappingsComponent implements OnInit {
       }
       this.sizesList.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
 
-      this.featuresList = data.features;
+      this.featuresList = features;
       for (let feature of this.featuresList) {
         let groupName = "";
         switch (feature.group) {
@@ -393,9 +419,11 @@ export class MappingsComponent implements OnInit {
       }
       this.featuresList.sort((a, b) => (parseInt(a.group) > parseInt(b.group)) ? 1 : ((parseInt(b.group) > parseInt(a.group)) ? -1 : ((a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))));
 
-      this.colorsList = data.colors;
+      this.colorsList = colors;
       this.colorsList.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+
       this.updateDataSaved();
+
     });
   }
 

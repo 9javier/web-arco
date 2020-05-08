@@ -35,6 +35,10 @@ export class MarketplacesService {
   private getProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
   private getProductCatalogUrl = this.apiMiddleware + "/api/v1/product";
   private getCategories = this.apiMiddleware + "/api/v1/marketCategory/byMarket/";
+  private getMarketSizesUrl = this.apiMiddleware + "/api/v1/marketProductProperty/sizes/byMarket/";
+  private getMarketBrandsUrl = this.apiMiddleware + "/api/v1/marketProductProperty/brands/byMarket/";
+  private getMarketColorsUrl = this.apiMiddleware + "/api/v1/marketProductProperty/colors/byMarket/";
+  private getMarketFeaturesUrl = this.apiMiddleware + "/api/v1/marketProductProperty/features/byMarket/";
 
   constructor(
     private http: HttpClient
@@ -186,6 +190,30 @@ export class MarketplacesService {
 
   getProductCatalog(): Observable<any> {
     return this.http.get<any>(this.getProductCatalogUrl, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getMarketSizes(market): Observable<any> {
+    return this.http.get<any>(this.getMarketSizesUrl + market, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getMarketBrands(market): Observable<any> {
+    return this.http.get<any>(this.getMarketBrandsUrl + market, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getMarketColors(market): Observable<any> {
+    return this.http.get<any>(this.getMarketColorsUrl + market, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getMarketFeatures(market): Observable<any> {
+    return this.http.get<any>(this.getMarketFeaturesUrl + market, {}).pipe(map(response => {
       return response;
     }));
   }
