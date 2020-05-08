@@ -15,7 +15,6 @@ import { IntermediaryService } from '../../../../services/src/lib/endpoint/inter
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 const FileSaver = require('file-saver');
 
-
 @Component({
   selector: 'suite-new-incidence',
   templateUrl: './new-incidence.component.html',
@@ -23,6 +22,19 @@ const FileSaver = require('file-saver');
 })
 
 export class NewIncidenceComponent implements OnInit {
+  name;
+  direction;
+  postalcode;
+  phone;
+  email;
+  selectedProvince;
+  selectedCountry;
+  market;
+  country;
+  province;
+  regexPhone = /^([0-9\s])*$/;
+  regexEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  regexNums = /^([0-9])*$/;
   form: FormGroup;
   operators;
   warehouses;
@@ -55,22 +67,21 @@ export class NewIncidenceComponent implements OnInit {
     this.getProvinces();
     this.getRules();
     this.form = this.formBuilder.group({
-      marketId: new FormControl(''),
-      warehouseOrigin: new FormControl(''),
+      marketId: new FormControl('', Validators.required ),
+      warehouseOrigin: new FormControl('', Validators.required ),
       warehouseDestiny: new FormControl(''),
       operator: new FormControl(''),
-      name: new FormControl(''),
-      lastname: new FormControl(''),
-      dni: new FormControl(''),
-      phone: new FormControl(''),
-      direction: new FormControl(''),
-      province: new FormControl(''),
-      country: new FormControl(''),
-      postalcode: new FormControl(''),
-      referenceExpedition: new FormControl(''),
-      packages: new FormControl(''),
-      packagesReference: new FormControl(''),
-      packagesWeight: new FormControl(''),
+      name: new FormControl('', [ Validators.required, Validators.maxLength(25) ]),
+      phone: new FormControl('', [ Validators.required, Validators.maxLength(12), Validators.pattern(this.regexPhone) ]),
+      email: new FormControl('', [ Validators.required, Validators.pattern(this.regexEmail) ]),
+      direction: new FormControl('', [ Validators.required, Validators.maxLength(30) ]),
+      province: new FormControl('', Validators.required ),
+      country: new FormControl('', Validators.required ),
+      postalcode: new FormControl('', [ Validators.required, Validators.maxLength(5), Validators.pattern(this.regexNums) ]),
+      referenceExpedition: new FormControl('', Validators.required ),
+      packages: new FormControl('', [ Validators.required, Validators.pattern(this.regexNums) ]),
+      packagesReference: new FormControl('', Validators.required ),
+      packagesWeight: new FormControl('', [ Validators.required, Validators.pattern(this.regexNums) ]),
       incidence: false
     });
   }
@@ -115,79 +126,107 @@ export class NewIncidenceComponent implements OnInit {
     if(this.form.value.warehouseDestiny != ''){
       recipient = {
         warehouseDestinityId: warehouseDestinySelect.id,
-        name: this.form.value.warehouseDestiny.name,
-        address: this.form.value.warehouseDestiny.address1 + ' '+ this.form.value.warehouseDestiny.address2,
+        name: this.name,
+        address: this.direction,
         country: this.form.value.warehouseDestiny.country.toUpperCase(),
         city: this.form.value.warehouseDestiny.city,
-        zipCode: this.form.value.warehouseDestiny.postcode,
-        phone: this.form.value.warehouseDestiny.phone.replace(/\(([^)]*)\)/g,''),
-        contactName: this.form.value.warehouseDestiny.name
+        zipCode: this.postalcode,
+        phone: this.phone,
+        email: this.email,
+        contactName: this.name
       }
     }else{
-      recipient = {
-        name: this.form.value.name + ' '+ this.form.value.lastname,
-        address: this.form.value.direction,
-        country: this.form.value.country.isoCode.toUpperCase(),
-        city: this.form.value.province.name,
-        zipCode: this.form.value.postalcode,
-        phone: this.form.value.phone,
-        contactName: this.form.value.name + ' '+ this.form.value.lastname
+      if(this.form.value.country !== undefined) {
+        recipient = {
+          name: this.form.value.name,
+          address: this.form.value.direction,
+          country: this.form.value.country.isoCode.toUpperCase(),
+          city: this.form.value.province.name,
+          zipCode: this.form.value.postalcode,
+          phone: this.form.value.phone,
+          email: this.form.value.email,
+          contactName: this.form.value.name
+        }
       }
     }
 
-    const body = {
-      marketId: marketId,
-      operator: operator.toUpperCase(),
-      warehouseReference: this.form.value.warehouseOrigin.warehouseReference,
-      referenceExpedition: this.form.value.referenceExpedition,
-      sender: {
-        warehouseOriginId: warehouseReference.id,
-        name: this.form.value.warehouseOrigin.name,
-        address: this.form.value.warehouseOrigin.address1 + ' ' + this.form.value.warehouseOrigin.address2,
-        country: this.form.value.warehouseOrigin.country.toUpperCase(),
-        city: this.form.value.warehouseOrigin.city,
-        zipCode: this.form.value.warehouseOrigin.postcode,
-        phone: this.form.value.warehouseOrigin.phone.replace(/\(([^)]*)\)/g,'')
-      },
-      recipient,
-      packages: {
-        packagesNum: this.form.value.packages,
-        packageReference: this.form.value.packagesReference,
-        kilos: this.form.value.packagesWeight
-      }
-    };
-    console.log('BODY -> ', body);
-
-    this.expeManSrv.createExpedition(body).subscribe(data => {
-      for(let i = 0; i < data.length; i++){
-        if(data[i].success === true){
-          for(let x = 0; x < data[i]['labels'].length; x++){
-            const byteCharacters = atob(data[i]['labels'][x]['label']);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-              byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-
-            const blob = new Blob([byteArray], {type: "application/pdf"});
-            FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.pdf');
-          }
-          this.intermediaryServiceL.presentToastSuccess('Expedicion guardada con exito');
-          this.close();
-        }else{
-          this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
+    if(this.form.value.warehouseOrigin != '') {
+      const body = {
+        marketId: marketId,
+        operator: operator.toUpperCase(),
+        warehouseReference: this.form.value.warehouseOrigin.warehouseReference,
+        referenceExpedition: this.form.value.referenceExpedition,
+        sender: {
+          warehouseOriginId: warehouseReference.id,
+          name: this.form.value.warehouseOrigin.name,
+          address: this.form.value.warehouseOrigin.address1 + ' ' + this.form.value.warehouseOrigin.address2,
+          country: this.form.value.warehouseOrigin.country.toUpperCase(),
+          city: this.form.value.warehouseOrigin.city,
+          zipCode: this.form.value.warehouseOrigin.postcode,
+          phone: this.form.value.warehouseOrigin.phone.replace(/\(([^)]*)\)/g, '')
+        },
+        recipient,
+        packages: {
+          packagesNum: this.form.value.packages,
+          packageReference: this.form.value.packagesReference,
+          kilos: this.form.value.packagesWeight
         }
-        console.log('RESPONSE -> ',data[i]);
-      }
-    }, error => {
-      this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
-    });
+      };
+      console.log('BODY -> ', body);
+
+      this.expeManSrv.createExpedition(body).subscribe(data => {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].success === true) {
+            for (let x = 0; x < data[i]['labels'].length; x++) {
+              const byteCharacters = atob(data[i]['labels'][x]['label']);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const byteArray = new Uint8Array(byteNumbers);
+
+              const blob = new Blob([byteArray], {type: "application/pdf"});
+              FileSaver.saveAs(blob, 'label-' + data[i]['tracking'] + '.pdf');
+            }
+            this.intermediaryServiceL.presentToastSuccess('Expedicion guardada con exito');
+            this.close();
+          } else {
+            if (data[i].errorMessage !== undefined || data[i].errorMessage !== '') {
+              this.intermediaryServiceL.presentToastError(data[i].errorMessage);
+            } else {
+              this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos');
+            }
+          }
+          console.log('RESPONSE -> ', data[i]);
+        }
+      }, error => {
+        if(this.form.value.country === undefined || this.form.value.warehouseDestiny === ''){
+          this.intermediaryServiceL.presentToastError('Debe rellenar la tienda de destino.');
+        }else{
+          this.intermediaryServiceL.presentToastError('Faltan campos por rellenar.');
+        }
+      });
+    }else{
+      this.intermediaryServiceL.presentToastError('ERROR. Debe seleccionar una tienda de origen.');
+    }
   }
 
   warehousesSelected(warehouse){
-    for(let i = 0; i < this.warehouses.length; i++){
-      if(warehouse === this.warehouses[i].name){
-        this.warehouseSelected = this.warehouses[i];
+    this.name = warehouse.name;
+    this.direction = warehouse.address1 + ' '+ warehouse.address2;
+    this.postalcode = warehouse.postcode;
+    this.phone = warehouse.phone.replace(/\(([^)]*)\)/g,'');
+    this.email = warehouse.email;
+
+    for(let province of this.provinces){
+      if(province.name.toUpperCase() === warehouse.city.toUpperCase().toString()){
+        this.selectedProvince = province;
+      }
+    }
+
+    for(let country of this.countries){
+      if(country.isoCode === warehouse.country.toUpperCase()){
+        this.selectedCountry = country;
       }
     }
   }
@@ -196,6 +235,22 @@ export class NewIncidenceComponent implements OnInit {
     for(let i = 0; i < this.logisticsOperators.length; i++){
       if(operator === this.logisticsOperators[i].name){
         this.operatorSelected = this.logisticsOperators[i];
+        console.log('OPERATOR -> ', this.operatorSelected);
+      }
+    }
+  }
+
+  countrySelected(country){
+
+  }
+
+  marketSelected(market){
+    for(let i = 0; i < this.markets.length; i++){
+      if(market.id === this.markets[i].id){
+        let market = this.markets[i];
+        return true;
+      }else{
+        return false;
       }
     }
   }

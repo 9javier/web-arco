@@ -5,7 +5,7 @@
               <ion-icon name="close" class="toogleArrow"></ion-icon>
           </ion-button>
       </ion-buttons>
-      <ion-title>Crear Incidencia</ion-title>
+      <ion-title>Crear etiqueta manual</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -15,13 +15,13 @@
     </ion-item>
     <ion-item>
       <ion-label class="label-text">Marketplace</ion-label>
-        <ion-select formControlName="marketId" name='marketId' placeholder="Selecciona" #selectMarket (ionChange)="operatorsSelected(selectMarket.value)">
+        <ion-select formControlName="marketId" name='marketId' placeholder="Selecciona" #selectMarket (ionChange)="marketSelected(selectMarket.value)">
           <ion-select-option *ngFor="let market of markets" [value]="market">{{market.name}}</ion-select-option>
         </ion-select>
     </ion-item>
     <ion-item id="selected-operator">
       <ion-label>Tienda origen</ion-label>
-      <ion-select formControlName="warehouseOrigin" name='warehouseOrigin' placeholder="Selecciona" #selectOrigen (ionChange)="warehousesSelected(selectOrigen.value)">
+      <ion-select formControlName="warehouseOrigin" name='warehouseOrigin' placeholder="Selecciona">
         <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse">{{warehouse.name}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -48,37 +48,34 @@
     </ion-item>
     <ion-item>
       <ion-label class="label-text">Tienda destino</ion-label>
-      <ion-select formControlName="warehouseDestiny" name='warehouseDestiny' placeholder="Selecciona">
+      <ion-select formControlName="warehouseDestiny" name='warehouseDestiny' placeholder="Selecciona" #selectDestiny (ionChange)="warehousesSelected(selectDestiny.value)">
         <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse">{{warehouse.name}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item lines="none">
-      <ion-input type="text" formControlName="name"   placeholder="Nombre"  name="name"  maxlength="50"></ion-input><br>
+      <ion-input id="name-input" type="text" [(ngModel)]="name" formControlName="name"   placeholder="Nombre"  name="name"></ion-input><br> <!--maxlength="50"-->
     </ion-item>
     <ion-item lines="none">
-      <ion-input type="text" formControlName="lastname"   placeholder="Apellidos"  name="lastname" maxlength="50"></ion-input><br>
+      <ion-input type="tel"  [(ngModel)]="phone" formControlName="phone"   placeholder="Telefono"  name="phone"></ion-input> <!--maxlength="25"-->
     </ion-item>
     <ion-item lines="none">
-      <ion-input type="text" formControlName="dni"    placeholder="DNI"  name="dni" maxlength="25"></ion-input>
+      <ion-input type="email"  [(ngModel)]="email" formControlName="email"   placeholder="Correo electronico"  name="email"></ion-input> <!--maxlength="25"-->
     </ion-item>
     <ion-item lines="none">
-      <ion-input type="tel"  formControlName="phone"   placeholder="Telefono"  name="phone" maxlength="25"></ion-input>
+      <ion-input type="text" [(ngModel)]="direction" formControlName="direction"   placeholder="Direccion" name="direction"> </ion-input><!--maxlength="25"-->
     </ion-item>
     <ion-item lines="none">
-      <ion-input type="text" formControlName="direction"   placeholder="Direccion" name="direction" maxlength="25"></ion-input>
-    </ion-item>
-    <ion-item lines="none">
-      <ion-input type="text" formControlName="postalcode"  placeholder="C.P."  name='postalcode' maxlength="25"></ion-input>
+      <ion-input type="text" [(ngModel)]="postalcode" formControlName="postalcode"  placeholder="C.P."  name='postalcode'></ion-input> <!--maxlength="25"-->
     </ion-item>
     <ion-item>
       <ion-label class="label-text">Provincia</ion-label>
-      <ion-select formControlName="province" name='province' placeholder="Selecciona" #selectProvince (ionChange)="operatorsSelected(selectProvince.value)">
+      <ion-select formControlName="province" name='province' placeholder="Selecciona" #selectProvince (ionChange)="operatorsSelected(selectProvince.value)" [(ngModel)]="selectedProvince">
         <ion-select-option *ngFor="let province of provinces" [value]="province">{{province.name}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label class="label-text">Pais</ion-label>
-      <ion-select formControlName="country" name='country' placeholder="Selecciona" #selectCountry (ionChange)="operatorsSelected(selectCountry.value)">
+      <ion-select formControlName="country" name='country' placeholder="Selecciona" #selectCountry (ionChange)="countrySelected(selectCountry.value)" [(ngModel)]="selectedCountry">
         <ion-select-option *ngFor="let country of countries" [value]="country">{{country.name}}</ion-select-option>
       </ion-select>
     </ion-item>
