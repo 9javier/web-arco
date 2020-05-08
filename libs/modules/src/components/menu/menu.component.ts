@@ -501,7 +501,12 @@ export class MenuComponent implements OnInit {
         },
       ]
     },
-   
+    {
+      title: 'Expedition Inside',
+      id: 'expedition-inside',
+      url: '/expedition-inside',
+      icon: 'folder'
+    },
   ];
 
   alPages: MenuItemList = [

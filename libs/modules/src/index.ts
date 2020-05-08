@@ -433,3 +433,7 @@ export * from './transports-orders/transports-orders.module'
 /**Transportes */
 export * from './transports-expeditions/transports-expeditions.component'
 export * from './transports-expeditions/transports-expeditions.module'
+
+/**Transportes */
+export * from './expeditions-inside/expedition-inside.component'
+export * from './expeditions-inside/expedition-inside.module'
