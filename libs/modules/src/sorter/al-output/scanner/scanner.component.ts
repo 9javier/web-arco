@@ -189,6 +189,14 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         }
       }
 
+      if(data.data == 'positioning/manual' && data.role == 'navigate'){
+        this.router.navigate(['sorter/output']).then(()=>{
+          this.toolbarProvider.currentPage.next('Ubicar/escanear con láser');
+          this.toolbarProvider.optionsActions.next([]);
+          this.router.navigate(['positioning/manual']);
+        });
+      }
+
     })
     modal.present();
   }
