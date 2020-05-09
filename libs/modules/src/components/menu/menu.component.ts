@@ -499,13 +499,13 @@ export class MenuComponent implements OnInit {
           icon: 'bus',
           tooltip: 'Transportes de expediciones'
         },
+        {
+          title: 'Pedidos Internos',
+          id: 'expedition-inside',
+          url: '/expedition-inside',
+          icon: 'folder'
+        },
       ]
-    },
-    {
-      title: 'Expedition Inside',
-      id: 'expedition-inside',
-      url: '/expedition-inside',
-      icon: 'folder'
     },
   ];
 

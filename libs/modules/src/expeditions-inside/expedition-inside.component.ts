@@ -126,7 +126,7 @@ export class ExpeditionInsideComponent implements OnInit {
   destiny: Array<TagsInputOption> = [];
   date: Array<TagsInputOption> = [];
 
-  displayedColumns: string[] = ['package', 'origin', 'destiny', 'delivery', 'order', 'date'];
+  displayedColumns: string[] = ['package', 'origin', 'destiny', 'delivery', 'date'];
   dataSource;
   button:boolean = false;
   subscriptionRefresh: Subscription;

@@ -1,4 +1,5 @@
 <ion-content>
+  <div class="table-container">
   <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
     
     <mat-row (click)="goDetails(row)"   *matRowDef="let row; columns: displayedColumns;"></mat-row>
@@ -66,15 +67,8 @@
     
     <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
   </mat-table>
-  <ion-grid>
-  <ion-row>
-    <ion-col size='8'>
-      <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
-    </ion-col>
-    <ion-col>
-    </ion-col>
-  </ion-row>
-  </ion-grid>
+  </div>
+  <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
   <ion-fab class="footer-products" vertical="bottom" horizontal="end" class="horizontal-fab">
     <ion-fab-button class="fab" matTooltip="Actualizar" matTooltipClass="tooltip" (click)="refresh()"><i
       class="material-icons">refresh</i>
