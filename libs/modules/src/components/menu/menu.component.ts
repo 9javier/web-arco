@@ -1037,8 +1037,6 @@ export class MenuComponent implements OnInit {
       this.checkAlertsAndRedirect();
     } else if (p.url === 'audits/scan') {
       this.auditMultipleScanditService.init();
-    } else if (p.url == 'defective-positioning'){
-      this.scanditService.defectivePositioning();
     }
   }
 
@@ -1091,6 +1089,8 @@ export class MenuComponent implements OnInit {
       this.productInfoScanditService.init();
     } else if (p.url === 'positioning') {
       this.scanditService.positioning();
+    } else if (p.url === 'defective-positioning'){
+      this.scanditService.defectivePositioning();
     } else if (p.url === 'audits/scan') {
       this.auditMultipleScanditService.init();
     } else {
