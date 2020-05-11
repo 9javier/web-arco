@@ -86,7 +86,7 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
                 if (!customErrorManagement && err.statusText == 'Unknown Error' && this.authenticationService.isAuthenticated()) {
                   this.authenticationService.logout();
                   if (!this.isToastVisible) {
-                    this.intermediaryService.presentToastError('Ha ocurrido un error al conectar con el servidor.');
+                    this.intermediaryService.presentToastError('Ha ocurrido un error al intentar conectarse con el servidor. Compruebe que su conexión a la red es estable para continuar.');
 
                     this.isToastVisible = true;
                     setTimeout(() => {
