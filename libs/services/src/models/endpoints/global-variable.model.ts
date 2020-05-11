@@ -5,6 +5,7 @@ export namespace GlobalVariableModel{
         id?:number;
         type:number;
         value:string;
+        tooltip:string;
         error?: boolean
     }
 

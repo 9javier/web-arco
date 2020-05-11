@@ -18,7 +18,7 @@ declare const BrowserPrint: any;
 export class GlobalVariablesComponent implements OnInit {
 
   listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
-  private listTypesFromDb: Array<{ id: number, name: string, workwave: boolean, type: string }> = [];
+  private listTypesFromDb: Array<{ id: number, name: string, workwave: boolean, type: string, tooltip: string }> = [];
   private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
   private countLoadOfVariables: number = 0;
 
@@ -77,7 +77,7 @@ export class GlobalVariablesComponent implements OnInit {
           }
         }
         if (!isTypeCreated) {
-          this.listVariables.push({ type: type.id, value: null });
+          this.listVariables.push({ type: type.id, value: null, tooltip: null });
         }
       }
     } else {
@@ -92,6 +92,7 @@ export class GlobalVariablesComponent implements OnInit {
     this.globalVariableService
       .getAll()
       .subscribe((globalVariables) => {
+        console.log("globalVariables",globalVariables);
         globalVariables.map(function(x){
           if(x.type == 4){
             x.value  = (parseInt(x.value)/60).toString();
@@ -124,6 +125,13 @@ export class GlobalVariablesComponent implements OnInit {
     });
 
     return type.type || '';
+  }
+  getTooltipById(id) : string {
+    let type = this.listTypesFromDb.find((type) => {
+      return type.id == id;
+    });
+
+    return type.tooltip || '';
   }
 
   updateVariables() {

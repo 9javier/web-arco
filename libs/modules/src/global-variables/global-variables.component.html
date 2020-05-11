@@ -2,13 +2,15 @@
   <div class="main-element-global-variables">
     <div class="scroll-list">
       <ion-item *ngFor="let variable of listVariables" class="variable-item" [ngClass]="variable.error ? 'wrong-variable' : ''">
-        <ion-label>[{{ getGeneralTypeById(variable.type) }}] {{ getTypeById(variable.type) }}</ion-label>
-        <i class="material-icons" *ngIf="variable.error">warning</i>
-        <ion-button class="users" *ngIf="getTypeById(variable.type)=='Usuarios que generan reposiciones'" matTooltip="Usuarios Reposiciones" matTooltipClass="tooltip" matTooltipPosition="left" (click)="usersReplenishment()">
-          <ion-icon name="people"></ion-icon>
-        </ion-button>
-        <ion-input *ngIf="getTypeById(variable.type)!='Usuarios que generan reposiciones'" [(ngModel)]="variable.value" placeholder="Valor"></ion-input>
-        <ion-input *ngIf="getTypeById(variable.type)=='Usuarios que generan reposiciones'" class="employees" placeholder="{{employeesToShow}}"></ion-input>
+        <ion-item class="tooltip" matTooltip="{{ getTooltipById(variable.type) }}" matTooltipClass="tooltip" >
+          <ion-label>[{{ getGeneralTypeById(variable.type) }}] {{ getTypeById(variable.type) }}</ion-label>
+          <i class="material-icons" *ngIf="variable.error">warning</i>
+          <ion-button class="users" *ngIf="getTypeById(variable.type)=='Usuarios que generan reposiciones'" matTooltip="Usuarios Reposiciones" matTooltipClass="tooltip" matTooltipPosition="left" (click)="usersReplenishment()">
+            <ion-icon name="people"></ion-icon>
+          </ion-button>
+          <ion-input *ngIf="getTypeById(variable.type)!='Usuarios que generan reposiciones'" [(ngModel)]="variable.value" placeholder="Valor"></ion-input>
+          <ion-input *ngIf="getTypeById(variable.type)=='Usuarios que generan reposiciones'" class="employees" placeholder="{{employeesToShow}}"></ion-input>
+        </ion-item>
       </ion-item>
     </div>
   </div>
