@@ -674,6 +674,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Asociar pares procesados para traspasos a embalajes y precintarlos'
         },
         {
+          title: 'Ubicar defectuosos',
+          id: 'defective-positioning',
+          icon: 'warning',
+          url: 'defective-positioning',
+          tooltip: 'Escanear artículos defectuosos mediante cámara para ubicar'
+        },
+        {
           title: 'Tareas de Picking',
           id: 'picking-task',
           icon: 'qr-scanner',
@@ -1030,6 +1037,8 @@ export class MenuComponent implements OnInit {
       this.checkAlertsAndRedirect();
     } else if (p.url === 'audits/scan') {
       this.auditMultipleScanditService.init();
+    } else if (p.url == 'defective-positioning'){
+      this.scanditService.defectivePositioning();
     }
   }
 

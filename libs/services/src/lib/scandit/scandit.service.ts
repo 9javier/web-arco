@@ -223,6 +223,155 @@ export class ScanditService {
     }, 'Ubicar/Escanear', HEADER_BACKGROUND, HEADER_COLOR);
   }
 
+  async defectivePositioning() {
+    this.isStoreUser = await this.authenticationService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
+    }
+
+    let lastCodeScanned: string = "start";
+    let positionsScanning = [];
+    let containerReference = null;
+    let packingReference = null;
+    let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
+    let timeoutStarted = null;
+
+    ScanditMatrixSimple.init((response) => {
+      if (response && response.barcode) {
+        let code = response.barcode.data;
+        if (code === "P0001") {
+          // temporary trick to release potential scanner service logic deadlock
+          this.positioningLog(2, "#1", "releasing pause flag!", [this.scannerPaused]);
+          this.scannerPaused = false;
+          return;
+        }
+        if (code === "P0002") {
+          // temporary trick to release potential scanner service logic deadlock
+          this.positioningLog(2, "#2", "clearing scanned codes buffer!", [this.scannerPaused]);
+          positionsScanning = [];
+          return;
+        }
+      }
+      if (response && response.barcode) {
+        this.positioningLog(2, "1", "scan!", [response && response.barcode && response.barcode.data]);
+        if (this.scannerPaused) {
+          this.positioningLog(3, "1.1", "paused!");
+        } else if (response.action != 'force_scanning') {
+          this.positioningLog(3, "1.2", "action empty");
+        }
+      } else {
+        this.positioningLog(3, "2", "empty scan!");
+      }
+      if (response && response.barcode && (!this.scannerPaused || response.action == 'force_scanning')) {
+        //Check Container or product
+        let code = response.barcode.data;
+
+        if (code === lastCodeScanned) return;
+        lastCodeScanned = code;
+
+        if (timeoutStarted) {
+          clearTimeout(timeoutStarted);
+        }
+        timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+
+        if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
+          this.positioningLog(2, "1.3", "container matched!", [code, containerReference]);
+          //Container
+          positionsScanning = [];
+          this.positioningLog(2, "1.3.1", "positioning start!");
+          ScanditMatrixSimple.setText(`Inicio de ubicación en la posición ${code}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+          containerReference = code;
+          packingReference = null;
+        } else if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PRODUCT) {
+          this.positioningLog(2, "1.4", "product matched!");
+          //Product
+          let productReference = code;
+          if (!this.isStoreUser && (!containerReference && !packingReference)) {
+            this.positioningLog(3, "1.4.1", "no container!");
+            ScanditMatrixSimple.setText(`Debe escanear una posición o embalaje para iniciar el posicionamiento`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+            this.hideTextMessage(1500);
+          } else {
+            this.positioningLog(2, "1.4.2", "yes container!");
+            if (response.action == 'force_scanning') {
+              this.positioningLog(2, "1.4.2.1", "action force, disable pause!");
+              this.scannerPaused = false;
+              if (response.force) {
+                this.positioningLog(2, "1.4.2.1.1", "sending save response to server with force!");
+                let params: any = {
+                  productReference: productReference,
+                  warehouseId: warehouseId,
+                  force: true
+                };
+                if (!this.isStoreUser && containerReference) {
+                  params.containerReference = containerReference;
+                } else if (!this.isStoreUser && packingReference) {
+                  params.packingReference = packingReference;
+                }
+
+                ScanditMatrixSimple.showLoadingDialog('Ubicando producto...');
+                this.storeProductInContainer(params, response);
+              } else {
+                this.positioningLog(2, "1.4.2.1.2", "response NO force!");
+                let msg = '';
+                if (this.isStoreUser) {
+                  msg = `No se ha registrado la ubicación del producto ${productReference} en la tienda.`;
+                } else {
+                  if (containerReference) {
+                    msg = `No se ha registrado la ubicación del producto ${productReference} en el contenedor.`;
+                  } else {
+                    msg = `No se ha registrado la ubicación del producto ${productReference} en el embalaje.`;
+                  }
+                }
+                ScanditMatrixSimple.setText(msg, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
+                this.hideTextMessage(1500);
+              }
+            } else {
+              this.positioningLog(2, "1.4.2.2", "action NO force");
+              let searchProductPosition = positionsScanning.filter(el => el.product == productReference && ((containerReference && el.position == containerReference) || (packingReference && el.position == packingReference) || (!containerReference && !packingReference && el.warehouse == warehouseId)));
+              if(searchProductPosition.length > 0){
+                this.positioningLog(3, "1.4.2.2.1", "ignored, duplicate!");
+              }
+              if(searchProductPosition.length == 0){
+                this.positioningLog(3, "1.4.2.2.2", "product located, saving scan hisotry and storing product (server)");
+                positionsScanning.push({product: productReference, position: containerReference, warehouse: warehouseId, packing: packingReference});
+                let msgSetText = '';
+                if (this.isStoreUser) {
+                  msgSetText = `Escaneado ${productReference} para ubicar en la tienda ${this.storeUserObj.name}`;
+                } else {
+                  if (packingReference) {
+                    msgSetText = `Escaneado ${productReference} para ubicar en el embalaje ${packingReference}`;
+                  } else {
+                    msgSetText = `Escaneado ${productReference} para ubicar en la posición ${containerReference}`;
+                  }
+                }
+                ScanditMatrixSimple.setText(msgSetText, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
+                this.hideTextMessage(1500);
+                let params: any = {
+                  productReference: productReference,
+                  warehouseId: warehouseId
+                };
+                if (!this.isStoreUser && containerReference) {
+                  params.containerReference = containerReference;
+                } else if (!this.isStoreUser && packingReference) {
+                  params.packingReference = packingReference;
+                }
+                ScanditMatrixSimple.showLoadingDialog('Ubicando producto...');
+                this.storeProductInContainer(params, response);
+              }
+            }
+          }
+        } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PACKING) {
+          positionsScanning = [];
+          ScanditMatrixSimple.setText(`Inicio de ubicación en el embalaje ${code}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+          packingReference = code;
+          containerReference = null;
+        }
+      }
+    }, 'Ubicar/Escanear', HEADER_BACKGROUND, HEADER_COLOR);
+  }
+
   private storeProductInContainer(params, responseScanning) {
     this.inventoryService
       .postStore(params)
