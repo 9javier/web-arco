@@ -672,4 +672,14 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
       this.getList(this.form);
     });
   }
+
+  refreshReceptions() {
+    this.paginatorObservable.unsubscribe();
+    this.paginatorObservable = null;
+    this.initEntity();
+    this.initForm();
+    this.getFilters();
+    this.getList(this.form);
+    this.listenChanges();
+  }
 }
