@@ -38,7 +38,8 @@ export namespace SorterOutputModel {
     packingReference: string,
     wayId: number,
     fullPacking: boolean,
-    incidenceProcess: boolean
+    incidenceProcess: boolean,
+    stopButtonPressed: boolean
   }
   export interface ScanProductPutInPacking {
     processStopped?: boolean,

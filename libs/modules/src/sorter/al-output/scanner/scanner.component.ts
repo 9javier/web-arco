@@ -20,6 +20,7 @@ import {Events} from "@ionic/angular";
 import { CarrierService } from '../../../../../services/src/lib/endpoint/carrier/carrier.service';
 import { ListasProductosComponent } from 'libs/modules/src/picking-manual/lista/listas-productos/listas-productos.component';
 import { ListProductsCarrierComponent } from '../../../components/list-products-carrier/list-products-carrier.component';
+import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'sorter-output-scanner',
@@ -36,6 +37,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   wrongCodeScanned: boolean = false;
   lastProductScannedChecking: ProductSorterModel.ProductSorter = null;
   packingIsFull: boolean = false;
+  stopButtonPressed: boolean = false;
   hideLeftButtonFooter: boolean = true;
   hideRightButtonFooter: boolean = true;
   lastProductScanned: boolean = false;
@@ -43,6 +45,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   isWaitingSorterFeedback = false;
 
   ULTIMA_JAULA:string;
+  lastJailPackingInventories: any[];
   lastWarehouse = null;
   lastWarehouseReference = null;
   ultimaReferenza:string;
@@ -82,6 +85,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     private sorterOutputService: SorterOutputService,
     private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
+    private toolbarProvider: ToolbarProvider,
     private keyboardService: KeyboardService,
     private carrier: CarrierService,
     public  events: Events,
@@ -102,6 +106,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.addStopButton();
     this.infoSorterOperation = this.sorterProvider.infoSorterOutputOperation;
     this.getTypes();
     this.getGlobalVariables();
@@ -112,6 +117,35 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.launchIncidenceBeep = false;
     this.wayIsEmpty = true;
     this.events.publish('sorter:refresh', this.wayIsEmpty);
+    this.toolbarProvider.optionsActions.next([]);
+  }
+
+  addStopButton() {
+    const buttons = [
+      {
+        icon: 'hand',
+        label: 'Detener proceso',
+        action: async () => {
+          if(this.isFirstProductScanned) {
+            const yesCallback = async () => {
+              this.stopButtonPressed = true;
+              this.hideLeftButtonFooter = true;
+              this.hideRightButtonFooter = true;
+              this.messageGuide = 'Escanea el primer artículo de la calle.';
+            };
+            const noCallback = async () => {
+              this.setWayAsEmpty();
+            };
+            await this.intermediaryService.presentConfirm('¿Quedan artículos en la calle?', yesCallback, noCallback);
+          }else{
+            if(this.messageGuide == 'ESCANEAR 1º ARTÍCULO' && this.lastJailPackingInventories.length == 0){
+              this.carrier.postPackingEmpty(this.ULTIMA_JAULA, null);
+            }
+            this.router.navigate(['sorter/output']);
+          }
+        }
+      }];
+    this.toolbarProvider.optionsActions.next(buttons);
   }
 
   focusToInput() {
@@ -155,6 +189,14 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         }
       }
 
+      if(data.data == 'positioning/manual' && data.role == 'navigate'){
+        this.router.navigate(['sorter/output']).then(()=>{
+          this.toolbarProvider.currentPage.next('Ubicar/escanear con láser');
+          this.toolbarProvider.optionsActions.next([]);
+          this.router.navigate(['positioning/manual']);
+        });
+      }
+
     })
     modal.present();
   }
@@ -187,6 +229,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         } else {
 
           this.carrier.getSingle(dataWrote).subscribe(data => {
+            this.lastJailPackingInventories = data.packingInventorys;
             if(data.packingInventorys.length > 0 && !test){
               this.modalList(dataWrote)
             }else{
@@ -483,7 +526,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         packingReference: this.infoSorterOperation.packingReference,
         wayId: this.infoSorterOperation.wayId,
         fullPacking: this.packingIsFull,
-        incidenceProcess: this.wrongCodeScanned
+        incidenceProcess: this.wrongCodeScanned,
+        stopButtonPressed: this.stopButtonPressed
       })
       .then(async (res: SorterOutputModel.ResponseScanProductPutInPacking) => {
         if (res.code === 201) {
@@ -546,6 +590,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
                 this.lastProductScanned = true;
                 this.setPackingAsFull();
+              } else if(this.stopButtonPressed){
+                this.router.navigate(['sorter/output']);
               } else {
 
                 this.hideLeftButtonFooter = false;
