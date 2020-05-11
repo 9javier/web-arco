@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  printerRequired: true,
   apiBasePhoto: 'http://conexion1.globalretail.es:57354',
   apiBase: 'http://conexion1.globalretail.es:57354/api',
   apiSorter: 'http://conexion1.globalretail.es:57354/api',

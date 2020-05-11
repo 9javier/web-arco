@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  printerRequired: true,
   apiBasePhoto: 'http://mga.krack.es:8080',
   apiBase: 'http://mga.krack.es:8080/api',
   apiSorter: 'http://mga.krack.es:8080/api',
