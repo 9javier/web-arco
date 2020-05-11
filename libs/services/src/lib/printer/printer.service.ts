@@ -648,6 +648,67 @@ export class PrinterService {
   failed = false;
 
 
+  public async toPrintCommands(commandsToPrint, callbackSuccess?: () => any, callbackFail?: () => any,  macAddress?) {
+
+      console.debug("PRINT::toPrintCommands 1 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress });
+      if (macAddress) {
+        this.address = macAddress;
+        console.debug("PRINT::toPrintCommands 2 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address });
+      } else {
+        this.address = await this.getConfiguredAddress();
+        console.debug("PRINT::toPrintCommands 3 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address });
+      }
+
+      console.debug("PRINT::toPrintCommands 4 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address });
+      if (!this.address) {
+        await this.connect();
+        console.debug("PRINT::toPrintCommands 5 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address });
+      }
+
+      console.debug("PRINT::toPrintFromString 6 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address });
+      if (this.address) {
+        if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {
+          console.debug("PRINT::toPrintFromString 7 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address });
+          return new Promise((resolve, reject) => {
+            let printAttempts = 0;
+            console.debug("PRINT::toPrintFromString 8 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address, printAttempts });
+            let tryToPrintFn = () => {
+              printAttempts++;
+              console.debug("PRINT::toPrintFromString 9 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address, printAttempts });
+              cordova.plugins.zbtprinter.printWithConnection(this.address, commandsToPrint,
+                (success) => {
+                  console.debug("PRINT::toPrintFromString 10 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address, printAttempts });
+                  this.stampe$.next(true);
+                  if(callbackSuccess){
+                    callbackSuccess();
+                  }
+                  resolve(true);
+                }, (fail) => {
+                  console.debug("PRINT::toPrintFromString 11 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address, printAttempts });
+                  if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
+                    console.debug("PRINT::toPrintFromString 12 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address, printAttempts });
+                    this.intermediaryService.presentToastError('No ha sido posible conectarse con la impresora', TimesToastType.DURATION_ERROR_TOAST);
+                    if(callbackFail){
+                      callbackFail();
+                    }
+                    resolve(false);
+                  } else {
+                    console.debug("PRINT::toPrintFromString 13 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address, printAttempts });
+                    setTimeout(tryToPrintFn, 1000);
+                  }
+                }
+              );
+            };
+            tryToPrintFn();
+          });
+        } else {
+          console.debug("PRINT::toPrintFromString 14 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address });
+        }
+      } else {
+        console.debug("PRINT::toPrintFromString 15 [" + new Date().toJSON() + "]", { commandsToPrint, macAddress: this.address });
+      }
+  }
+
   /**
    * Print labels with the zebra printed from string
    * @param textToPrint - string to be printed
