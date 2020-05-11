@@ -626,7 +626,21 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         this.loadingMessageComponent.show(false);
         const referencesToPrint = res.resultToPrint.map(r => r.reference);
         if (referencesToPrint && referencesToPrint.length > 0) {
-          this.printerService.printTagBarcode(referencesToPrint)
+          const markAsPrinted = async () => {
+            const parameters = {
+              resultToPrint: res.resultToPrint
+            };
+            this.receptionsAvelonService.markAsPrinted(parameters).then(response => {
+              if(!response || !response.code || response.code != 200){
+                console.error('Error al tratar de marcar como impreso alguno de los productos:', response);
+              }
+            }, response => {
+              console.error('Error al tratar de marcar como impreso alguno de los productos:', response);
+            }).catch(error => {
+              console.error('Error al tratar de marcar como impreso alguno de los productos:', error);
+            });
+          };
+          this.printerService.printTagBarcode(referencesToPrint, 1, markAsPrinted)
             .subscribe(async (resPrint) => {
               console.log('Print reference of reception successful');
               if (typeof resPrint == 'boolean') {
