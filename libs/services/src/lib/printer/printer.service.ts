@@ -381,6 +381,40 @@ export class PrinterService {
     return out;
   }
 
+  printTagBarcodeAndData(listReferences: string[], cntPrint: number = 1): Promise<Array<any>>{
+    console.debug("PRINT::printTagBarcodeAndData 1 [" + new Date().toJSON() + "]", listReferences);
+
+    let referencesToPrint = [];
+
+    /**obtain the products */
+    console.debug("PRINT::printTagBarcodeAndData 2 [" + new Date().toJSON() + "]", listReferences);
+
+    let results = this.getProductsByReference(listReferences).then((response: HttpRequestModel.Response) => {
+        console.debug("PRINT::getProductsByReference 2 [" + new Date().toJSON() + "]", response);
+        let products = response.data;
+        let dataToPrint;
+        if (cntPrint == 1) {
+          products.map(product => {
+            dataToPrint = this.processProductToPrintTagBarcode(product);
+            referencesToPrint.push(dataToPrint);
+          });
+        } else
+        if (cntPrint > 1) {
+
+          let newData;
+          newData = products[0];
+
+          dataToPrint = this.processProductToPrintTagBarcode(this.convertArrayFromPrint(newData, cntPrint, true));
+          referencesToPrint = dataToPrint;
+        }
+
+        console.debug("PRINT::printTagBarcodeAndData 3 [" + new Date().toJSON() + "]", referencesToPrint);
+        return referencesToPrint;
+      });
+    console.debug("PRINT::printTagBarcodeAndData 4 [" + new Date().toJSON() + "]", results);
+    return results;
+  }
+
   printTagBarcode(listReferences: string[], cntPrint: number = 1): Observable<boolean | Observable<any>> {
     console.debug("PRINT::printTagBarcode 1 [" + new Date().toJSON() + "]", listReferences);
     /** declare and obsevable to merge all print results */
@@ -413,8 +447,6 @@ export class PrinterService {
             }
             dataToPrint = this.processProductToPrintTagBarcode(this.convertArrayFromPrint(newData, cntPrint, true));
           }
-
-
 
         innerObservable = innerObservable.pipe(flatMap(product => {
           return from(this.toPrintFromString(dataToPrint));
