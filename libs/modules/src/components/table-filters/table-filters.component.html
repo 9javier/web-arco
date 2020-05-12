@@ -12,7 +12,7 @@
                   <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true"
                     [matRippleRadius]="20" [matRippleColor]="'white'" class="custom-checkbox"
                     (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
-                    [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
+                    [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()" color="primary">
                   </mat-checkbox>
                 </ng-container>
               </div>
@@ -23,7 +23,8 @@
                 <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true"
                   [matRippleRadius]="20" [matRippleColor]="'black'" (click)="$event.stopPropagation();"
                   (change)="checkboxRow($event,row)" [checked]="selection.isSelected(row)"
-                  [aria-label]="checkboxLabel(row)">
+                  [aria-label]="checkboxLabel(row)"
+                  color="primary">
                 </mat-checkbox>
               </ng-container>
             </mat-cell>
@@ -42,13 +43,13 @@
             <div *ngIf='col.type == "checkbox"'>
               <mat-cell *matCellDef="let element" class="my-sticky-col info number">
                 <div *ngIf='col.field.length == 1'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
                 <div *ngIf='col.field.length == 2'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true"  color="primary"></mat-checkbox>
                 </div>
                 <div *ngIf='col.field.length == 3'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]'  [disabled]="true" color="primary"></mat-checkbox>
                 </div>
               </mat-cell>
             </div>
@@ -73,13 +74,13 @@
             <div *ngIf='col.type == "checkbox"'>
               <mat-cell *matCellDef="let element" class="my-sticky-col info number">
                 <div *ngIf='col.field.length == 1'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
                 <div *ngIf='col.field.length == 2'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
                 <div *ngIf='col.field.length == 3'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
               </mat-cell>
             </div>
@@ -105,13 +106,13 @@
             <div *ngIf='col.type == "checkbox"'>
               <mat-cell *matCellDef="let element" class="my-sticky-col info number">
                 <div *ngIf='col.field.length == 1'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
                 <div *ngIf='col.field.length == 2'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
                 <div *ngIf='col.field.length == 3'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
               </mat-cell>
             </div>
@@ -134,13 +135,13 @@
             <div *ngIf='col.type == "checkbox"'>
               <mat-cell *matCellDef="let element" class="my-sticky-col info number">
                 <div *ngIf='col.field.length == 1'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
                 <div *ngIf='col.field.length == 2'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
                 <div *ngIf='col.field.length == 3'>
-                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true"></mat-checkbox>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
               </mat-cell>
             </div>

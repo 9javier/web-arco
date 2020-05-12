@@ -18,20 +18,22 @@ Table Component with filters and dynamic functions.
  => Component.TS
   **Example**
 
- this.columnsData =[
+ this.columnsData = [
     {
       name: 'name',
       title:'Nombre',
-      field: 'name',
-      filters:true
+      field: ['name'],
+      filters:true,
+      type:'text'
     },
     {
-      name: 'product',
-      title:'Nombre',
-      field: 'name',
-      filters:false
-    }
-    ];
+      name: 'logistic_internal',
+      title:'Logistica interna',
+      field: ['logistic_internal'],
+      filters:true,
+      type: 'checkbox'
+    } 
+  ];
     this.filtersData[
       {
         name:[{id:1,name: "DHL"},{id:2, name:"SEUR"}],
@@ -42,45 +44,49 @@ Table Component with filters and dynamic functions.
     this.dataSource =[];
 # ----------------------------------------------------
 # COMPONENT.TS
-emitMain(e) {
+  emitMain(e) {
     switch (e.event) {
       case TableEmitter.BtnAdd:
         /**Add function*/
-        console.log("Agregar");
-        break;
-      case TableEmitter.BtnExcell:
-        /** Excell download Function*/
+        this.createTransport();
         break;
       case TableEmitter.BtnSend:
         /**Send function */
         let selectSend = e.value;
-        
+        console.log(selectSend);
         break;
       case TableEmitter.BtnRefresh:
         /**Refresh funtion*/
-        break;
-      case TableEmitter.BtnDelete:
-        /**Delete funtion */
-        let selecDelete = e.value;
-        break;
-      case TableEmitter.Checkbox:
-        let selectCheckbox = e.value;
-        break;
-        case TableEmitter.OpenRow:
-        let row = e.value;
-        console.log(row);
+        this.refresh();
         break;
       case TableEmitter.Filters:
         let entity = e.value.entityName;
         let filters = e.value.filters;
+        this.form.get(entity).patchValue(filters);
+        this.getList(this.form);
+        break;
+      case TableEmitter.OpenRow:
+        let row = e.value;
+        console.log(row);
+        this.openRow(row);
         break;
       case TableEmitter.Pagination:
         let pagination = e.value;
+        this.form.value.pagination = pagination;
+        this.getList(this.form);
         break;
       case TableEmitter.Sorter:
         let orderby = e.value;
+        this.form.value.orderby = orderby;
+        this.getList(this.form);
+        break;
+      case TableEmitter.BtnDelete:
+        let select = e.value;
+        this.delete(select);
         break;
     }
+
+  }
 ## Properties
   **HTML**  
   -> Button refresh.
