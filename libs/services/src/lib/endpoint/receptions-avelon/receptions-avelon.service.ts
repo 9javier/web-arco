@@ -21,6 +21,7 @@ export class ReceptionsAvelonService {
   postLoadSizesUrl: string = `${environment.apiBase}/reception/sizes/list`;
   private postReloadModelsListUrl: string = `${environment.apiBase}/reception/models/list`;
   makeReceptionFreeUrl: string = `${this.receptionsUrl}/free`;
+  postCreateIncidenceForNotPrintsUrl: string = `${this.receptionsUrl}/no-printed/incidence`;
 
   private models = new BehaviorSubject([]);
   private models$ = this.models.asObservable()
@@ -90,6 +91,10 @@ export class ReceptionsAvelonService {
 
   postReloadModelsList(params: ReceptionAvelonModel.ParamsReloadModelsList): Observable<ReceptionAvelonModel.ResponseReloadModelsList> {
     return this.http.post<ReceptionAvelonModel.ResponseReloadModelsList>(this.postReloadModelsListUrl, params);
+  }
+
+  postCreateIncidenceForNotPrints(params: {references: string[]}): Observable<any> {
+    return this.http.post<any>(this.postCreateIncidenceForNotPrintsUrl, params);
   }
   //endregion
 

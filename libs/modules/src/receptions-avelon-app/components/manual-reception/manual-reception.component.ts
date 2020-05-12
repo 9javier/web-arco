@@ -645,6 +645,12 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
               await this.localStorageProvider.set('lastPrint', JSON.stringify(lastPrint));
             }, (error) => {
               console.error('Some error success to print reference of reception', error);
+              this.receptionsAvelonService
+                .postCreateIncidenceForNotPrints({references: referencesToPrint})
+                .subscribe(
+                  () => console.log('- Incidences for received products not printed generated! -'),
+                  (error) => console.error('- Error to generate incidences for received products not printed >> ', error)
+                );
             });
 
           const someProductToSorter = !!res.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
