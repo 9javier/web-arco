@@ -187,6 +187,9 @@
 </ion-content>
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button matTooltip="Recargar" matTooltipClass="tooltip" (click)="refreshReceptions()">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
     <ion-fab-button *ngIf="isEnableSend() && sameDestiny()" matTooltip="Lanzar Picking" matTooltipClass="tooltip" (click)="newPicking()"><i class="material-icons">send</i></ion-fab-button>
   </ion-fab>
 </ion-footer>
