@@ -126,22 +126,17 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         icon: 'hand',
         label: 'Detener proceso',
         action: async () => {
-          if(this.isFirstProductScanned) {
-            const yesCallback = async () => {
-              this.stopButtonPressed = true;
-              this.hideLeftButtonFooter = true;
-              this.hideRightButtonFooter = true;
-              this.messageGuide = 'Escanea el primer artículo de la calle.';
-            };
-            const noCallback = async () => {
-              this.setWayAsEmpty();
-            };
-            await this.intermediaryService.presentConfirm('¿Quedan artículos en la calle?', yesCallback, noCallback);
-          }else{
-            if(this.messageGuide == 'ESCANEAR 1º ARTÍCULO' && this.lastJailPackingInventories.length == 0){
-              this.carrier.postPackingEmpty(this.ULTIMA_JAULA, null);
+          if(this.wrongCodeScanned){
+            await this.presentModalCancelOutputWithIncidence();
+          } else {
+            if(this.isFirstProductScanned) {
+              await this.presentModalCancelOutput();
+            }else{
+              if(this.messageGuide == 'ESCANEAR 1º ARTÍCULO' && this.lastJailPackingInventories && this.lastJailPackingInventories.length == 0){
+                this.carrier.postPackingEmpty(this.ULTIMA_JAULA, null);
+              }
+              this.router.navigate(['sorter/output']);
             }
-            this.router.navigate(['sorter/output']);
           }
         }
       }];
@@ -305,9 +300,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       });
   }
 
-  async emptyWay() {
-    let showModalWithCount = async () => {
-
+  async emptyWay(finish?: boolean) {
+    let showModalWithCount = async (finish?: boolean) => {
       let globalVar = 5;
       let textCountdown = 'Revisa para confirmar que la calle está completamente vacía.<br/>';
       let globalFound = this.listVariables.find( global => {
@@ -328,7 +322,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
       let buttonOk = {
         text: 'Confirmar',
-        handler: () => this.jaulaLlena()
+        handler: () => this.jaulaLlena(finish)
         // handler: () => this.setWayAsEmpty()
 
       };
@@ -367,7 +361,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       .then(async (res: SorterOutputModel.ResponseBlockSorterWay) => {
         if (res.code === 200) {
           await this.intermediaryService.dismissLoading();
-          showModalWithCount();
+          showModalWithCount(finish);
         } else {
           let errorMessage = 'Ha ocurrido un error al intentar bloquear los procesos en la calle actual.';
           if (res.errors) {
@@ -536,7 +530,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           if (res.data.processStopped && !this.wrongCodeScanned) {
             this.audioProvider.playDefaultOk();
             await this.intermediaryService.presentToastSuccess('Proceso de salida finalizado.', 2000);
-            this.stopExecutionOutput();
+            this.stopExecutionOutput(this.stopButtonPressed);
           } else {
             if (this.wrongCodeScanned) {
               let resData = res.data;
@@ -690,7 +684,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       });
   }
 
-  private async jaulaLlena(){
+  private async jaulaLlena(finish?: boolean){
     this.alerta = false;
     let alert = await this.alertController.create({
       header:`¿El embalaje ${this.infoSorterOperation.packingReference} está lleno? `,
@@ -709,7 +703,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
               if(res.code === 200){
                 this.audioProvider.playDefaultOk();
                 this.ULTIMA_JAULA = null;
-                this.setWayAsEmpty().then(()=>{
+                this.setWayAsEmpty(finish).then(()=>{
                   this.packingIsFull = false;
                 })
               }
@@ -720,7 +714,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           handler:()=>{
             this.alerta = true;
             this.outputWithIncidencesClear = false;
-            this.setWayAsEmpty();
+            this.setWayAsEmpty(finish);
           }
         }
       ]
@@ -728,7 +722,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  private async setWayAsEmpty() {
+  private async setWayAsEmpty(finish?: boolean) {
     await this.intermediaryService.presentLoading('Comprobando que la calle esté vacía...');
     setTimeout(() => {
       this.sorterOutputService
@@ -743,7 +737,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
             this.sorterProvider.colorActiveForUser = null;
             await this.intermediaryService.dismissLoading();
             await this.intermediaryService.presentToastSuccess(`Registrada la calle como vacía.`);
-            this.stopExecutionOutput();
+            this.stopExecutionOutput(finish);
           } else {
             this.audioProvider.playDefaultError();
             let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
@@ -867,70 +861,76 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     }
   }
 
-  private stopExecutionOutput() {
+  private stopExecutionOutput(finish?: boolean, forceWithIncidence?:boolean) {
     this.sorterExecutionService
-      .postStopExecuteColor()
+      .postStopExecuteColor(forceWithIncidence)
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
 
-        let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
-          color: this.sorterProvider.colorSelected.id,
-          type: 2
-        };
-        if (paramsRequest) {
-          this.sorterExecutionService.postExecuteColor(paramsRequest).subscribe(data => {
+        if(!finish){
+          let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
+            color: this.sorterProvider.colorSelected.id,
+            type: 2
+          };
+          if (paramsRequest) {
+            this.sorterExecutionService.postExecuteColor(paramsRequest).subscribe(data => {
 
-            let idWayToWork = null;
-            if (this.waySelectedToEmptying) {
-              idWayToWork = this.waySelectedToEmptying.id;
-            }
+              let idWayToWork = null;
+              if (this.waySelectedToEmptying) {
+                idWayToWork = this.waySelectedToEmptying.id;
+              }
 
-            let lastWarehouse: number;
-            if (this.sorterProvider.infoSorterOutputOperation) {
-              lastWarehouse = this.sorterProvider.infoSorterOutputOperation.destinyWarehouse.id;
-            }
+              let lastWarehouse: number;
+              if (this.sorterProvider.infoSorterOutputOperation) {
+                lastWarehouse = this.sorterProvider.infoSorterOutputOperation.destinyWarehouse.id;
+              }
 
-            this.sorterOutputService.getNewProcessWay(idWayToWork, lastWarehouse)
-              .then(async (res2: SorterOutputModel.ResponseNewProcessWay) => {
+              this.sorterOutputService.getNewProcessWay(idWayToWork, lastWarehouse)
+                .then(async (res2: SorterOutputModel.ResponseNewProcessWay) => {
 
-                if (res2.code === 201) {
-                  this.inputValue = null;
-                  this.processStarted = null;
-                  this.isFirstProductScanned = false;
-                  this.wrongCodeScanned = false;
-                  this.packingIsFull = false;
+                  if (res2.code === 201) {
+                    this.inputValue = null;
+                    this.processStarted = null;
+                    this.isFirstProductScanned = false;
+                    this.wrongCodeScanned = false;
+                    this.packingIsFull = false;
 
-                  let id = this.sorterProvider.id_wareHouse;
+                    let id = this.sorterProvider.id_wareHouse;
 
-                  let newProcessWay = res2.data;
-                  this.infoSorterOperation = {
-                    destinyWarehouse: {
-                      id: newProcessWay.warehouse.id,
-                      name: newProcessWay.warehouse.name,
-                      reference: newProcessWay.warehouse.reference
-                    },
-                    wayId: newProcessWay.way.zoneWay.ways.id
-                  };
+                    let newProcessWay = res2.data;
+                    this.infoSorterOperation = {
+                      destinyWarehouse: {
+                        id: newProcessWay.warehouse.id,
+                        name: newProcessWay.warehouse.name,
+                        reference: newProcessWay.warehouse.reference
+                      },
+                      wayId: newProcessWay.way.zoneWay.ways.id
+                    };
 
-                  if(this.ULTIMA_JAULA || this.ULTIMA_JAULA !== null){
-                    this.assignPackingToProcess(this.ULTIMA_JAULA);
+                    if(this.ULTIMA_JAULA || this.ULTIMA_JAULA !== null){
+                      this.assignPackingToProcess(this.ULTIMA_JAULA);
+                    }
+                    this.focusToInput();
+                  } else {
+                    let errorMessage = 'Ha ocurrido un error al intentar obtener la nueva calle donde trabajar.';
+                    if (res2.errors) {
+                      errorMessage = res2.errors;
+                    }
+                    await this.intermediaryService.presentToastError(errorMessage);
+                    this.location.back();
                   }
-                  this.focusToInput();
-                } else {
-                  let errorMessage = 'Ha ocurrido un error al intentar obtener la nueva calle donde trabajar.';
-                  if (res2.errors) {
-                    errorMessage = res2.errors;
-                  }
-                  await this.intermediaryService.presentToastError(errorMessage);
-                  this.location.back();
-                }
 
-              }).catch(error => { this.location.back() })
-          })
+                }).catch(error => { this.location.back() })
+            })
+          }
         }
 
         await this.intermediaryService.dismissLoading();
         this.sorterProvider.colorActiveForUser = null;
         this.checkByWrongCode = true;
+        if(finish){
+            this.sorterProvider.processActiveForUser = null;
+            this.router.navigate(['sorter/output']);
+        }
       }, async (error: HttpRequestModel.Error) => {
         await this.intermediaryService.dismissLoading();
         let errorMessage = 'Ha ocurrido un error al intentar finalizar el proceso.';
@@ -946,5 +946,70 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     if(event && event.target && event.target.id){
       this.keyboardService.setInputFocused(event.target.id);
     }
+  }
+
+  private async presentModalCancelOutput() {
+    const previousMessage = this.messageGuide;
+    let buttonsAlert: any = [{
+      text: "Sí",
+      handler: ()=>{
+        this.stopButtonPressed = true;
+        this.hideLeftButtonFooter = true;
+        this.hideRightButtonFooter = true;
+        this.messageGuide = 'ESCANEAR 1º ARTÍCULO';
+        this.focusToInput();
+      }
+    }, {
+      text: "No",
+      handler: async ()=>{
+        await this.emptyWay(true);
+      }
+    }];
+
+    const alert = await this.alertController.create({
+      header: "Detener Salida Sorter",
+      message: "¿Quedan artículos en la calle?",
+      buttons: buttonsAlert
+    });
+    alert.onDidDismiss().then((data) => {
+      if(!data){
+        this.stopButtonPressed = false;
+        this.hideLeftButtonFooter = false;
+        this.hideRightButtonFooter = false;
+        this.messageGuide = previousMessage;
+        this.focusToInput();
+      }
+    });
+    return await alert.present();
+  }
+
+  private async presentModalCancelOutputWithIncidence() {
+    const previousMessage = this.messageGuide;
+    let buttonsAlert: any = [{
+      text: "Sí",
+      handler: ()=>{
+        this.stopExecutionOutput(true, true);
+      }
+    }, {
+      text: "No",
+      handler: async ()=>{
+        await this.emptyWay(true);
+      }
+    }];
+
+    const alert = await this.alertController.create({
+      header: "Detener Salida Sorter",
+      message: "¿Quedan artículos en la calle?",
+      buttons: buttonsAlert
+    });
+    alert.onDidDismiss().then((data) => {
+      if(!data){
+        this.hideLeftButtonFooter = false;
+        this.hideRightButtonFooter = false;
+        this.messageGuide = previousMessage;
+        this.focusToInput();
+      }
+    });
+    return await alert.present();
   }
 }
