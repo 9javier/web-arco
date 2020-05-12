@@ -191,16 +191,16 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
       });
 
       const selectedReceptions = this.getListReceptions();
-      const selectedReceptionsIds: number[] = [];
+      const selectedReservedIds: number[] = [];
       for(let reception of selectedReceptions){
-        selectedReceptionsIds.push(parseInt(reception.expeditionLineId));
+        selectedReservedIds.push(parseInt(reception.id));
       }
 
       modal.onDidDismiss().then(async response => {
         if(response.data) {
           await this.intermediaryService.presentLoading();
           const parameters: PredistributionModel.PickingRequest = {
-            receptionIds: selectedReceptionsIds,
+            ids: selectedReservedIds,
             destinies: [{warehouseId: Number(parseInt(selectedReceptions[0].warehouseId)), userId: response.data}]
           };
           await this.predistributionsService.newDirectPicking(parameters).then(async response => {
@@ -258,10 +258,12 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
         receptionList.length=0;
        for(let i=0; i<this.selection.selected.length; i++){
          let expeditionLineId =JSON.stringify(this.selection.selected[i].expeditionLineId);
+         let id =JSON.stringify(this.selection.selected[i].id);
          let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
          let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
          let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
            receptionList.push({
+             id: id,
              expeditionLineId: expeditionLineId,
              modelId: modelId,
              sizeId: sizeId,

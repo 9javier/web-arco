@@ -18,8 +18,10 @@ import {WebsocketService} from '../../../services/src/lib/endpoint/web-socket/we
 import {type} from '../../../services/src/lib/endpoint/web-socket/enums/typeData';
 import {StateExpeditionAvelonService} from "../../../services/src/lib/endpoint/state-expedition-avelon/state-expedition-avelon.service";
 import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
-import {ActivatedRoute} from "@angular/router";
 import {TypeModelVisualization} from "./enums/model_visualization.enum";
+import {PrinterService} from "../../../services/src/lib/printer/printer.service";
+import {ActivatedRoute, Router} from "@angular/router";
+declare const BrowserPrint: any;
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -111,7 +113,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     private cd: ChangeDetectorRef,
     private websocketService : WebsocketService,
     private stateExpeditionAvelonService: StateExpeditionAvelonService,
-    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider
+    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider,
+    private printerService: PrinterService
   ) {}
 
   ngOnInit() {
@@ -901,8 +904,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       params.delivery_note = this.deliveryNote;
     }
 
-    const subscribeResponseOk = (res) => {
-      // refresh the data
+    const subscribeResponseOk = async (res) => {
       this.reception
         .getReceptions(this.providerId, this.typeModelVisualization)
         .subscribe((info: ReceptionAvelonModel.Reception) => {
@@ -924,6 +926,40 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         this.referencesToPrint = res.resultToPrint.map(r => r.reference);
       }
 
+      if (this.referencesToPrint && this.referencesToPrint.length > 0) {
+        this.printerService.printTagBarcodeAndData(this.referencesToPrint)
+          .then((resPrint) => {
+
+            if(BrowserPrint){
+              BrowserPrint.getDefaultDevice("printer", (device) => {
+                console.log("BrowserPrint::device", device);
+                if(device){
+                  resPrint.map( labelToPrint => {
+                    console.log("BrowserPrint::send", labelToPrint);
+                    device.send(labelToPrint, (data) => {
+                      console.log("BrowserPrint::data", data);
+                    }, (e) => {
+                      console.log("BrowserPrint::Error send", e);
+                      this.intermediaryService.presentToastError('Error enviando datos a la impresora');
+                    });
+                  });
+                } else {
+                  console.log("BrowserPrint::Error device")
+                  this.intermediaryService.presentToastError('No hay impresora por defecto de Browser Print');
+                }
+              }, (error) => {
+                this.intermediaryService.presentToastError('Error obteniendo impresora por defecto de Browser Print');
+                console.log("BrowserPrint::Error getDevice", error)
+              });
+            } else {
+              this.intermediaryService.presentToastError('Browser Print no instalado');
+              console.log("BrowserPrint not installed")
+            }
+          }, (error) => {
+            console.error('Some error success to print reference of reception', error);
+          });
+      }
+
       if (res.productsWithError && res.productsWithError.length > 0) {
         let errorMessage = `No se han podido generar e imprimir alguna de las etiquetas necesarias (${res.productsWithError.length}). <br/>Se detalla la incidencia a continuación: <ul>`;
         for (let error of res.productsWithError) {
@@ -939,7 +975,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.');
     };
-
     if (this.isReceptionWithoutOrder) {
       this.reception.makeReceptionFree(params).subscribe(subscribeResponseOk, subscribeResponseError);
     } else {
