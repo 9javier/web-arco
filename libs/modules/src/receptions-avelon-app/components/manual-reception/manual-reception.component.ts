@@ -640,7 +640,14 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
               console.error('Error al tratar de marcar como impreso alguno de los productos:', error);
             });
           };
-          this.printerService.printTagBarcode(referencesToPrint, 1, markAsPrinted)
+          this.printerService.printTagBarcode(referencesToPrint, 1, markAsPrinted, ()=>{
+            this.receptionsAvelonService
+              .postCreateIncidenceForNotPrints({references: referencesToPrint})
+              .subscribe(
+                () => console.log('- Incidences for received products not printed generated! -'),
+                (error) => console.error('- Error to generate incidences for received products not printed >> ', error)
+              )
+          })
             .subscribe(async (resPrint) => {
               console.log('Print reference of reception successful');
               if (typeof resPrint == 'boolean') {
