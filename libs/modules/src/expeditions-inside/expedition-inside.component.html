@@ -1,80 +1,13 @@
 <ion-content>
-  <div class="table-container">
-  <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
-    
-    <mat-row (click)="goDetails(row)"   *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    <ng-container matColumnDef="package">
-      <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Bultos
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonPackage [title]="'Bultos'"
-                              [listItems]="entities.package"
-                              [isFiltering]="isFilteringpackage != entities.package.length" 
-                              (applyFilters)="applyFilters($event, 'packages')">
-        </suite-filter-button> 
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.uniqueCode}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="origin">
-      <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Tienda Origen
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonOrigin [title]="'Origen'"
-                              [listItems]="entities.origin"
-                              [isFiltering]="isFilteringOrigin != entities.origin.length"
-                              (applyFilters)="applyFilters($event, 'origin')">
-        </suite-filter-button>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.order.origin.name}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="destiny">
-      <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Destino
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonDestiny [title]="'Destinos'"
-                              [listItems]="entities.destiny"
-                              [isFiltering]="isFilteringDestiny != entities.destiny.length"
-                              (applyFilters)="applyFilters($event, 'destiny')">
-        </suite-filter-button>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{ element.order.destiny.name}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="delivery">
-      <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Pedido
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonDeliveryRequest [title]="'Pedido'"
-              [listItems]="entities.deliveryRequest"
-              [isFiltering]="isFilteringDeliveryRequest != entities.deliveryRequest.length"
-              (applyFilters)="applyFilters($event, 'deliveryRequest')">
-        </suite-filter-button>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.order.deliveryRequestId}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="order">
-      <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Orden
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonOrder [title]="'Orden'"
-              [listItems]="entities.order"
-              [isFiltering]="isFilteringOrder != entities.order.length"
-              (applyFilters)="applyFilters($event, 'order')">
-        </suite-filter-button>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.order.id}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="date">
-      <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Fecha
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonDate [title]="'Fechas'"
-              [listItems]="entities.date"
-              [isFiltering]="isFilteringDate != entities.date.length"
-              (applyFilters)="applyFilters($event, 'date')">
-        </suite-filter-button>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{ formattedDate(element.order.createdAt) }} </mat-cell>
-    </ng-container>
-    
-    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-  </mat-table>
-  </div>
-  <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
-  <ion-fab class="footer-products" vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button class="fab" matTooltip="Actualizar" matTooltipClass="tooltip" (click)="refresh()"><i
-      class="material-icons">refresh</i>
-    </ion-fab-button>
-    <ion-fab-button  class="fab" matTooltip="Descargar Excel" matTooltipClass="tooltip" (click)="fileExcell()">
-      <ion-icon name="document"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+<suite-table-filters
+[columnsData]="columnsData" 
+[dataSource]="dataSource" 
+[filters]="true"
+[filtersData]="filtersData"
+[btnRefresh]="true"
+[pagination]="pagination"
+[checkbox]="false"
+[btnExcell]="true"
+(emitMain)="emitMain($event)">
+ </suite-table-filters>
 </ion-content>

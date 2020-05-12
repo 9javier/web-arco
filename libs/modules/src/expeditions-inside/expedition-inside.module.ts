@@ -11,6 +11,8 @@ import { FilterButtonModule } from "../components/filter-button/filter-button.mo
 import { MatTooltipModule } from "@angular/material";
 import { ExpeditionInsideComponent } from './expedition-inside.component';
 import {MatTabsModule} from '@angular/material/tabs';
+import { TableFiltersModule } from "../components/table-filters/table-filters.component.module";
+
 import {
   MatCheckboxModule,
   MatPaginatorModule,
@@ -52,6 +54,7 @@ const routes: Routes = [
     NgxFileDropModule,
     MatTabsModule,
     InternalExpeditionModalModule,
+    TableFiltersModule,
   ],
   declarations: [ExpeditionInsideComponent],
   entryComponents:[InternalExpeditionModalComponent]

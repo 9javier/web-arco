@@ -16,6 +16,7 @@ import {
   MatRippleModule,
 } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TableFiltersModule } from "../components/table-filters/table-filters.component.module";
 
 const routes: Routes = [
   {
@@ -43,6 +44,7 @@ const routes: Routes = [
     MatCheckboxModule,
     MatRippleModule,
     FormsModule,
+    TableFiltersModule,
   ],
   entryComponents:[CreateTransportComponent],
   providers:[
