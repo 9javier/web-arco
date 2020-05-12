@@ -433,3 +433,9 @@ export * from './transports-orders/transports-orders.module'
 /**Transportes */
 export * from './transports-expeditions/transports-expeditions.component'
 export * from './transports-expeditions/transports-expeditions.module'
+
+
+/**Órdenes no procesadas */
+export * from './order-no-processed/order-no-processed.component'
+export * from './order-no-processed/order-no-processed.module'
+

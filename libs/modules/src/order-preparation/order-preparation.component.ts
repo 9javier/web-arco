@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild,
 import { Router } from '@angular/router';
 import { LabelsService } from '@suite/services';
 import { IntermediaryService } from '@suite/services';
+import { ExpeditionService } from '@suite/services';
 import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
 import {Subscription} from "rxjs";
 import { Observable } from 'rxjs';
@@ -40,10 +41,15 @@ export class OrderPreparationComponent implements OnInit {
   id=0;
   errorLabel:boolean = false;
   scann:boolean = false;
+  
+  private isInternal:boolean = false;
+  private orderId:number;
+
   constructor(
     private labelsService: LabelsService,
     private router: Router,
     private intermediaryService: IntermediaryService,
+    private expeditionService: ExpeditionService,
     private toolbarProvider: ToolbarProvider,
     private routeParams: ActivatedRoute,
     private transfer: FileTransfer,
@@ -51,22 +57,36 @@ export class OrderPreparationComponent implements OnInit {
     private downloader:Downloader,
 
   ) { }
-
+   
   ngOnInit() {
     this.toolbarProvider.currentPage.next("Generar etiquetas de envio");
     this.initViews();
-    this.initNumsScanner();  
-    
+    this.initNumsScanner();
   }
 
   initViews(){
+    
+
     if(this.routeParams.snapshot.params.id != undefined){
+      
+      if(this.routeParams.snapshot.params.isInternal != undefined){
+        this.isInternal = this.routeParams.snapshot.params.isInternal;
+      }
+      
+      if(this.routeParams.snapshot.params.orderId != undefined){
+        this.orderId = this.routeParams.snapshot.params.orderId;
+      }
+      
+      this.expeId =this.routeParams.snapshot.params.id;      
       this.nScanned = this.routeParams.snapshot.params.id;
-      this.expeId =this.routeParams.snapshot.params.id;
-      let data ={expeditionId:this.nScanned, update:true };
+      
+      let data ={expeditionId:this.nScanned, update:true, isInternal:this.isInternal, orderId:this.orderId };
+      
       this.showExpedition();
       this.getExpeditionStatus(data);
     }
+
+    
   }
 
   initNumsScanner(){
@@ -150,10 +170,8 @@ export class OrderPreparationComponent implements OnInit {
   
   async getAllNumScann() {
     this.labelsService.getNumAllScanner().subscribe((resp: any) => {
-      this.numAllScanner = resp;
-     
-    })
-    
+      this.numAllScanner = resp;     
+    })    
   }
 
   async getTransportStatus(body){
@@ -184,26 +202,25 @@ export class OrderPreparationComponent implements OnInit {
   
   async getExpeditionStatus(body){
     this.intermediaryService.presentLoading("cargando expedición...");
-   await this.labelsService.getTransportStatus(body).subscribe(result =>{
-    this.intermediaryService.dismissLoading();
-      let expedition = result;
-      this.dataSource=[result]
-      this.numPackages = expedition.expedition.packages.length;
-      this.numAllScanner = this.numPackages;
-      this.numScanner = this.numPackages;
-      this.expeditionId = expedition.expedition.id;
-      this.labelsService.setNumAllScanner(this.numAllScanner);
-      this.showExpedition();
-      this.sendServicePrintPack(this.expeId); 
-    },
-    async (err) => {
-      this.intermediaryService.dismissLoading();
-      this.sendServicePrintPack(this.expeId);
-    });
-    
+    await this.labelsService.getTransportStatus(body).subscribe(result =>{
+        this.intermediaryService.dismissLoading();
+        let expedition = result;
+        this.dataSource=[result]
+        this.numPackages = expedition.expedition.packages.length;
+        this.numAllScanner = this.numPackages;
+        this.numScanner = this.numPackages;
+        this.expeditionId = expedition.expedition.id;
+        this.labelsService.setNumAllScanner(this.numAllScanner);
+        this.showExpedition();
+        this.sendServicePrintPack(this.expeId); 
+      },
+      async (err) => {
+        this.intermediaryService.dismissLoading();
+        this.sendServicePrintPack(this.expeId);
+      });    
   }
 
- async sendServicePrintPack(id){
+  async sendServicePrintPack(id){
    let body = {expeditionId:id }
    await this.labelsService.postServicePrintPack(body).subscribe(result =>{
     let isMobileApp = typeof (<any>window).cordova !== "undefined";

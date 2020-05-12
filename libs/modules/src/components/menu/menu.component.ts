@@ -589,6 +589,13 @@ export class MenuComponent implements OnInit {
           icon: 'notifications',
           tooltip: 'listado de incidencias'
         },
+        {
+          title: 'Órdenes no procesadas',
+          id: 'order-no-processed',
+          url: '/order-no-processed',
+          icon: 'barcode',
+          tooltip: 'Órdenes no procesadas'
+        },
 
       ]
     },
