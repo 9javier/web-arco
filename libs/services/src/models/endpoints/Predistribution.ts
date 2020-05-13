@@ -160,7 +160,7 @@ export namespace PredistributionModel {
    }
 
   export interface PickingRequest {
-    receptionIds: number[],
+    ids: number[],
     destinies: Destiny[]
   }
   export interface Destiny {

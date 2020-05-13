@@ -871,6 +871,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
           if (error.error && error.error.errors) {
             errorMessage = error.error.errors;
           } await this.intermediaryService.presentToastError(errorMessage);
+          await this.intermediaryService.dismissLoading();
         }
       });
   }

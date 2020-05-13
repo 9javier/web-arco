@@ -5,6 +5,8 @@ import { PrinterConnectionService } from "../../../services/src/lib/printer-conn
 import { IntermediaryService } from '@suite/services';
 import { TimesToastType } from '../../../services/src/models/timesToastType';
 import { HolderTooltipText } from '../../../services/src/lib/tooltipText/holderTooltipText.service';
+import {PrinterService} from "../../../services/src/lib/printer/printer.service";
+declare const BrowserPrint: any;
 
 @Component({
   selector: 'app-settings',
@@ -24,6 +26,7 @@ export class SettingsComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private printerConnectionService: PrinterConnectionService,
     private holderTooltipText: HolderTooltipText,
+    private printerService: PrinterService,
   ) {
   }
 
@@ -59,6 +62,17 @@ export class SettingsComponent implements OnInit {
             }
           });
         });
+    });
+  }
+
+  async sendZebraCommands(){
+    await this.intermediaryService.presentLoading("Guardando configuración...",() => {
+      console.log("CommandPrint::sendZebraCommands");
+      const commandsToSend = "! U1 setvar \"power.inactivity_timeout\" \"0\"\n" + "! U1 setvar \"power.low_battery_timeout\" \"0\"\"\n" +
+        "! U1 setvar \"\"media.type\"\" \"\"label\"\"\n" + "! U1 setvar \"\"media.sense_mode\"\" \"\"gap\"\"\n" + "~jc^xa^jus^xz";
+      this.printerService.toPrintCommands(commandsToSend).then( () => {
+        this.intermediaryService.dismissLoading();
+      });
     });
   }
 }

@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  printerRequired: true,
   apiBasePhoto: 'http://192.168.254.109:8080',
   apiBase: 'http://192.168.254.109:8080/api',
   apiSorter: 'http://192.168.254.109:8080/api',

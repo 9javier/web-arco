@@ -7,6 +7,8 @@ import {EmployeeService} from "../../../services/src/lib/endpoint/employee/emplo
 import EmployeeReplenishment = EmployeeModel.EmployeeReplenishment;
 import {EmployeeModel} from "../../../services/src/models/endpoints/Employee";
 import {MatPaginator} from "@angular/material";
+import {PrinterService} from "../../../services/src/lib/printer/printer.service";
+declare const BrowserPrint: any;
 
 @Component({
   selector: 'suite-global-variables',
@@ -16,7 +18,7 @@ import {MatPaginator} from "@angular/material";
 export class GlobalVariablesComponent implements OnInit {
 
   listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
-  private listTypesFromDb: Array<{ id: number, name: string, workwave: boolean, type: string }> = [];
+  private listTypesFromDb: Array<{ id: number, name: string, workwave: boolean, type: string, tooltip: string }> = [];
   private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
   private countLoadOfVariables: number = 0;
 
@@ -35,7 +37,8 @@ export class GlobalVariablesComponent implements OnInit {
     private formBuilder: FormBuilder,
     private intermediaryService: IntermediaryService,
     private modalController: ModalController,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private printerService: PrinterService,
   ) { }
 
   ngOnInit() {
@@ -74,7 +77,7 @@ export class GlobalVariablesComponent implements OnInit {
           }
         }
         if (!isTypeCreated) {
-          this.listVariables.push({ type: type.id, value: null });
+          this.listVariables.push({ type: type.id, value: null, tooltip: null });
         }
       }
     } else {
@@ -89,6 +92,7 @@ export class GlobalVariablesComponent implements OnInit {
     this.globalVariableService
       .getAll()
       .subscribe((globalVariables) => {
+        console.log("globalVariables",globalVariables);
         globalVariables.map(function(x){
           if(x.type == 4){
             x.value  = (parseInt(x.value)/60).toString();
@@ -121,6 +125,13 @@ export class GlobalVariablesComponent implements OnInit {
     });
 
     return type.type || '';
+  }
+  getTooltipById(id) : string {
+    let type = this.listTypesFromDb.find((type) => {
+      return type.id == id;
+    });
+
+    return type.tooltip || '';
   }
 
   updateVariables() {
@@ -197,6 +208,41 @@ export class GlobalVariablesComponent implements OnInit {
           }).join(', ');
         }
       });
+  }
+
+  async sendZebraCommands(){
+    await this.intermediaryService.presentLoading("Guardando configuración...",() => {
+      console.log("BrowserPrint::sendZebraCommands");
+      const commandsToSend = "! U1 setvar \"power.inactivity_timeout\" \"0\"\n" + "! U1 setvar \"power.low_battery_timeout\" \"0\"\"\n" +
+        "! U1 setvar \"\"media.type\"\" \"\"label\"\"\n" + "! U1 setvar \"\"media.sense_mode\"\" \"\"gap\"\"\n" + "~jc^xa^jus^xz";
+      if(BrowserPrint){
+        BrowserPrint.getDefaultDevice("printer", (device) => {
+          console.log("BrowserPrint::device", device);
+          if(device){
+            console.log("BrowserPrint::send", commandsToSend)
+            device.send(commandsToSend, (data) => {
+              console.log("BrowserPrint::data", data);
+              this.intermediaryService.dismissLoading();
+            }, (e) => {
+              this.intermediaryService.dismissLoading();
+              console.log("BrowserPrint::Error send", e);
+              this.intermediaryService.presentToastError('Error enviando datos a la impresora');
+            });
+          } else {
+            this.intermediaryService.dismissLoading();
+            this.intermediaryService.presentToastError('No hay impresora por defecto de Browser Print');
+          }
+        }, (error) => {
+          this.intermediaryService.dismissLoading();
+          console.log("BrowserPrint::Error send", error);
+          this.intermediaryService.presentToastError('Error enviando datos a la impresora');
+        });
+      } else {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError('Browser Print no instalado');
+        console.log("BrowserPrint not installed")
+      }
+    });
   }
 
 }
