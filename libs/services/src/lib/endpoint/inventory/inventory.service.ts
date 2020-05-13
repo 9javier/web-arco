@@ -23,6 +23,7 @@ export class InventoryService {
 
   /**Urls for the inventory service */
   private postStoreUrl: string = environment.apiBase + "/processes/positioner-main";
+  private postStoreDefectiveUrl: string = environment.apiBase + "/processes/positioner-main/defective";
   private postStoreOnlineUrl: string = environment.apiBase + "/processes/positioner-main/online";
   private getProductsByContainerUrl: string = environment.apiBase + "/inventory/container/{{id}}";
   private getProductsHistoryByContainerUrl: string = environment.apiBase + "/inventory/processes/container/{{id}}";
@@ -109,6 +110,10 @@ export class InventoryService {
 
   postStore(params: InventoryModel.Inventory): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postStoreUrl, params);
+  }
+
+  postStoreDefective(parameters): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postStoreDefectiveUrl, parameters);
   }
 
   postStoreOnline(params: InventoryModel.Inventory): Promise<HttpRequestModel.Response> {
