@@ -232,7 +232,7 @@ export class ScanditService {
       packing: string
     }[] = [];
     let packingReference: string = null;
-    let timeoutStarted: number = null;
+    let timeoutStarted = null;
 
     ScanditMatrixSimple.init((response) => {
       if (response && response.barcode) {
