@@ -195,7 +195,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           })
 
         }
-      } else if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PRODUCT) {
+      } else if (true == true) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {
           this.outputProductFromSorter(dataWrote);
         } else if (this.packingIsFull) {
