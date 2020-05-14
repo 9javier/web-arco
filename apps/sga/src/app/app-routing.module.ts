@@ -237,6 +237,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'return-tracking-list',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/return-tracking-list/return-tracking-list.module#ReturnTrackingListModule',
+    data: {
+      name: 'Listado de Seguimiento de Devoluciones'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',

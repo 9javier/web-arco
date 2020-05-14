@@ -128,6 +128,9 @@ export * from './defective-registry/defective-registry.module';
 export * from './defective-historic/defective-historic.component';
 export * from './defective-historic/defective-historic.module';
 
+export * from './return-tracking-list/return-tracking-list.component';
+export * from './return-tracking-list/return-tracking-list.module';
+
 /**returns-list */
 export * from './returns-list/returns-list.component';
 export * from './returns-list/returns-list.module';

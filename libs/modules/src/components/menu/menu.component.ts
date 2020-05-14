@@ -247,6 +247,13 @@ export class MenuComponent implements OnInit {
           url: '/returns-list',
           icon: 'list-box',
           tooltip: 'Listado de registro de devoluciones'
+        },
+        {
+          title: 'Listado Seguimiento Devoluciones',
+          id: 'return-tracking-list',
+          url: '/return-tracking-list',
+          icon: 'list',
+          tooltip: 'Listado de seguimiento de devoluciones'
         }
       ]
     },

@@ -1,0 +1,71 @@
+<ion-content>
+
+  <ion-grid slot="fixed">
+    <ion-row nowrap>
+      <ion-col size="5">
+        <b>Id</b>
+        <span class="material-icons">filter_list</span>
+      </ion-col>
+      <ion-col size="9">
+        <b>Tipo</b>
+        <span class="material-icons">filter_list</span>
+      </ion-col>
+      <ion-col size="11">
+        <b>Proveedor</b>
+        <span class="material-icons">filter_list</span>
+      </ion-col>
+      <ion-col size="9">
+        <b>Marcas</b>
+        <span class="material-icons">filter_list</span>
+      </ion-col>
+      <ion-col size="11">
+        <b>Fecha Máx</b>
+        <span class="material-icons">filter_list</span>
+      </ion-col>
+      <ion-col size="10">
+        <b>Almacén</b>
+        <span class="material-icons">filter_list</span>
+      </ion-col>
+      <ion-col size="9">
+        <b>Estado</b>
+        <span class="material-icons">filter_list</span>
+      </ion-col>
+      <ion-col size="10">
+        <b>Fecha UE</b>
+        <span class="material-icons">filter_list</span>
+      </ion-col>
+      <ion-col size="11">
+        <b>Usuario UE</b>
+        <span class="material-icons">filter_list</span>
+      </ion-col>
+      <ion-col size="10">
+        <b>Unidades</b>
+        <span class="material-icons">filter_list</span>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid>
+    <ion-row nowrap *ngFor="let ret of returns">
+      <ion-col size="5">{{ret.id}}</ion-col>
+      <ion-col size="9">{{ret.type}}</ion-col>
+      <ion-col size="11">{{ret.provider}}</ion-col>
+      <ion-col size="9">{{ret.brands}}</ion-col>
+      <ion-col size="11">{{ret.dateLimit}}</ion-col>
+      <ion-col size="10">{{ret.warehouse}}</ion-col>
+      <ion-col size="9">{{ret.status}}</ion-col>
+      <ion-col size="10">{{ret.dateLastStatus}}</ion-col>
+      <ion-col size="11">{{ret.userLastStatus}}</ion-col>
+      <ion-col size="10">{{ret.units}}</ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
+
+<mat-paginator></mat-paginator>

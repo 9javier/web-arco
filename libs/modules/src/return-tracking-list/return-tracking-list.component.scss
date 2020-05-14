@@ -1,0 +1,21 @@
+ion-content{
+  --offset-top: -45px !important;
+  --offset-bottom: 10px !important;
+  --overflow: overlay;
+  text-align: center;
+}
+
+ion-grid{
+  --ion-grid-columns: 95;
+  margin: 0;
+}
+
+ion-col{
+  padding-left: 0;
+}
+
+b{
+  vertical-align: middle;
+  display: inline-block;
+  height: 100%;
+}
