@@ -12,10 +12,18 @@ ion-grid{
 
 ion-col{
   padding-left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+ion-fab-button{
+   margin-top: 10px;
 }
 
 b{
   vertical-align: middle;
   display: inline-block;
   height: 100%;
+  cursor: pointer;
 }

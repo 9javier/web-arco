@@ -3,43 +3,43 @@
   <ion-grid slot="fixed">
     <ion-row nowrap>
       <ion-col size="5">
-        <b>Id</b>
+        <b (click)="orderBy('id')">Id</b>
         <span class="material-icons">filter_list</span>
       </ion-col>
       <ion-col size="9">
-        <b>Tipo</b>
+        <b (click)="orderBy('type')">Tipo</b>
         <span class="material-icons">filter_list</span>
       </ion-col>
       <ion-col size="11">
-        <b>Proveedor</b>
+        <b (click)="orderBy('provider')">Proveedor</b>
         <span class="material-icons">filter_list</span>
       </ion-col>
       <ion-col size="9">
-        <b>Marcas</b>
+        <b (click)="orderBy('brand')">Marcas</b>
         <span class="material-icons">filter_list</span>
       </ion-col>
       <ion-col size="11">
-        <b>Fecha Máx</b>
+        <b (click)="orderBy('dateLimit')">Fecha Máx</b>
         <span class="material-icons">filter_list</span>
       </ion-col>
       <ion-col size="10">
-        <b>Almacén</b>
+        <b (click)="orderBy('warehouse')">Almacén</b>
         <span class="material-icons">filter_list</span>
       </ion-col>
       <ion-col size="9">
-        <b>Estado</b>
+        <b (click)="orderBy('status')">Estado</b>
         <span class="material-icons">filter_list</span>
       </ion-col>
       <ion-col size="10">
-        <b>Fecha UE</b>
+        <b (click)="orderBy('dateLastStatus')">Fecha UE</b>
         <span class="material-icons">filter_list</span>
       </ion-col>
       <ion-col size="11">
-        <b>Usuario UE</b>
+        <b (click)="orderBy('userLastStatus')">Usuario UE</b>
         <span class="material-icons">filter_list</span>
       </ion-col>
       <ion-col size="10">
-        <b>Unidades</b>
+        <b (click)="orderBy('unitsPrepared')">Unidades</b>
         <span class="material-icons">filter_list</span>
       </ion-col>
     </ion-row>
@@ -48,21 +48,24 @@
   <ion-grid>
     <ion-row nowrap *ngFor="let ret of returns">
       <ion-col size="5">{{ret.id}}</ion-col>
-      <ion-col size="9">{{ret.type}}</ion-col>
-      <ion-col size="11">{{ret.provider}}</ion-col>
-      <ion-col size="9">{{ret.brands}}</ion-col>
-      <ion-col size="11">{{ret.dateLimit}}</ion-col>
-      <ion-col size="10">{{ret.warehouse}}</ion-col>
-      <ion-col size="9">{{ret.status}}</ion-col>
-      <ion-col size="10">{{ret.dateLastStatus}}</ion-col>
-      <ion-col size="11">{{ret.userLastStatus}}</ion-col>
-      <ion-col size="10">{{ret.units}}</ion-col>
+      <ion-col size="9">{{ret.type.name}}</ion-col>
+      <ion-col size="11">{{ret.provider.name}}</ion-col>
+      <ion-col size="9" [matTooltip]="getBrandNameList(ret.brands)">{{getBrandNameList(ret.brands)}}</ion-col>
+      <ion-col size="11">{{getFormattedDate(ret.dateLimit)}}</ion-col>
+      <ion-col size="10">{{ret.warehouse.reference}}</ion-col>
+      <ion-col size="9" [matTooltip]="getStatusName(ret.status)">{{getStatusName(ret.status)}}</ion-col>
+      <ion-col size="10">{{getFormattedDate(ret.dateLastStatus)}}</ion-col>
+      <ion-col size="11">{{ret.userLastStatus.name}}</ion-col>
+      <ion-col size="10">{{ret.unitsPrepared}}</ion-col>
     </ion-row>
   </ion-grid>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="loadReturns()">
+      <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
