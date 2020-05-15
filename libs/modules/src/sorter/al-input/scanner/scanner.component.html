@@ -92,7 +92,7 @@
   <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted && !productScanned && !productScanWithException">{{messageGuide}}</p>
 
   <!-- Input where set the new code -->
-  <input hideKeyboard *ngIf="(!productScanned && !productScanWithException) || needScanNewPacking" id="input" class="input-sorter" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="inputValue">
+  <input hideKeyboard *ngIf="(!productScanned && !packageScanned && !productScanWithException) || needScanNewPacking" id="input" class="input-sorter" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="inputValue">
 </div>
 
 <!-- Actions to show when the product scanned has a destiny assigned and the destiny has a way assigned in sorter -->
@@ -108,6 +108,7 @@
   </ion-button>
 </ion-footer>
 
+<!-- Actions to show when the package scanned has a destiny assigned and the destiny has a way assigned in sorter -->
 <ion-footer *ngIf="processStarted && packageScanned && !productScanWithException">
   <ion-button [disabled]="isWaitingWayWillFree" expand="full" color="danger" (click)="wrongWay()">
     <p>CARRIL EQUIV.</p>

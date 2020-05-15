@@ -113,7 +113,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     const scannerModal = await this.modalCtrl.create({
       component: ScannerRackComponent,
       componentProps: {
-        'productScanned': this.productScanned
+        'productScanned': this.productScanned != null && this.productScanned != undefined ? this.productScanned : this.packageScanned 
       }
     });
 
@@ -127,7 +127,11 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         if (this.lastProductIsToBusyWay) {
           this.checkWayWillFree(this.idLastWaySet, this.productToSetInSorter);
         } else {
-          this.checkProductInWay(this.productScanned.reference);
+          if(this.productScanned != undefined && this.productScanned != undefined){
+            this.checkProductInWay(this.productScanned.reference);
+          }else{
+            this.checkProductInWay(this.packageScanned.uniqueCode);
+          }
         }
       } else {
         this.isWaitingSorterFeedback = false;
@@ -321,7 +325,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
                 reference: resData.product.order.destinationShop.reference,
                 name: resData.product.order.destinationShop.name
               }:null,
-              product: resData.product.order.expedition ?{
+              product: resData.product.order.deliveryRequestId ?{
                 id: resData.product.order.deliveryRequestId,
               }: null
             };
@@ -336,7 +340,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           if (resData.wayBusyByAnotherUser) {
             this.checkWayWillFree(this.idLastWaySet, this.productToSetInSorter);
           } else {
-            await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000, PositionsToast.BOTTOM);
+            await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del `+( this.productScanned ? 'producto.': 'paquete.'), 2000, PositionsToast.BOTTOM);
             this.checkProductInWay(productReference);
           }
           this.focusToInput(true, 'ok');
@@ -513,6 +517,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.productToSetInSorter = null;
     this.messageGuide = 'ESCANEE EL SIGUIENTE ARTÍCULO';
     this.productScanned = null;
+    this.packageScanned = null;
     this.focusToInput();
   }
 
