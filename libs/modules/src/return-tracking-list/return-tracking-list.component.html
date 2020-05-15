@@ -4,43 +4,93 @@
     <ion-row nowrap>
       <ion-col size="5">
         <b (click)="orderBy('id')">Id</b>
-        <span class="material-icons">filter_list</span>
+        <suite-filter-button
+          [title]="'Id'"
+          [listItems]="filterOptions.ids"
+          [isFiltering]="filters.ids.length > 0"
+          (applyFilters)="applyFilters($event, 'ids')">
+        </suite-filter-button>
       </ion-col>
       <ion-col size="9">
         <b (click)="orderBy('type')">Tipo</b>
-        <span class="material-icons">filter_list</span>
+        <suite-filter-button
+          [title]="'Tipo'"
+          [listItems]="filterOptions.typeIds"
+          [isFiltering]="filters.typeIds.length > 0"
+          (applyFilters)="applyFilters($event, 'typeIds')">
+        </suite-filter-button>
       </ion-col>
       <ion-col size="11">
         <b (click)="orderBy('provider')">Proveedor</b>
-        <span class="material-icons">filter_list</span>
+        <suite-filter-button
+          [title]="'Proveedor'"
+          [listItems]="filterOptions.providerIds"
+          [isFiltering]="filters.providerIds.length > 0"
+          (applyFilters)="applyFilters($event, 'providerIds')">
+        </suite-filter-button>
       </ion-col>
       <ion-col size="9">
         <b (click)="orderBy('brand')">Marcas</b>
-        <span class="material-icons">filter_list</span>
+        <suite-filter-button
+          [title]="'Marcas'"
+          [listItems]="filterOptions.brandIds"
+          [isFiltering]="filters.brandIds.length > 0"
+          (applyFilters)="applyFilters($event, 'brandIds')">
+        </suite-filter-button>
       </ion-col>
       <ion-col size="11">
         <b (click)="orderBy('dateLimit')">Fecha Máx</b>
-        <span class="material-icons">filter_list</span>
+        <suite-filter-button
+          [title]="'Fecha Máx'"
+          [listItems]="filterOptions.datesLimit"
+          [isFiltering]="filters.datesLimit.length > 0"
+          (applyFilters)="applyFilters($event, 'datesLimit')">
+        </suite-filter-button>
       </ion-col>
       <ion-col size="10">
         <b (click)="orderBy('warehouse')">Almacén</b>
-        <span class="material-icons">filter_list</span>
+        <suite-filter-button
+          [title]="'Almacén'"
+          [listItems]="filterOptions.warehouseIds"
+          [isFiltering]="filters.warehouseIds.length > 0"
+          (applyFilters)="applyFilters($event, 'warehouseIds')">
+        </suite-filter-button>
       </ion-col>
       <ion-col size="9">
         <b (click)="orderBy('status')">Estado</b>
-        <span class="material-icons">filter_list</span>
+        <suite-filter-button
+          [title]="'Estado'"
+          [listItems]="filterOptions.statuses"
+          [isFiltering]="filters.statuses.length > 0"
+          (applyFilters)="applyFilters($event, 'statuses')">
+        </suite-filter-button>
       </ion-col>
       <ion-col size="10">
         <b (click)="orderBy('dateLastStatus')">Fecha UE</b>
-        <span class="material-icons">filter_list</span>
+        <suite-filter-button
+          [title]="'Fecha UE'"
+          [listItems]="filterOptions.datesLastStatus"
+          [isFiltering]="filters.datesLastStatus.length > 0"
+          (applyFilters)="applyFilters($event, 'datesLastStatus')">
+        </suite-filter-button>
       </ion-col>
       <ion-col size="11">
         <b (click)="orderBy('userLastStatus')">Usuario UE</b>
-        <span class="material-icons">filter_list</span>
+        <suite-filter-button
+          [title]="'Usuario UE'"
+          [listItems]="filterOptions.userIdsLastStatus"
+          [isFiltering]="filters.userIdsLastStatus.length > 0"
+          (applyFilters)="applyFilters($event, 'userIdsLastStatus')">
+        </suite-filter-button>
       </ion-col>
       <ion-col size="10">
         <b (click)="orderBy('unitsPrepared')">Unidades</b>
-        <span class="material-icons">filter_list</span>
+        <suite-filter-button
+          [title]="'Unidades'"
+          [listItems]="filterOptions.unitsPrepared"
+          [isFiltering]="filters.unitsPrepared.length > 0"
+          (applyFilters)="applyFilters($event, 'unitsPrepared')">
+        </suite-filter-button>
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -64,7 +114,7 @@
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button (click)="loadReturns()">
+    <ion-fab-button (click)="reset()">
       <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
   </ion-fab>

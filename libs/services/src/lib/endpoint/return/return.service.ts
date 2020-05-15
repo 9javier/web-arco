@@ -4,6 +4,7 @@ import {environment} from "@suite/services";
 import {ReturnModel} from "../../../models/endpoints/Return";
 import SearchParameters = ReturnModel.SearchParameters;
 import SearchResponse = ReturnModel.SearchResponse;
+import FilterOptionsResponse = ReturnModel.FilterOptionsResponse;
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import SearchResponse = ReturnModel.SearchResponse;
 export class ReturnService {
 
   private postSearchUrl = environment.apiBase+'/returns/search';
+  private getFilterOptionsUrl = environment.apiBase+'/returns/filter-options';
 
   constructor(
     private requestsProvider: RequestsProvider
@@ -18,6 +20,10 @@ export class ReturnService {
 
   postSearch(params: SearchParameters): Promise<SearchResponse> {
     return this.requestsProvider.post(this.postSearchUrl, params);
+  }
+
+  getFilterOptions(): Promise<FilterOptionsResponse> {
+    return this.requestsProvider.get(this.getFilterOptionsUrl);
   }
 
 }

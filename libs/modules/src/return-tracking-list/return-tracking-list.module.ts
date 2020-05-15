@@ -4,6 +4,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { MatPaginatorModule, MatTooltipModule } from "@angular/material";
 import { IonicModule } from '@ionic/angular';
 import { ReturnTrackingListComponent } from './return-tracking-list.component';
+import { FilterButtonModule } from "../components/filter-button/filter-button.module";
 
 const routes: Routes = [{
     path: '',
@@ -17,7 +18,8 @@ const routes: Routes = [{
     IonicModule,
     RouterModule.forChild(routes),
     MatPaginatorModule,
-    MatTooltipModule
+    MatTooltipModule,
+    FilterButtonModule
   ]
 })
 

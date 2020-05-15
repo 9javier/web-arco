@@ -52,6 +52,25 @@ export namespace ReturnModel{
     errors?: any
   }
 
+  export interface FilterOptionsResponse {
+    message?: string,
+    code?: number,
+    data?: {
+      ids: number[],
+      types: string[],
+      providers: string[],
+      brands: string[],
+      datesLimit: string[],
+      warehouses: string[],
+      statuses: number[],
+      datesLastStatus: string[],
+      usersLastStatus: string[],
+      unitsPrepared: number[],
+    },
+    error?: any,
+    errors?: any
+  }
+
   export interface Filters {
     ids: number[],
     typeIds: number[],
@@ -74,5 +93,26 @@ export namespace ReturnModel{
     limit: number,
     page: number
   }
+
+  export interface FilterOption {
+    id: any,
+    value: any,
+    checked: boolean,
+    hide: boolean
+  }
+
+  export interface FilterOptions {
+    ids: FilterOption[],
+    typeIds: FilterOption[],
+    providerIds: FilterOption[],
+    brandIds: FilterOption[],
+    datesLimit: FilterOption[],
+    warehouseIds: FilterOption[],
+    statuses: FilterOption[],
+    datesLastStatus: FilterOption[],
+    userIdsLastStatus: FilterOption[],
+    unitsPrepared: FilterOption[]
+  }
+
 
 }
