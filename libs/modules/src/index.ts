@@ -439,3 +439,6 @@ export * from './transports-expeditions/transports-expeditions.module'
 export * from './order-no-processed/order-no-processed.component'
 export * from './order-no-processed/order-no-processed.module'
 
+/**Transportes */
+export * from './expeditions-inside/expedition-inside.component'
+export * from './expeditions-inside/expedition-inside.module'

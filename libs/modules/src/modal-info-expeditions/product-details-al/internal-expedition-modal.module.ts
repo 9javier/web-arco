@@ -16,8 +16,5 @@ import {MatExpansionModule, MatGridListModule, MatPaginatorModule} from "@angula
     FormsModule,
     MatExpansionModule
   ],
-  entryComponents: [
-    InternalExpeditionModalComponent
-  ],
 })
 export class InternalExpeditionModalModule {}

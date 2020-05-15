@@ -55,8 +55,7 @@ export class ListProductsCarrierComponent implements OnInit {
   private async getProducts(data = null) {
     await this.intermediaryService.presentLoading();
     await this.listProductsCarrierService.getProducts(this.carrierReference, data).subscribe(async (res: any) => {
-      console.log('recive productos');
-      
+
       if (res.data.results && res.data.results.length > 0) {
         this.packingProducts = res.data.results[0].packingInventorys;
       } else {
@@ -109,7 +108,6 @@ export class ListProductsCarrierComponent implements OnInit {
   }
 
   async btnContinue(con = false) {
-    console.log('Continuar');
     if(con){
       await this.modalController.dismiss(this.carrierReference);
     }else{
@@ -118,7 +116,6 @@ export class ListProductsCarrierComponent implements OnInit {
   }
 
   async btnCarrierEmpty() {
-    console.log('Jaula vacía');
     await this.intermediaryService.presentLoading();
     await this.carrierService.postPackingEmpty(this.carrierReference, this.process).then(res => {
       if(res.code === 200){
@@ -141,7 +138,6 @@ export class ListProductsCarrierComponent implements OnInit {
   }
 
   async btnPosition(ruta:string) {
-    console.log('Posicionar');
     await this.route.navigateByUrl(ruta);
     await this.modalController.dismiss(ruta,'navigate');
   }

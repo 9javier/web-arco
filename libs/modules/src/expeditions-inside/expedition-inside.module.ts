@@ -1,32 +1,39 @@
-import { NgModule,CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MatCheckboxModule, MatSortModule, MatTableModule } from '@angular/material';
 import { MatListModule } from '@angular/material';
 import { RouterModule, Routes } from "@angular/router";
-import { MatPaginatorModule } from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 import { FilterButtonModule } from "../components/filter-button/filter-button.module";
 import { MatTooltipModule } from "@angular/material";
-import { TransportsExpeditionsComponent } from './transports-expeditions.component';
-import {CreateTransportComponent} from './create-transport/create-transport.component';
-import {
-  MatRippleModule,
-} from '@angular/material';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ExpeditionInsideComponent } from './expedition-inside.component';
+import {MatTabsModule} from '@angular/material/tabs';
 import { TableFiltersModule } from "../components/table-filters/table-filters.component.module";
+
+import {
+  MatCheckboxModule,
+  MatPaginatorModule,
+  MatRippleModule,
+  MatSortModule,
+  MatTableModule
+} from '@angular/material';
+import { NgxFileDropModule } from  'ngx-file-drop' ;
+import { InternalExpeditionModalComponent } from '../modal-info-expeditions/product-details-al/internal-expedition-modal.component';
+import { InternalExpeditionModalModule } from '../modal-info-expeditions/product-details-al/internal-expedition-modal.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: TransportsExpeditionsComponent
+    component: ExpeditionInsideComponent
   }
 ];
 
+
+
 @NgModule({
-  declarations: [TransportsExpeditionsComponent,CreateTransportComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -40,16 +47,16 @@ const routes: Routes = [
     PaginatorComponentModule,
     FilterButtonModule,
     MatTooltipModule,
-    MatSortModule,
+    FormsModule,
     MatCheckboxModule,
     MatRippleModule,
-    FormsModule,
+    MatSortModule,
+    NgxFileDropModule,
+    MatTabsModule,
+    InternalExpeditionModalModule,
     TableFiltersModule,
   ],
-  entryComponents:[CreateTransportComponent],
-  providers:[
-    CreateTransportComponent
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  declarations: [ExpeditionInsideComponent],
+  entryComponents:[InternalExpeditionModalComponent]
 })
-export class TransportsExpeditionsModule { }
+export class ExpeditionInsideModule { }

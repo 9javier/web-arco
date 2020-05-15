@@ -533,6 +533,14 @@ const routes: Routes = [
       name:'Transportes de expediciones'
     }
   },
+  {
+    path: 'expedition-inside',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/expeditions-inside/expedition-inside.module#ExpeditionInsideModule',
+    data:{
+      name:'Transportes de expediciones'
+    }
+  },
 ];
 
 @NgModule({

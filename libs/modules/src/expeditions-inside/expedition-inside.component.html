@@ -1,14 +1,13 @@
 <ion-content>
-  <suite-table-filters
+<suite-table-filters
 [columnsData]="columnsData" 
 [dataSource]="dataSource" 
 [filters]="true"
 [filtersData]="filtersData"
 [btnRefresh]="true"
 [pagination]="pagination"
-[checkbox]="true"
-[btnDelete]="true"
-[btnAdd]="true"
+[checkbox]="false"
+[btnExcell]="true"
 (emitMain)="emitMain($event)">
- </suite-table-filters> 
+ </suite-table-filters>
 </ion-content>
