@@ -221,6 +221,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'supplier-conditions',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/supplier-conditions/supplier-conditions.module#SupplierConditionsModule',
+    data: {
+      name: 'Condiciones de Proveedores'
+    }
+  },
+  {
     path: 'returns-list',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/returns-list/returns-list.module#ReturnsListModule',
