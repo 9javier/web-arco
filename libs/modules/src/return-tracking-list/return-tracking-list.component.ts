@@ -12,6 +12,7 @@ import {BrandModel} from "../../../services/src/models/endpoints/Brand";
 import Brand = BrandModel.Brand;
 import FilterOptions = ReturnModel.FilterOptions;
 import FilterOptionsResponse = ReturnModel.FilterOptionsResponse;
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'suite-return-tracking-list',
@@ -57,6 +58,7 @@ export class ReturnTrackingListComponent implements OnInit {
   };
 
   constructor(
+    private router: Router,
     private returnService: ReturnService
   ) {}
 

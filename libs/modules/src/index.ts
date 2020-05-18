@@ -131,6 +131,9 @@ export * from './defective-historic/defective-historic.module';
 export * from './return-tracking-list/return-tracking-list.component';
 export * from './return-tracking-list/return-tracking-list.module';
 
+export * from './new-return/new-return.component';
+export * from './new-return/new-return.module';
+
 /**returns-list */
 export * from './returns-list/returns-list.component';
 export * from './returns-list/returns-list.module';

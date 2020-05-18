@@ -245,6 +245,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'new-return',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/new-return/new-return.module#NewReturnModule',
+    data: {
+      name: 'Crear Nueva Devolución'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',
