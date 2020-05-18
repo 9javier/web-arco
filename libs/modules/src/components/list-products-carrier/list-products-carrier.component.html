@@ -19,14 +19,14 @@
 
         <!-- Reference of the product/package -->
         <h3 matLine *ngIf="packingProduct.product"><b>{{packingProduct.product.reference}}</b></h3>
-        <h3 matLine *ngIf="packingProduct.opPackage">
-          <b>Referencia: {{packingProduct.opPackage.uniqueCode}}</b>
+        <h3 matLine *ngIf="packingProduct.package">
+          <b>Referencia: {{packingProduct.package.uniqueCode}}</b>
           <button mat-raised-button color="primary" style="margin-left: 45%"> Bulto </button>
         </h3>
 
         <!-- Number of the order -->
-        <p matLine *ngIf="!packingProduct.product">
-          <span> Pedido: {{packingProduct.opPackage.order.deliveryRequestExternalId}} </span>
+        <p matLine *ngIf="packingProduct.package">
+          <span> Pedido: {{packingProduct.package.order.deliveryRequestExternalId}} </span>
         </p>
 
         <!-- Reference of the model and brand name -->

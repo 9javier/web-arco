@@ -14,7 +14,8 @@ export class ItemReferencesProvider {
     PALLET: 'pallet',
     PRODUCT: 'product',
     PRODUCT_MODEL: 'product_model',
-    PRODUCT_UNDEFINED: 'product_undefined'
+    PRODUCT_UNDEFINED: 'product_undefined',
+    PACKAGE: 'package',
   };
   get codeValue(): CodeValue {
     return this._codeValue;
@@ -56,6 +57,10 @@ export class ItemReferencesProvider {
     {
       value: this._codeValue.PALLET,
       regex: /P([0-9]){4}/
+    },
+    {
+      value: this._codeValue.PACKAGE,
+      regex: /UQ([0-9]){6}/
     }
   ];
 
@@ -87,7 +92,8 @@ export interface CodeValue {
   PALLET: string,
   PRODUCT: string,
   PRODUCT_MODEL: string,
-  PRODUCT_UNDEFINED: string
+  PRODUCT_UNDEFINED: string,
+  PACKAGE: string
 }
 
 export interface Regex {
