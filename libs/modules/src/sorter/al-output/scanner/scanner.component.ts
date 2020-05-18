@@ -968,7 +968,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
     const alert = await this.alertController.create({
       header: "Detener Salida Sorter",
-      message: "¿Quedan artículos en la calle?",
+      message: "¿Quedan artículos en la calle? <br> Si quedan artículos en la calle tendrá que <b>escanear el primer artículo</b> de la calle para saber que artículos se añadieron a la jaula.",
       buttons: buttonsAlert
     });
     alert.onDidDismiss().then((data) => {
@@ -998,8 +998,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     }];
 
     const alert = await this.alertController.create({
-      header: "Detener Salida Sorter",
-      message: "¿Quedan artículos en la calle?",
+      header: "Detener Salida Sorter con incidencias",
+      message: "¿Quedan artículos en la calle? <br>Si quedan artículos en la calle, se detendrá el proceso de salida y la <b>calle seguirá indicada con incidencias</b> para una revisión posterior.",
       buttons: buttonsAlert
     });
     alert.onDidDismiss().then((data) => {
