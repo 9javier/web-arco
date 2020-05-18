@@ -8,8 +8,8 @@
           <ion-button class="users" *ngIf="getTypeById(variable.type)=='Usuarios que generan reposiciones'" matTooltip="Usuarios Reposiciones" matTooltipClass="tooltip" matTooltipPosition="left" (click)="usersReplenishment()">
             <ion-icon name="people"></ion-icon>
           </ion-button>
-          <ion-input *ngIf="getTypeById(variable.type)!='Usuarios que generan reposiciones'" [(ngModel)]="variable.value" placeholder="Valor"></ion-input>
-          <ion-input *ngIf="getTypeById(variable.type)=='Usuarios que generan reposiciones'" class="employees" placeholder="{{employeesToShow}}"></ion-input>
+          <ion-input *ngIf="getTypeById(variable.type)!='Usuarios que generan reposiciones'" [(ngModel)]="variable.value" placeholder="Valor" readonly (click)="usersReplenishment()"></ion-input>
+          <ion-input *ngIf="getTypeById(variable.type)=='Usuarios que generan reposiciones'" class="employees" placeholder="{{employeesToShow}}" readonly (click)="usersReplenishment()"></ion-input>
         </ion-item>
       </ion-item>
     </div>
