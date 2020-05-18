@@ -87,6 +87,18 @@ export namespace ReturnModel{
     errors?: any
   }
 
+  export interface OptionsResponse {
+    message?: string,
+    code?: number,
+    data?: {
+      types: any[],
+      warehouses: Warehouse[],
+      providers: any[]
+    },
+    error?: any,
+    errors?: any
+  }
+
   export interface Filters {
     ids: number[],
     typeIds: number[],

@@ -1,1 +1,155 @@
-prueba
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">ID</ion-label>
+          <ion-input disabled>{{return.id == 0 ? 'Este campo se rellenará automáticamente al guardar.' : return.id}}</ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-button>Unidades</ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Tipo</ion-label>
+          <ion-select [(ngModel)]="return.type">
+            <ion-select-option *ngFor="let type of types" value="{{type}}">{{type.name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Almacén</ion-label>
+          <ion-select [(ngModel)]="return.warehouse">
+            <ion-select-option *ngFor="let warehouse of warehouses" value="{{warehouse}}">{{warehouse.reference+' - '+warehouse.name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Proveedor</ion-label>
+          <ion-select [(ngModel)]="return.provider">
+            <ion-select-option *ngFor="let provider of providers" value="{{provider}}">{{provider.name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Jaulas contenedoras</ion-label>
+          <ion-input [(ngModel)]="return.packings" disabled></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Marcas</ion-label>
+          <ion-input *ngIf="!return.provider" disabled placeholder="Debe seleccionar un proveedor."></ion-input>
+          <ion-select *ngIf="return.provider" [(ngModel)]="return.brands" multiple>
+            <ion-select-option *ngFor="let brand of return.provider.brands" value="{{brand}}">{{brand.name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item class="inline">
+          <ion-label position="stacked">Último estado</ion-label>
+          <ion-input disabled>{{getStatusName(return.lastStatus)}}</ion-input>
+        </ion-item>
+        <ion-button>Cambiar de estado</ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Devolver antes de</ion-label>
+          <ion-datetime [(ngModel)]="return.dateReturnBefore" displayFormat="DD/MM/YYYY" placeholder="Seleccione una fecha"></ion-datetime>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Fecha último estado</ion-label>
+          <ion-datetime [(ngModel)]="return.dateLastStatus" disabled displayFormat="DD/MM/YYYY" placeholder="Esta fecha se rellenará automáticamente."></ion-datetime>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Correo de contacto</ion-label>
+          <ion-input [(ngModel)]="return.email"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Usuario</ion-label>
+          <ion-input disabled>{{return.user ? return.user.name : 'Este campo se rellenará automáticamente al guardar.'}}</ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Observaciones</ion-label>
+          <ion-input [(ngModel)]="return.observations"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Nº Bultos</ion-label>
+          <ion-input [(ngModel)]="return.amountPackages"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Impresión de etiquetas bultos</ion-label>
+          <span>
+            OFF
+            <ion-toggle [(ngModel)]="return.printTagPackages"></ion-toggle>
+            ON
+          </span>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Agencia transportista</ion-label>
+          <ion-input [(ngModel)]="return.shipper"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Fecha de recogida</ion-label>
+          <ion-datetime [(ngModel)]="return.datePickup" disabled displayFormat="DD/MM/YYYY" placeholder="Esta fecha se rellenará automáticamente."></ion-datetime>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="stacked">Fecha prevista de recogida</ion-label>
+          <ion-datetime [(ngModel)]="return.datePredictedPickup" displayFormat="DD/MM/YYYY" placeholder="Seleccione una fecha"></ion-datetime>
+        </ion-item>
+      </ion-col>
+      <ion-col></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button>Impresión/envío de albarán</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button>Adjuntar archivos/imágenes</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button>Imagen albarán agencia</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

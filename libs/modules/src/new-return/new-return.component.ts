@@ -5,6 +5,11 @@ import Return = ReturnModel.Return;
 import SaveResponse = ReturnModel.SaveResponse;
 import {ActivatedRoute, Router} from "@angular/router";
 import LoadResponse = ReturnModel.LoadResponse;
+import {BrandModel} from "../../../services/src/models/endpoints/Brand";
+import Brand = BrandModel.Brand;
+import {WarehouseModel} from "@suite/services";
+import Warehouse = WarehouseModel.Warehouse;
+import OptionsResponse = ReturnModel.OptionsResponse;
 
 @Component({
   selector: 'suite-new-return',
@@ -13,7 +18,10 @@ import LoadResponse = ReturnModel.LoadResponse;
 })
 export class NewReturnComponent implements OnInit{
 
-  newReturn: Return;
+  return: Return;
+  types: any[];
+  warehouses: Warehouse[];
+  providers: any[]; //provider stuff + conditions (email + observations) + brands
 
   constructor(
     private route: ActivatedRoute,
@@ -22,17 +30,12 @@ export class NewReturnComponent implements OnInit{
   ) {}
 
   ngOnInit() {
+    this.getOptions();
     const returnId: number = parseInt(this.route.snapshot.paramMap.get('id'));
     if(returnId) {
-      this.returnService.postLoad(returnId).then((response: LoadResponse) => {
-        if (response.code == 200) {
-          this.newReturn = response.data;
-        } else {
-          console.error(response);
-        }
-      }).catch(console.error);
+      this.load(returnId);
     }else{
-      this.newReturn = {
+      this.return = {
         amountPackages: 0,
         brands: [],
         dateLastStatus: "",
@@ -61,13 +64,65 @@ export class NewReturnComponent implements OnInit{
   }
 
   save(){
-    this.returnService.postSave(this.newReturn).then((response: SaveResponse) => {
+    this.returnService.postSave(this.return).then((response: SaveResponse) => {
       if(response.code == 200){
         this.router.navigateByUrl('/return-tracking-list')
       }else{
         console.error(response);
       }
     }).catch(console.error);
+  }
+
+  load(returnId: number){
+    this.returnService.postLoad(returnId).then((response: LoadResponse) => {
+      if (response.code == 200) {
+        this.return = response.data;
+      } else {
+        console.error(response);
+      }
+    }).catch(console.error);
+  }
+
+  getOptions(){
+    this.returnService.getOptions().then((response: OptionsResponse) => {
+      if(response.code == 200){
+        this.types = response.data.types;
+        this.warehouses = response.data.warehouses;
+        this.providers = response.data.providers;
+      }else{
+        console.error(response);
+      }
+    }).catch(console.error);
+  }
+
+  getStatusName(status: number): string{
+    switch(status){
+      case 0:
+        return '';
+      case 1:
+        return 'Orden devolución';
+      case 2:
+        return 'En proceso';
+      case 3:
+        return 'Preparado';
+      case 4:
+        return 'Pendiente recogida';
+      case 5:
+        return 'Recogido';
+      case 6:
+        return 'Facturado';
+      default:
+        return 'Desconocido'
+    }
+  }
+
+  getFormattedDate(value: string): string{
+    const date = new Date(value);
+    return date.getDay()+'/'+date.getMonth()+'/'+date.getFullYear();
+  }
+
+  getBrandNameList(brands: Brand[]): string{
+    return brands.map(brand => brand.name).join('/');
   }
 
 }
