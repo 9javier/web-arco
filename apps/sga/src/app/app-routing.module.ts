@@ -229,6 +229,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'return-types',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/return-types/return-types.module#ReturnTypesModule',
+    data: {
+      name: 'Tipos de Devoluciones'
+    }
+  },
+  {
     path: 'returns-list',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/returns-list/returns-list.module#ReturnsListModule',

@@ -247,6 +247,13 @@ export class MenuComponent implements OnInit {
           url: '/supplier-conditions',
           icon: 'list-box',
           tooltip: 'Listado de condiciones de proveedores'
+        },
+        {
+          title: 'Tipos de devoluciones',
+          id: 'return-types',
+          url: '/return-types',
+          icon: 'list-box',
+          tooltip: 'Listado de tipos de devoluciones'
         }
       ]
     },

@@ -132,6 +132,10 @@ export * from './defective-historic/defective-historic.module';
 export * from './supplier-conditions/supplier-conditions.component';
 export * from './supplier-conditions/supplier-conditions.module';
 
+/**return-types */
+export * from './return-types/return-types.component';
+export * from './return-types/return-types.module';
+
 /**returns-list */
 export * from './returns-list/returns-list.component';
 export * from './returns-list/returns-list.module';
