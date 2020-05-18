@@ -29,11 +29,11 @@ export class ReturnService {
     return this.requestsProvider.post(this.postSearchUrl, params);
   }
 
-  postSave(params: Return): Promise<SaveResponse> {
+  postSave(params: {return: Return}): Promise<SaveResponse> {
     return this.requestsProvider.post(this.postSaveUrl, params);
   }
 
-  postLoad(params: number): Promise<LoadResponse> {
+  postLoad(params: {returnId: number}): Promise<LoadResponse> {
     return this.requestsProvider.post(this.postLoadUrl, params);
   }
 

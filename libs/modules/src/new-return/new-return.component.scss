@@ -2,14 +2,24 @@ ion-label{
   font-weight: bold;
 }
 
-.inline{
-  display: inline-block;
-}
-
 span{
   margin-right: auto;
 }
 
 ion-toggle{
   padding: 5px;
+}
+
+.no-padding{
+  padding: 0;
+}
+
+.center-contents{
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+ion-fab-button{
+  margin-top: 10px;
 }

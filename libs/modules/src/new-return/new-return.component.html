@@ -1,5 +1,5 @@
 <ion-content>
-  <ion-grid>
+  <ion-grid *ngIf="return">
     <ion-row>
       <ion-col>
         <ion-item>
@@ -7,7 +7,7 @@
           <ion-input disabled>{{return.id == 0 ? 'Este campo se rellenará automáticamente al guardar.' : return.id}}</ion-input>
         </ion-item>
       </ion-col>
-      <ion-col>
+      <ion-col class="center-contents">
         <ion-button>Unidades</ion-button>
       </ion-col>
     </ion-row>
@@ -15,16 +15,16 @@
       <ion-col>
         <ion-item>
           <ion-label position="stacked">Tipo</ion-label>
-          <ion-select [(ngModel)]="return.type">
-            <ion-select-option *ngFor="let type of types" value="{{type}}">{{type.name}}</ion-select-option>
+          <ion-select [value]="return.type ? return.type.name : ''" placeholder="Seleccione un tipo">
+            <ion-select-option *ngFor="let type of types" (click)="return.type = type">{{type.name}}</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="stacked">Almacén</ion-label>
-          <ion-select [(ngModel)]="return.warehouse">
-            <ion-select-option *ngFor="let warehouse of warehouses" value="{{warehouse}}">{{warehouse.reference+' - '+warehouse.name}}</ion-select-option>
+          <ion-select [value]="return.warehouse ? return.warehouse.reference+' - '+return.warehouse.name : ''" placeholder="Seleccione un almacén">
+            <ion-select-option *ngFor="let warehouse of warehouses" (click)="return.warehouse = warehouse">{{warehouse.reference+' - '+warehouse.name}}</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-col>
@@ -33,8 +33,8 @@
       <ion-col>
         <ion-item>
           <ion-label position="stacked">Proveedor</ion-label>
-          <ion-select [(ngModel)]="return.provider">
-            <ion-select-option *ngFor="let provider of providers" value="{{provider}}">{{provider.name}}</ion-select-option>
+          <ion-select [value]="return.provider ? return.provider.name : ''" placeholder="Seleccione un proveedor">
+            <ion-select-option *ngFor="let provider of providers" (click)="return.provider = provider">{{provider.name}}</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-col>
@@ -50,17 +50,28 @@
         <ion-item>
           <ion-label position="stacked">Marcas</ion-label>
           <ion-input *ngIf="!return.provider" disabled placeholder="Debe seleccionar un proveedor."></ion-input>
-          <ion-select *ngIf="return.provider" [(ngModel)]="return.brands" multiple>
-            <ion-select-option *ngFor="let brand of return.provider.brands" value="{{brand}}">{{brand.name}}</ion-select-option>
+          <ion-select *ngIf="return.provider" [selectedText]="getBrandNameList(return.brands)" multiple (ionChange)="selectBrands($event)" [value]="getSelectedBrandIds()">
+            <ion-select-option *ngFor="let brand of getProviderBrands()" value="{{brand.id}}">{{brand.name}}</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-col>
       <ion-col>
-        <ion-item class="inline">
-          <ion-label position="stacked">Último estado</ion-label>
-          <ion-input disabled>{{getStatusName(return.lastStatus)}}</ion-input>
-        </ion-item>
-        <ion-button>Cambiar de estado</ion-button>
+        <ion-row class="no-padding">
+          <ion-col class="no-padding">
+            <ion-item>
+              <ion-label position="stacked">Último estado</ion-label>
+              <ion-input disabled>{{getStatusName(return.lastStatus)}}</ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="no-padding">
+            <ion-item>
+              <ion-label position="stacked">Cambiar estado</ion-label>
+              <ion-select [value]="''" placeholder="Seleccione un nuevo estado">
+                <ion-select-option *ngFor="let status of [1,2,3,4,5,6]" (click)="changeStatus(status)">{{getStatusName(status)}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -87,7 +98,7 @@
       <ion-col>
         <ion-item>
           <ion-label position="stacked">Usuario</ion-label>
-          <ion-input disabled>{{return.user ? return.user.name : 'Este campo se rellenará automáticamente al guardar.'}}</ion-input>
+          <ion-input disabled>{{return.user.name}}</ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -141,15 +152,25 @@
       <ion-col></ion-col>
     </ion-row>
     <ion-row>
-      <ion-col>
+      <ion-col class="center-contents">
         <ion-button>Impresión/envío de albarán</ion-button>
       </ion-col>
-      <ion-col>
+      <ion-col class="center-contents">
         <ion-button>Adjuntar archivos/imágenes</ion-button>
       </ion-col>
-      <ion-col>
+      <ion-col class="center-contents">
         <ion-button>Imagen albarán agencia</ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="save()">
+      <ion-icon name="save"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="router.navigateByUrl('/return-tracking-list')">
+      <ion-icon name="close"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
 </ion-content>

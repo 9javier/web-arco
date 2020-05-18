@@ -7,9 +7,13 @@ import {ActivatedRoute, Router} from "@angular/router";
 import LoadResponse = ReturnModel.LoadResponse;
 import {BrandModel} from "../../../services/src/models/endpoints/Brand";
 import Brand = BrandModel.Brand;
-import {WarehouseModel} from "@suite/services";
+import {AuthenticationService, WarehouseModel} from "@suite/services";
 import Warehouse = WarehouseModel.Warehouse;
 import OptionsResponse = ReturnModel.OptionsResponse;
+import {ReturnTypeModel} from "../../../services/src/models/endpoints/ReturnType";
+import ReturnType = ReturnTypeModel.ReturnType;
+import {ProviderModel} from "../../../services/src/models/endpoints/Provider";
+import Provider = ProviderModel.Provider;
 
 @Component({
   selector: 'suite-new-return',
@@ -19,26 +23,27 @@ import OptionsResponse = ReturnModel.OptionsResponse;
 export class NewReturnComponent implements OnInit{
 
   return: Return;
-  types: any[];
+  types: ReturnType[];
   warehouses: Warehouse[];
-  providers: any[]; //provider stuff + conditions (email + observations) + brands
+  providers: Provider[];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private returnService: ReturnService
+    private returnService: ReturnService,
+    private authenticationService: AuthenticationService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.getOptions();
     const returnId: number = parseInt(this.route.snapshot.paramMap.get('id'));
-    if(returnId) {
+    if (returnId) {
       this.load(returnId);
-    }else{
+    } else {
       this.return = {
         amountPackages: 0,
         brands: [],
-        dateLastStatus: "",
+        dateLastStatus: String(new Date()),
         dateLimit: "",
         datePickup: "",
         datePredictedPickup: "",
@@ -46,25 +51,25 @@ export class NewReturnComponent implements OnInit{
         email: "",
         history: false,
         id: 0,
-        lastStatus: 0,
+        lastStatus: 1,
         observations: "",
         packings: [],
         printTagPackages: false,
-        provider: undefined,
+        provider: null,
         shipper: "",
-        status: 0,
-        type: undefined,
+        status: 1,
+        type: null,
         unitsPrepared: 0,
         unitsSelected: 0,
-        user: undefined,
-        userLastStatus: undefined,
-        warehouse: undefined
+        user: await this.authenticationService.getCurrentUser(),
+        userLastStatus: await this.authenticationService.getCurrentUser(),
+        warehouse: null
       };
     }
   }
 
   save(){
-    this.returnService.postSave(this.return).then((response: SaveResponse) => {
+    this.returnService.postSave({return: this.return}).then((response: SaveResponse) => {
       if(response.code == 200){
         this.router.navigateByUrl('/return-tracking-list')
       }else{
@@ -74,7 +79,7 @@ export class NewReturnComponent implements OnInit{
   }
 
   load(returnId: number){
-    this.returnService.postLoad(returnId).then((response: LoadResponse) => {
+    this.returnService.postLoad({returnId: returnId}).then((response: LoadResponse) => {
       if (response.code == 200) {
         this.return = response.data;
       } else {
@@ -116,13 +121,28 @@ export class NewReturnComponent implements OnInit{
     }
   }
 
-  getFormattedDate(value: string): string{
-    const date = new Date(value);
-    return date.getDay()+'/'+date.getMonth()+'/'+date.getFullYear();
-  }
-
   getBrandNameList(brands: Brand[]): string{
     return brands.map(brand => brand.name).join('/');
+  }
+
+  getProviderBrands(): Brand[]{
+    return this.providers.filter(provider => provider.id == this.return.provider.id)[0].brands;
+  }
+
+  selectBrands(event){
+    const selectedIds: number[] = event.detail.value.map(brandId => {return parseInt(brandId)});
+    this.return.brands = this.providers.filter(provider => provider.id == this.return.provider.id)[0].brands.filter(brand => selectedIds.includes(brand.id));
+  }
+
+  getSelectedBrandIds(){
+    return this.return.brands.map(brand => {return brand.id.toString()});
+  }
+
+  async changeStatus(status: number) {
+    this.return.status = status;
+    this.return.lastStatus = status;
+    this.return.userLastStatus = await this.authenticationService.getCurrentUser();
+    this.return.dateLastStatus = String(new Date());
   }
 
 }

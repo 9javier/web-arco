@@ -2,17 +2,21 @@ import {UserModel} from "./User";
 import {WarehouseModel} from "./Warehouse";
 import {CarrierModel} from "./Carrier";
 import {BrandModel} from "./Brand";
+import {ReturnTypeModel} from "./ReturnType";
+import {ProviderModel} from "./Provider";
 import User = UserModel.User;
 import Warehouse = WarehouseModel.Warehouse;
 import Carrier = CarrierModel.Carrier;
 import Brand = BrandModel.Brand;
+import ReturnType = ReturnTypeModel.ReturnType;
+import Provider = ProviderModel.Provider;
 
 export namespace ReturnModel{
 
   export interface Return {
     id: number,
-    type: any,
-    provider: any,
+    type: ReturnType,
+    provider: Provider,
     brands: Brand[],
     dateLimit: string,
     warehouse: Warehouse,
