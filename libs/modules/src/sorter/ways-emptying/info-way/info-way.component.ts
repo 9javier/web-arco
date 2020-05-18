@@ -20,6 +20,7 @@ export class SorterInfoWayEmptyingComponent implements OnInit {
   public way: WaySorterModel.WaySorter = null;
   public destinyWarehouse: string = null;
   public listProducts: SorterOutputModel.ProductInSorterWithIncidence[] = [];
+  public listPackages = []; 
   public isLoadingData: boolean = false;
   public wayWithIncidences: boolean = false;
 
@@ -36,6 +37,7 @@ export class SorterInfoWayEmptyingComponent implements OnInit {
     this.way = null;
     this.destinyWarehouse = null;
     this.listProducts = [];
+    this.listPackages = [];
     this.isLoadingData = false;
   }
 
@@ -49,6 +51,7 @@ export class SorterInfoWayEmptyingComponent implements OnInit {
           let resData = res.data;
           this.destinyWarehouse = resData.warehouse ? `${resData.warehouse.reference} ${resData.warehouse.name}` : 'NO ASIGNADO';
           this.listProducts = resData.products || [];
+          this.listPackages = resData.packages || [];
           this.wayWithIncidences = resData.with_incidences;
           this.isLoadingData = false;
         } else {
