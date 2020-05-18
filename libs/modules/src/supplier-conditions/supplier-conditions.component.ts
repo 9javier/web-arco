@@ -480,6 +480,11 @@ export class SupplierConditionsComponent implements OnInit {
     });
   }*/
 
+  prevent(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
   async addSupplierConditions(event) {
     event.stopPropagation();
     event.preventDefault();
