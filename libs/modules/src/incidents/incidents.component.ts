@@ -471,6 +471,21 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }
   }
 
+  isFormComplete(){
+    if(!this.defectParentId || !this.defectZoneParentId){
+      return false;
+    }
+    if(this.requirePhoto && this.photos.length == 0){
+      return false;
+    }
+    if(this.requireOk && !this.signatures){
+      return false;
+    }
+    if(this.requireContact && this.txtName.length < 4 && this.txtInfo.length < 1){
+      return false;
+    }
+    return true;
+  }
 
   async enviaryarn() {
     let photos = []

@@ -53,3 +53,7 @@ ion-slides, ion-slide,scanner-manual, form {
   transform: rotate(-45deg); /* Giramos el cuadrado */
   transition: all 0.25s ease;
 }
+
+.toolbar-buttons {
+  height: 60px !important;
+}

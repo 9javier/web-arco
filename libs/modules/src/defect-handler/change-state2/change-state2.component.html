@@ -19,8 +19,13 @@
     <ion-datetime formControlName="dateDetection" picker-format="DD/MM/YYYY" display-format="DD/MM/YYYY" format disabled></ion-datetime>
   </ion-item>
 
+  <ion-item>
+    <ion-label class="label-text">Estado actual</ion-label>
+    <ion-input class="input-barcode" type="text" readonly>{{registry?.data?.statusManagementDefect?.name}}</ion-input><br>
+  </ion-item>
+
   <ion-item (click)="clickSelectPopover($event)">
-    <ion-label class="label-text">Estado de gestion</ion-label>
+    <ion-label class="label-text">Estado nuevo</ion-label>
     <ion-label class="content-select" style="text-align: center" *ngIf="!defectStatus"><font color="#808080">Selecciona</font> <i></i></ion-label>
     <ion-label class="content-select" style="text-align: center" *ngIf="defectStatus">{{ defectStatus.name }} <i></i></ion-label>
   </ion-item>
@@ -38,13 +43,6 @@
     <ion-input style="margin-left: 10%;" disabled>{{ ZoneAndChild }}</ion-input>
   </ion-item>
 
-
-
-
-  <ion-item *ngIf="selectGestionState == true">
-    <ion-label position="floating" class="label-text">Observaciones</ion-label>
-    <ion-textarea  formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-textarea>
-  </ion-item>
 
   <div *ngIf="requireContact == true && selectGestionState == true" class="contact">
     <div formGroupName = "contact">
@@ -85,6 +83,10 @@
       </ion-button>
     </ion-item>
   </ion-list>
+
+  <ion-item *ngIf="selectGestionState == true">
+    <ion-textarea placeholder="Observaciones..." formControlName="observations" type="text"></ion-textarea>
+  </ion-item>
   </div>
 
 <div *ngIf="selectGestionState == true">
@@ -109,10 +111,14 @@
   </ion-list>
   </div>
   <!--<ion-label>{{imgUrl}}</ion-label>-->
-
-
-  <ion-button  [disabled]="selectGestionState == false" (click)="send()" expand="block" shape="round">
-    actualizar
-  </ion-button>
   </form>
 </ion-content>
+
+<div class="toolbar-buttons">
+  <ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button matTooltip="Cambiar Estado" matTooltipClass="tooltip" [disabled]="!isFormComplete()"
+                    (click)="send()">
+      <ion-icon name="save"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</div>

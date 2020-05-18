@@ -299,6 +299,22 @@ export class ChangeState2Component implements OnInit {
     }
   }
 
+  isFormComplete(){
+    if(!this.selectGestionState){
+      return false;
+    }
+    if(this.requirePhoto && this.photos.length == 0){
+      return false;
+    }
+    if(this.requireOk && !this.signatures){
+      return false;
+    }
+    if(this.requireContact && this.txtName.length < 4 && this.txtInfo.length < 1){
+      return false;
+    }
+    return true;
+  }
+
 
 
 
