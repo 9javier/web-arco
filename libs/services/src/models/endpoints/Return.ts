@@ -71,6 +71,22 @@ export namespace ReturnModel{
     errors?: any
   }
 
+  export interface SaveResponse {
+    message?: string,
+    code?: number,
+    data?: any,
+    error?: any,
+    errors?: any
+  }
+
+  export interface LoadResponse {
+    message?: string,
+    code?: number,
+    data?: Return,
+    error?: any,
+    errors?: any
+  }
+
   export interface Filters {
     ids: number[],
     typeIds: number[],

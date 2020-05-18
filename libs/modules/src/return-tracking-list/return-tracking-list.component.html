@@ -96,7 +96,7 @@
   </ion-grid>
 
   <ion-grid>
-    <ion-row nowrap *ngFor="let ret of returns">
+    <ion-row class="clickable-row" nowrap *ngFor="let ret of returns" (click)="router.navigate(['/new-return', {id: ret.id}])">
       <ion-col size="5">{{ret.id}}</ion-col>
       <ion-col size="9">{{ret.type.name}}</ion-col>
       <ion-col size="11">{{ret.provider.name}}</ion-col>

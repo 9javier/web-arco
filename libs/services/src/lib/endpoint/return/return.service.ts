@@ -5,6 +5,9 @@ import {ReturnModel} from "../../../models/endpoints/Return";
 import SearchParameters = ReturnModel.SearchParameters;
 import SearchResponse = ReturnModel.SearchResponse;
 import FilterOptionsResponse = ReturnModel.FilterOptionsResponse;
+import Return = ReturnModel.Return;
+import SaveResponse = ReturnModel.SaveResponse;
+import LoadResponse = ReturnModel.LoadResponse;
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +15,8 @@ import FilterOptionsResponse = ReturnModel.FilterOptionsResponse;
 export class ReturnService {
 
   private postSearchUrl = environment.apiBase+'/returns/search';
+  private postSaveUrl = environment.apiBase+'/returns/save';
+  private postLoadUrl = environment.apiBase+'/returns/load';
   private getFilterOptionsUrl = environment.apiBase+'/returns/filter-options';
 
   constructor(
@@ -20,6 +25,14 @@ export class ReturnService {
 
   postSearch(params: SearchParameters): Promise<SearchResponse> {
     return this.requestsProvider.post(this.postSearchUrl, params);
+  }
+
+  postSave(params: Return): Promise<SaveResponse> {
+    return this.requestsProvider.post(this.postSaveUrl, params);
+  }
+
+  postLoad(params: number): Promise<LoadResponse> {
+    return this.requestsProvider.post(this.postLoadUrl, params);
   }
 
   getFilterOptions(): Promise<FilterOptionsResponse> {
