@@ -77,14 +77,26 @@ export class GlobalVariablesComponent implements OnInit {
           }
         }
         if (!isTypeCreated) {
-          this.listVariables.push({ type: type.id, value: null, tooltip: null });
+          this.listVariables.push({ type: type.id, typeObject: type, value: null, tooltip: null });
         }
       }
     } else {
       this.listVariables = this.listVariablesFromDb;
     }
-    this.listVariables.sort((a, b) => {
-      return a.type < b.type ? -1 : 1;
+    this.listVariables.sort((a,b) => {
+      if ( a && a.typeObject && b && b.typeObject && a.typeObject.type < b.typeObject.type ){
+        return -1;
+      }
+      if ( a && a.typeObject && b && b.typeObject && a.typeObject.type > b.typeObject.type ){
+        return 1;
+      }
+      if ( a && a.typeObject && b && b.typeObject && a.typeObject.name < b.typeObject.name ){
+        return -1;
+      }
+      if ( a && a.typeObject && b && b.typeObject && a.typeObject.name > b.typeObject.name ){
+        return 1;
+      }
+      return 0;
     });
   }
 
