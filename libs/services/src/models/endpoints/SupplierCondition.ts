@@ -1,13 +1,17 @@
 import {Request} from "./request";
-
+import {BrandModel} from "./Brand";
+import ProviderModel = ProviderModel.Provider;
+import Brand = BrandModel.Brand;
 export namespace SupplierConditionModel {
 
   export interface SupplierCondition {
-    provider?: number,
-    brand?: number,
+    id: number,
+    provider?: ProviderModel,
     noClaim?: boolean,
     contact?: string,
     observations?: string,
+    brand?: Brand,
+    showObs?: boolean
   }
   export interface Provider {
     id?: number,
