@@ -5,7 +5,10 @@ import { IonicModule } from '@ionic/angular';
 import { NewReturnComponent } from './new-return.component';
 import {FormsModule} from "@angular/forms";
 import {SelectConditionComponent} from "./select-condition/select-condition.component";
-import {MatTooltipModule} from "@angular/material";
+import {MatTooltipModule, MatRippleModule, MatCardModule} from "@angular/material";
+import {SelectableListComponent} from "./modals/selectable-list/selectable-list.component";
+import {SingleSelectListModule} from "../components/single-select-list/single-select-list.module";
+import {MatButtonModule} from "@angular/material/button";
 
 const routes: Routes = [{
     path: '',
@@ -13,14 +16,18 @@ const routes: Routes = [{
 }];
 
 @NgModule({
-  declarations: [NewReturnComponent, SelectConditionComponent],
-  entryComponents: [SelectConditionComponent],
+  declarations: [NewReturnComponent, SelectConditionComponent, SelectableListComponent],
+  entryComponents: [SelectConditionComponent, SelectableListComponent],
   imports: [
     CommonModule,
     IonicModule,
     RouterModule.forChild(routes),
     FormsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    SingleSelectListModule,
+    MatRippleModule,
+    MatCardModule,
+    MatButtonModule
   ]
 })
 

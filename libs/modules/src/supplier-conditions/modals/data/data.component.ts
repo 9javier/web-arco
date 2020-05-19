@@ -16,7 +16,6 @@ import {SelectableListComponent} from "../selectable-list/selectable-list.compon
 export class DataComponent implements OnInit, AfterViewInit {
 
   @Input() set supplierCondition(_supplierCondition){
-    console.log('T:suppliercondition', _supplierCondition);
     if(_supplierCondition) {
       this.providerSelectedForm = _supplierCondition.provider;
       this.brandSelectedForm = _supplierCondition.brand;
@@ -105,7 +104,6 @@ export class DataComponent implements OnInit, AfterViewInit {
 
   selectedProvider(event) {
     if (event) {
-      console.log("event['detail'].value",event['detail'].value);
       this.getBrands(event['detail'].value);
     }
   }
@@ -132,7 +130,6 @@ export class DataComponent implements OnInit, AfterViewInit {
   }
 
   public async openShowSelectableList(type: number) {
-    console.log('T:openShowSelectableList', type);
     if (type == 1) {
       this.listItemsSelected = this.providers.map(p => {
         return {id: p.id, value: p.name}
@@ -154,10 +151,8 @@ export class DataComponent implements OnInit, AfterViewInit {
         if (type == 1) {
           this.getBrands(result.data);
           this.providerSelectedForm = this.providers.find(p => p.id == result.data);
-          console.log('T:this.providerSelectedForm', this.providerSelectedForm);
         } else if (type == 2) {
           this.brandSelectedForm = this.brands.find(p => p.id == result.data);
-          console.log('T:this.brandSelectedForm', this.brandSelectedForm);
         }
       }
     });

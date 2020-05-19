@@ -1,3 +1,15 @@
+ion-col.button-col {
+  text-align: start;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+ion-item.item-selectable {
+  height: 67px;
+  ion-label {
+    margin-top: 23px;
+    margin-bottom: 22px;
+  }
+}
 ion-label{
   font-weight: bold;
 }

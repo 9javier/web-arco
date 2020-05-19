@@ -19,18 +19,22 @@ import {ModalController} from "@ionic/angular";
 import {SelectConditionComponent} from "./select-condition/select-condition.component";
 import {SupplierConditionModel} from "../../../services/src/models/endpoints/SupplierCondition";
 import SupplierCondition = SupplierConditionModel.SupplierCondition;
+import {SelectableListComponent} from "./modals/selectable-list/selectable-list.component";
 
 @Component({
   selector: 'suite-new-return',
   templateUrl: './new-return.component.html',
   styleUrls: ['./new-return.component.scss']
 })
-export class NewReturnComponent implements OnInit{
+export class NewReturnComponent implements OnInit {
 
   return: Return;
   types: ReturnType[];
   warehouses: Warehouse[];
   providers: Provider[];
+
+  private listItemsSelected: any[] = [];
+  private itemForList: string = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -176,4 +180,47 @@ export class NewReturnComponent implements OnInit{
     await modal.present();
   }
 
+  public async openShowSelectableList(type: number) {
+    switch (type) {
+      case 1:
+        this.listItemsSelected = this.types.map(v => {
+          return {id: v.id, value: v.name}
+        });
+        this.itemForList = 'Tipo';
+        break;
+      case 2:
+        this.listItemsSelected = this.warehouses.map(v => {
+          return {id: v.id, value: `${v.reference} - ${v.name}`}
+        });
+        this.itemForList = 'Almacén';
+        break;
+      case 3:
+        this.listItemsSelected = this.providers.map(v => {
+          return {id: v.id, value: v.name}
+        });
+        this.itemForList = 'Proveedor';
+        break;
+    }
+
+    const modal = await this.modalController.create({
+      component: SelectableListComponent,
+      componentProps: { listItemsSelected: this.listItemsSelected, itemForList: this.itemForList }
+    });
+    modal.onDidDismiss().then(result => {
+      if (result && result.data != null) {
+        switch (type) {
+          case 1:
+            this.return.type = this.types.find(v => v.id == result.data);
+            break;
+          case 2:
+            this.return.warehouse = this.warehouses.find(v => v.id == result.data);
+            break;
+          case 3:
+            this.return.provider = this.providers.find(v => v.id == result.data);
+            break;
+        }
+      }
+    });
+    await modal.present();
+  }
 }
