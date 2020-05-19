@@ -22,6 +22,7 @@ import {FormHeaderReceptionComponent} from "./components/form-header-reception/f
 import {LoadingButtonModule} from "../components/button/loading-button/loading-button.module";
 import {InfoHeaderReceptionComponent} from "./components/info-header-reception/info-header-reception.component";
 import {SizeSelectModule} from "../components/size-select/size-select.module";
+import {ScrollingModule} from "@angular/cdk/scrolling";
 
 const routes: Routes = [
   {
@@ -56,7 +57,8 @@ const routes: Routes = [
     MatRippleModule,
     SizeSelectModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    ScrollingModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

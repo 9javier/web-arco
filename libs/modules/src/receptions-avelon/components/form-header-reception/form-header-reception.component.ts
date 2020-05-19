@@ -30,6 +30,7 @@ export class FormHeaderReceptionComponent implements OnInit {
   public providerSelected: ReceptionAvelonModel.Providers = null;
 
   public listProviders: any[] = [];
+  public listProvidersToKeyboard: {id: number, value: string}[] = [];
   public lastExepeditionQueried = {reference: null, providerId: null};
 
   constructor(
@@ -49,6 +50,7 @@ export class FormHeaderReceptionComponent implements OnInit {
       .getAllProviders()
       .subscribe((data: Array<ReceptionAvelonModel.Providers>) => {
         this.listProviders = data;
+        this.listProvidersToKeyboard = this.listProviders.map(p => {return {id: p.id, value: p.name};});
       }, e => {
 
       });
@@ -68,47 +70,51 @@ export class FormHeaderReceptionComponent implements OnInit {
 
   //region PUBLIC METHODS FOR VIEW
   public showKeyboard(type: Type, list: ReceptionAvelonModel.Data[] = []) {
-    const dataList = list.map(l => {return {id: l.id, value: l.name};});
+    if (!this.virtualKeyboardService.aKeyboardIsOpen) {
+      let dataList: {id: number, value: string}[] = [];
 
-    let placeholderText = '';
-    let initialValue = null;
+      let placeholderText = '';
+      let initialValue = null;
 
-    switch (type) {
-      case Type.EXPEDITION_NUMBER:
-        placeholderText = 'Código de la expedición';
-        initialValue = this.expeditionInput.nativeElement.value;
-        break;
-      case Type.PROVIDER:
-        placeholderText = 'Proveedor';
-        initialValue = this.providerInput.nativeElement.value;
-        break;
-    }
+      switch (type) {
+        case Type.EXPEDITION_NUMBER:
+          placeholderText = 'Código de la expedición';
+          initialValue = this.expeditionInput.nativeElement.value;
+          break;
+        case Type.PROVIDER:
+          placeholderText = 'Proveedor';
+          initialValue = this.providerInput.nativeElement.value;
+          dataList = this.listProvidersToKeyboard;
+          break;
+      }
 
-    const keyboardEventEmitterSubscribe = this.virtualKeyboardService.eventEmitter
-      .subscribe(data => {
-        if (data.selected) {
-          switch (data.selected.type) {
-            case Type.EXPEDITION_NUMBER:
-              this.expeditionInput.nativeElement.value = data.selected.id;
-              this.loadingButtonExpedition.isDisabled = !data.selected.id;
-              this.clickCheckExpedition();
-              break;
-            case Type.PROVIDER:
-              this.providerInput.nativeElement.value = data.selected.id;
-              this.loadingButtonProvider.isDisabled = !data.selected.id;
-              this.clickCheckByProvider();
-              break;
+      let keyboardEventEmitterSubscribe = this.virtualKeyboardService.eventEmitter
+        .subscribe(data => {
+          if (data.selected) {
+            switch (data.selected.type) {
+              case Type.EXPEDITION_NUMBER:
+                this.expeditionInput.nativeElement.value = data.selected.id;
+                this.loadingButtonExpedition.isDisabled = !data.selected.id;
+                this.clickCheckExpedition();
+                break;
+              case Type.PROVIDER:
+                this.providerInput.nativeElement.value = data.selected.id;
+                this.loadingButtonProvider.isDisabled = !data.selected.id;
+                this.clickCheckByProvider();
+                break;
+            }
           }
-        }
-      });
-
-    this.virtualKeyboardService
-      .openVirtualKeyboard({dataList, type, placeholder: placeholderText, initialValue: initialValue})
-      .then((popover: any) => {
-        popover.onDidDismiss().then(() => {
-          keyboardEventEmitterSubscribe.unsubscribe();
         });
-      });
+
+      const callbackDismissKeyboard = () => {
+        this.virtualKeyboardService.aKeyboardIsOpen = false;
+        if (keyboardEventEmitterSubscribe) {
+          keyboardEventEmitterSubscribe.unsubscribe();
+          keyboardEventEmitterSubscribe = null;
+        }
+      };
+      this.virtualKeyboardService.openVirtualKeyboard({dataList, type, placeholder: placeholderText, initialValue: initialValue}, callbackDismissKeyboard);
+    }
   }
 
   public clickResumeExpedition() {

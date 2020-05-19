@@ -127,6 +127,9 @@ div.grid {
   div.selectors {
     height: 30vh;
     place-content: space-between;
+    i.cursor-pointer {
+      cursor: pointer;
+    }
     div {
       width: 30vw;
       ion-item {
