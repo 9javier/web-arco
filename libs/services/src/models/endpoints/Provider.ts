@@ -6,8 +6,8 @@ export namespace ProviderModel{
   export interface Provider {
     id: number,
     name: string,
-    hash: string,
-    avelonId: number,
+    hash?: string,
+    avelonId?: number,
     brands?: Brand[]
   }
 

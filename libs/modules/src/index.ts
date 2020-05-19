@@ -128,6 +128,14 @@ export * from './defective-registry/defective-registry.module';
 export * from './defective-historic/defective-historic.component';
 export * from './defective-historic/defective-historic.module';
 
+/**supplier-conditions */
+export * from './supplier-conditions/supplier-conditions.component';
+export * from './supplier-conditions/supplier-conditions.module';
+
+/**return-types */
+export * from './return-types/return-types.component';
+export * from './return-types/return-types.module';
+
 export * from './return-tracking-list/return-tracking-list.component';
 export * from './return-tracking-list/return-tracking-list.module';
 
