@@ -1,0 +1,34 @@
+ion-content{
+  --offset-top: -45px !important;
+  --offset-bottom: 10px !important;
+  --overflow: overlay;
+  text-align: center;
+}
+
+ion-grid{
+  --ion-grid-columns: 95;
+  margin: 0;
+}
+
+ion-col{
+  padding-left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+ion-fab-button{
+   margin-top: 10px;
+}
+
+b{
+  vertical-align: bottom;
+  display: inline-block;
+  height: 100%;
+  cursor: pointer;
+}
+
+.clickable-row:hover{
+  cursor: pointer;
+  background-color: lightgrey;
+}

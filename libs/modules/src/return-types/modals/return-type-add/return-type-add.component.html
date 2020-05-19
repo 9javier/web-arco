@@ -1,0 +1,19 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Crear Tipo de Devolución</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content padding="true">
+    <suite-data [selectProviders]="selectProviders"></suite-data>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary" [disabled]="data.form==null" (click)="submit(data.getValue())">Guardar</ion-button>
+    </ion-toolbar>
+</ion-footer>

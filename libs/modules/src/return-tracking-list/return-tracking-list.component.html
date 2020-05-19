@@ -1,0 +1,124 @@
+<ion-content>
+
+  <ion-grid slot="fixed">
+    <ion-row nowrap>
+      <ion-col size="5">
+        <b (click)="orderBy('id')">Id</b>
+        <suite-filter-button
+          [title]="'Id'"
+          [listItems]="filterOptions.ids"
+          [isFiltering]="filters.ids.length > 0"
+          (applyFilters)="applyFilters($event, 'ids')">
+        </suite-filter-button>
+      </ion-col>
+      <ion-col size="9">
+        <b (click)="orderBy('type')">Tipo</b>
+        <suite-filter-button
+          [title]="'Tipo'"
+          [listItems]="filterOptions.typeIds"
+          [isFiltering]="filters.typeIds.length > 0"
+          (applyFilters)="applyFilters($event, 'typeIds')">
+        </suite-filter-button>
+      </ion-col>
+      <ion-col size="11">
+        <b (click)="orderBy('provider')">Proveedor</b>
+        <suite-filter-button
+          [title]="'Proveedor'"
+          [listItems]="filterOptions.providerIds"
+          [isFiltering]="filters.providerIds.length > 0"
+          (applyFilters)="applyFilters($event, 'providerIds')">
+        </suite-filter-button>
+      </ion-col>
+      <ion-col size="9">
+        <b (click)="orderBy('brand')">Marcas</b>
+        <suite-filter-button
+          [title]="'Marcas'"
+          [listItems]="filterOptions.brandIds"
+          [isFiltering]="filters.brandIds.length > 0"
+          (applyFilters)="applyFilters($event, 'brandIds')">
+        </suite-filter-button>
+      </ion-col>
+      <ion-col size="11">
+        <b (click)="orderBy('dateLimit')">Fecha Máx</b>
+        <suite-filter-button
+          [title]="'Fecha Máx'"
+          [listItems]="filterOptions.datesLimit"
+          [isFiltering]="filters.datesLimit.length > 0"
+          (applyFilters)="applyFilters($event, 'datesLimit')">
+        </suite-filter-button>
+      </ion-col>
+      <ion-col size="10">
+        <b (click)="orderBy('warehouse')">Almacén</b>
+        <suite-filter-button
+          [title]="'Almacén'"
+          [listItems]="filterOptions.warehouseIds"
+          [isFiltering]="filters.warehouseIds.length > 0"
+          (applyFilters)="applyFilters($event, 'warehouseIds')">
+        </suite-filter-button>
+      </ion-col>
+      <ion-col size="9">
+        <b (click)="orderBy('status')">Estado</b>
+        <suite-filter-button
+          [title]="'Estado'"
+          [listItems]="filterOptions.statuses"
+          [isFiltering]="filters.statuses.length > 0"
+          (applyFilters)="applyFilters($event, 'statuses')">
+        </suite-filter-button>
+      </ion-col>
+      <ion-col size="10">
+        <b (click)="orderBy('dateLastStatus')">Fecha UE</b>
+        <suite-filter-button
+          [title]="'Fecha UE'"
+          [listItems]="filterOptions.datesLastStatus"
+          [isFiltering]="filters.datesLastStatus.length > 0"
+          (applyFilters)="applyFilters($event, 'datesLastStatus')">
+        </suite-filter-button>
+      </ion-col>
+      <ion-col size="11">
+        <b (click)="orderBy('userLastStatus')">Usuario UE</b>
+        <suite-filter-button
+          [title]="'Usuario UE'"
+          [listItems]="filterOptions.userIdsLastStatus"
+          [isFiltering]="filters.userIdsLastStatus.length > 0"
+          (applyFilters)="applyFilters($event, 'userIdsLastStatus')">
+        </suite-filter-button>
+      </ion-col>
+      <ion-col size="10">
+        <b (click)="orderBy('unitsPrepared')">Unidades</b>
+        <suite-filter-button
+          [title]="'Unidades'"
+          [listItems]="filterOptions.unitsPrepared"
+          [isFiltering]="filters.unitsPrepared.length > 0"
+          (applyFilters)="applyFilters($event, 'unitsPrepared')">
+        </suite-filter-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid>
+    <ion-row class="clickable-row" nowrap *ngFor="let ret of returns" (click)="router.navigate(['/new-return', {id: ret.id}])">
+      <ion-col size="5">{{ret.id}}</ion-col>
+      <ion-col size="9">{{ret.type.name}}</ion-col>
+      <ion-col size="11">{{ret.provider.name}}</ion-col>
+      <ion-col size="9" [matTooltip]="getBrandNameList(ret.brands)">{{getBrandNameList(ret.brands)}}</ion-col>
+      <ion-col size="11">{{getFormattedDate(ret.dateLimit)}}</ion-col>
+      <ion-col size="10">{{ret.warehouse.reference}}</ion-col>
+      <ion-col size="9" [matTooltip]="getStatusName(ret.status)">{{getStatusName(ret.status)}}</ion-col>
+      <ion-col size="10">{{getFormattedDate(ret.dateLastStatus)}}</ion-col>
+      <ion-col size="11">{{ret.userLastStatus.name}}</ion-col>
+      <ion-col size="10">{{ret.unitsPrepared}}</ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="router.navigateByUrl('/new-return')" matTooltip="Nueva Devolución">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="reset()" matTooltip="Reset">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
+
+<mat-paginator></mat-paginator>

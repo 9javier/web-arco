@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button matTooltip="Cerrar" (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Condiciones del Proveedor {{provider.name}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col [size]="3">
+        <b>Marca</b>
+      </ion-col>
+      <ion-col [size]="3">
+        <b>Contacto</b>
+      </ion-col>
+      <ion-col [size]="6">
+        <b>Acciones</b>
+      </ion-col>
+    </ion-row>
+    <div *ngFor="let condition of conditions">
+      <ion-row>
+        <ion-col [size]="3">
+          <span>{{condition.brand.name}}</span>
+        </ion-col>
+        <ion-col [size]="3">
+          <span>{{condition.contact}}</span>
+        </ion-col>
+        <ion-col [size]="3" class="align-center">
+          <ion-button (click)="condition.showObs ? condition.showObs = false : condition.showObs = true">Observaciones</ion-button>
+        </ion-col>
+        <ion-col [size]="3" class="align-center">
+          <ion-button (click)="apply(condition)">Aplicar</ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="condition.showObs">
+        <ion-item>
+          <ion-label position="stacked">Observaciones</ion-label>
+          <ion-input disabled>{{condition.observations}}</ion-input>
+        </ion-item>
+      </ion-row>
+    </div>
+  </ion-grid>
+</ion-content>

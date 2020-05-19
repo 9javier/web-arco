@@ -236,7 +236,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Devoluciones',
+      title: 'Devoluciones fábrica',
       open: true,
       type: 'wrapper',
       icon: 'return-left',
@@ -247,6 +247,27 @@ export class MenuComponent implements OnInit {
           url: '/returns-list',
           icon: 'list-box',
           tooltip: 'Listado de registro de devoluciones'
+        },
+        {
+          title: 'Listado Seguimiento Devoluciones',
+          id: 'return-tracking-list',
+          url: '/return-tracking-list',
+          icon: 'list',
+          tooltip: 'Listado de seguimiento de devoluciones'
+        },
+        {
+          title: 'Condiciones proveedores',
+          id: 'supplier-conditions',
+          url: '/supplier-conditions',
+          icon: 'list-box',
+          tooltip: 'Listado de condiciones de proveedores'
+        },
+        {
+          title: 'Tipos de devoluciones',
+          id: 'return-types',
+          url: '/return-types',
+          icon: 'list-box',
+          tooltip: 'Listado de tipos de devoluciones'
         }
       ]
     },

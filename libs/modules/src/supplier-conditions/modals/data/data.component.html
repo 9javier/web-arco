@@ -1,0 +1,38 @@
+<form [formGroup]="form">
+  <ion-item *ngIf="form['controls']?.provider" [formGroup]="form['controls']?.provider">
+      <!-- Input Label -->
+      <ion-label position="floating">Proveedor</ion-label>
+      <!-- Input Select -->
+      <ion-select placeholder="{{isAdd ? '' : supplierCondition.provider.name}}" formControlName="id" (ionChange)="selectedProvider($event)">
+          <ion-select-option *ngFor="let provider of providers" [value]="provider.id">{{provider.name}}</ion-select-option>
+      </ion-select>
+  </ion-item>
+  <br>
+  <ion-item *ngIf="form['controls']?.brand" [formGroup]="form['controls']?.brand">
+    <!-- Input Label -->
+    <ion-label position="floating">Marca</ion-label>
+    <!-- Input Select -->
+    <ion-select placeholder="{{isAdd ? '' : supplierCondition.brand.name}}" formControlName="id">
+      <ion-select-option *ngFor="let brand of brands" [value]="brand.id">{{brand.name}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <br>
+  <ion-item *ngIf="form['controls']?.noClaim">
+    <!-- Input Label -->
+    <ion-label position="floating">No Claim</ion-label>
+    <!-- Input Select -->
+    <ion-select placeholder="{{isAdd ? '' : form['controls']?.noClaim.value==true ? 'Sí' : 'No'}}" formControlName="noClaim">
+      <ion-select-option *ngFor="let noClaim of noClaimSelect" [value]="noClaim.id">{{noClaim.name}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <br>
+  <ion-item>
+    <ion-label slot="start">Contacto</ion-label>
+    <ion-input formControlName="contact" placeholder="Ejem: galvintec@gmail.com"></ion-input>
+  </ion-item>
+  <br>
+  <ion-item class="textarea">
+    <ion-label slot="start">Observaciones</ion-label>
+    <ion-textarea formControlName="observations" type="text"></ion-textarea>
+  </ion-item>
+</form>
