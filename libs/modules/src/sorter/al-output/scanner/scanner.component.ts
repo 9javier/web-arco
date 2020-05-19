@@ -181,11 +181,16 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
       if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PACKING) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {
-          this.audioProvider.playDefaultError();
-          await this.intermediaryService.presentToastError('Código de producto erróneo.');
-          this.focusToInput();
+          if(dataWrote.includes('UQ')){
+            //is package
+            this.scannPackage(dataWrote);
+          }else{
+            //code invalid
+            this.audioProvider.playDefaultError();
+            await this.intermediaryService.presentToastError('Código de producto erróneo.');
+            this.focusToInput();
+          }
         } else {
-
           this.carrier.getSingle(dataWrote).subscribe(data => {
             if(data.packingInventorys.length > 0 && !test){
               this.modalList(dataWrote)
@@ -195,7 +200,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           })
 
         }
-      } else if (true == true) {
+      } else if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PRODUCT) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {
           this.outputProductFromSorter(dataWrote);
         } else if (this.packingIsFull) {
@@ -216,6 +221,21 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  async scannPackage(dataWrote){
+    if (this.processStarted && this.infoSorterOperation.packingReference) {
+      this.outputProductFromSorter(dataWrote);
+    } else if (this.packingIsFull) {
+      this.audioProvider.playDefaultError();
+      await this.intermediaryService.presentToastError('Escanea el nuevo embalaje a utilizar antes de continuar con los productos.');
+      this.focusToInput();
+    } else {
+      this.audioProvider.playDefaultError();
+      await this.intermediaryService.presentToastError('Escanea el embalaje a utilizar antes de comenzar con los productos.');
+      this.focusToInput();
+    }
+  }
+  
 
   generateVariablesList() {
     this.intermediaryService.dismissLoading();

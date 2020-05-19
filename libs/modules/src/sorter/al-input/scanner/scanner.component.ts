@@ -300,10 +300,10 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
             this.productScanned = {
               reference: resData.product.reference,
               model: {
-                reference: resData.product.model.reference
+                reference: resData.product.model ? resData.product.model.reference : ''
               },
               size: {
-                name: resData.product.size.name
+                name: resData.product.size ? resData.product.size.name : ''
               },
               destinyWarehouse: resData.warehouse ? {
                 id: resData.warehouse.id,
