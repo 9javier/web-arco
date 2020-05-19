@@ -1,20 +1,4 @@
 <ion-content padding="true">
-
-  <ion-text color="primary">
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          <suite-breadcrumb></suite-breadcrumb>
-        </ion-col>
-        <ion-col class="ion-align-self-center bt-right">
-          <ion-button matTooltip="Descargar Excel" matTooltipClass="tooltip" color="primary" (click)="fileExcell()">
-            <ion-icon name="document"></ion-icon>
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-text>
-
   <div class="mat-table-wrapper-overflow-x">
     <table mat-table [dataSource]="dataSource">
 
