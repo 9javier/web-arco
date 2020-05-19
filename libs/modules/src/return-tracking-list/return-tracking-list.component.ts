@@ -237,8 +237,12 @@ export class ReturnTrackingListComponent implements OnInit {
   }
 
   getFormattedDate(value: string): string{
-    const date = new Date(value);
-    return date.getDay()+'/'+date.getMonth()+'/'+date.getFullYear();
+    if(value && value != ''){
+      const date = new Date(value);
+      return date.getDay()+'/'+date.getMonth()+'/'+date.getFullYear();
+    }else{
+      return '';
+    }
   }
 
   getBrandNameList(brands: Brand[]): string{

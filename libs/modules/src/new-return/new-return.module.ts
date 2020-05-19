@@ -4,6 +4,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { IonicModule } from '@ionic/angular';
 import { NewReturnComponent } from './new-return.component';
 import {FormsModule} from "@angular/forms";
+import {MatTooltipModule} from "@angular/material";
 
 const routes: Routes = [{
     path: '',
@@ -16,7 +17,8 @@ const routes: Routes = [{
     CommonModule,
     IonicModule,
     RouterModule.forChild(routes),
-    FormsModule
+    FormsModule,
+    MatTooltipModule
   ]
 })
 

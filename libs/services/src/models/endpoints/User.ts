@@ -83,7 +83,8 @@ export namespace UserModel {
     password?: string;
     address?: string;
     employeId?:number;
-    hasWarehouse?: boolean
+    hasWarehouse?: boolean;
+    permits?: any;
   }
   export interface ResponseIndex {
     data: User[];
