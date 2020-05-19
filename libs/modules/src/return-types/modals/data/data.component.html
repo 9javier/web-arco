@@ -1,16 +1,12 @@
-<form [formGroup]="form">
+<div>
   <ion-item>
     <ion-label slot="start">Nombre</ion-label>
-    <ion-input formControlName="name" placeholder="Nombre"></ion-input>
+    <ion-input placeholder="Nombre" [(ngModel)]="nameForm"></ion-input>
   </ion-item>
   <br>
-  <ion-item *ngIf="form['controls']?.defective">
-    <!-- Input Label -->
-    <ion-label position="floating">Defectuoso</ion-label>
-    <!-- Input Select -->
-    <ion-select placeholder="{{isAdd ? '' : form['controls']?.defective.value==true ? 'Sí' : 'No'}}" formControlName="defective">
-      <ion-select-option *ngFor="let defective of defectiveSelect" [value]="defective.id">{{defective.name}}</ion-select-option>
-    </ion-select>
+  <ion-item>
+    <ion-label>Defectuoso</ion-label>
+    <ion-toggle checked="false" [(ngModel)]="defectiveForm"></ion-toggle>
   </ion-item>
   <br>
-</form>
+</div>

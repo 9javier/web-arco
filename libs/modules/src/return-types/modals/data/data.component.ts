@@ -9,17 +9,11 @@ import {IntermediaryService} from "../../../../../services/src/lib/endpoint/inte
 })
 export class DataComponent implements OnInit {
 
-  private _returnType = null;
-
   @Input() set returnType(_returnType){
     if(_returnType){
-      this._returnType = _returnType;
-      this.form.removeControl("returnType");
-      this.form.patchValue(_returnType);
+      this.nameForm = _returnType.name;
+      this.defectiveForm = _returnType.defective;
     }
-  }
-  get returnType(){
-    return this._returnType;
   }
 
   isAdd: any;
@@ -38,6 +32,9 @@ export class DataComponent implements OnInit {
     name: ['',[Validators.required]],
     defective: ['',[Validators.required]]
   });
+
+  public nameForm: string = null;
+  public defectiveForm: boolean = false;
 
   constructor(
     private formBuilder:FormBuilder,
@@ -63,8 +60,14 @@ export class DataComponent implements OnInit {
     this.intermediaryService.dismissLoading();
   }
 
-  getValue(){
-    let valueFormat =  this.form.value;
-    return valueFormat;
+  getValue() {
+    return {
+      name: this.nameForm,
+      defective: this.defectiveForm
+    }
+  }
+
+  validValues() {
+    return this.nameForm != null;
   }
 }
