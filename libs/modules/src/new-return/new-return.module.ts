@@ -4,6 +4,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { IonicModule } from '@ionic/angular';
 import { NewReturnComponent } from './new-return.component';
 import {FormsModule} from "@angular/forms";
+import {SelectConditionComponent} from "./select-condition/select-condition.component";
 import {MatTooltipModule} from "@angular/material";
 
 const routes: Routes = [{
@@ -12,7 +13,8 @@ const routes: Routes = [{
 }];
 
 @NgModule({
-  declarations: [NewReturnComponent],
+  declarations: [NewReturnComponent, SelectConditionComponent],
+  entryComponents: [SelectConditionComponent],
   imports: [
     CommonModule,
     IonicModule,

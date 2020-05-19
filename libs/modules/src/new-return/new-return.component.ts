@@ -15,6 +15,10 @@ import ReturnType = ReturnTypeModel.ReturnType;
 import {ProviderModel} from "../../../services/src/models/endpoints/Provider";
 import Provider = ProviderModel.Provider;
 import User = UserModel.User;
+import {ModalController} from "@ionic/angular";
+import {SelectConditionComponent} from "./select-condition/select-condition.component";
+import {SupplierConditionModel} from "../../../services/src/models/endpoints/SupplierCondition";
+import SupplierCondition = SupplierConditionModel.SupplierCondition;
 
 @Component({
   selector: 'suite-new-return',
@@ -32,7 +36,8 @@ export class NewReturnComponent implements OnInit{
     private route: ActivatedRoute,
     private router: Router,
     private returnService: ReturnService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private modalController: ModalController
   ) {}
 
   async ngOnInit() {
@@ -142,6 +147,33 @@ export class NewReturnComponent implements OnInit{
 
   allFieldsFilled(): boolean{
     return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.shipper && this.return.datePredictedPickup);
+  }
+
+  thereAreConditions(): boolean{
+    if(this.return.provider){
+      return this.return.provider.brands.map(brand => {if(brand.condition) return brand.condition}).length > 0;
+    }else{
+      return false;
+    }
+  }
+
+  async selectCondition() {
+    const modal = await this.modalController.create({
+      component: SelectConditionComponent,
+      componentProps: {
+        provider: this.return.provider
+      }
+    });
+
+    modal.onDidDismiss().then(response => {
+      if (response.data) {
+        const condition: SupplierCondition = response.data;
+        this.return.email = condition.contact;
+        this.return.observations = condition.observations;
+      }
+    });
+
+    await modal.present();
   }
 
 }

@@ -31,12 +31,19 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-item>
-          <ion-label position="stacked">Proveedor</ion-label>
-          <ion-select [interfaceOptions]="{cssClass: 'wide-alert'}" [selectedText]="return.provider ? return.provider.name : ''" placeholder="Seleccione un proveedor" (ionChange)="return.provider = $event.detail.value">
-            <ion-select-option *ngFor="let provider of providers" [value]="provider">{{provider.name}}</ion-select-option>
-          </ion-select>
-        </ion-item>
+        <ion-row class="no-padding">
+          <ion-col class="no-padding">
+            <ion-item>
+              <ion-label position="stacked">Proveedor</ion-label>
+              <ion-select [interfaceOptions]="{cssClass: 'wide-alert'}" [selectedText]="return.provider ? return.provider.name : ''" placeholder="Seleccione un proveedor" (ionChange)="return.provider = $event.detail.value">
+                <ion-select-option *ngFor="let provider of providers" [value]="provider">{{provider.name}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col class="no-padding center-contents" *ngIf="thereAreConditions()">
+            <ion-button (click)="selectCondition()">Condiciones</ion-button>
+          </ion-col>
+        </ion-row>
       </ion-col>
       <ion-col>
         <ion-item>
