@@ -40,3 +40,19 @@ ion-fab-button{
   --width: 422px;
   --max-width: 422px;
 }
+
+ion-item.item-date {
+  ion-label {
+    max-height: 15px;
+  }
+  input {
+    height: 39px;
+  }
+  mat-datepicker-toggle {
+    position: absolute;
+    right: 16px;
+    top: 13px;
+    width: 100%;
+    text-align: end;
+  }
+}

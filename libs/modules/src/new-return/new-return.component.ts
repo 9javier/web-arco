@@ -150,7 +150,7 @@ export class NewReturnComponent implements OnInit {
   }
 
   allFieldsFilled(): boolean{
-    return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.shipper && this.return.datePredictedPickup);
+    return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
   }
 
   thereAreConditions(): boolean{

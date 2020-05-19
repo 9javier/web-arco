@@ -80,15 +80,19 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-item>
+        <ion-item class="item-date">
           <ion-label position="stacked">Devolver antes de</ion-label>
-          <ion-datetime [(ngModel)]="return.dateReturnBefore" displayFormat="DD/MM/YYYY" placeholder="Seleccione una fecha"></ion-datetime>
+          <input matInput [matDatepicker]="pickerDateReturnBefore" [(ngModel)]="return.dateReturnBefore" placeholder="Seleccione una fecha">
+          <mat-datepicker-toggle matSuffix [for]="pickerDateReturnBefore"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDateReturnBefore></mat-datepicker>
         </ion-item>
       </ion-col>
       <ion-col>
-        <ion-item>
+        <ion-item class="item-date">
           <ion-label position="stacked">Fecha último estado</ion-label>
-          <ion-datetime [(ngModel)]="return.dateLastStatus" disabled displayFormat="DD/MM/YYYY" placeholder="Esta fecha se rellenará automáticamente."></ion-datetime>
+          <input matInput [matDatepicker]="pickerDateLastStatus" [(ngModel)]="return.dateLastStatus" disabled placeholder="Esta fecha se rellenará automáticamente">
+          <mat-datepicker-toggle matSuffix [for]="pickerDateLastStatus"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDateLastStatus></mat-datepicker>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -122,15 +126,19 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-item>
+        <ion-item class="item-date">
           <ion-label position="stacked">Fecha de recogida</ion-label>
-          <ion-datetime [(ngModel)]="return.datePickup" disabled displayFormat="DD/MM/YYYY" placeholder="Esta fecha se rellenará más adelante."></ion-datetime>
+          <input matInput [matDatepicker]="pickerDatePickup" [(ngModel)]="return.datePickup" disabled placeholder="Esta fecha se rellenará más adelante">
+          <mat-datepicker-toggle matSuffix [for]="pickerDatePickup"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDatePickup></mat-datepicker>
         </ion-item>
       </ion-col>
       <ion-col>
-        <ion-item>
+        <ion-item class="item-date">
           <ion-label position="stacked">Fecha prevista de recogida</ion-label>
-          <ion-datetime [(ngModel)]="return.datePredictedPickup" displayFormat="DD/MM/YYYY" placeholder="Seleccione una fecha"></ion-datetime>
+          <input matInput [matDatepicker]="pickerDatePredictedPickup" [(ngModel)]="return.datePredictedPickup">
+          <mat-datepicker-toggle matSuffix [for]="pickerDatePredictedPickup"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDatePredictedPickup></mat-datepicker>
         </ion-item>
       </ion-col>
     </ion-row>

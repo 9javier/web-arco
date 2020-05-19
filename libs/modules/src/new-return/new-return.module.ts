@@ -9,6 +9,9 @@ import {MatTooltipModule, MatRippleModule, MatCardModule} from "@angular/materia
 import {SelectableListComponent} from "./modals/selectable-list/selectable-list.component";
 import {SingleSelectListModule} from "../components/single-select-list/single-select-list.module";
 import {MatButtonModule} from "@angular/material/button";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatInputModule} from "@angular/material/input";
+import {MatIconModule} from "@angular/material/icon";
 
 const routes: Routes = [{
     path: '',
@@ -27,7 +30,10 @@ const routes: Routes = [{
     SingleSelectListModule,
     MatRippleModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatIconModule
   ]
 })
 
