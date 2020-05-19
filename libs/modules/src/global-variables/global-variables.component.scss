@@ -32,6 +32,15 @@ ion-content.variables-list {
           position: absolute;
           right: calc(30vw + 24px);
         }
+        ion-select.reasons {
+          width: 30vw;
+          max-width: 30vw;
+          position: absolute;
+          right: 16px;
+          border: 1px solid var(--ion-color-secondary);
+          text-align: end;
+          --padding-end: 16px;
+        }
         ion-input {
           width: 30vw;
           max-width: 30vw;

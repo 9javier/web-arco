@@ -8,6 +8,8 @@ import EmployeeReplenishment = EmployeeModel.EmployeeReplenishment;
 import {EmployeeModel} from "../../../services/src/models/endpoints/Employee";
 import {MatPaginator} from "@angular/material";
 import {PrinterService} from "../../../services/src/lib/printer/printer.service";
+import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-store/picking-store.service";
+import {PickingStoreModel} from "../../../services/src/models/endpoints/PickingStore";
 declare const BrowserPrint: any;
 
 @Component({
@@ -21,6 +23,7 @@ export class GlobalVariablesComponent implements OnInit {
   private listTypesFromDb: Array<{ id: number, name: string, workwave: boolean, type: string, tooltip: string }> = [];
   private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
   private countLoadOfVariables: number = 0;
+  private listReasons;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   employees: EmployeeReplenishment[];
@@ -34,6 +37,7 @@ export class GlobalVariablesComponent implements OnInit {
   constructor(
     private events: Events,
     private globalVariableService: GlobalVariableService,
+    private pickingStoreService: PickingStoreService,
     private formBuilder: FormBuilder,
     private intermediaryService: IntermediaryService,
     private modalController: ModalController,
@@ -45,6 +49,7 @@ export class GlobalVariablesComponent implements OnInit {
     this.intermediaryService.presentLoading();
 
     this.getTypes();
+    this.getReasonVariable();
     this.getGlobalVariables();
     this.filters = {
       name: '',
@@ -52,7 +57,6 @@ export class GlobalVariablesComponent implements OnInit {
       order: 'ASC'
     };
     this.search();
-
     this.events.subscribe('load_of_variables', () => {
       this.countLoadOfVariables++;
       if (this.countLoadOfVariables == 2) {
@@ -104,7 +108,6 @@ export class GlobalVariablesComponent implements OnInit {
     this.globalVariableService
       .getAll()
       .subscribe((globalVariables) => {
-        console.log("globalVariables",globalVariables);
         globalVariables.map(function(x){
           if(x.type == 4){
             x.value  = (parseInt(x.value)/60).toString();
@@ -122,6 +125,21 @@ export class GlobalVariablesComponent implements OnInit {
         this.listTypesFromDb = types;
         this.events.publish('load_of_variables');
       });
+  }
+
+  getReasonVariable() {
+    this.pickingStoreService
+      .getLoadRejectionReasons()
+      .then((res: PickingStoreModel.ResponseLoadRejectionReasons) => {
+        let resData: Array<PickingStoreModel.RejectionReasons> = res.data;
+        this.listReasons = resData;
+      }, (error) => {
+        console.error('Error::Subscribe::pickingStoreService::getLoadRejectionReasons', error);
+      })
+      .catch((error) => {
+        console.error('Error::Subscribe::pickingStoreService::getLoadRejectionReasons', error);
+      });
+
   }
 
   getTypeById(id) : string {
