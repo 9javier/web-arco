@@ -1,21 +1,18 @@
 import {Request} from "./request";
 import {BrandModel} from "./Brand";
-import ProviderModel = ProviderModel.Provider;
+import {ProviderModel} from "./Provider";
+import Provider = ProviderModel.Provider;
 import Brand = BrandModel.Brand;
 export namespace SupplierConditionModel {
 
   export interface SupplierCondition {
     id: number,
-    provider?: ProviderModel,
+    provider?: Provider,
     noClaim?: boolean,
     contact?: string,
     observations?: string,
     brand?: Brand,
     showObs?: boolean
-  }
-  export interface Provider {
-    id?: number,
-    name?: string
   }
   export interface DataSource {
     filters: Array<Filters>
