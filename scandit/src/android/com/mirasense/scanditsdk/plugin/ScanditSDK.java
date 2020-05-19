@@ -1226,9 +1226,17 @@ public class ScanditSDK extends CordovaPlugin {
             tvPackingEnd.setVisibility(View.VISIBLE);
 
             if (fPackingType == 1) {
-              endScan = "Escanea la Jaula " + fPackingReference + " para finalizar el proceso de picking.";
+              if (fPackingReference.isEmpty() || fPackingReference.equals("")) {
+                endScan = "Escanea la Jaula para finalizar el proceso de picking.";
+              } else {
+                endScan = "Escanea la Jaula " + fPackingReference + " para finalizar el proceso de picking.";
+              }
             } else {
-              endScan = "Escanea el Pallet " + fPackingReference + " para finalizar el proceso de picking.";
+              if (fPackingReference.isEmpty() || fPackingReference.equals("")) {
+                endScan = "Escanea el Pallet para finalizar el proceso de picking.";
+              } else {
+                endScan = "Escanea el Pallet " + fPackingReference + " para finalizar el proceso de picking.";
+              }
             }
             tvPackingEnd.setText(endScan);
           } else {

@@ -493,7 +493,7 @@ export class TextareaComponent implements OnInit {
                   },
                   toast: {
                     position: PositionsToast.BOTTOM,
-                    message: `Producto ${dataWrited} escaneado y añadido ${this.literalsJailPallet[this.typePacking].toThe}.`,
+                    message: `Producto ${dataWrited} escaneado y añadido el embalaje.`,
                     duration: TimesToastType.DURATION_SUCCESS_TOAST_2000
                   }
                 });
@@ -1029,7 +1029,7 @@ export class TextareaComponent implements OnInit {
 
   private sealPackingIntermediate(packingReference: any) {
     if (packingReference && packingReference.length > 0) {
-      this.loadingMessageComponent.show(true, 'Precintando Jaula');
+      this.loadingMessageComponent.show(true, 'Precintando embalaje');
       this.carrierService.postSealList(Array(packingReference)).subscribe(async () => {
         this.endProcessIntermediate(this.jailReference);
       });
