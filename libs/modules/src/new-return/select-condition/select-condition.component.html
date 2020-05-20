@@ -18,6 +18,9 @@
         Contacto: <b>{{ condition.contact }}</b>
       </p>
       <p>
+        No Claim: <b>{{ condition.noClaim ? 'Sí':'No' }}</b>
+      </p>
+      <p>
         Observaciones: <b>{{ condition.observations || 'Sin observaciones' }}</b>
       </p>
     </mat-card-content>
