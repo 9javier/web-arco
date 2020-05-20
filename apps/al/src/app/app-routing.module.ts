@@ -328,6 +328,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'return-pending-list',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/return-pending-list/return-pending-list.module#ReturnPendingListModule',
+    data: {
+      name: 'Listado Devoluciones Pendientes'
+    }
+  },
+  {
     path: 'audits',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/audits-mobile/audits-mobile.module#AuditsMobileModule',

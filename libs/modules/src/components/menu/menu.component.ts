@@ -788,6 +788,12 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      id: 'return-pending-list',
+      title: 'Devoluciones Pendientes',
+      icon: 'return-left',
+      url: '/return-pending-list'
+    },
+    {
       title: 'Picking y Ventilación',
       open: false,
       type: 'wrapper',

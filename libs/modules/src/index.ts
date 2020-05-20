@@ -139,6 +139,9 @@ export * from './return-types/return-types.module';
 export * from './return-tracking-list/return-tracking-list.component';
 export * from './return-tracking-list/return-tracking-list.module';
 
+export * from './return-pending-list/return-pending-list.component';
+export * from './return-pending-list/return-pending-list.module';
+
 export * from './new-return/new-return.component';
 export * from './new-return/new-return.module';
 
