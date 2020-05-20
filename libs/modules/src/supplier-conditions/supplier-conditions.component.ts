@@ -115,7 +115,6 @@ export class SupplierConditionsComponent implements OnInit {
     this.initEntity();
     this.initForm();
     this.getFilters();
-    /*this.getProviders();*/
     this.getColumns(this.form);
     this.getList(this.form);
     this.listenChanges();
