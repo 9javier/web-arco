@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { VirtualKeyboardComponent } from './virtual-keyboard.component';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
+import {ScrollingModule} from "@angular/cdk/scrolling";
 
 @NgModule({
   declarations: [VirtualKeyboardComponent],
   imports: [
     CommonModule,
     IonicModule,
-    FormsModule
+    FormsModule,
+    ScrollingModule
   ],
   entryComponents: [VirtualKeyboardComponent],
   exports: [VirtualKeyboardComponent]

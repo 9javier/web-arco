@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Router, NavigationExtras} from '@angular/router';
 
-import { Platform, MenuController } from '@ionic/angular';
+import {Platform, MenuController, ModalController, NavController, AlertController} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import {ResponseLogout, Oauth2Service, TypeModel, TypesService} from '@suite/services';
@@ -122,11 +122,41 @@ export class AppComponent implements OnInit {
     private printerConnectionService: PrinterConnectionService,
     private toolbarProvider: ToolbarProvider,
     private audioProvider: AudioProvider,
-    private keyboard: Keyboard
+    private keyboard: Keyboard,
+    private modalController: ModalController,
+    private navCtrl: NavController,
+    private alertController: AlertController
   ) {
     this.initializeApp();
     this.menu.enable(false, 'sidebar');
     this.dateAdapter.setLocale('es');
+    this.platform.backButton.subscribeWithPriority(99999, async () => {
+      this.focusToInput();
+      const isModalOpened = await this.modalController.getTop();
+      if (this.router.url == '/defect-handler') {
+        if(isModalOpened && isModalOpened.innerHTML && isModalOpened.innerHTML.search("data-modal-defects-change-state") != -1){
+          await this.presentModelConfirmClose(async ()=>{
+            await this.modalController.dismiss();
+          });
+        } else {
+          if(isModalOpened){
+            await this.modalController.dismiss();
+          } else {
+            this.navCtrl.back();
+          }
+        }
+      } else if(this.router.url == '/incidents'){
+        await this.presentModelConfirmClose(async ()=>{
+          this.navCtrl.back();
+        });
+      } else {
+        if(isModalOpened){
+          await this.modalController.dismiss();
+        } else {
+          this.navCtrl.back();
+        }
+      }
+    });
   }
 
   changeMenutTitle(title:string){
@@ -269,5 +299,42 @@ export class AppComponent implements OnInit {
 
   private showAlMenu() {
     this.toolbarProvider.showAlMenu.next(this.deploySidebarSmallDevices);
+  }
+
+  public focusToInput() {
+    setTimeout(() => {
+      const input = document.getElementById('input-ta')
+      if(input) {
+        input.focus()
+      }
+    }, 500);
+  }
+
+  async presentModelConfirmClose(callback:()=>{}){
+    let buttonsAlert: any = [{
+      text: "Salir sin guardar",
+      handler: async ()=>{
+        if(callback){
+          await callback();
+        }
+      }
+    }, {
+      text: "No",
+      handler: ()=>{
+
+      }
+    }];
+
+    const alert = await this.alertController.create({
+      header: "Salir sin guardar",
+      message: "¿Está seguro de que desea salir de la operación sin guardar los cambios?",
+      buttons: buttonsAlert
+    });
+    alert.onDidDismiss().then((data) => {
+      if(!data){
+
+      }
+    });
+    return await alert.present();
   }
 }

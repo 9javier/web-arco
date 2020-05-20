@@ -50,6 +50,10 @@
     Escanea el primer artículo de la calle para detener el proceso de salida.
   </p>
 
+  <p *ngIf="wrongCodeScanned && !packingIsFull && processStarted && !outputWithIncidencesClear && !stopButtonPressed" class="message-guide-wrong-code">
+    ¡Escanea cada artículo y revisa destino!
+  </p>
+
   <div class="start-message-guide" (click)="focusToInput()" *ngIf="!inputValue && !processStarted">
     <span>¡Hola </span><div class="color-selected" [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}"></div><span>!</span>
     <br/>

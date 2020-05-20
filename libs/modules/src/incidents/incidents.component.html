@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content scrollY="true">
   <form [formGroup]="incidenceForm">
     <ng-container *ngIf="!readed;else read">
       <scanner-manual (newValue)=newValue($event) placeholder="PRODUCTO"></scanner-manual>
@@ -50,11 +50,6 @@
         <ion-label class="ion-text-capitalize label-text">Subzona</ion-label>
         <ion-label class="content-select" style="text-align: center" *ngIf="!defectZoneC"><font color="#808080">Selecciona</font> <i></i></ion-label>
         <ion-label class="content-select" style="text-align: center" *ngIf="defectZoneC">{{ defectZoneC.name }} <i></i></ion-label>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating" class="label-text">Observaciones</ion-label>
-        <ion-textarea formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-textarea>
       </ion-item>
 
       <div *ngIf="requireContact == true" class="contact">
@@ -116,16 +111,25 @@
           </ion-button>
         </ion-item>
       </ion-list>
-      <!-- <ion-label>{{imgUrl}}</ion-label> -->
-
-      <ion-button *ngIf="barcodeRoute==null"  [attr.disabled]="!select1 || !select2" (click)="send()" expand="block" shape="round">
-        enviar
-      </ion-button>
-
-      <ion-button *ngIf="barcodeRoute!=null" [disabled]="differentState" (click)="enviaryarn()" expand="block" shape="round" >
-        actualizar
-      </ion-button>
-
+      <ion-item>
+        <ion-textarea formControlName="observations" placeholder="Observaciones..." [readonly]="barcodeRoute!=null"></ion-textarea>
+      </ion-item>
     </ng-template>
   </form>
 </ion-content>
+
+<div class="toolbar-buttons">
+  <ion-fab vertical="bottom" horizontal="end" *ngIf="readed && barcodeRoute==null">
+    <ion-fab-button matTooltip="Confirmar Defectuoso" matTooltipClass="tooltip" (click)="send()"
+                    [attr.disabled]="!isFormComplete()">
+      <ion-icon name="save"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-fab vertical="bottom" horizontal="end" *ngIf="readed && barcodeRoute!=null">
+    <ion-fab-button matTooltip="Confirmar Defectuoso" matTooltipClass="tooltip"
+                    (click)="enviaryarn()" [disabled]="!isFormComplete()">
+      <ion-icon name="save"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</div>

@@ -223,6 +223,137 @@ export class ScanditService {
     }, 'Ubicar/Escanear', HEADER_BACKGROUND, HEADER_COLOR);
   }
 
+  async defectivePositioning() {
+    this.isStoreUser = false;
+
+    let lastCodeScanned: string = 'start';
+    let positionsScanning: {
+      product: string,
+      packing: string
+    }[] = [];
+    let packingReference: string = null;
+    let timeoutStarted = null;
+
+    ScanditMatrixSimple.init((response) => {
+      if (response && response.barcode) {
+        let code = response.barcode.data;
+        if (code === "P0001") {
+          // temporary trick to release potential scanner service logic deadlock
+          this.positioningLog(2, "#1", "releasing pause flag!", [this.scannerPaused]);
+          this.scannerPaused = false;
+          return;
+        }
+        if (code === "P0002") {
+          // temporary trick to release potential scanner service logic deadlock
+          this.positioningLog(2, "#2", "clearing scanned codes buffer!", [this.scannerPaused]);
+          positionsScanning = [];
+          return;
+        }
+      }
+      if (response && response.barcode) {
+        this.positioningLog(2, "1", "scan!", [response && response.barcode && response.barcode.data]);
+        if (this.scannerPaused) {
+          this.positioningLog(3, "1.1", "paused!");
+        } else if (response.action != 'force_scanning') {
+          this.positioningLog(3, "1.2", "action empty");
+        }
+      } else {
+        this.positioningLog(3, "2", "empty scan!");
+      }
+      if (response && response.barcode && (!this.scannerPaused || response.action == 'force_scanning')) {
+        //Check Container or product
+        let code: string = response.barcode.data;
+
+        if (code === lastCodeScanned){
+          return;
+        }
+        lastCodeScanned = code;
+
+        if (timeoutStarted) {
+          clearTimeout(timeoutStarted);
+        }
+        timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+
+        if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PRODUCT) {
+          this.positioningLog(2, "1.4", "product matched!");
+          //Product
+          let productReference = code;
+          if (!packingReference) {
+            this.positioningLog(3, "1.4.1", "no container!");
+            ScanditMatrixSimple.setText('Debe escanear un embalaje para iniciar el posicionamiento', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+            this.hideTextMessage(1500);
+          } else {
+            this.positioningLog(2, "1.4.2", "yes container!");
+            this.positioningLog(2, "1.4.2.2", "action NO force");
+            let searchProductPosition = positionsScanning.filter(position => position.product == productReference && position.packing == packingReference);
+            if(searchProductPosition.length > 0){
+              this.positioningLog(3, "1.4.2.2.1", "ignored, duplicate!");
+            }
+            if(searchProductPosition.length == 0){
+              this.positioningLog(3, "1.4.2.2.2", "product located, saving scan history and storing product (server)");
+              positionsScanning.push({product: productReference, packing: packingReference});
+              ScanditMatrixSimple.setText(`Escaneado ${productReference} para ubicar en el embalaje ${packingReference}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
+              this.hideTextMessage(1500);
+              let params: any = {
+                productReference: productReference,
+                packingReference: packingReference
+              };
+              ScanditMatrixSimple.showLoadingDialog('Ubicando producto...');
+              this.storeDefectiveProductInPacking(params, response.barcode);
+            }
+          }
+        } else if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PACKING) {
+          positionsScanning = [];
+          ScanditMatrixSimple.setText(`Inicio de ubicación en el embalaje ${code}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+          packingReference = code;
+        }
+      }
+    }, 'Ubicar defectuosos', HEADER_BACKGROUND, HEADER_COLOR);
+  }
+
+  private storeDefectiveProductInPacking(parameters, barcode) {
+    this.inventoryService
+      .postStoreDefective(parameters)
+      .then((res: InventoryModel.ResponseStore) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        if (res.code == 201) {
+          this.positioningLog(2, "1.4.2.2.2.1", "scan saved on server!!!!!");
+          ScanditMatrixSimple.setText(`Producto ${parameters.productReference} añadido al embalaje ${parameters.packingReference}`, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+        } else if (res.code == 428) {
+          this.positioningLog(3, "1.4.2.2.2.2", "error 428, stop pause!");
+          this.scannerPaused = true;
+          ScanditMatrixSimple.showWarningToForce(true, barcode);
+        } else {
+          this.positioningLog(3, "1.4.2.2.2.3", "error unknown!!!");
+          let errorMessage = res.message;
+          if (res.errors) {
+            if (typeof res.errors == 'string') {
+              errorMessage = res.errors;
+            } else {
+              if (res.errors.productReference && res.errors.productReference.message) {
+                errorMessage = res.errors.productReference.message;
+              }
+            }
+          }
+          ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          this.hideTextMessage(1500);
+        }
+      }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        if (error.error.code == 428) {
+          this.positioningLog(3, "1.4.2.2.2.6", "error 428, stop pause!");
+          this.scannerPaused = true;
+          ScanditMatrixSimple.showWarningToForce(true, barcode);
+        } else {
+          this.positioningLog(3, "1.4.2.2.2.7", "error unknown!!!");
+          ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          this.hideTextMessage(1500);
+        }
+      });
+  }
+
   private storeProductInContainer(params, responseScanning) {
     this.inventoryService
       .postStore(params)
@@ -284,28 +415,34 @@ export class ScanditService {
     let lastCodeScanned: string = "start";
     let literalsJailPallet: any = {
       1: {
-        not_registered: 'La Jaula escaneada no está registrada en el sistema.',
-        process_resumed: 'Para continuar con el proceso de picking escanea la Jaula ',
-        process_started: 'Proceso iniciado con la Jaula ',
-        process_end_packing: 'Proceso finalizado con la Jaula ',
-        process_packing_empty: 'Desasociada del picking la Jaula ',
-        scan_before_products: 'Escanea la Jaula a utilizar antes de comenzar el proceso.',
-        scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo la Jaula utilizada para finalizar el proceso.',
-        toThe: "a la Jaula",
+        not_registered: 'El embalaje escaneado no está registrado en el sistema.',
+        process_resumed: 'Para continuar con el proceso de picking escanea el embalaje ',
+        process_started: 'Proceso iniciado con el embalaje ',
+        process_end_packing: 'Proceso finalizado con el embalaje ',
+        process_packing_empty: 'Desasociado del picking el embalaje ',
+        scan_before_products: 'Escanea el embalaje a utilizar antes de comenzar el proceso.',
+        scan_packing_to_end: 'Escanea de nuevo el embalaje utilizado para finalizar el proceso',
+        scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el embalaje utilizado para finalizar el proceso.',
+        toThe: "al embalaje",
         wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
-        wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.'
+        wrong_process_finished: 'El embalaje escaneado es diferente al embalaje con el que inició el proceso.',
+        scan_packings_to_end: 'Escanee los embalajes utilizados para finalizar el picking',
+        press_scan_packings_to_continue: 'Pulse escanear embalajes para continuar con el traspaso'
       },
       2: {
-        not_registered: 'El Pallet escaneado no está registrado en el sistema.',
-        process_resumed: 'Para continuar con el proceso de picking escanea el Pallet ',
-        process_started: 'Proceso iniciado con el Pallet ',
-        process_end_packing: 'Proceso finalizado con el Pallet ',
-        process_packing_empty: 'Desasociada del picking el Pallet ',
-        scan_before_products: 'Escanea el Pallet a utilizar antes de comenzar el proceso.',
-        scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el Pallet utilizado para finalizar el proceso.',
-        toThe: "al Pallet",
+        not_registered: 'El embalaje escaneado no está registrado en el sistema.',
+        process_resumed: 'Para continuar con el proceso de picking escanea el embalaje ',
+        process_started: 'Proceso iniciado con el embalaje ',
+        process_end_packing: 'Proceso finalizado con el embalaje ',
+        process_packing_empty: 'Desasociado del picking el embalaje ',
+        scan_before_products: 'Escanea el embalaje a utilizar antes de comenzar el proceso.',
+        scan_packing_to_end: 'Escanea de nuevo el embalaje utilizado para finalizar el proceso',
+        scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el embalaje utilizado para finalizar el proceso.',
+        toThe: "al embalaje",
         wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea un Pallet para comenzar el proceso de picking.',
-        wrong_process_finished: 'El Pallet escaneado es diferente al Pallet con el que inició el proceso.'
+        wrong_process_finished: 'El embalaje escaneado es diferente al embalaje con el que inició el proceso.',
+        scan_packings_to_end: 'Escanee los embalajes utilizados para finalizar el picking',
+        press_scan_packings_to_continue: 'Pulse escanear embalajes para continuar con el traspaso'
       }
     };
     let timeLastCodeScanned: number = 0;
@@ -605,7 +742,7 @@ export class ScanditService {
                   this.pickingLog(2, "32", "if (res.code == 200 || res.code == 201) {");
                   productsToScan = res.data.shoePickingPending;
                   productsScanned.push(code);
-                  ScanditMatrixSimple.setText(`Producto ${code} escaneado y añadido ${literalsJailPallet[typePacking].toThe}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                  ScanditMatrixSimple.setText(`Producto ${code} escaneado y añadido el embalaje.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
                   this.hideTextMessage(2000);
                   if (productsToScan.length > 0) {
                     this.pickingLog(2, "33", "if (productsToScan.length > 0) {");

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, NavParams } from "@ionic/angular";
+import {AlertController, ModalController, NavParams } from "@ionic/angular";
 import { DetailsRegisterComponent } from '../details-register/details-register.component';
 import { IntermediaryService, IncidentsService, environment, UploadFilesService } from '../../../../services/src';
 import { DropFilesComponent } from '../../drop-files/drop-files.component';
@@ -109,7 +109,8 @@ export class ChangeState2Component implements OnInit {
     private defectiveRegistryService: DefectiveRegistryService,
     private printTicketService: PrintTicketService,
     private popoverController: PopoverController,
-    private selectScrollbarProvider: SelectScrollbarProvider
+    private selectScrollbarProvider: SelectScrollbarProvider,
+    private alertController: AlertController,
 
   ) {
     this.registry = this.navParams.get("registry");
@@ -299,16 +300,27 @@ export class ChangeState2Component implements OnInit {
     }
   }
 
+  isFormComplete(){
+    if(!this.selectGestionState){
+      return false;
+    }
+    if(this.requirePhoto && this.photos.length == 0){
+      return false;
+    }
+    if(this.requireOk && !this.signatures){
+      return false;
+    }
+    if(this.requireContact && this.txtName.length < 4 && this.txtInfo.length < 1){
+      return false;
+    }
+    return true;
+  }
+
 
 
 
   async close() {
-
-
-    await this.modalController.dismiss();
-
-
-
+    await this.presentModelConfirmClose();
   }
 
 
@@ -677,6 +689,32 @@ export class ChangeState2Component implements OnInit {
     this.defectStatus = defectStatus.data;
     this.managementId = defectStatus.data;
     this.gestionChange(this.defectStatus);
+  }
+
+  async presentModelConfirmClose(){
+    let buttonsAlert: any = [{
+      text: "Salir sin guardar",
+      handler: async ()=>{
+        await this.modalController.dismiss();
+      }
+    }, {
+      text: "No",
+      handler: ()=>{
+
+      }
+    }];
+
+    const alert = await this.alertController.create({
+      header: "Salir sin guardar",
+      message: "¿Está seguro de que desea salir de la operación sin guardar los cambios?",
+      buttons: buttonsAlert
+    });
+    alert.onDidDismiss().then((data) => {
+      if(!data){
+
+      }
+    });
+    return await alert.present();
   }
 
 }

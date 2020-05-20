@@ -221,6 +221,22 @@ const routes: Routes = [
     }
   },
   {
+    path: 'supplier-conditions',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/supplier-conditions/supplier-conditions.module#SupplierConditionsModule',
+    data: {
+      name: 'Condiciones de Proveedores'
+    }
+  },
+  {
+    path: 'return-types',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/return-types/return-types.module#ReturnTypesModule',
+    data: {
+      name: 'Tipos de Devoluciones'
+    }
+  },
+  {
     path: 'returns-list',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/returns-list/returns-list.module#ReturnsListModule',
@@ -234,6 +250,22 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/returns-list-products/returns-list-products.module#ReturnsListProductsModule',
     data: {
       name: 'Lista de Productos Devueltos'
+    }
+  },
+  {
+    path: 'return-tracking-list',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/return-tracking-list/return-tracking-list.module#ReturnTrackingListModule',
+    data: {
+      name: 'Listado de Seguimiento de Devoluciones'
+    }
+  },
+  {
+    path: 'new-return',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/new-return/new-return.module#NewReturnModule',
+    data: {
+      name: 'Crear Nueva Devolución'
     }
   },
   {
