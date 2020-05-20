@@ -12,7 +12,7 @@ import {BrandModel} from "../../../services/src/models/endpoints/Brand";
 import Brand = BrandModel.Brand;
 import FilterOptions = ReturnModel.FilterOptions;
 import FilterOptionsResponse = ReturnModel.FilterOptionsResponse;
-import {Router} from "@angular/router";
+import {NavigationEnd, Router} from "@angular/router";
 
 @Component({
   selector: 'suite-return-tracking-list',
@@ -60,7 +60,15 @@ export class ReturnTrackingListComponent implements OnInit {
   constructor(
     public router: Router,
     private returnService: ReturnService
-  ) {}
+  ) {
+    this.router.events.subscribe((val) => {
+      if(val instanceof NavigationEnd && val && val.url == '/return-tracking-list'){
+        if(typeof this.returns !== 'undefined'){
+          this.reset();
+        }
+      }
+    });
+  }
 
   ngOnInit() {
     this.paginator.pageSizeOptions = [20, 50, 100];
