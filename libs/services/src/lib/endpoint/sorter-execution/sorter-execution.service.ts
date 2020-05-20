@@ -35,8 +35,9 @@ export class SorterExecutionService {
     return this.requestsProvider.get(this.getExecuteColorUrl);
   }
 
-  postStopExecuteColor(): Observable<ExecutionSorterModel.StopExecuteColor> {
-    return this.http.post<ExecutionSorterModel.ResponseStopExecuteColor>(this.postStopExecuteColorUrl, {}).pipe(map(response => {
+  postStopExecuteColor(forceWithIncidence?: boolean): Observable<ExecutionSorterModel.StopExecuteColor> {
+    const body = forceWithIncidence ? {forceWithIncidence} : {};
+    return this.http.post<ExecutionSorterModel.ResponseStopExecuteColor>(this.postStopExecuteColorUrl, body).pipe(map(response => {
       return response.data;
     }));
   }

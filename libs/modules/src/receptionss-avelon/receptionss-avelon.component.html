@@ -50,26 +50,48 @@
         <mat-cell *matCellDef="let element" class="my-sticky-col info type-120">{{element.size.name}}</mat-cell>
       </ng-container>
 
+      <ng-container matColumnDef="products">
+        <mat-header-cell class="my-sticky-col info info type-240" *matHeaderCellDef mat-sort-header>Código
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProducts [title]="'Código'"
+                               [listItems]="entities.products"
+                               [isFiltering]="isFilteringProducts != entities.products.length"
+                               (applyFilters)="applyFilters($event, 'products')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-240"> {{element?.product?.reference}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="locations">
+        <mat-header-cell class="my-sticky-col info type-360" *matHeaderCellDef mat-sort-header>Ubicación
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonLocations [title]="'Ubicación'"
+                               [listItems]="entities.locations"
+                               [isFiltering]="isFilteringLocations != entities.locations.length"
+                               (applyFilters)="applyFilters($event, 'locations')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-360"> {{element?.container?.reference}} </mat-cell>
+      </ng-container>
+
       <ng-container matColumnDef="warehouses">
-        <mat-header-cell class="my-sticky-col info type-240" *matHeaderCellDef mat-sort-header>Tiendas
+        <mat-header-cell class="my-sticky-col info type-480" *matHeaderCellDef mat-sort-header>Tiendas
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonWarehouses [title]="'Tiendas'"
                                [listItems]="entities.warehouses"
                                [isFiltering]="isFilteringWarehouses != entities.warehouses.length"
                                (applyFilters)="applyFilters($event, 'warehouses')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info type-240"> {{element.warehouse.reference}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-480"> {{element.warehouse.reference}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="date_service">
-        <mat-header-cell class="my-sticky-col info type-360" *matHeaderCellDef mat-sort-header>Fecha de servicio
+        <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>Fecha de servicio
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonDateServices [title]="'Fecha de servicio'"
                                [listItems]="entities.date_service"
                                [isFiltering]="isFilteringDateServices != entities.date_service.length"
                                (applyFilters)="applyFilters($event, 'date_service')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info type-360">{{element.date_service | date:"dd/MM/yyyy"}}  </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product">{{element.date_service | date:"dd/MM/yyyy"}}  </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="brands">
@@ -165,6 +187,9 @@
 </ion-content>
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button matTooltip="Recargar" matTooltipClass="tooltip" (click)="refreshReceptions()">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
     <ion-fab-button *ngIf="isEnableSend() && sameDestiny()" matTooltip="Lanzar Picking" matTooltipClass="tooltip" (click)="newPicking()"><i class="material-icons">send</i></ion-fab-button>
   </ion-fab>
 </ion-footer>

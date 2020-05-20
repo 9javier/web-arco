@@ -18,8 +18,10 @@ import {WebsocketService} from '../../../services/src/lib/endpoint/web-socket/we
 import {type} from '../../../services/src/lib/endpoint/web-socket/enums/typeData';
 import {StateExpeditionAvelonService} from "../../../services/src/lib/endpoint/state-expedition-avelon/state-expedition-avelon.service";
 import {StatesExpeditionAvelonProvider} from "../../../services/src/providers/states-expetion-avelon/states-expedition-avelon.provider";
-import {ActivatedRoute} from "@angular/router";
 import {TypeModelVisualization} from "./enums/model_visualization.enum";
+import {PrinterService} from "../../../services/src/lib/printer/printer.service";
+import {ActivatedRoute, Router} from "@angular/router";
+declare const BrowserPrint: any;
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -111,48 +113,65 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     private cd: ChangeDetectorRef,
     private websocketService : WebsocketService,
     private stateExpeditionAvelonService: StateExpeditionAvelonService,
-    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider
+    private stateExpeditionAvelonProvider: StatesExpeditionAvelonProvider,
+    private printerService: PrinterService
   ) {}
 
   ngOnInit() {
     this.typeModelVisualization = TypeModelVisualization.MODEL_NAME;
     this.isReceptionWithoutOrder = !!(this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path && this.activatedRoute.snapshot.routeConfig.path == 'free');
 
-    this.intermediaryService.presentLoading('Cargando');
-    this.response = new Reception();
-    this.filterData = new Reception();
-    this.typeScreen = undefined;
-    this.referencesToPrint = [];
-    this.isReceptionStarted = false;
-    this.deliveryNote = null;
-    this.expeditionStarted = null;
-    this.subscriptions.push(this.reception.getAllProviders().subscribe(
-      (data: Array<ReceptionAvelonModel.Providers>) => {
-        this.providers = data;
-        this.providersAux = data;
-      },
-      e => {
-        this.intermediaryService.dismissLoading();
-      },
-      () => {
-        this.filteredProviders = this.myControl.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => typeof value === 'string' ? value : value.name),
-            map(name => name ? this._filter(name) : this.providers.slice())
-          );
-        this.intermediaryService.dismissLoading();
-      }
-    ));
-    this.stateExpeditionAvelonService.getIndex().subscribe(response=>{
-      this.stateExpeditionAvelonProvider.states = response;
+    this.intermediaryService.presentLoading('Cargando', () => {
+      this.response = new Reception();
+      this.filterData = new Reception();
+      this.typeScreen = undefined;
+      this.referencesToPrint = [];
+      this.isReceptionStarted = false;
+      this.deliveryNote = null;
+      this.expeditionStarted = null;
+
+      let subscriptionLoadData = this.reception.getAllProviders()
+        .subscribe((data: Array<ReceptionAvelonModel.Providers>) => {
+            this.providers = data;
+            this.providersAux = data;
+          },
+          e => {
+            this.intermediaryService.dismissLoading();
+          },
+          () => {
+            this.filteredProviders = this.myControl.valueChanges
+              .pipe(
+                startWith(''),
+                map(value => typeof value === 'string' ? value : value.name),
+                map(name => name ? this._filter(name) : this.providers.slice())
+              );
+            this.intermediaryService.dismissLoading();
+
+            if (subscriptionLoadData) {
+              subscriptionLoadData.unsubscribe();
+              subscriptionLoadData = null;
+            }
+          }
+        );
+      this.subscriptions.push(subscriptionLoadData);
     });
+
+    let subscriptionLoadStates = this.stateExpeditionAvelonService.getIndex().subscribe(response=>{
+      this.stateExpeditionAvelonProvider.states = response;
+      if (subscriptionLoadStates) {
+        subscriptionLoadStates.unsubscribe();
+        subscriptionLoadStates = null;
+      }
+    });
+    this.subscriptions.push(subscriptionLoadStates);
   }
 
   ngOnDestroy() {
     for (let subscription of this.subscriptions) {
       try {
-        subscription.unsubscribe();
+        if (subscription) {
+          subscription.unsubscribe();
+        }
       } catch (error) {
         console.error('Error to try unsubscribe of some observable');
       }
@@ -199,57 +218,59 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   openVirtualKeyboard(list?: Array<ReceptionAvelonModel.Data>, type?: Type) {
-    const dataList = [];
+    if (!this.virtualKeyboardService.aKeyboardIsOpen) {
+      const dataList = [];
 
-    if(list) {
-      list.forEach(item => {
-        dataList.push({id: item.id, value: item.name, color: item.color});
-      });
-    }
+      if(list) {
+        list.forEach(item => {
+          dataList.push({id: item.id, value: item.name, color: item.color});
+        });
+      }
 
-    const keyboardEventEmitterSubscribe = this.virtualKeyboardService.eventEmitter.subscribe(
-      data => {
-        let dato;
-        if (data.selected) {
-          switch (data.selected.type) {
-            case Type.BRAND:
-              dato = this.response.brands.find(elem => elem.id === data.selected.id);
-              this.updateList(dato);
-              break;
-            case Type.COLOR:
-              dato = this.response.colors.find(elem => elem.id === data.selected.id);
-              this.updateList(dato);
-              break;
-            case Type.MODEL:
-              dato = this.response.models.find(elem => elem.id === data.selected.id);
-              this.updateList(dato);
-              break;
-            case Type.PROVIDER:
-              this.providerInput.nativeElement.value = data.selected.id;
-              break;
-            case Type.EXPEDITION_NUMBER:
-              this.expeditionInput.nativeElement.value = data.selected.id;
-              break;
-            case Type.EAN_CODE:
-              this.eanInput.nativeElement.value = data.selected.id;
-              this.result.ean = this.eanInput.nativeElement.value;
-              this.sizeSelectedInSelector(null);
-              break;
-            case undefined:
-              this.expedition = data.selected.id;
-              break;
+      let keyboardEventEmitterSubscribe = this.virtualKeyboardService.eventEmitter.subscribe(
+        data => {
+          let dato;
+          if (data.selected) {
+            switch (data.selected.type) {
+              case Type.BRAND:
+                dato = this.response.brands.find(elem => elem.id === data.selected.id);
+                this.updateList(dato);
+                break;
+              case Type.COLOR:
+                dato = this.response.colors.find(elem => elem.id === data.selected.id);
+                this.updateList(dato);
+                break;
+              case Type.MODEL:
+                dato = this.response.models.find(elem => elem.id === data.selected.id);
+                this.updateList(dato);
+                break;
+              case Type.PROVIDER:
+                this.providerInput.nativeElement.value = data.selected.id;
+                break;
+              case Type.EXPEDITION_NUMBER:
+                this.expeditionInput.nativeElement.value = data.selected.id;
+                break;
+              case Type.EAN_CODE:
+                this.eanInput.nativeElement.value = data.selected.id;
+                this.result.ean = this.eanInput.nativeElement.value;
+                this.sizeSelectedInSelector(null);
+                break;
+              case undefined:
+                this.expedition = data.selected.id;
+                break;
+            }
           }
         }
-      }
-    );
-
-    this.virtualKeyboardService
-      .openVirtualKeyboard({dataList, type})
-      .then((popover: any) => {
-        popover.onDidDismiss().then(() => {
+      );
+      this.subscriptions.push(keyboardEventEmitterSubscribe);
+      const callbackDismissKeyboard = () => {
+        if (keyboardEventEmitterSubscribe) {
           keyboardEventEmitterSubscribe.unsubscribe();
-        });
-      });
+          keyboardEventEmitterSubscribe = null;
+        }
+      };
+      this.virtualKeyboardService.openVirtualKeyboard({dataList, type}, callbackDismissKeyboard);
+    }
   }
 
   async checkProvider(data: ReceptionAvelonModel.CheckProvider) {
@@ -257,7 +278,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.providerId = data.providerId;
 
     await this.intermediaryService.presentLoading('Cargando');
-    this.reception.getReceptions(data.providerId, this.typeModelVisualization).subscribe((info: ReceptionAvelonModel.Reception) => {
+    let subscription = this.reception.getReceptions(data.providerId, this.typeModelVisualization).subscribe((info: ReceptionAvelonModel.Reception) => {
       this.response = info;
       this.expeditionLines = info.lines;
       this.response.brands = this.clearSelected(this.response.brands);
@@ -270,7 +291,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       this.reset();
       this.expedition = data.expedition;
 
-    },error => {}, async () => await this.intermediaryService.dismissLoading());
+    },error => {}, async () => {
+      await this.intermediaryService.dismissLoading();
+      if (subscription) {
+        subscription.unsubscribe();
+        subscription = null;
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   async alertMessage(message: string) {
@@ -285,7 +313,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   clickSizeSelected() {
-    this.reception.getEmitSizes().subscribe((e: any) => {
+    let subscription = this.reception.getEmitSizes().subscribe((e: any) => {
       if (e && e.dato) {
         if (e.dato.selected) {
           this.result.sizeId = e.dato.id;
@@ -295,7 +323,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       } else {
         this.result.sizeId = undefined;
       }
-    })
+    }, () => {}, () => {
+      if (subscription) {
+        subscription.unsubscribe();
+        subscription = null;
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   updateList(dato) {
@@ -440,7 +474,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   goBack(type: string) {
-
     switch (type) {
       case 'brands':
         if(this.oldBrands.length > 0) {
@@ -511,7 +544,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   listSelected() {
-    this.subscriptions.push(this.reception.getEmitList().subscribe((event: any) => {
+    let subscription = this.reception.getEmitList().subscribe((event: any) => {
       switch (event.type) {
         case 'brands':
           if (event.dato.selected) {
@@ -573,8 +606,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           }
           break;
       }
-
-    }));
+    }, () => {}, () => {
+      if (subscription) {
+        subscription.unsubscribe();
+        subscription = null;
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   getModelAndColorColors(brandId: number){
@@ -734,7 +772,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     if (data.expedition === undefined || data.expedition.length === 0) {
       this.alertMessage('Introduzca un número de expedición para poder iniciar la recepción.');
     } else {
-      await this.reception.checkExpeditionsByNumberAndProvider({
+      let subscription = this.reception.checkExpeditionsByNumberAndProvider({
         expeditionNumber: data.expedition,
         providerId: data.providerId
       }).subscribe(async (response) => {
@@ -760,12 +798,18 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           this.isReceptionStarted = false;
           this.alertMessage('No se ha encontrado esa expedición');
         }
+      }, () => {}, () => {
+        if (subscription) {
+          subscription.unsubscribe();
+          subscription = null;
+        }
       });
+      this.subscriptions.push(subscription);
     }
   }
 
   private loadSizes() {
-    this.reception
+    let subscription = this.reception
       .postLoadSizesList({modelId: this.result.modelId, colorId: this.result.colorId})
       .subscribe((res: ReceptionAvelonModel.ResponseLoadSizesList) => {
         if (res.code == 200) {
@@ -775,11 +819,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         }
       }, (error) => {
         this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
+      }, () => {
+        if (subscription) {
+          subscription.unsubscribe();
+          subscription = null;
+        }
       });
+    this.subscriptions.push(subscription);
   }
 
   private checkEanAndPrint(ean) {
-    this.reception
+    let subscription = this.reception
       .eanProductPrint(ean, this.expedition, this.providerId)
       .subscribe((resultCheck) => {
         this.intermediaryService.dismissLoading();
@@ -813,7 +863,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           }
           this.intermediaryService.presentToastError(errorMessage);
         }
+      }, () => {
+        if (subscription) {
+          subscription.unsubscribe();
+          subscription = null;
+        }
       });
+    this.subscriptions.push(subscription);
   }
 
   // check if all fields mandatory are selected to receive the product (brand, model, color and at least one size)
@@ -901,16 +957,23 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       params.delivery_note = this.deliveryNote;
     }
 
-    const subscribeResponseOk = (res) => {
-      // refresh the data
-      this.reception
+    let subscription = null;
+
+    const subscribeResponseOk = async (res) => {
+      let subscriptionInner = this.reception
         .getReceptions(this.providerId, this.typeModelVisualization)
         .subscribe((info: ReceptionAvelonModel.Reception) => {
           this.response = info;
           this.response.brands = this.clearSelected(this.response.brands);
           this.response.models = this.clearSelected(this.response.models);
           this.response.colors = this.clearSelected(this.response.colors);
+        }, () => {}, () => {
+          if (subscriptionInner) {
+            subscriptionInner.unsubscribe();
+            subscriptionInner = null;
+          }
         });
+      this.subscriptions.push(subscriptionInner);
 
       if (res.resultToPrint && res.resultToPrint.length > 0) {
         const someProductToSorter = !!res.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
@@ -922,6 +985,40 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         }
 
         this.referencesToPrint = res.resultToPrint.map(r => r.reference);
+      }
+
+      if (this.referencesToPrint && this.referencesToPrint.length > 0) {
+        this.printerService.printTagBarcodeAndData(this.referencesToPrint)
+          .then((resPrint) => {
+
+            if(BrowserPrint){
+              BrowserPrint.getDefaultDevice("printer", (device) => {
+                console.log("BrowserPrint::device", device);
+                if(device){
+                  resPrint.map( labelToPrint => {
+                    console.log("BrowserPrint::send", labelToPrint);
+                    device.send(labelToPrint, (data) => {
+                      console.log("BrowserPrint::data", data);
+                    }, (e) => {
+                      console.log("BrowserPrint::Error send", e);
+                      this.intermediaryService.presentToastError('Error enviando datos a la impresora');
+                    });
+                  });
+                } else {
+                  console.log("BrowserPrint::Error device")
+                  this.intermediaryService.presentToastError('No hay impresora por defecto de Browser Print');
+                }
+              }, (error) => {
+                this.intermediaryService.presentToastError('Error obteniendo impresora por defecto de Browser Print');
+                console.log("BrowserPrint::Error getDevice", error)
+              });
+            } else {
+              this.intermediaryService.presentToastError('Browser Print no instalado');
+              console.log("BrowserPrint not installed")
+            }
+          }, (error) => {
+            console.error('Some error success to print reference of reception', error);
+          });
       }
 
       if (res.productsWithError && res.productsWithError.length > 0) {
@@ -939,12 +1036,19 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.');
     };
+    const subscribeResponseComplete = () => {
+      if (subscription) {
+        subscription.unsubscribe();
+        subscription = null;
+      }
+    };
 
     if (this.isReceptionWithoutOrder) {
-      this.reception.makeReceptionFree(params).subscribe(subscribeResponseOk, subscribeResponseError);
+      subscription = this.reception.makeReceptionFree(params).subscribe(subscribeResponseOk, subscribeResponseError, subscribeResponseComplete);
     } else {
-      this.reception.printReceptionLabel(params).subscribe(subscribeResponseOk, subscribeResponseError);
+      subscription = this.reception.printReceptionLabel(params).subscribe(subscribeResponseOk, subscribeResponseError, subscribeResponseComplete);
     }
+    this.subscriptions.push(subscription);
   }
 
   public getPhotoUrl(modelId): string {
@@ -957,7 +1061,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   public resumeExpedition(expeditionReference: string) {
     this.formHeaderReceptionComponent.checkingResumeExpedition(true);
-    this.reception
+    let subscription = this.reception
       .checkExpeditionByReference(expeditionReference)
       .subscribe(res => {
         if (res.code == 200) {
@@ -983,13 +1087,19 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         }
         this.intermediaryService.presentToastError(errorMessage);
         this.formHeaderReceptionComponent.checkingResumeExpedition(false);
+      }, () => {
+        if (subscription) {
+          subscription.unsubscribe();
+          subscription = null;
+        }
       });
+    this.subscriptions.push(subscription);
   }
 
   // check if the expedition selected by reference is available and get her data
   public checkExpedition(data) {
     this.formHeaderReceptionComponent.checkingExpedition(true);
-    this.reception
+    let subscription = this.reception
       .checkExpeditionByReference(data)
       .subscribe(async (res) => {
         if (res.code == 200) {
@@ -1036,13 +1146,19 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         }
         this.intermediaryService.presentToastError(errorMessage);
         this.formHeaderReceptionComponent.checkingExpedition(false);
+      }, () => {
+        if (subscription) {
+          subscription.unsubscribe();
+          subscription = null;
+        }
       });
+    this.subscriptions.push(subscription);
   }
 
   // check if the provider selected have expeditions to receive
   public listByProvider(data) {
     this.formHeaderReceptionComponent.checkingProvider(true);
-    this.reception
+    let subscription = this.reception
       .checkExpeditionsByProvider(data)
       .subscribe(async (res) => {
         if (res.code == 200) {
@@ -1092,23 +1208,35 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         }
         this.intermediaryService.presentToastError(errorMessage);
         this.formHeaderReceptionComponent.checkingProvider(false);
+      }, () => {
+        if (subscription) {
+          subscription.unsubscribe();
+          subscription = null;
+        }
       });
+    this.subscriptions.push(subscription);
   }
 
   getEmitEan(){
-    this.websocketService.getEmitData().subscribe((x:any)=>{
+    let subscription = this.websocketService.getEmitData().subscribe((x:any)=>{
       if(x.type !== undefined){
         if(x.type === type.OBJECT){
           this.result.ean = x.data.ean;
           this.printProductsLoading();
         }
       }
+    }, () => {}, () => {
+      if (subscription) {
+        subscription.unsubscribe();
+        subscription = null;
+      }
     });
+    this.subscriptions.push(subscription);
   }
 
   //region Selection of data visualization for model
   public changeValue() {
-    this.reception
+    let subscription = this.reception
       .postReloadModelsList({typeVisualization: this.typeModelVisualization, providerId: this.providerId})
       .subscribe((res) => {
         this.filterData.models = res.data;
@@ -1118,7 +1246,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         console.error('Error reloading models: ', error);
         this.typeModelVisualization = this.lastTypeModelVisualization;
         this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los modelos por el valor seleccionado.');
+      }, () => {
+        if (subscription) {
+          subscription.unsubscribe();
+          subscription = null;
+        }
       });
+    this.subscriptions.push(subscription);
   }
   //endregion
 

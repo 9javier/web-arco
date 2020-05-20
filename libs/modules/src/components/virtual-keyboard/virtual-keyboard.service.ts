@@ -8,12 +8,13 @@ import { PopoverController } from '@ionic/angular';
 export class VirtualKeyboardService {
 
   eventEmitter = new EventEmitter();
+  aKeyboardIsOpen: boolean = false;
 
   constructor(
     private popoverController: PopoverController
   ) {}
 
-  async openVirtualKeyboard(options: {dataList?: any[], type: Number, layout_type?: 'qwerty'|'number', placeholder?: string, initialValue?: string}) {
+  async openVirtualKeyboard(options: {dataList?: any[], type: Number, layout_type?: 'qwerty'|'number', placeholder?: string, initialValue?: string}, callbackOnDidDismiss?) {
     const params: any = {
       eventOnKeyPress: this.eventEmitter,
       type: options.type,
@@ -34,7 +35,17 @@ export class VirtualKeyboardService {
       cssClass: 'virtual-keyboard-component'
     });
 
-    await popover.present();
+    if (callbackOnDidDismiss) {
+      popover.onDidDismiss().then(() => {
+        this.aKeyboardIsOpen = false;
+        callbackOnDidDismiss();
+      });
+    }
+
+    await popover.present().then(() => this.aKeyboardIsOpen = true);
+
+    setTimeout(() => this.aKeyboardIsOpen = false, 800);
+
     return popover;
   }
 }

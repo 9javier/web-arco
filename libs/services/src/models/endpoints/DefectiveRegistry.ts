@@ -6,6 +6,8 @@ export namespace DefectiveRegistryModel {
 
   export interface DefectiveRegistry {
     id?: number;
+    autoId?: any;
+    warehouseDefectId: number;
     product?: Product;
     dateDetection?: Date;
     statusManagementDefect?: StatusManagementDefect;
@@ -16,6 +18,7 @@ export namespace DefectiveRegistryModel {
     photos?: (any)[];
     warehouse?: Warehouse;
     factoryReturn?: boolean;
+    sold?: boolean;
   }
 
   export interface StatusManagementDefect {

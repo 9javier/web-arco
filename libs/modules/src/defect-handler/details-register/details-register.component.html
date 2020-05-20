@@ -10,7 +10,7 @@
             <ion-icon name="print" class="toogleArrow"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>{{ registry.id }}</ion-title>
+        <ion-title>{{ registry?.warehouse?.reference }}/{{registry?.warehouseDefectIdentifier}}</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -80,10 +80,7 @@
               Zona: {{registry.defectZoneParent.name}} - {{registry.defectZoneChild.name}}
             </ion-label>
           </ion-item>
-          <ion-item *ngIf="registry && registry.observations && registry?.observations?.length > 0">
-            <ion-label>Observaciones:</ion-label>
-            <ion-textarea class="text-observations" type="text" rows="4" value="{{registry?.observations}}" readonly="true"></ion-textarea>
-          </ion-item>
+
           <div *ngIf="getRequireStatus(registry?.statusManagementDefect, 'contact')" class="contact">
             <ion-list>
               <ion-list-header>
@@ -122,6 +119,9 @@
               <img src="{{baseUrlPhoto}}{{registry?.signature?.pathMedium}}" alt="" />
             </ion-item>
           </mat-expansion-panel>
+          <ion-item *ngIf="registry && registry.observations && registry?.observations?.length > 0">
+            <ion-textarea class="text-observations" type="text" rows="4" value="{{registry?.observations}}" readonly="true"></ion-textarea>
+          </ion-item>
         </ion-list>
     </div>
 
@@ -193,8 +193,4 @@
         <ion-item-divider></ion-item-divider>
     </div>
 </ion-content>
-<ion-footer>
-  <ion-toolbar class="ion-text-center">
-    <suite-button-change-state2 [registry]="registry_data"  [showChangeState]="showChangeState"></suite-button-change-state2>
-  </ion-toolbar>
-</ion-footer>
+<suite-button-change-state2 [registry]="registry_data"  [showChangeState]="showChangeState"></suite-button-change-state2>

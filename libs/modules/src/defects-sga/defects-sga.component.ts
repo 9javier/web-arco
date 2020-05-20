@@ -695,9 +695,9 @@ async enviaryarn() {
 
   takePhoto() {
     const options: CameraOptions = {
-      quality: 50,
+      quality: 15,
       destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.PNG,
+      encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
       sourceType: this.camera.PictureSourceType.CAMERA,
       correctOrientation: true
@@ -715,9 +715,9 @@ async enviaryarn() {
   }
   searchPhoto() {
     const options: CameraOptions = {
-      quality: 50,
+      quality: 15,
       destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.PNG,
+      encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
       sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
       correctOrientation: true

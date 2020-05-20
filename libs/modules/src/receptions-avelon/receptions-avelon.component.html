@@ -11,7 +11,7 @@
         <div class="col">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
             <ion-title> Marcas </ion-title>
-            <i slot="end" class="material-icons">keyboard</i>
+            <i slot="end" class="material-icons cursor-pointer">keyboard</i>
           </ion-item>
           <suite-lists type="brands"></suite-lists>
         </div>
@@ -28,7 +28,7 @@
                 </mat-select>
               </mat-form-field>
             </ion-title>
-            <i slot="end" class="material-icons">keyboard</i>
+            <i slot="end" class="material-icons  cursor-pointer">keyboard</i>
           </ion-item>
           <suite-lists type="models" ></suite-lists>
         </div>
@@ -36,7 +36,7 @@
         <div class="col">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
             <ion-title> Colores </ion-title>
-            <i slot="end" class="material-icons">keyboard</i>
+            <i slot="end" class="material-icons cursor-pointer">keyboard</i>
           </ion-item>
           <suite-lists type="colors"></suite-lists>
         </div>

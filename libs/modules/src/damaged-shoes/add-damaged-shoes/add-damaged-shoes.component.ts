@@ -52,7 +52,6 @@ export class AddDamagedShoesComponent implements OnInit {
       this.form.actions[4].isChecked = this.element.requireOk;
       this.form.actions[5].isChecked = this.element.allowOrders;
       this.form.actions[6].isChecked = this.element.shippedFallback;
-      this.form.actions[7].isChecked = this.element.soldFallback;
     }
   }
 

@@ -1,0 +1,28 @@
+<div>
+  <ion-item (click)="openShowSelectableList(1)">
+    <ion-label>Proveedor</ion-label>
+    <ion-label>{{providerSelectedForm ? providerSelectedForm.name : ''}}</ion-label>
+    <ion-icon name="ios-arrow-forward" slot="end"></ion-icon>
+  </ion-item>
+  <br>
+  <ion-item (click)="openShowSelectableList(2)">
+    <ion-label>Marca</ion-label>
+    <ion-label>{{brandSelectedForm ? brandSelectedForm.name : ''}}</ion-label>
+    <ion-icon name="ios-arrow-forward" slot="end"></ion-icon>
+  </ion-item>
+  <br>
+  <ion-item>
+    <ion-label>No Claim</ion-label>
+    <ion-toggle checked="false" [(ngModel)]="noClaimForm"></ion-toggle>
+  </ion-item>
+  <br>
+  <ion-item>
+    <ion-label slot="start">Contacto</ion-label>
+    <ion-input [(ngModel)]="contactForm" placeholder="Ejem: galvintec@gmail.com"></ion-input>
+  </ion-item>
+  <br>
+  <ion-item>
+    <ion-label position="floating">Observaciones</ion-label>
+    <ion-textarea rows="6" cols="20" placeholder="Introduzca aquí sus observaciones" [(ngModel)]="observationsForm" type="text"></ion-textarea>
+  </ion-item>
+</div>

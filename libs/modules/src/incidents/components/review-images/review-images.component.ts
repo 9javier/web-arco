@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 @Component({
@@ -7,7 +7,8 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./review-images.component.scss']
 })
 export class ReviewImagesComponent implements OnInit {
-  imgSrc
+
+  @Input("imgSrc") imgSrc;
   constructor(private modalController: ModalController) { }
 
   ngOnInit() {

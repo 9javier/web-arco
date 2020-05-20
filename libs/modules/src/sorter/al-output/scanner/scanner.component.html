@@ -38,11 +38,19 @@
     Escanea el primer artículo de la calle.
   </p>
 
-  <p *ngIf="isFirstProductScanned && !wrongCodeScanned && !packingIsFull" class="message-guide-finish">
+  <p *ngIf="isFirstProductScanned && !wrongCodeScanned && !packingIsFull && !stopButtonPressed" class="message-guide-finish">
     Retira artículos del sorter hasta que se vacíe la calle o se llene la jaula.
   </p>
 
-  <p *ngIf="wrongCodeScanned && !packingIsFull && processStarted && !outputWithIncidencesClear" class="message-guide-wrong-code">
+  <p *ngIf="isFirstProductScanned && !wrongCodeScanned && !packingIsFull && !stopButtonPressed" class="message-guide-finish">
+    Retira artículos del sorter hasta que se vacíe la calle o se llene la jaula.
+  </p>
+
+  <p *ngIf="stopButtonPressed" class="message-guide-finish">
+    Escanea el primer artículo de la calle para detener el proceso de salida.
+  </p>
+
+  <p *ngIf="wrongCodeScanned && !packingIsFull && processStarted && !outputWithIncidencesClear && !stopButtonPressed" class="message-guide-wrong-code">
     ¡Escanea cada artículo y revisa destino!
   </p>
 

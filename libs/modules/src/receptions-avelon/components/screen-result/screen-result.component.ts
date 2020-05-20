@@ -44,7 +44,7 @@ export class ScreenResultComponent implements OnInit {
         console.error('Some error success to print reference of reception', error);
       });
     } else {
-      return await this.printerService.printBarcodesOnBrowser(this.references);
+      return;
     }
   }
 

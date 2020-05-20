@@ -1,38 +1,26 @@
 <div class="content-ta">
   <p class="next-product-picking" *ngIf="nexProduct">
     <ion-row>
-      <span class="col-text">
-        Ubicación:
-      </span>
       <span>
         <b>{{nexProduct.inventory.container.reference}} ({{oldReference(nexProduct.inventory)}})</b>
       </span>
     </ion-row>
     <ion-row>
-      <span class="col-text">
-        Referencia:
-      </span>
       <span>
         <b>{{nexProduct.product.model.reference}}</b>
       </span>
+      <span class="align-right">
+        <b>T{{nexProduct.product.size.name}}</b>
+      </span>
     </ion-row>
     <ion-row>
-      <span class="col-text">
-        Marca:
-      </span>
       <span>
         <b>{{nexProduct.product.model.brand.name}}</b>
       </span>
     </ion-row>
     <ion-row>
-      <span class="col-text">
-        Talla:
-      </span>
       <span>
-        <b>{{nexProduct.product.size.name}}</b>
-      </span>
-      <span class="col-btn">
-        <ion-button fill="clear" (click)="productNotFound()">¡No lo encuentro!</ion-button>
+        <b>{{pickingSelected.quantity-listProducts.length+1}}/{{pickingSelected.quantity}}</b>
       </span>
     </ion-row>
   </p>
@@ -42,3 +30,31 @@
     [(ngModel)]="inputPicking" [disabled]="isScannerBlocked">
   <p class="scan-container-not-found" *ngIf="scanContainerToNotFound">{{scanContainerToNotFound}}</p>
 </div>
+
+<ion-footer *ngIf="nexProduct">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="menu"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <div>
+        <ion-button>No encontrado</ion-button>
+        <ion-fab-button size="small" color="dark" (click)="productNotFound()">
+          <ion-icon name="alert"></ion-icon>
+        </ion-fab-button>
+      </div>
+      <div>
+        <ion-button>Embalaje lleno</ion-button>
+        <ion-fab-button size="small" color="dark" (click)="fullPacking()">
+          <ion-icon name="cube"></ion-icon>
+        </ion-fab-button>
+      </div>
+      <div>
+        <ion-button>Ubicar</ion-button>
+        <ion-fab-button size="small" color="dark" routerLink="/positioning/manual" (click)="toolbarProvider.currentPage.next('Ubicar/escanear con láser');">
+          <ion-icon name="locate"></ion-icon>
+        </ion-fab-button>
+      </div>
+    </ion-fab-list>
+  </ion-fab>
+</ion-footer>

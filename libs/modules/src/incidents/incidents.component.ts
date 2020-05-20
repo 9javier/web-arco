@@ -344,7 +344,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     ScanditMatrixSimple.init((response) => {
       if(response && response.result && response.actionIonic){
         this.executeAction(response.actionIonic, response.params);
-      } else if (response && response.barcode) {
+      } else if (response && response.barcode && response.barcode.data) {
         if(response.barcode != this.lastCodeScanned){
           this.lastCodeScanned = response.barcode;
           ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
@@ -471,6 +471,21 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     }
   }
 
+  isFormComplete(){
+    if(!this.defectParentId || !this.defectZoneParentId){
+      return false;
+    }
+    if(this.requirePhoto && this.photos.length == 0){
+      return false;
+    }
+    if(this.requireOk && !this.signatures){
+      return false;
+    }
+    if(this.requireContact && this.txtName.length < 4 && this.txtInfo.length < 1){
+      return false;
+    }
+    return true;
+  }
 
   async enviaryarn() {
     let photos = []
@@ -668,9 +683,9 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
 
   takePhoto() {
     const options: CameraOptions = {
-      quality: 50,
+      quality: 15,
       destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.PNG,
+      encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
       sourceType: this.camera.PictureSourceType.CAMERA,
       correctOrientation: true
@@ -690,7 +705,7 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
     const options: CameraOptions = {
       quality: 50,
       destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.PNG,
+      encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
       sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
       correctOrientation: true

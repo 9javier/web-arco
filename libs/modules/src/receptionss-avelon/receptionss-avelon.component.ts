@@ -26,7 +26,7 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
 
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select','references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
+  displayedColumns: string[] = ['select','references','sizes','products','locations','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
   dataSource;
   selection = new SelectionModel<Predistribution>(true, []);
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
@@ -45,6 +45,8 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
   @ViewChild('filterButtonCategory') filterButtonCategory: FilterButtonComponent;
   @ViewChild('filterButtonFamily') filterButtonFamily: FilterButtonComponent;
   @ViewChild('filterButtonLifestyle') filterButtonLifestyle: FilterButtonComponent;
+  @ViewChild('filterButtonProducts') filterButtonProducts: FilterButtonComponent;
+  @ViewChild('filterButtonLocations') filterButtonLocations: FilterButtonComponent;
 
   isFilteringReferences: number = 0;
   isFilteringSizes: number = 0;
@@ -57,6 +59,8 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
   isFilteringCategory: number = 0;
   isFilteringFamily: number = 0;
   isFilteringLifestyle: number = 0;
+  isFilteringProducts: number = 0;
+  isFilteringLocations: number = 0;
 
   /**Filters */
   references: Array<TagsInputOption> = [];
@@ -70,6 +74,8 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
   category: Array<TagsInputOption> = [];
   family: Array<TagsInputOption> = [];
   lifestyle: Array<TagsInputOption> = [];
+  products: Array<TagsInputOption> = [];
+  locations: Array<TagsInputOption> = [];
 
   entities;
   pauseListenFormChange: boolean;
@@ -88,6 +94,8 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
     category: [],
     family: [],
     lifestyle: [],
+    products: [],
+    locations: [],
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
@@ -151,6 +159,8 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
       category: [],
       family: [],
       lifestyle: [],
+      products: [],
+      locations: [],
     }
   }
   initForm() {
@@ -166,6 +176,8 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
       category: [],
       family: [],
       lifestyle: [],
+      products: [],
+      locations: [],
     })
   }
 
@@ -179,16 +191,16 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
       });
 
       const selectedReceptions = this.getListReceptions();
-      const selectedReceptionsIds: number[] = [];
+      const selectedReservedIds: number[] = [];
       for(let reception of selectedReceptions){
-        selectedReceptionsIds.push(parseInt(reception.expeditionLineId));
+        selectedReservedIds.push(parseInt(reception.id));
       }
 
       modal.onDidDismiss().then(async response => {
         if(response.data) {
           await this.intermediaryService.presentLoading();
           const parameters: PredistributionModel.PickingRequest = {
-            receptionIds: selectedReceptionsIds,
+            ids: selectedReservedIds,
             destinies: [{warehouseId: Number(parseInt(selectedReceptions[0].warehouseId)), userId: response.data}]
           };
           await this.predistributionsService.newDirectPicking(parameters).then(async response => {
@@ -246,10 +258,12 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
         receptionList.length=0;
        for(let i=0; i<this.selection.selected.length; i++){
          let expeditionLineId =JSON.stringify(this.selection.selected[i].expeditionLineId);
+         let id =JSON.stringify(this.selection.selected[i].id);
          let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
          let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
          let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
            receptionList.push({
+             id: id,
              expeditionLineId: expeditionLineId,
              modelId: modelId,
              sizeId: sizeId,
@@ -300,6 +314,8 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
       this.category = this.updateFilterSource(entities.category, 'category');
       this.family = this.updateFilterSource(entities.family, 'family');
       this.lifestyle = this.updateFilterSource(entities.lifestyle, 'lifestyle');
+      this.products = this.updateFilterSource(entities.products, 'products');
+      this.locations = this.updateFilterSource(entities.locations, 'locations');
 
       this.reduceFilters(entities);
       setTimeout(() => {
@@ -577,6 +593,44 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
             this.isFilteringBrands = this.brands.length;
           }
         }
+      case 'products':
+        let productsFiltered: number[] = [];
+        for (let product of filters) {
+          if (product.checked) productsFiltered.push(product.id);
+        }
+
+        if (productsFiltered.length >= this.products.length) {
+          this.form.value.products = [];
+          this.isFilteringProducts = this.products.length;
+        } else {
+          if (productsFiltered.length > 0) {
+            this.form.value.products = productsFiltered;
+            this.isFilteringProducts = productsFiltered.length;
+          } else {
+            this.form.value.products = [99999];
+            this.isFilteringProducts = this.products.length;
+          }
+        }
+        break;
+      case 'locations':
+        let locationsFiltered: number[] = [];
+        for (let location of filters) {
+          if (location.checked) locationsFiltered.push(location.id);
+        }
+
+        if (locationsFiltered.length >= this.locations.length) {
+          this.form.value.locations = [];
+          this.isFilteringLocations = this.locations.length;
+        } else {
+          if (locationsFiltered.length > 0) {
+            this.form.value.locations = locationsFiltered;
+            this.isFilteringLocations = locationsFiltered.length;
+          } else {
+            this.form.value.products = [99999];
+            this.isFilteringLocations = this.products.length;
+          }
+        }
+        break;
     }
     this.lastUsedFilter = filterType;
     this.getList(this.form);
@@ -594,6 +648,8 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
     this.filterButtonCategory.listItems = this.reduceFilterEntities(this.category, entities,'category');
     this.filterButtonFamily.listItems = this.reduceFilterEntities(this.family, entities,'family');
     this.filterButtonLifestyle.listItems = this.reduceFilterEntities(this.lifestyle, entities,'lifestyle');
+    this.filterButtonProducts.listItems = this.reduceFilterEntities(this.products, entities,'products');
+    this.filterButtonLocations.listItems = this.reduceFilterEntities(this.locations, entities,'locations');
   }
 
   private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
@@ -615,5 +671,15 @@ export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
     await this.intermediaryService.presentLoading('Cargando filtros...', () => {
       this.getList(this.form);
     });
+  }
+
+  refreshReceptions() {
+    this.paginatorObservable.unsubscribe();
+    this.paginatorObservable = null;
+    this.initEntity();
+    this.initForm();
+    this.getFilters();
+    this.getList(this.form);
+    this.listenChanges();
   }
 }

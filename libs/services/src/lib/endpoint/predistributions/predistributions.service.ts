@@ -35,7 +35,7 @@ export class PredistributionsService {
   ) {
     this.baseUrl = environment.apiSorter;
     this.indexUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress`;
-    this.entitiesUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress/entites`;
+    this.entitiesUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress/entities`;
     this.updateBlockReservedUrl = `${this.baseUrl}/reception/expedition/update-block-reserved`;
     this.updateBlockReservedUrl2 = `${this.baseUrl}/handler/test/BlockProduct`;
     this.index2Url = `${this.baseUrl}/reception/expedition/lines-destiny-impress/blocked`;
@@ -60,7 +60,9 @@ export class PredistributionsService {
       colors: [],
       category: [],
       family: [],
-      lifestyle: []
+      lifestyle: [],
+      reserved: [],
+      distribution: []
     };
 
     return this.http.post<HttpRequestModel.Response>(this.entitiesUrl,body).pipe(
@@ -97,7 +99,9 @@ export class PredistributionsService {
       colors: [],
       category: [],
       family: [],
-      lifestyle: []
+      lifestyle: [],
+      products: [],
+      locations: []
     };
 
     return this.http.post<HttpRequestModel.Response>(this.entitiesBlockedUrl,body).pipe(

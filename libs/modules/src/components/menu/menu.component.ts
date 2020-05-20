@@ -62,12 +62,12 @@ export class MenuComponent implements OnInit {
   pickingTasksStoresAmount: number = 0;
 
   sgaPages: MenuItemList = [
-    {
+/*    {
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
       icon: 'time'
-    },
+    },*/
     {
       title: 'Logística',
       open: true,
@@ -236,7 +236,7 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Devoluciones',
+      title: 'Devoluciones fábrica',
       open: true,
       type: 'wrapper',
       icon: 'return-left',
@@ -247,6 +247,27 @@ export class MenuComponent implements OnInit {
           url: '/returns-list',
           icon: 'list-box',
           tooltip: 'Listado de registro de devoluciones'
+        },
+        {
+          title: 'Listado Seguimiento Devoluciones',
+          id: 'return-tracking-list',
+          url: '/return-tracking-list',
+          icon: 'list',
+          tooltip: 'Listado de seguimiento de devoluciones'
+        },
+        {
+          title: 'Condiciones proveedores',
+          id: 'supplier-conditions',
+          url: '/supplier-conditions',
+          icon: 'list-box',
+          tooltip: 'Listado de condiciones de proveedores'
+        },
+        {
+          title: 'Tipos de devoluciones',
+          id: 'return-types',
+          url: '/return-types',
+          icon: 'list-box',
+          tooltip: 'Listado de tipos de devoluciones'
         }
       ]
     },
@@ -510,13 +531,13 @@ export class MenuComponent implements OnInit {
   ];
 
   alPages: MenuItemList = [
-    {
+/*    {
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
       icon: 'time',
       tooltip: 'Registrar hora de entrada y salida'
-    },
+    },*/
     {
       title: 'Productos',
       open: true,
@@ -663,13 +684,13 @@ export class MenuComponent implements OnInit {
           id: 'positioning-manual',
           tooltip: 'Escanear artículos mediante láser para ubicar'
         },
-        {
+/*        {
           title: 'Ubicar no aptos online',
           icon: 'locate',
           url: '/positioning/manual-online',
           id: 'positioning-manual-online',
           tooltip: 'Ubicar productos no aptos online'
-        },
+        },*/
         {
           title: 'Traspasos',
           id: 'picking-task-store',
@@ -693,18 +714,18 @@ export class MenuComponent implements OnInit {
           tooltip: 'Asociar pares procesados para traspasos a embalajes y precintarlos'
         },
         {
-          title: 'Tareas de picking con cámara',
+          title: 'Ubicar defectuosos',
+          id: 'defective-positioning',
+          icon: 'warning',
+          url: 'defective-positioning',
+          tooltip: 'Escanear artículos defectuosos mediante cámara para ubicar'
+        },
+        {
+          title: 'Tareas de Picking',
           id: 'picking-task',
           icon: 'qr-scanner',
           url: '/picking-tasks',
-          tooltip: 'Tareas de picking asignadas para realizarlas con el escáner de la cámara'
-        },
-        {
-          title: 'Tareas de picking con láser',
-          icon: 'qr-scanner',
-          url: '/picking-tasks/manual',
-          id: 'picking-tasks-manual',
-          tooltip: 'Tareas de picking asignadas para realizarlas con el láser'
+          tooltip: 'Tareas de picking asignadas'
         },
         {
           title: 'Verificación de artículos',
@@ -973,12 +994,7 @@ export class MenuComponent implements OnInit {
         }, 5 * 60 * 1000);
       });
     }
-    let logoutItem = dictionary['user-time'] ? ({
-      title: 'Cerrar sesión',
-      id: 'logout',
-      url: '/user-time/logout',
-      icon: 'log-out'
-    }) : ({
+    let logoutItem = ({
       title: 'Cerrar sesión',
       id: 'logout',
       url: '/logout',
@@ -1113,6 +1129,8 @@ export class MenuComponent implements OnInit {
       this.productInfoScanditService.init();
     } else if (p.url === 'positioning') {
       this.scanditService.positioning();
+    } else if (p.url === 'defective-positioning'){
+      this.scanditService.defectivePositioning();
     } else if (p.url === 'audits/scan') {
       this.auditMultipleScanditService.init();
     } else {
