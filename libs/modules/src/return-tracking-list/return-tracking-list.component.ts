@@ -58,7 +58,7 @@ export class ReturnTrackingListComponent implements OnInit {
   };
 
   constructor(
-    private router: Router,
+    public router: Router,
     private returnService: ReturnService
   ) {}
 

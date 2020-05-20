@@ -38,7 +38,7 @@ export class NewReturnComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    public router: Router,
     private returnService: ReturnService,
     private authenticationService: AuthenticationService,
     private modalController: ModalController
