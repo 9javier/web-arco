@@ -50,7 +50,7 @@
                                [isFiltering]="isFilteringContacts != contacts.length" (applyFilters)="applyFilters($event, 'contacts')">
           </suite-filter-button>
         </th>
-        <td mat-cell *matCellDef="let element" ((click)="updateSupplierConditions($event, element)">
+        <td mat-cell *matCellDef="let element" (click)="updateSupplierConditions($event, element)">
           {{ element?.contact}}
         </td>
       </ng-container>
