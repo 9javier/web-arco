@@ -1,7 +1,7 @@
 <div class="container" [ngStyle]="{'height': height || 'auto', 'width': width || 'auto'}" *ngIf="way">
   <ion-item>
     <ion-label>Calle {{way.number}} <span *ngIf="wayWithIncidences" class="with-incidence">(con incidencias)</span></ion-label>
-    <ion-label slot="end" class="qty-prods">{{listProducts.length}} productos</ion-label>
+    <ion-label slot="end" class="qty-prods">{{listProducts.length + listPackages.length}} productos</ion-label>
   </ion-item>
 
   <ion-item>
