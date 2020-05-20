@@ -12,7 +12,9 @@ import {BrandModel} from "../../../services/src/models/endpoints/Brand";
 import Brand = BrandModel.Brand;
 import FilterOptions = ReturnModel.FilterOptions;
 import FilterOptionsResponse = ReturnModel.FilterOptionsResponse;
-import {Router} from "@angular/router";
+import {NavigationEnd, Router} from "@angular/router";
+import {SupplierConditionModel} from "../../../services/src/models/endpoints/SupplierCondition";
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
   selector: 'suite-return-tracking-list',
@@ -22,6 +24,10 @@ import {Router} from "@angular/router";
 export class ReturnTrackingListComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  public pagerValues = [20, 50, 100];
+  public dataSource = null;
+  public displayedColumns: string[] = ['id', 'type', 'provider', 'brand', 'maxDate', 'warehouse', 'status', 'ueDate', 'ueUser', 'unities'];
 
   returns: Return[];
   filters: Filters = {
@@ -53,17 +59,25 @@ export class ReturnTrackingListComponent implements OnInit {
     direction: 'ASC'
   };
   pagination: Pagination = {
-    limit: 20,
+    limit: this.pagerValues[0],
     page: 1
   };
 
   constructor(
     public router: Router,
     private returnService: ReturnService
-  ) {}
+  ) {
+    this.router.events.subscribe((val) => {
+      if(val instanceof NavigationEnd && val && val.url == '/return-tracking-list'){
+        if(typeof this.returns !== 'undefined'){
+          this.reset();
+        }
+      }
+    });
+  }
 
   ngOnInit() {
-    this.paginator.pageSizeOptions = [20, 50, 100];
+    this.paginator.pageSizeOptions = this.pagerValues;
     this.loadFilters();
     this.loadReturns();
     this.paginator.page.subscribe(paginator => {
@@ -189,6 +203,7 @@ export class ReturnTrackingListComponent implements OnInit {
     };
     this.returnService.postSearch(parameters).then((response: SearchResponse) => {
       if(response.code == 200){
+        this.dataSource = new MatTableDataSource<SupplierConditionModel.SupplierCondition>(response.data.result);
         this.returns = response.data.result;
         this.paginator.length = response.data.count;
       }else{
@@ -267,13 +282,12 @@ export class ReturnTrackingListComponent implements OnInit {
       direction: 'ASC'
     };
     this.pagination = {
-      limit: 20,
+      limit: this.pagerValues[0],
       page: 1
     };
-    this.paginator.pageSize = 20;
+    this.paginator.pageSize = this.pagerValues[0];
     this.paginator.pageIndex = 0;
     this.loadFilters();
     this.loadReturns();
   }
-
 }
