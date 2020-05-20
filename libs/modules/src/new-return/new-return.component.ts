@@ -124,14 +124,16 @@ export class NewReturnComponent implements OnInit {
       case 1:
         return 'Orden devolución';
       case 2:
-        return 'En proceso';
+        return 'Pendiente';
       case 3:
-        return 'Preparado';
+        return 'En proceso';
       case 4:
-        return 'Pendiente recogida';
+        return 'Preparado';
       case 5:
-        return 'Recogido';
+        return 'Pendiente recogida';
       case 6:
+        return 'Recogido';
+      case 7:
         return 'Facturado';
       default:
         return 'Desconocido'
