@@ -17,6 +17,7 @@ import {MatTableModule} from "@angular/material/table";
 import {DefectiveProductsComponent} from "../new-return-unities/defective-products/defective-products.component";
 import {ProductsComponent} from "../new-return-unities/products/products.component";
 import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
 
 const routes: Routes = [{
     path: '',
@@ -44,7 +45,8 @@ const routes: Routes = [{
     MatIconModule,
     MatTableModule,
     MatPaginatorModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatProgressBarModule
   ]
 })
 

@@ -153,38 +153,42 @@ export namespace ReturnModel{
     brands: number[],
     filters: any
   }
+  export interface GetDefectiveProductsResults {
+    product: {
+      id: number,
+      reference: string,
+      brand: {
+        id: number,
+        name: string
+      },
+      provider: {
+        id: number,
+        name: string
+      },
+      commercial: {
+        id: number,
+        name: string
+      },
+      model: {
+        id: number,
+        name: string,
+        reference: string
+      },
+      size: {
+        id: number,
+        number: string,
+        reference: string
+      }
+    },
+    defective: {
+      reason: string
+    }
+  }
   export interface GetDefectiveProducts {
     products: {
-      product: {
-        unities: number,
-        maxUnities: number,
-        brand: {
-          id: number,
-          name: string
-        },
-        provider: {
-          id: number,
-          name: string
-        },
-        commercial: {
-          id: number,
-          name: string
-        },
-        model: {
-          id: number,
-          name: string,
-          reference: string
-        },
-        size: {
-          id: number,
-          number: string,
-          reference: string
-        }
-      },
-      defective: {
-        reason: string
-      }
-    }[],
+      results: GetDefectiveProductsResults[]
+    },
+    count: number,
     productsByBrand: {
       id: number,
       name: string,
@@ -231,5 +235,26 @@ export namespace ReturnModel{
       results: GetProducts[],
       count: number
     }
+  }
+
+  export interface AssignDefectiveProductsParams {
+    returnId: number,
+    itemsToReturn: {
+      product: number
+    }[]
+  }
+  export interface AssignProductsParams {
+    returnId: number,
+    itemsToReturn: {
+      model: number,
+      size: number,
+      unities: number
+    }[]
+  }
+  export interface AssignDefectiveProductsResponse extends HttpRequestModel.Response {
+
+  }
+  export interface AssignProductsResponse extends HttpRequestModel.Response {
+
   }
 }

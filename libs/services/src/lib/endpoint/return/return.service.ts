@@ -24,6 +24,7 @@ export class ReturnService {
   private getFilterOptionsUrl = environment.apiBase+'/returns/filter-options';
   private postGetDefectiveProductsUrl = environment.apiBase + '/returns/products/defective';
   private postGetProductsUrl = environment.apiBase + '/returns/products';
+  private postAssignDefectiveProductsUrl = environment.apiBase + '/returns/products/defective/assign';
   private postAssignProductsUrl = environment.apiBase + '/returns/products/assign';
 
   constructor(
@@ -59,7 +60,11 @@ export class ReturnService {
     return this.http.post<ReturnModel.GetProductsResponse>(this.postGetProductsUrl, params);
   }
 
-  public postAssignProducts(params): Observable<any> {
+  public postAssignDefectiveProducts(params: ReturnModel.AssignDefectiveProductsParams): Observable<ReturnModel.AssignDefectiveProductsResponse> {
+    return this.http.post(this.postAssignDefectiveProductsUrl, params);
+  }
+
+  public postAssignProducts(params: ReturnModel.AssignProductsParams): Observable<ReturnModel.AssignProductsResponse> {
     return this.http.post(this.postAssignProductsUrl, params);
   }
 }

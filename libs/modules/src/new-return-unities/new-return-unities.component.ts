@@ -5,6 +5,8 @@ import {ReturnModel} from "../../../services/src/models/endpoints/Return";
 import {ProductsComponent} from "./products/products.component";
 import {DefectiveProductsComponent} from "./defective-products/defective-products.component";
 import {MatPaginator} from "@angular/material/paginator";
+import {IntermediaryService} from "@suite/services";
+import {TimesToastType} from "../../../services/src/models/timesToastType";
 
 @Component({
   selector: 'new-return-unities',
@@ -19,6 +21,8 @@ export class NewReturnUnitiesComponent implements OnInit {
 
   private returnId: number = null;
 
+  private isLoadingData: boolean = false;
+
   private isDefective: boolean = false;
   private warehouseId: number = null;
   private providerId: number = null;
@@ -29,18 +33,19 @@ export class NewReturnUnitiesComponent implements OnInit {
   private filters: any = {
     pagination: {
       limit: this.pagerValues[0],
-      page: 1
+      page: 0
     }
   };
 
-  private resultsDefective: ReturnModel.GetDefectiveProducts = null;
+  private resultsDefective: ReturnModel.GetDefectiveProductsResults[] = null;
   private results: ReturnModel.GetProducts[] = null;
 
   public itemsSelected: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
-    private returnService: ReturnService
+    private returnService: ReturnService,
+    private intermediaryService: IntermediaryService
   ) {}
 
   ngOnInit() {
@@ -74,6 +79,8 @@ export class NewReturnUnitiesComponent implements OnInit {
   }
 
   private loadItems() {
+    this.isLoadingData = true;
+
     const params = {
       warehouse: this.warehouseId,
       provider: this.providerId,
@@ -85,10 +92,12 @@ export class NewReturnUnitiesComponent implements OnInit {
         .postGetDefectiveProducts(params)
         .subscribe((res) => {
           if (res.code == 200) {
-            this.resultsDefective = res.data;
+            this.resultsDefective = res.data.products.results;
+            this.tPaginator.length = res.data.count;
+            this.defectiveProductsList.loadItems(this.resultsDefective);
             this.itemsSelected = false;
           }
-        }, (error) => {});
+        }, (error) => {}, () => this.isLoadingData = false);
     } else {
       this.returnService
         .postGetProducts(params)
@@ -98,17 +107,40 @@ export class NewReturnUnitiesComponent implements OnInit {
             this.tPaginator.length = res.data.count;
             this.productsList.loadItems(this.results);
             this.itemsSelected = false;
+            this.isLoadingData = false;
           }
-        }, (error) => {});
+        }, (error) => {}, () => this.isLoadingData = false);
     }
   }
 
-  public assignSelectedItems() {
+  public async assignSelectedItems() {
+    await this.intermediaryService.presentLoadingNew('Asignando productos a la devolución...');
+
     if (this.isDefective) {
+      const selectedItems = this.defectiveProductsList.getSelectedItems();
+      const itemsToReturn = selectedItems.map(i => {
+        return {
+          product: i.product.id
+        }
+      });
+
+      this.returnService
+        .postAssignDefectiveProducts({
+          returnId: this.returnId,
+          itemsToReturn
+        })
+        .subscribe((res) => {
+          if (res.code == 201) {
+            this.intermediaryService.presentToastSuccess('Reservados los productos para devolver.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+          } else {
+            this.intermediaryService.presentToastError('Ha ocurrido un error al reservar los productos para devolver.', TimesToastType.DURATION_ERROR_TOAST);
+          }
+        }, (error) => {
+          this.intermediaryService.presentToastError('Ha ocurrido un error al reservar los productos para devolver.', TimesToastType.DURATION_ERROR_TOAST);
+        }, () => this.intermediaryService.dismissLoadingNew());
 
     } else {
       const selectedItems = this.productsList.getSelectedItems();
-      console.log('T:selectedItems', selectedItems);
       const itemsToReturn = selectedItems.map(i => {
         return {
           model: i.model.id,
@@ -123,10 +155,14 @@ export class NewReturnUnitiesComponent implements OnInit {
           itemsToReturn
         })
         .subscribe((res) => {
-          console.log('T:Res', res);
+          if (res.code == 201) {
+            this.intermediaryService.presentToastSuccess('Asignada la cantidad de artículos para devolver.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+          } else {
+            this.intermediaryService.presentToastError('Ha ocurrido un error al asignar los artículos para devolver.', TimesToastType.DURATION_ERROR_TOAST);
+          }
         }, (error) => {
-          console.log('T:Error', error);
-        });
+          this.intermediaryService.presentToastError('Ha ocurrido un error al asignar los artículos para devolver.', TimesToastType.DURATION_ERROR_TOAST);
+        }, () => this.intermediaryService.dismissLoadingNew());
     }
   }
 
