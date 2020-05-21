@@ -336,6 +336,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'view-return',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/view-return/view-return.module#ViewReturnModule',
+    data: {
+      name: 'Consultar Devolución'
+    }
+  },
+  {
     path: 'audits',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/audits-mobile/audits-mobile.module#AuditsMobileModule',

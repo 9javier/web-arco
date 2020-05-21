@@ -145,6 +145,9 @@ export * from './return-pending-list/return-pending-list.module';
 export * from './new-return/new-return.component';
 export * from './new-return/new-return.module';
 
+export * from './view-return/view-return.component';
+export * from './view-return/view-return.module';
+
 /**returns-list */
 export * from './returns-list/returns-list.component';
 export * from './returns-list/returns-list.module';
