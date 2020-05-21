@@ -70,7 +70,7 @@
 
 <ion-content>
   <ion-grid class="no-vertical-padding">
-    <div class="row-container" *ngFor="let ret of returns" (click)="router.navigate(['/new-return', {id: ret.id}])">
+    <div class="row-container" *ngFor="let ret of returns" (click)="router.navigate(['/view-return', {id: ret.id}])">
       <ion-row nowrap >
         <ion-col size="33">{{ret.id}}</ion-col>
         <ion-col size="34">{{ret.provider.name}}</ion-col>
