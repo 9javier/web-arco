@@ -157,7 +157,7 @@ export class NewReturnComponent implements OnInit {
 
   thereAreConditions(): boolean{
     if(this.return.provider){
-      return this.return.provider.brands.map(brand => {if(brand.condition) return brand.condition}).length > 0;
+      return this.return.provider.brands.filter(brand => brand.condition != null).length > 0;
     }else{
       return false;
     }
