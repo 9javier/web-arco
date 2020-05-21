@@ -9,6 +9,8 @@ import Return = ReturnModel.Return;
 import SaveResponse = ReturnModel.SaveResponse;
 import LoadResponse = ReturnModel.LoadResponse;
 import OptionsResponse = ReturnModel.OptionsResponse;
+import {HttpClient} from "@angular/common/http";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +22,12 @@ export class ReturnService {
   private postLoadUrl = environment.apiBase+'/returns/load';
   private getOptionsUrl = environment.apiBase+'/returns/options';
   private getFilterOptionsUrl = environment.apiBase+'/returns/filter-options';
+  private postGetDefectiveProductsUrl = environment.apiBase + '/returns/products/defective';
+  private postGetProductsUrl = environment.apiBase + '/returns/products';
+  private postAssignProductsUrl = environment.apiBase + '/returns/products/assign';
 
   constructor(
+    private http: HttpClient,
     private requestsProvider: RequestsProvider
   ) {}
 
@@ -45,4 +51,15 @@ export class ReturnService {
     return this.requestsProvider.get(this.getOptionsUrl);
   }
 
+  public postGetDefectiveProducts(params: ReturnModel.GetProductsParams): Observable<ReturnModel.GetDefectiveProductsResponse> {
+    return this.http.post<ReturnModel.GetDefectiveProductsResponse>(this.postGetDefectiveProductsUrl, params);
+  }
+
+  public postGetProducts(params: ReturnModel.GetProductsParams): Observable<ReturnModel.GetProductsResponse> {
+    return this.http.post<ReturnModel.GetProductsResponse>(this.postGetProductsUrl, params);
+  }
+
+  public postAssignProducts(params): Observable<any> {
+    return this.http.post(this.postAssignProductsUrl, params);
+  }
 }

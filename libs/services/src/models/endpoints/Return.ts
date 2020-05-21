@@ -10,6 +10,7 @@ import Carrier = CarrierModel.Carrier;
 import Brand = BrandModel.Brand;
 import ReturnType = ReturnTypeModel.ReturnType;
 import Provider = ProviderModel.Provider;
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace ReturnModel{
 
@@ -38,13 +39,13 @@ export namespace ReturnModel{
     datePickup: string,
     printTagPackages: boolean
   }
-  
+
   export interface SearchParameters {
     filters: Filters,
     order: Order,
     pagination: Pagination
   }
-  
+
   export interface SearchResponse {
     message?: string,
     code?: number,
@@ -146,5 +147,89 @@ export namespace ReturnModel{
     unitsPrepared: FilterOption[]
   }
 
-
+  export interface GetProductsParams {
+    warehouse: number,
+    provider: number,
+    brands: number[],
+    filters: any
+  }
+  export interface GetDefectiveProducts {
+    products: {
+      product: {
+        unities: number,
+        maxUnities: number,
+        brand: {
+          id: number,
+          name: string
+        },
+        provider: {
+          id: number,
+          name: string
+        },
+        commercial: {
+          id: number,
+          name: string
+        },
+        model: {
+          id: number,
+          name: string,
+          reference: string
+        },
+        size: {
+          id: number,
+          number: string,
+          reference: string
+        }
+      },
+      defective: {
+        reason: string
+      }
+    }[],
+    productsByBrand: {
+      id: number,
+      name: string,
+      quantity: number
+    }[],
+    productsByProvider: {
+      id: number,
+      name: string,
+      quantity: number
+    }[]
+  }
+  export interface GetProducts {
+    selected: boolean
+    unities: number,
+    maxUnities: number,
+    brand: {
+      id: number,
+      name: string
+    },
+    provider: {
+      id: number,
+      name: string
+    },
+    commercial: {
+      id: number,
+      name: string
+    },
+    model: {
+      id: number,
+      name: string,
+      reference: string
+    },
+    size: {
+      id: number,
+      number: string,
+      reference: string
+    }
+  }
+  export interface GetDefectiveProductsResponse extends HttpRequestModel.Response {
+    data: GetDefectiveProducts
+  }
+  export interface GetProductsResponse extends HttpRequestModel.Response {
+    data: {
+      results: GetProducts[],
+      count: number
+    }
+  }
 }

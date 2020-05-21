@@ -98,8 +98,7 @@ export class DataComponent implements OnInit, AfterViewInit {
   getProviders(){
     this.supplierConditionsService.getProviders(this.isAdd).subscribe(providers => {
         this.providers = providers;
-        this.intermediaryService.dismissLoading();
-    });
+    }, () => {}, () => this.intermediaryService.dismissLoading());
   }
 
   selectedProvider(event) {

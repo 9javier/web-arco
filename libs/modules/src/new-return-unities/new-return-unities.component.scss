@@ -1,0 +1,16 @@
+ion-content {
+  mat-paginator {
+    margin-bottom: 72px;
+  }
+}
+
+.horizontal-fab {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  right: 24px;
+
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}
