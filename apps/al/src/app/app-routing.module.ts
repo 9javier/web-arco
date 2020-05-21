@@ -83,7 +83,14 @@ const routes: Routes = [
     data: {
       name: 'Manifiesto transportista'
     }
-
+  },
+  {
+    path: 'order-no-processed',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/order-no-processed/order-no-processed.module#OrderNoProcesse2dModule',
+    data: {
+      name: 'Órdenes no procesadas'
+    }
   },
   {
     path: 'labels-manual',

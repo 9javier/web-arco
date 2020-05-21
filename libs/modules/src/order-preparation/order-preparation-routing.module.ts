@@ -24,6 +24,10 @@ const routes: Routes = [
     path: 'expe-alert/:id_alert',
     component: OrderPreparationComponent
   },
+  {
+    path: 'id/:id/:isInternal/:orderId',
+    component: OrderPreparationComponent
+  },
  
 ];
 

@@ -15,7 +15,7 @@ export class ItemReferencesProvider {
     PRODUCT: 'product',
     PRODUCT_MODEL: 'product_model',
     PRODUCT_UNDEFINED: 'product_undefined',
-    PACKAGE: 'package'
+    PACKAGE: 'package',
   };
   get codeValue(): CodeValue {
     return this._codeValue;
@@ -93,7 +93,7 @@ export interface CodeValue {
   PRODUCT: string,
   PRODUCT_MODEL: string,
   PRODUCT_UNDEFINED: string,
-  PACKAGE: string,
+  PACKAGE: string
 }
 
 export interface Regex {

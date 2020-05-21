@@ -492,9 +492,21 @@ export class MenuComponent implements OnInit {
           icon: 'car',
           tooltip: 'Ordenes'
         },
+        {
+          title: 'Transportes de expediciones',
+          id: 'transports',
+          url: '/transports',
+          icon: 'bus',
+          tooltip: 'Transportes de expediciones'
+        },
+        {
+          title: 'Pedidos Internos',
+          id: 'expedition-inside',
+          url: '/expedition-inside',
+          icon: 'folder'
+        },
       ]
     },
-
   ];
 
   alPages: MenuItemList = [
@@ -581,6 +593,13 @@ export class MenuComponent implements OnInit {
           url: '/list-alerts',
           icon: 'notifications',
           tooltip: 'listado de incidencias'
+        },
+        {
+          title: 'Órdenes no procesadas',
+          id: 'order-no-processed',
+          url: '/order-no-processed',
+          icon: 'barcode',
+          tooltip: 'Órdenes no procesadas'
         },
 
       ]

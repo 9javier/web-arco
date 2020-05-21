@@ -20,6 +20,9 @@ export class ExpeditionCollectedService {
   private getFiltersPackages: string;
   private updatePackages: string;
   private getTransports: string;
+  private getIncidenceInsideFiltersUrl: string;
+  private getPacketsInsideUrl: string;
+  private getFileExcellUrl: string;
   private $id = new BehaviorSubject({});
   private id = this.$id.asObservable();
   private emitData = new BehaviorSubject({});
@@ -40,7 +43,9 @@ export class ExpeditionCollectedService {
     this.getFiltersPackages = `${this.baseUrl}/opl-expedition/transports/get-expedition-package/filters`;
     this.updatePackages = `${this.baseUrl}/opl-expedition/transports/get-expedition-package/updatePackages`;
     this.getTransports = `${this.baseUrl}/expeditions-manual/get-transports`;
-
+    this.getIncidenceInsideFiltersUrl = `${this.baseUrl}/expeditions-manual/get-expedition-inside/`;
+    this.getPacketsInsideUrl = `${this.baseUrl}/opl-expedition/op-orders/index/`;
+    this.getFileExcellUrl = `${this.baseUrl}/opl-expedition/op-orders/excel`;
   }
 
   store(body): Observable<any>{
@@ -121,5 +126,25 @@ export class ExpeditionCollectedService {
   getData(){
     return this.getData$;
   }
+
+  getIncidenceInsideFilters():Observable<any>{
+    return this.http.get<HttpRequestModel.Response>(this.getIncidenceInsideFiltersUrl).pipe(
+      map(resp => resp.data)
+    )
+  }
+
+  getPacketsInside(body):Observable<any>{
+    return this.http.post<any>(this.getPacketsInsideUrl, body).pipe(
+      map(resp =>{
+        return resp.data;
+      })
+    );
+  }
+
+
+  getFileExcell(form: any){
+    return this.http.post(this.getFileExcellUrl, form,{responseType: 'blob'})
+  }
+
 
 }
