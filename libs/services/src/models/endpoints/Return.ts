@@ -70,6 +70,7 @@ export namespace ReturnModel{
       datesLastStatus: string[],
       usersLastStatus: string[],
       unitsPrepared: number[],
+      unitsSelected: number[]
     },
     error?: any,
     errors?: any
@@ -105,15 +106,16 @@ export namespace ReturnModel{
 
   export interface Filters {
     ids: number[],
-    typeIds: number[],
+    typeIds?: number[],
     providerIds: number[],
-    brandIds: number[],
+    brandIds?: number[],
     datesLimit: Date[],
     warehouseIds: number[],
     statuses: number[],
-    datesLastStatus: Date[],
-    userIdsLastStatus: number[],
-    unitsPrepared: number[]
+    datesLastStatus?: Date[],
+    userIdsLastStatus?: number[],
+    unitsPrepared: number[],
+    unitsSelected?: number[]
   }
 
   export interface Order {

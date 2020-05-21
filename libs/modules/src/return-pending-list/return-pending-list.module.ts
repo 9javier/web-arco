@@ -5,6 +5,8 @@ import { MatPaginatorModule, MatTooltipModule } from "@angular/material";
 import { IonicModule } from '@ionic/angular';
 import { ReturnPendingListComponent } from './return-pending-list.component';
 import { FilterButtonModule } from "../components/filter-button/filter-button.module";
+import {TagsInputModule} from "../components/tags-inputag/tags-input.module";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 const routes: Routes = [{
     path: '',
@@ -19,7 +21,10 @@ const routes: Routes = [{
     RouterModule.forChild(routes),
     MatPaginatorModule,
     MatTooltipModule,
-    FilterButtonModule
+    FilterButtonModule,
+    TagsInputModule,
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 

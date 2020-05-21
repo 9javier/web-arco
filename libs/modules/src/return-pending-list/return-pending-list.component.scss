@@ -1,31 +1,42 @@
-ion-grid{
-  --ion-grid-columns: 100;
-  margin: 0;
+form{
+  ion-select{
+    max-width: 100%;
+    width: 100%;
+  }
 }
 
-ion-col{
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+ion-content{
 
-.row-container{
-  padding-top: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  border-bottom-color: darkgrey;
-}
+  ion-grid{
+    --ion-grid-columns: 100;
+    margin: 0;
+  }
 
-.no-vertical-padding{
-  padding-top: 0;
-  padding-bottom: 0;
+  ion-col{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row-container{
+    padding-top: 5px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: darkgrey;
+  }
+
+  .no-vertical-padding{
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .text-align-end{
+    text-align: end;
+  }
+
 }
 
 mat-paginator{
   margin-top: -10px;
   margin-bottom: -5px;
-}
-
-.text-align-end{
-  text-align: end;
 }
