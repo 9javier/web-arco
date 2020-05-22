@@ -60,7 +60,7 @@ export class ItemReferencesProvider {
     },
     {
       value: this._codeValue.PACKAGE,
-      regex: /UQ([0-9]){6}/
+      regex: /IL([0-9]){12}/
     }
   ];
 
