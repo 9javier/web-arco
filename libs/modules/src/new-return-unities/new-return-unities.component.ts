@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ReturnService} from "../../../services/src/lib/endpoint/return/return.service";
 import {ReturnModel} from "../../../services/src/models/endpoints/Return";
 import {ProductsComponent} from "./products/products.component";
@@ -44,6 +44,7 @@ export class NewReturnUnitiesComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private returnService: ReturnService,
     private intermediaryService: IntermediaryService
   ) {}
@@ -134,13 +135,13 @@ export class NewReturnUnitiesComponent implements OnInit {
         .subscribe((res) => {
           if (res.code == 201) {
             this.intermediaryService.presentToastSuccess('Reservados los productos para devolver.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+            this.router.navigateByUrl('/return-tracking-list');
           } else {
             this.intermediaryService.presentToastError('Ha ocurrido un error al reservar los productos para devolver.', TimesToastType.DURATION_ERROR_TOAST);
           }
         }, (error) => {
           this.intermediaryService.presentToastError('Ha ocurrido un error al reservar los productos para devolver.', TimesToastType.DURATION_ERROR_TOAST);
         }, () => this.intermediaryService.dismissLoadingNew());
-
     } else {
       const selectedItems = this.productsList.getSelectedItems();
       const itemsToReturn = selectedItems.map(i => {
@@ -160,6 +161,7 @@ export class NewReturnUnitiesComponent implements OnInit {
         .subscribe((res) => {
           if (res.code == 201) {
             this.intermediaryService.presentToastSuccess('Asignada la cantidad de artículos para devolver.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+            this.router.navigateByUrl('/return-tracking-list');
           } else {
             this.intermediaryService.presentToastError('Ha ocurrido un error al asignar los artículos para devolver.', TimesToastType.DURATION_ERROR_TOAST);
           }
