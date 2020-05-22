@@ -204,6 +204,8 @@ export namespace ReturnModel{
     selected: boolean
     unities: number,
     maxUnities: number,
+    unitiesAssigned: number,
+    remove: boolean,
     brand: {
       id: number,
       name: string
@@ -248,7 +250,8 @@ export namespace ReturnModel{
     itemsToReturn: {
       model: number,
       size: number,
-      unities: number
+      unities: number,
+      remove: boolean
     }[]
   }
   export interface AssignDefectiveProductsResponse extends HttpRequestModel.Response {

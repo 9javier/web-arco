@@ -44,7 +44,7 @@
       <span class="title">Unidades</span>
     </th>
     <td mat-cell *matCellDef="let element" class="toRight">
-      <input [(ngModel)]="element.unities" type="number" [max]="element.maxUnities">
+      <input [(ngModel)]="element.unities" type="number" [max]="element.maxUnities"> / <p class="max-unity">{{ element.maxUnities }}</p>
     </td>
   </ng-container>
 

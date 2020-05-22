@@ -5,7 +5,7 @@ import {ReturnModel} from "../../../services/src/models/endpoints/Return";
 import {ProductsComponent} from "./products/products.component";
 import {DefectiveProductsComponent} from "./defective-products/defective-products.component";
 import {MatPaginator} from "@angular/material/paginator";
-import {IntermediaryService} from "@suite/services";
+import {IntermediaryService} from "../../../services/src/lib/endpoint/intermediary/intermediary.service";
 import {TimesToastType} from "../../../services/src/models/timesToastType";
 
 @Component({
@@ -82,6 +82,7 @@ export class NewReturnUnitiesComponent implements OnInit {
     this.isLoadingData = true;
 
     const params = {
+      returnId: this.returnId,
       warehouse: this.warehouseId,
       provider: this.providerId,
       brands: this.brandIds,
@@ -145,7 +146,8 @@ export class NewReturnUnitiesComponent implements OnInit {
         return {
           model: i.model.id,
           size: i.size.id,
-          unities: i.unities
+          unities: i.unities,
+          remove: i.remove
         }
       });
 

@@ -10,4 +10,26 @@ table {
   .toCenter {
     text-align: center;
   }
+
+  input {
+    width: 32px;
+    text-align: end;
+    padding: 4px;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  p.max-unity {
+    width: 16px;
+    min-width: 16px;
+    max-width: 16px;
+    margin: 0;
+    display: inline-block;
+  }
 }

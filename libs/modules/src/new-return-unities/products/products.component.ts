@@ -2,7 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {ReturnModel} from "../../../../services/src/models/endpoints/Return";
 import {MatTableDataSource} from "@angular/material/table";
 import {FormArray, FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {validators} from "@suite/common-modules";
+import {validators} from "../../utils/validators";
 
 @Component({
   selector: 'return-unities-products',
@@ -48,7 +48,11 @@ export class ProductsComponent implements OnInit {
   public itemSelected(item: ReturnModel.GetProducts) {
     const index = this.itemsSelected.indexOf(item, 0);
     if (index > -1) {
-      this.itemsSelected.splice(index, 1);
+      if (this.itemsSelected[index].unitiesAssigned) {
+        this.itemsSelected[index].remove = true;
+      } else {
+        this.itemsSelected.splice(index, 1);
+      }
     } else {
       this.itemsSelected.push(item);
     }
@@ -62,8 +66,13 @@ export class ProductsComponent implements OnInit {
       validators: validators.haveItems("toSelect")
     });
     this.selectedForm.removeControl("toSelect");
-    this.selectedForm.addControl("toSelect", this.formBuilder.array(this.itemsToLoad.map(element => new FormControl(false))));
     this.itemsSelected = [];
+    this.selectedForm.addControl("toSelect", this.formBuilder.array(this.itemsToLoad.map(element => {
+      if (!!element.unitiesAssigned) {
+        this.itemsSelected.push(element);
+      }
+      return new FormControl(!!element.unitiesAssigned);
+    })));
   }
 
   public loadItems(items: ReturnModel.GetProducts[]) {
