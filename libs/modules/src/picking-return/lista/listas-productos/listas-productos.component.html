@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+          <ion-button (click)="close()">
+              <ion-icon name="close" class="toogleArrow"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+    <ion-title>Lista Productos por Jaula {{jaula}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+  <ion-card padding=true >
+    <ion-card-header>
+      <ion-card-subtitle>
+        {{data?.warehouse?.name}}
+      </ion-card-subtitle>
+      <ion-card-title >Destinos: </ion-card-title>
+        <ion-row class="rowclass" *ngFor="let item of data.carrierWarehousesDestiny">
+          {{item?.warehouse?.name}}
+        </ion-row>
+          
+    </ion-card-header>
+  </ion-card>
+
+  
+  <ion-row class="header">
+    <ion-col [size]=[item.size] *ngFor="let item of column" >{{item.name}}</ion-col>
+  </ion-row>
+
+<ion-content>
+  <ion-grid>
+    <ion-row class="rowclass" nowrap *ngFor="let item of productos" >
+        <ion-col size="4" >{{item?.product?.reference}}</ion-col>
+        <ion-col size="3" >{{item?.product?.model?.name}}</ion-col>
+        <ion-col>{{item?.product?.size?.name}}</ion-col>
+        <ion-col size="3" >{{item?.product?.model?.color?.name}}</ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+
+ 
+<!-- TODO fooder con bottones -->
+<ion-footer>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-button   size="small" (click)="close(true)">
+        <ion-icon name="paper-plane"></ion-icon>Continuar
+      </ion-button>
+      <ion-button   size="small" (click)="vaciar()">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>Vaciar Jaula
+      </ion-button>
+      
+      <!--  -->
+      <ion-button *ngIf="visible"   size="small" (click)="navigate('positioning/manual')">
+        <ion-icon name="pin"></ion-icon>Ubijar
+      </ion-button>
+      
+    </ion-buttons>
+
+      <!-- <ion-button slot="end" color="primary" [disabled]="data.form.invalid" (click)="submit(data.getValue())">Guardar</ion-button> -->
+  </ion-toolbar>
+</ion-footer>
+

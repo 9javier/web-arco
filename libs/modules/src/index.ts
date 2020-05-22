@@ -217,6 +217,10 @@ export * from './positioning-manual-online/positioning-manual-online.module';
 export * from './picking-manual/picking-manual.component';
 export * from './picking-manual/picking-manual.module';
 
+/**Return Picking */
+export * from './picking-return/picking-return.component';
+export * from './picking-return/picking-return.module';
+
 /**List Pickings with Products */
 export * from './list-picking/list-picking.component';
 export * from './list-picking/list-picking.module';
