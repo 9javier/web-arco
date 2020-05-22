@@ -1,6 +1,4 @@
 ion-content{
-  --offset-bottom: 10px !important;
-  --overflow: overlay;
 
   ion-item {
     ion-label+ion-input {
@@ -8,16 +6,8 @@ ion-content{
     }
   }
 
-  .mat-table-wrapper-overflow-x {
-    overflow-x: auto;
-  }
-
   table {
     width: 100%;
-  }
-
-  .mat-cell, .mat-header-cell {
-    padding: 10px 10px 10px 0;
   }
 
   .bt-right{
@@ -40,6 +30,10 @@ ion-content{
   .title{
     cursor: pointer;
   }
+
+  mat-paginator {
+    margin-bottom: 72px;
+  }
 }
 
 ion-fab-button{
@@ -55,8 +49,8 @@ ion-fab-button{
   display: flex;
   flex: 1;
   flex-direction: row;
+  right: 24px;
   ion-fab-button {
     margin-left: 16px;
   }
 }
-

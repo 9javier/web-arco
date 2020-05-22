@@ -1,5 +1,4 @@
-<ion-content padding>
-  <div class="mat-table-wrapper-overflow-x">
+<ion-content>
     <table mat-table [dataSource]="dataSource">
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="router.navigate(['/new-return', {id: row.id}])"></tr>
@@ -155,7 +154,6 @@
         </td>
       </ng-container>
     </table>
-  </div>
 
   <mat-paginator></mat-paginator>
 </ion-content>
