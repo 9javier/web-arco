@@ -161,6 +161,9 @@
 </ion-content>
 
 <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="horizontal-fab">
+  <ion-fab-button (click)="fileExcell()" matTooltip="Descargar Excel" matTooltipClass="tooltip" color="primary" >
+    <ion-icon name="document"></ion-icon>
+  </ion-fab-button>
   <ion-fab-button (click)="router.navigateByUrl('/new-return')" matTooltip="Nueva Devolución">
     <ion-icon name="add"></ion-icon>
   </ion-fab-button>
