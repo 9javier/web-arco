@@ -17,7 +17,7 @@ import { IntermediaryService } from '../../../services/src/';
 })
 
 export class DropFilesComponent {
-
+  type: string;
   public files: NgxFileDropEntry[] = [];
   constructor(
     private dropFileSrv: DropFilesService,
@@ -36,24 +36,57 @@ export class DropFilesComponent {
         fileEntry.file((file: File) => {
           // Here you can access the real file
           console.log(droppedFile.relativePath, file);
-          
           // You could upload it like this:
           const formData = new FormData()
-          formData.append('file', file, droppedFile.relativePath)
-
-          this.dropFileSrv.uploadFile(formData).subscribe( 
-          resp => {
-            this.dropFileSrv.setImage(resp.data)
-            this.modalController.dismiss()
-          },
-          err => {
-            this.intermediary.presentToastError('ocurrio un erro al subir la imagen')
-            this.intermediary.dismissLoading()
-          },
-          () => {
-            this.intermediary.presentToastSuccess('Imagen guardada exitosamente')
-            this.intermediary.dismissLoading()
-          });
+          formData.append('file', file, droppedFile.relativePath);
+          if(this.type=='archive'){
+            this.dropFileSrv.uploadReturnArchive(formData).subscribe(
+              resp => {
+                this.dropFileSrv.setImage(resp.data)
+                this.modalController.dismiss()
+              },
+              err => {
+                this.intermediary.presentToastError('ocurrio un erro al subir la imagen')
+                this.intermediary.dismissLoading()
+              },
+              () => {
+                this.intermediary.presentToastSuccess('Imagen guardada exitosamente')
+                this.intermediary.dismissLoading()
+              }
+            );
+          }else{
+            if(this.type=='delivery_note'){
+              this.dropFileSrv.uploadReturnDeliveryNote(formData).subscribe(
+                resp => {
+                  this.dropFileSrv.setImage(resp.data)
+                  this.modalController.dismiss()
+                },
+                err => {
+                  this.intermediary.presentToastError('ocurrio un erro al subir la imagen')
+                  this.intermediary.dismissLoading()
+                },
+                () => {
+                  this.intermediary.presentToastSuccess('Imagen guardada exitosamente')
+                  this.intermediary.dismissLoading()
+                }
+              );
+            }else{
+              this.dropFileSrv.uploadFile(formData).subscribe(
+                resp => {
+                  this.dropFileSrv.setImage(resp.data)
+                  this.modalController.dismiss()
+                },
+                err => {
+                  this.intermediary.presentToastError('ocurrio un erro al subir la imagen')
+                  this.intermediary.dismissLoading()
+                },
+                () => {
+                  this.intermediary.presentToastSuccess('Imagen guardada exitosamente')
+                  this.intermediary.dismissLoading()
+                }
+              );
+            }
+          }
         });
       } else {
         // It was a directory (empty directories are added, otherwise only files)
@@ -71,9 +104,7 @@ export class DropFilesComponent {
     console.log(event);
   }
 
-
   public close(){
     this.modalController.dismiss();
   }
-  
 }

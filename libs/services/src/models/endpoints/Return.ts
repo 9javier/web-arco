@@ -36,15 +36,17 @@ export namespace ReturnModel{
     shipper: string,
     datePredictedPickup: string,
     datePickup: string,
-    printTagPackages: boolean
+    printTagPackages: boolean,
+    archives?: (any)[],
+    delivery_notes?: (any)[],
   }
-  
+
   export interface SearchParameters {
     filters: Filters,
     order: Order,
     pagination: Pagination
   }
-  
+
   export interface SearchResponse {
     message?: string,
     code?: number,
