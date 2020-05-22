@@ -154,6 +154,8 @@ export namespace ReturnModel{
     filters: any
   }
   export interface GetDefectiveProductsResults {
+    assigned: boolean,
+    remove: boolean,
     product: {
       id: number,
       reference: string,

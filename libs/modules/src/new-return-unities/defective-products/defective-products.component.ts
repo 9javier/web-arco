@@ -48,7 +48,11 @@ export class DefectiveProductsComponent implements OnInit {
   public itemSelected(item: ReturnModel.GetDefectiveProductsResults) {
     const index = this.itemsSelected.indexOf(item, 0);
     if (index > -1) {
-      this.itemsSelected.splice(index, 1);
+      if (this.itemsSelected[index].assigned) {
+        this.itemsSelected[index].remove = true;
+      } else {
+        this.itemsSelected.splice(index, 1);
+      }
     } else {
       this.itemsSelected.push(item);
     }
@@ -62,8 +66,13 @@ export class DefectiveProductsComponent implements OnInit {
       validators: validators.haveItems("toSelect")
     });
     this.selectedForm.removeControl("toSelect");
-    this.selectedForm.addControl("toSelect", this.formBuilder.array(this.itemsToLoad.map(element => new FormControl(false))));
     this.itemsSelected = [];
+    this.selectedForm.addControl("toSelect", this.formBuilder.array(this.itemsToLoad.map(element => {
+      if (element.assigned) {
+        this.itemsSelected.push(element);
+      }
+      return new FormControl(element.assigned);
+    })));
   }
 
   public loadItems(items: ReturnModel.GetDefectiveProductsResults[]) {

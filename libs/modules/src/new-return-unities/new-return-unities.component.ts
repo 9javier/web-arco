@@ -121,7 +121,8 @@ export class NewReturnUnitiesComponent implements OnInit {
       const selectedItems = this.defectiveProductsList.getSelectedItems();
       const itemsToReturn = selectedItems.map(i => {
         return {
-          product: i.product.id
+          product: i.product.id,
+          remove: i.remove
         }
       });
 
