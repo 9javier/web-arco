@@ -9,6 +9,7 @@ import {BrandModel} from "../../../services/src/models/endpoints/Brand";
 import Brand = BrandModel.Brand;
 import {AuthenticationService} from "@suite/services";
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
+import {PickingProvider} from "../../../services/src/providers/picking/picking.provider";
 
 @Component({
   selector: 'suite-view-return',
@@ -22,6 +23,7 @@ export class ViewReturnComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public router: Router,
+    private pickingProvider: PickingProvider,
     private returnService: ReturnService,
     private toolbarProvider: ToolbarProvider,
     private authenticationService: AuthenticationService
@@ -47,6 +49,7 @@ export class ViewReturnComponent implements OnInit {
     this.returnService.postLoad({returnId: returnId}).then((response: LoadResponse) => {
       if (response.code == 200) {
         this.return = response.data;
+        this.pickingProvider.currentReturnPickingId = this.return.id;
       } else {
         console.error(response);
       }

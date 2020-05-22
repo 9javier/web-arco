@@ -117,6 +117,14 @@ export class PickingProvider {
     this._pickingId = value;
   }
 
+  private _currentReturnPickingId: number;
+  get currentReturnPickingId(): number {
+    return this._currentReturnPickingId;
+  }
+  set currentReturnPickingId(value: number) {
+    this._currentReturnPickingId = value;
+  }
+
   private _listProducts: ShoesPickingModel.ShoesPicking[];
   get listProducts(): ShoesPickingModel.ShoesPicking[] {
     return this._listProducts;
