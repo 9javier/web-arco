@@ -226,7 +226,14 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.timeoutToQuickUser();
     const setWayAsWrong = async () => {
       // Request to server to notify that las product was set in a wrong way and reset the sorter notify led
-      const productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
+    
+      let productRef;
+      if(this.productScanned !=null){
+         productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
+      }else if(this.packageScanned != null){
+        productRef = this.packageScanned.uniqueCode;
+      }
+
       if (productRef) {
         this.sorterExecutionService
           .postWrongWay({ way: this.idLastWaySet, productReference: productRef })
