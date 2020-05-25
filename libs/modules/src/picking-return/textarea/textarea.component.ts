@@ -56,8 +56,8 @@ export class TextareaComponent implements OnInit {
   pickingSelected: Return;
 
   private postVerifyPackingUrl = environment.apiBase + "/processes/picking-main/packing-return";
-  private getPendingListByPickingUrl = environment.apiBase + "/processes/picking-main/shoes/{{id}}/pending";
-  private putProductNotFoundUrl = environment.apiBase + "/processes/picking-main/shoes/{{workWaveOrderId}}/product-not-found/{{productId}}";
+  private getPendingListByPickingUrl = environment.apiBase + "/processes/picking-main/shoes/{{id}}/pending-return";
+  private putProductNotFoundUrl = environment.apiBase + "/processes/picking-main/shoes/{{returnId}}/product-not-found-return/{{productId}}";
   private postCheckContainerProductUrl = environment.apiBase + "/inventory/check-container";
 
   private timeoutStarted = null;
@@ -89,41 +89,42 @@ export class TextareaComponent implements OnInit {
 
   ngOnInit() {
     this.pickingId = this.pickingProvider.currentReturnPickingId;
-    this.returnService.postLoadWithProducts({returnId:  this.pickingId}).then((response: LoadResponse) => {
+    this.returnService.postLoadWithProducts({returnId:  this.pickingId}).then(async (response: LoadResponse) => {
       if (response.code == 200) {
         this.pickingSelected = response.data;
-        this.listProducts = response.data.products;
-
-        this.typePacking = 1;
-        this.typePicking = 1;
-        if(this.pickingSelected.status == 2){
-          this.packingReference = null;
-        }else{
-          let activePackings: ReturnPacking[] = this.pickingSelected.packings.filter(packings => packings.packing.status == 2);
-          if(!(activePackings && activePackings.length > 0)){
-            activePackings = this.pickingSelected.packings.filter(packings => packings.packing.status == 1);
-          }
-          this.packingReference = activePackings[0].packing.reference;
-        }
-        this.literalsJailPallet = this.pickingProvider.literalsJailPallet;
-
-        this.clearTimeoutCleanLastCodeScanned();
-        this.intervalCleanLastCodeScanned = setInterval(() => {
-          if (this.itemReferencesProvider.checkCodeValue(this.lastCodeScanned) === this.itemReferencesProvider.codeValue.PACKING) {
-            if (Math.abs((new Date().getTime() - this.timeLastCodeScanned) / 1000) > 4) {
-              this.lastCodeScanned = 'start';
+        this.getPendingListByPicking(this.pickingId).subscribe(response=>{
+          this.listProducts = response.data;
+          this.typePacking = 1;
+          this.typePicking = 1;
+          if (this.pickingSelected.status == 2) {
+            this.packingReference = null;
+          } else {
+            let activePackings: ReturnPacking[] = this.pickingSelected.packings.filter(packings => packings.packing.status == 2);
+            if (!(activePackings && activePackings.length > 0)) {
+              activePackings = this.pickingSelected.packings.filter(packings => packings.packing.status == 1);
             }
+            this.packingReference = activePackings[0].packing.reference;
           }
-        }, 1000);
+          this.literalsJailPallet = this.pickingProvider.literalsJailPallet;
 
-        if (this.listProducts.length > 0) {
-          this.showTextStartScanPacking(true, this.typePacking, this.packingReference || '');
-        } else {
-          if (this.lastCarrierScanned) this.packingReference = this.lastCarrierScanned;
-          this.jailReference = this.packingReference;
-          this.processInitiated = true;
-          this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-        }
+          this.clearTimeoutCleanLastCodeScanned();
+          this.intervalCleanLastCodeScanned = setInterval(() => {
+            if (this.itemReferencesProvider.checkCodeValue(this.lastCodeScanned) === this.itemReferencesProvider.codeValue.PACKING) {
+              if (Math.abs((new Date().getTime() - this.timeLastCodeScanned) / 1000) > 4) {
+                this.lastCodeScanned = 'start';
+              }
+            }
+          }, 1000);
+
+          if (this.listProducts.length > 0) {
+            this.showTextStartScanPacking(true, this.typePacking, this.packingReference || '');
+          } else {
+            if (this.lastCarrierScanned) this.packingReference = this.lastCarrierScanned;
+            this.jailReference = this.packingReference;
+            this.processInitiated = true;
+            this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+          }
+        });
       } else {
         console.error(response);
       }
@@ -424,131 +425,129 @@ export class TextareaComponent implements OnInit {
               pikingId: this.pickingId,
               productReference: dataWrited
             };
-            // this.inventoryService.postPickingReturn(picking).then(await (async (res: InventoryModel.ResponsePicking) => {
-            //   if (res.code === 200 || res.code === 201) {
-            //     this.listProducts = res.data.shoePickingPending;
-            //     this.productsScanned.push(dataWrited);
-            //     this.inputPicking = null;
-            //
-            //     this.isScannerBlocked = false;
-            //     this.processFinishOk({
-            //       focusInput: {
-            //         playSound: true
-            //       },
-            //       toast: {
-            //         position: PositionsToast.BOTTOM,
-            //         message: `Producto ${dataWrited} escaneado y añadido el embalaje.`,
-            //         duration: TimesToastType.DURATION_SUCCESS_TOAST_2000
-            //       }
-            //     });
-            //
-            //     if (this.listProducts.length > 0) {
-            //       this.setNexProductToScan(this.listProducts[0]);
-            //     } else {
-            //       this.showNexProductToScan(false);
-            //       setTimeout(() => {
-            //         this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-            //         this.dataToWrite = 'CONTENEDOR';
-            //
-            //         this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end,
-            //           TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
-            //       }, 2 * 1000);
-            //     }
-            //   } else {
-            //     this.inputPicking = null;
-            //
-            //     this.isScannerBlocked = false;
-            //     this.processFinishError({
-            //       focusInput: {
-            //         playSound: true
-            //       },
-            //       toast: {
-            //         position: PositionsToast.BOTTOM,
-            //         message: res.errors
-            //       }
-            //     });
-            //
-            //     this.getPendingListByPicking(this.pickingId)
-            //       .subscribe((res2: ShoesPickingModel.ResponseListByPicking) => {
-            //         if (res2.code === 200 || res2.code === 201) {
-            //           this.listProducts = res2.data;
-            //           if (this.listProducts.length > 0) {
-            //             this.setNexProductToScan(this.listProducts[0]);
-            //           } else {
-            //             this.showNexProductToScan(false);
-            //             setTimeout(() => {
-            //               this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-            //               this.dataToWrite = 'CONTENEDOR';
-            //
-            //               this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
-            //             }, 2 * 1000);
-            //           }
-            //         }
-            //       });
-            //   }
-            // }), (error) => {
-            //   this.inputPicking = null;
-            //
-            //   this.isScannerBlocked = false;
-            //   this.processFinishError({
-            //     focusInput: {
-            //       playSound: true
-            //     },
-            //     toast: {
-            //       position: PositionsToast.BOTTOM,
-            //       message: error.error.errors
-            //     }
-            //   });
-            //
-            //   this.getPendingListByPicking(this.pickingId)
-            //     .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
-            //       if (res.code === 200 || res.code === 201) {
-            //         this.listProducts = res.data;
-            //         if (this.listProducts.length > 0) {
-            //           this.setNexProductToScan(this.listProducts[0]);
-            //         } else {
-            //           this.showNexProductToScan(false);
-            //           setTimeout(() => {
-            //             this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-            //             this.dataToWrite = 'CONTENEDOR';
-            //
-            //             this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
-            //           }, 2 * 1000);
-            //         }
-            //       }
-            //     });
-            // }).catch((error) => {
-            //   this.inputPicking = null;
-            //
-            //   this.isScannerBlocked = false;
-            //   this.processFinishError({
-            //     focusInput: {
-            //       playSound: true
-            //     },
-            //     toast: {
-            //       position: PositionsToast.BOTTOM,
-            //       message: error.error.errors
-            //     }
-            //   });
-            //
-            //   this.getPendingListByPicking(this.pickingId)
-            //     .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
-            //       if (res.code === 200 || res.code === 201) {
-            //         this.listProducts = res.data;
-            //         if (this.listProducts.length > 0) {
-            //           this.setNexProductToScan(this.listProducts[0]);
-            //         } else {
-            //           this.showNexProductToScan(false);
-            //           setTimeout(() => {
-            //             this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-            //             this.dataToWrite = 'CONTENEDOR';
-            //
-            //             this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
-            //           }, 2 * 1000);
-            //         }
-            //       }
-            //     });
-            // });
+            this.inventoryService.postPickingReturn(picking).then(await (async (res: InventoryModel.ResponsePickingReturn) => {
+              if (res.code === 200 || res.code === 201) {
+                this.listProducts = res.data;
+                this.pickingSelected.unitsPrepared += 1;
+                this.productsScanned.push(dataWrited);
+                this.inputPicking = null;
+
+                this.isScannerBlocked = false;
+                this.processFinishOk({
+                  focusInput: {
+                    playSound: true
+                  },
+                  toast: {
+                    position: PositionsToast.BOTTOM,
+                    message: `Producto ${dataWrited} escaneado y añadido el embalaje.`,
+                    duration: TimesToastType.DURATION_SUCCESS_TOAST_2000
+                  }
+                });
+
+                if (this.listProducts.length > 0) {
+                  this.setNexProductToScan(this.listProducts[0]);
+                } else {
+                  this.showNexProductToScan(false);
+                  setTimeout(() => {
+                    this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                    this.dataToWrite = 'CONTENEDOR';
+
+                    this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end,
+                      TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
+                  }, 2 * 1000);
+                }
+              } else {
+                this.inputPicking = null;
+
+                this.isScannerBlocked = false;
+                this.processFinishError({
+                  focusInput: {
+                    playSound: true
+                  },
+                  toast: {
+                    position: PositionsToast.BOTTOM,
+                    message: res.errors
+                  }
+                });
+
+                this.getPendingListByPicking(this.pickingId).subscribe((res2: ShoesPickingModel.ResponseListByPickingReturn) => {
+                    if (res2.code === 200 || res2.code === 201) {
+                      this.listProducts = res2.data;
+                      if (this.listProducts.length > 0) {
+                        this.setNexProductToScan(this.listProducts[0]);
+                      } else {
+                        this.showNexProductToScan(false);
+                        setTimeout(() => {
+                          this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                          this.dataToWrite = 'CONTENEDOR';
+
+                          this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
+                        }, 2 * 1000);
+                      }
+                    }
+                  });
+              }
+            }), (error) => {
+              this.inputPicking = null;
+
+              this.isScannerBlocked = false;
+              this.processFinishError({
+                focusInput: {
+                  playSound: true
+                },
+                toast: {
+                  position: PositionsToast.BOTTOM,
+                  message: error.error.errors
+                }
+              });
+
+              this.getPendingListByPicking(this.pickingId).subscribe((res: ShoesPickingModel.ResponseListByPickingReturn) => {
+                  if (res.code === 200 || res.code === 201) {
+                    this.listProducts = res.data;
+                    if (this.listProducts.length > 0) {
+                      this.setNexProductToScan(this.listProducts[0]);
+                    } else {
+                      this.showNexProductToScan(false);
+                      setTimeout(() => {
+                        this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                        this.dataToWrite = 'CONTENEDOR';
+
+                        this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
+                      }, 2 * 1000);
+                    }
+                  }
+                });
+            }).catch((error) => {
+              this.inputPicking = null;
+
+              this.isScannerBlocked = false;
+              this.processFinishError({
+                focusInput: {
+                  playSound: true
+                },
+                toast: {
+                  position: PositionsToast.BOTTOM,
+                  message: error.error.errors
+                }
+              });
+
+              this.getPendingListByPicking(this.pickingId).subscribe((res: ShoesPickingModel.ResponseListByPickingReturn) => {
+                  if (res.code === 200 || res.code === 201) {
+                    this.listProducts = res.data;
+                    if (this.listProducts.length > 0) {
+                      this.setNexProductToScan(this.listProducts[0]);
+                    } else {
+                      this.showNexProductToScan(false);
+                      setTimeout(() => {
+                        this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                        this.dataToWrite = 'CONTENEDOR';
+
+                        this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
+                      }, 2 * 1000);
+                    }
+                  }
+                });
+            });
           } else {
             this.inputPicking = null;
             this.dataToWrite = 'CONTENEDOR';
@@ -573,92 +572,90 @@ export class TextareaComponent implements OnInit {
         if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER
           || this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER_OLD) {
           this.loadingMessageComponent.show(true, `Comprobando ${dataWrited}`);
-          // this.postCheckContainerProduct(dataWrited, this.nexProduct.inventory.id).subscribe((res: InventoryModel.ResponseCheckContainer) => {
-          //     if (res.code === 200) {
-          //       let productNotFoundId = this.nexProduct.product.id;
-          //       this.putProductNotFound(this.pickingId, productNotFoundId)
-          //         .subscribe((res3: ShoesPickingModel.ResponseProductNotFound) => {
-          //           if (res3.code === 200 || res3.code === 201) {
-          //             this.scanContainerToNotFound = null;
-          //             this.dataToWrite = "PRODUCTO";
-          //
-          //             this.isScannerBlocked = false;
-          //             this.processFinishOk({
-          //               focusInput: {
-          //                 playSound: true
-          //               },
-          //               toast: {
-          //                 position: PositionsToast.BOTTOM,
-          //                 message: 'El producto ha sido reportado como no encontrado',
-          //                 duration: TimesToastType.DURATION_SUCCESS_TOAST_1500
-          //               }
-          //             });
-          //
-          //             this.getPendingListByPicking(this.pickingId)
-          //               .subscribe((res2: ShoesPickingModel.ResponseListByPicking) => {
-          //                 if (res2.code === 200 || res2.code === 201) {
-          //                   this.listProducts = res2.data;
-          //                   if (this.listProducts.length > 0) {
-          //                     this.setNexProductToScan(this.listProducts[0]);
-          //                   } else {
-          //                     this.showNexProductToScan(false);
-          //                     setTimeout(() => {
-          //                       this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-          //                       this.dataToWrite = 'CONTENEDOR';
-          //
-          //                       this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM)
-          //                     }, 2 * 1000);
-          //                   }
-          //                 }
-          //               });
-          //           } else {
-          //             this.isScannerBlocked = false;
-          //             this.processFinishError({
-          //               focusInput: {
-          //                 playSound: true
-          //               },
-          //               toast: {
-          //                 position: PositionsToast.BOTTOM,
-          //                 message: 'Ha ocurrido un error al intentar reportar el producto como no encontrado.'
-          //               }
-          //             });
-          //           }
-          //         }, error => {
-          //           this.isScannerBlocked = false;
-          //           this.processFinishError({
-          //             focusInput: {
-          //               playSound: true
-          //             },
-          //             toast: {
-          //               position: PositionsToast.BOTTOM,
-          //               message: 'El código escaneado no corresponde a la ubicación del producto.'
-          //             }
-          //           });
-          //         });
-          //     } else {
-          //       this.isScannerBlocked = false;
-          //       this.processFinishError({
-          //         focusInput: {
-          //           playSound: true
-          //         },
-          //         toast: {
-          //           position: PositionsToast.BOTTOM,
-          //           message: 'El código escaneado no corresponde a la ubicación del producto'
-          //         }
-          //       });
-          //     }
-          //   }, (error) => {
-          //     this.isScannerBlocked = false;
-          //     this.processFinishError({
-          //       focusInput: {
-          //         playSound: true
-          //       },
-          //       toast: {
-          //         position: PositionsToast.BOTTOM,
-          //         message: 'El código escaneado no corresponde a la ubicación del producto.'
-          //       }
-          //     });
-          //   });
+          this.postCheckContainerProduct(dataWrited, this.nexProduct.inventory.id).subscribe((res: InventoryModel.ResponseCheckContainer) => {
+              if (res.code === 200) {
+                let productNotFoundId = this.nexProduct.product.id;
+                this.putProductNotFound(this.pickingId, productNotFoundId).subscribe((res3: ShoesPickingModel.ResponseProductNotFound) => {
+                    if (res3.code === 200 || res3.code === 201) {
+                      this.scanContainerToNotFound = null;
+                      this.dataToWrite = "PRODUCTO";
+
+                      this.isScannerBlocked = false;
+                      this.processFinishOk({
+                        focusInput: {
+                          playSound: true
+                        },
+                        toast: {
+                          position: PositionsToast.BOTTOM,
+                          message: 'El producto ha sido reportado como no encontrado',
+                          duration: TimesToastType.DURATION_SUCCESS_TOAST_1500
+                        }
+                      });
+
+                      this.getPendingListByPicking(this.pickingId).subscribe((res2: ShoesPickingModel.ResponseListByPickingReturn) => {
+                        if (res2.code === 200 || res2.code === 201) {
+                          this.listProducts = res2.data;
+                          if (this.listProducts.length > 0) {
+                            this.setNexProductToScan(this.listProducts[0]);
+                          } else {
+                            this.showNexProductToScan(false);
+                            setTimeout(() => {
+                              this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                              this.dataToWrite = 'CONTENEDOR';
+
+                              this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM)
+                            }, 2 * 1000);
+                          }
+                        }
+                      });
+                    } else {
+                      this.isScannerBlocked = false;
+                      this.processFinishError({
+                        focusInput: {
+                          playSound: true
+                        },
+                        toast: {
+                          position: PositionsToast.BOTTOM,
+                          message: 'Ha ocurrido un error al intentar reportar el producto como no encontrado.'
+                        }
+                      });
+                    }
+                  }, error => {
+                    this.isScannerBlocked = false;
+                    this.processFinishError({
+                      focusInput: {
+                        playSound: true
+                      },
+                      toast: {
+                        position: PositionsToast.BOTTOM,
+                        message: 'El código escaneado no corresponde a la ubicación del producto.'
+                      }
+                    });
+                  });
+              } else {
+                this.isScannerBlocked = false;
+                this.processFinishError({
+                  focusInput: {
+                    playSound: true
+                  },
+                  toast: {
+                    position: PositionsToast.BOTTOM,
+                    message: 'El código escaneado no corresponde a la ubicación del producto'
+                  }
+                });
+              }
+            }, (error) => {
+              this.isScannerBlocked = false;
+              this.processFinishError({
+                focusInput: {
+                  playSound: true
+                },
+                toast: {
+                  position: PositionsToast.BOTTOM,
+                  message: 'El código escaneado no corresponde a la ubicación del producto.'
+                }
+              });
+            });
         } else {
           this.isScannerBlocked = false;
           this.processFinishError({
@@ -720,17 +717,17 @@ export class TextareaComponent implements OnInit {
     }));
   }
 
-  private getPendingListByPicking(pickingId: number): Observable<ShoesPickingModel.ResponseListByPicking> {
+  private getPendingListByPicking(pickingId: number): Observable<ShoesPickingModel.ResponseListByPickingReturn> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.get<ShoesPickingModel.ResponseListByPicking>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
+      return this.http.get<ShoesPickingModel.ResponseListByPickingReturn>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
     }));
   }
 
   private putProductNotFound(pickingId: number, productId: number): Observable<ShoesPickingModel.ResponseProductNotFound> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      let putProductNotFoundUrl = this.putProductNotFoundUrl.replace('{{workWaveOrderId}}', pickingId.toString());
+      let putProductNotFoundUrl = this.putProductNotFoundUrl.replace('{{returnId}}', pickingId.toString());
       putProductNotFoundUrl = putProductNotFoundUrl.replace('{{productId}}', productId.toString());
       return this.http.put<ShoesPickingModel.ResponseProductNotFound>(putProductNotFoundUrl, { headers });
     }));

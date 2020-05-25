@@ -2,7 +2,7 @@
   <ion-grid *ngIf="return">
     <ion-row>
       <ion-col class="center-contents">
-        <ion-button (click)="this.router.navigateByUrl('picking/return')">Iniciar picking</ion-button>
+        <ion-button [disabled]="![2,3].includes(return.status)" (click)="this.router.navigateByUrl('picking/return')">Iniciar picking</ion-button>
       </ion-col>
     </ion-row>
     <ion-row>

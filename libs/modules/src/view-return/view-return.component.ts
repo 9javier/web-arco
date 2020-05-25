@@ -11,6 +11,7 @@ import {AuthenticationService} from "@suite/services";
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 import {PickingProvider} from "../../../services/src/providers/picking/picking.provider";
 import ReturnPacking = ReturnModel.ReturnPacking;
+import {Events} from "@ionic/angular";
 
 @Component({
   selector: 'suite-view-return',
@@ -22,6 +23,7 @@ export class ViewReturnComponent implements OnInit {
   return: Return;
 
   constructor(
+    private events: Events,
     private route: ActivatedRoute,
     public router: Router,
     private pickingProvider: PickingProvider,
@@ -34,6 +36,14 @@ export class ViewReturnComponent implements OnInit {
     this.toolbarProvider.currentPage.next('Picking Devolución');
     this.toolbarProvider.optionsActions.next([]);
     this.load(parseInt(this.route.snapshot.paramMap.get('id')));
+
+    this.events.subscribe('picking:remove', () => {
+      this.load(parseInt(this.route.snapshot.paramMap.get('id')));
+    });
+  }
+
+  ngOnDestroy() {
+    this.events.unsubscribe('picking:remove');
   }
 
   save(){
