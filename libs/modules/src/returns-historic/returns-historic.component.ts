@@ -15,13 +15,17 @@ import FilterOptionsResponse = ReturnModel.FilterOptionsResponse;
 import {NavigationEnd, Router} from "@angular/router";
 import {SupplierConditionModel} from "../../../services/src/models/endpoints/SupplierCondition";
 import {MatTableDataSource} from "@angular/material/table";
+import * as Filesave from 'file-saver';
+import { map, catchError } from 'rxjs/operators';
+import { BehaviorSubject, of, Observable } from 'rxjs';
+import {IntermediaryService} from "@suite/services";
 
 @Component({
-  selector: 'suite-return-tracking-list',
-  templateUrl: './return-tracking-list.component.html',
-  styleUrls: ['./return-tracking-list.component.scss']
+  selector: 'suite-returns-historic',
+  templateUrl: './returns-historic.component.html',
+  styleUrls: ['./returns-historic.component.scss']
 })
-export class ReturnTrackingListComponent implements OnInit {
+export class ReturnsHistoricComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -65,10 +69,12 @@ export class ReturnTrackingListComponent implements OnInit {
 
   constructor(
     public router: Router,
-    private returnService: ReturnService
+    private returnService: ReturnService,
+    private intermediaryService: IntermediaryService
+
   ) {
     this.router.events.subscribe((val) => {
-      if(val instanceof NavigationEnd && val && val.url == '/return-tracking-list'){
+      if(val instanceof NavigationEnd && val && val.url == '/returns-historic'){
         if(typeof this.returns !== 'undefined'){
           this.reset();
         }
@@ -201,7 +207,7 @@ export class ReturnTrackingListComponent implements OnInit {
       order: this.order,
       pagination: this.pagination
     };
-    this.returnService.postSearchHistoricFalse(parameters).then((response: SearchResponse) => {
+    this.returnService.postSearchHistoricTrue(parameters).then((response: SearchResponse) => {
       if(response.code == 200){
         this.dataSource = new MatTableDataSource<SupplierConditionModel.SupplierCondition>(response.data.result);
         this.returns = response.data.result;
@@ -289,5 +295,27 @@ export class ReturnTrackingListComponent implements OnInit {
     this.paginator.pageIndex = 0;
     this.loadFilters();
     this.loadReturns();
+  }
+
+  /**
+   * @description Eviar parametros y recibe un archivo excell
+   */
+  async fileExcell() {
+    this.intermediaryService.presentLoading('Descargando Archivo Excel').then(()=>{
+      const parameters: SearchParameters = {
+        filters: this.filters,
+        order: this.order,
+        pagination: this.pagination
+      };
+      this.returnService.getFileExcellHistoric(parameters).pipe(
+        catchError(error => of(error)),
+        // map(file => file.error.text)
+      ).subscribe((data) => {
+        const blob = new Blob([data], { type: 'application/octet-stream' });
+        Filesave.saveAs(blob, `${Date.now()}.xlsx`);
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastSuccess('Archivo descargado')
+      }, error => console.log(error));
+    });
   }
 }

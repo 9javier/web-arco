@@ -31,20 +31,20 @@ export namespace ReturnModel{
     observations: string,
     lastStatus: number,
     user: User,
-    packings: Carrier[],
+    //packings: Carrier[],
     amountPackages: number,
     shipper: string,
     datePredictedPickup: string,
     datePickup: string,
     printTagPackages: boolean
   }
-  
+
   export interface SearchParameters {
     filters: Filters,
     order: Order,
     pagination: Pagination
   }
-  
+
   export interface SearchResponse {
     message?: string,
     code?: number,

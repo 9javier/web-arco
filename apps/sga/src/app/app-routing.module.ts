@@ -245,6 +245,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'returns-historic',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/returns-historic/returns-historic.module#ReturnsHistoricModule',
+    data: {
+      name: 'Listado de Histórico de Devoluciones'
+    }
+  },
+  {
     path: 'returns-list-products',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/returns-list-products/returns-list-products.module#ReturnsListProductsModule',

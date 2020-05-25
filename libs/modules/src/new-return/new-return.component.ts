@@ -32,6 +32,7 @@ export class NewReturnComponent implements OnInit {
   types: ReturnType[];
   warehouses: Warehouse[];
   providers: Provider[];
+  isHistoric;
 
   private listItemsSelected: any[] = [];
   private itemForList: string = null;
@@ -47,6 +48,9 @@ export class NewReturnComponent implements OnInit {
   async ngOnInit() {
     this.getOptions();
     const returnId: number = parseInt(this.route.snapshot.paramMap.get('id'));
+    if(this.route.snapshot.paramMap.get('isHistoric')){
+      this.isHistoric = this.route.snapshot.paramMap.get('isHistoric');
+    }
     if (returnId) {
       this.load(returnId);
     } else {
@@ -63,7 +67,6 @@ export class NewReturnComponent implements OnInit {
         id: 0,
         lastStatus: 1,
         observations: "",
-        packings: [],
         printTagPackages: false,
         provider: null,
         shipper: "",
@@ -87,7 +90,11 @@ export class NewReturnComponent implements OnInit {
   save(){
     this.returnService.postSave({return: this.return}).then((response: SaveResponse) => {
       if(response.code == 200){
-        this.router.navigateByUrl('/return-tracking-list')
+        if(this.isHistoric){
+          this.router.navigateByUrl('/returns-historic')
+        }else{
+          this.router.navigateByUrl('/return-tracking-list')
+        }
       }else{
         console.error(response);
       }
