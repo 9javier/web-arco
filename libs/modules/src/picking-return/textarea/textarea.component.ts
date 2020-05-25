@@ -2,14 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { from, Observable } from "rxjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import {
-  AuthenticationService,
-  environment,
-  InventoryModel,
-  InventoryService,
-  IntermediaryService,
-  CarrierService
-} from '@suite/services';
+import { AuthenticationService, environment, InventoryModel, InventoryService, IntermediaryService, CarrierService } from '@suite/services';
 import { AlertController, Events, ModalController } from "@ionic/angular";
 import { ShoesPickingModel } from "../../../../services/src/models/endpoints/ShoesPicking";
 import { switchMap } from "rxjs/operators";
@@ -23,9 +16,13 @@ import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
 import { LoadingMessageComponent } from "../../components/loading-message/loading-message.component";
-import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import * as toolbarProvider from "../../../../services/src/providers/toolbar/toolbar.provider";
-import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
+import {ReturnModel} from "../../../../services/src/models/endpoints/Return";
+import Return = ReturnModel.Return;
+import {ReturnService} from "../../../../services/src/lib/endpoint/return/return.service";
+import LoadResponse = ReturnModel.LoadResponse;
+import ReturnProduct = ReturnModel.ReturnProduct;
+import ReturnPacking = ReturnModel.ReturnPacking;
 
 @Component({
   selector: 'suite-textarea',
@@ -40,10 +37,10 @@ export class TextareaComponent implements OnInit {
   containerReference: string = null;
   inputPicking: string = null;
   scanJail: string = null;
-  nexProduct: ShoesPickingModel.ShoesPicking = null;
+  nexProduct: ReturnProduct = null;
 
   pickingId: number;
-  listProducts: ShoesPickingModel.ShoesPicking[];
+  listProducts: ReturnProduct[];
   typePacking: number;
   typePicking: number;
   packingReference: string = null;
@@ -56,9 +53,9 @@ export class TextareaComponent implements OnInit {
   literalsJailPallet: any = null;
   scanContainerToNotFound: string = null;
   intervalCleanLastCodeScanned = null;
-  pickingSelected: PickingModel.Picking;
+  pickingSelected: Return;
 
-  private postVerifyPackingUrl = environment.apiBase + "/processes/picking-main/packing";
+  private postVerifyPackingUrl = environment.apiBase + "/processes/picking-main/packing-return";
   private getPendingListByPickingUrl = environment.apiBase + "/processes/picking-main/shoes/{{id}}/pending";
   private putProductNotFoundUrl = environment.apiBase + "/processes/picking-main/shoes/{{workWaveOrderId}}/product-not-found/{{productId}}";
   private postCheckContainerProductUrl = environment.apiBase + "/inventory/check-container";
@@ -83,7 +80,7 @@ export class TextareaComponent implements OnInit {
     private keyboardService: KeyboardService,
     private carrierService: CarrierService,
     private modalCtrl: ModalController,
-    private scanditService: ScanditService,
+    private returnService: ReturnService,
     private toolbarProvider: toolbarProvider.ToolbarProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
@@ -91,96 +88,46 @@ export class TextareaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.addCameraButton();
-    this.pickingSelected = this.pickingProvider.pickingSelectedToStart;
-    this.pickingId = this.pickingProvider.pickingId;
-    this.listProducts = this.pickingProvider.listProducts;
+    this.pickingId = this.pickingProvider.currentReturnPickingId;
+    this.returnService.postLoadWithProducts({returnId:  this.pickingId}).then((response: LoadResponse) => {
+      if (response.code == 200) {
+        this.pickingSelected = response.data;
+        this.listProducts = response.data.products;
 
-    this.typePacking = this.pickingProvider.typePacking;
-    this.typePicking = this.pickingProvider.typePicking;
-    this.packingReference = this.pickingProvider.packingReference;
-    this.literalsJailPallet = this.pickingProvider.literalsJailPallet;
-
-    this.clearTimeoutCleanLastCodeScanned();
-    this.intervalCleanLastCodeScanned = setInterval(() => {
-      if (this.itemReferencesProvider.checkCodeValue(this.lastCodeScanned) === this.itemReferencesProvider.codeValue.PACKING) {
-        if (Math.abs((new Date().getTime() - this.timeLastCodeScanned) / 1000) > 4) {
-          this.lastCodeScanned = 'start';
-        }
-      }
-    }, 1000);
-
-    if (this.listProducts.length > 0) {
-      this.showTextStartScanPacking(true, this.typePacking, this.packingReference || '');
-    } else {
-      if (this.lastCarrierScanned) this.packingReference = this.lastCarrierScanned;
-      this.jailReference = this.packingReference;
-      this.processInitiated = true;
-      this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-    }
-
-    this.scanditService.laserMode.subscribe(pacRef => {
-      if(pacRef == ''){
-        this.processInitiated = false;
-        this.inputPicking = null;
-        this.jailReference = null;
-        this.dataToWrite = 'CONTENEDOR';
-        this.packingReference = this.jailReference;
-        this.isScannerBlocked = false;
-        this.showNexProductToScan(false);
-        this.showTextStartScanPacking(true, this.typePacking, '', true);
-      }else{
-        this.listProducts = this.pickingProvider.listProducts;
-        this.isScannerBlocked = true;
-        document.getElementById('input-ta').blur();
-        this.lastCodeScanned = pacRef;
-        if (this.timeoutStarted) {
-          clearTimeout(this.timeoutStarted);
-        }
-        this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
-        this.inputPicking = null;
-        this.timeLastCodeScanned = new Date().getTime();
-        this.lastCarrierScanned = pacRef;
-        this.loadingMessageComponent.show(true);
-        if (this.itemReferencesProvider.checkSpecificCodeValue(pacRef, this.itemReferencesProvider.codeValue.JAIL)) {
-          this.typePacking = 1;
-        } else if (this.itemReferencesProvider.checkSpecificCodeValue(pacRef, this.itemReferencesProvider.codeValue.PALLET)) {
-          this.typePacking = 2;
-        } else {
-          this.typePacking = 3;
-        }
-        this.processInitiated = true;
-        this.jailReference = pacRef;
-        this.dataToWrite = 'PRODUCTO';
-        if (!this.packingReference) {
-          this.packingReference = this.jailReference;
-        }
-        this.isScannerBlocked = false;
-        this.processFinishOk({
-          focusInput: {
-            playSound: true
-          },
-          toast: {
-            duration: TimesToastType.DURATION_SUCCESS_TOAST_2000,
-            position: PositionsToast.BOTTOM,
-            message: `${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`
+        this.typePacking = 1;
+        this.typePicking = 1;
+        if(this.pickingSelected.status == 2){
+          this.packingReference = null;
+        }else{
+          let activePackings: ReturnPacking[] = this.pickingSelected.packings.filter(packings => packings.packing.status == 2);
+          if(!(activePackings && activePackings.length > 0)){
+            activePackings = this.pickingSelected.packings.filter(packings => packings.packing.status == 1);
           }
-        });
-        this.setNexProductToScan(this.listProducts[0]);
-        this.showTextStartScanPacking(false, this.typePacking, '');
-      }
-    });
-  }
+          this.packingReference = activePackings[0].packing.reference;
+        }
+        this.literalsJailPallet = this.pickingProvider.literalsJailPallet;
 
-  addCameraButton(){
-    const buttons = [{
-      icon: 'camera',
-      label: 'Cámara',
-      action: () => {
-        this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, this.listProducts, this.pickingProvider.pickingSelectedToStart.packingType, this.pickingProvider.typePicking, this.packingReference);
+        this.clearTimeoutCleanLastCodeScanned();
+        this.intervalCleanLastCodeScanned = setInterval(() => {
+          if (this.itemReferencesProvider.checkCodeValue(this.lastCodeScanned) === this.itemReferencesProvider.codeValue.PACKING) {
+            if (Math.abs((new Date().getTime() - this.timeLastCodeScanned) / 1000) > 4) {
+              this.lastCodeScanned = 'start';
+            }
+          }
+        }, 1000);
+
+        if (this.listProducts.length > 0) {
+          this.showTextStartScanPacking(true, this.typePacking, this.packingReference || '');
+        } else {
+          if (this.lastCarrierScanned) this.packingReference = this.lastCarrierScanned;
+          this.jailReference = this.packingReference;
+          this.processInitiated = true;
+          this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+        }
+      } else {
+        console.error(response);
       }
-    }];
-    this.toolbarProvider.optionsActions.next(buttons);
+    }).catch(console.error);
   }
 
   private async modalList(jaula: string) {
@@ -253,10 +200,7 @@ export class TextareaComponent implements OnInit {
             }
           }
         } else {
-          this.carrierService.getSingle(this.lastCodeScanned)
-            .pipe(
-              // map(x => x.packingInventorys),
-            )
+          this.carrierService.getSingle(this.lastCodeScanned).pipe()
             .subscribe(data => {
               if (data) {
                 if (data.packingInventorys.length > 0 && !prova) {
@@ -277,7 +221,7 @@ export class TextareaComponent implements OnInit {
                       if ((this.typePacking && typePackingScanned === this.typePacking) || !this.typePacking) {
                         this.loadingMessageComponent.show(true);
                         this.postVerifyPacking({
-                          status: 2,
+                          status: 3,
                           pickingId: this.pickingId,
                           packingReference: dataWrited
                         })
@@ -291,7 +235,7 @@ export class TextareaComponent implements OnInit {
                             }
                             if (res) {
                               if (res.code === 200 || res.code === 201) {
-                                if (res.data.packingStatus === 2) {
+                                if (res.data.packingStatus === 3) {
                                   this.processInitiated = true;
                                   this.inputPicking = null;
                                   this.jailReference = dataWrited;
@@ -314,7 +258,7 @@ export class TextareaComponent implements OnInit {
 
                                   this.setNexProductToScan(this.listProducts[0]);
                                   this.showTextStartScanPacking(false, this.typePacking, '');
-                                } else if (res.data.packingStatus === 3) {
+                                } else if (res.data.packingStatus === 4) {
                                   if (this.typePicking === 1) {
                                     this.loadingMessageComponent.show(false);
                                     this.alertSealPackingIntermediate(this.jailReference);
@@ -473,116 +417,138 @@ export class TextareaComponent implements OnInit {
           });
         } else {
           if (this.listProducts.length > 0) {
+            this.loadingMessageComponent.show(true, `Procesando ${dataWrited || ''}`);
             let picking: InventoryModel.Picking = {
               packingReference: this.jailReference,
               packingType: this.typePacking,
               pikingId: this.pickingId,
               productReference: dataWrited
             };
-            this.loadingMessageComponent.show(true, `Procesando ${picking.productReference || ''}`);
-            let subscribeResponse = await (async (res: InventoryModel.ResponsePicking) => {
-              if (res.code === 200 || res.code === 201) {
-                this.listProducts = res.data.shoePickingPending;
-                this.productsScanned.push(dataWrited);
-                this.inputPicking = null;
-
-                this.isScannerBlocked = false;
-                this.processFinishOk({
-                  focusInput: {
-                    playSound: true
-                  },
-                  toast: {
-                    position: PositionsToast.BOTTOM,
-                    message: `Producto ${dataWrited} escaneado y añadido el embalaje.`,
-                    duration: TimesToastType.DURATION_SUCCESS_TOAST_2000
-                  }
-                });
-
-                if (this.listProducts.length > 0) {
-                  this.setNexProductToScan(this.listProducts[0]);
-                } else {
-                  this.showNexProductToScan(false);
-                  setTimeout(() => {
-                    this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-                    this.dataToWrite = 'CONTENEDOR';
-
-                    this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end,
-                      TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
-                  }, 2 * 1000);
-                }
-              } else {
-                this.inputPicking = null;
-
-                this.isScannerBlocked = false;
-                this.processFinishError({
-                  focusInput: {
-                    playSound: true
-                  },
-                  toast: {
-                    position: PositionsToast.BOTTOM,
-                    message: res.errors
-                  }
-                });
-
-                this.getPendingListByPicking(this.pickingId)
-                  .subscribe((res2: ShoesPickingModel.ResponseListByPicking) => {
-                    if (res2.code === 200 || res2.code === 201) {
-                      this.listProducts = res2.data;
-                      if (this.listProducts.length > 0) {
-                        this.setNexProductToScan(this.listProducts[0]);
-                      } else {
-                        this.showNexProductToScan(false);
-                        setTimeout(() => {
-                          this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-                          this.dataToWrite = 'CONTENEDOR';
-
-                          this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
-                        }, 2 * 1000);
-                      }
-                    }
-                  });
-              }
-            });
-            let subscribeError = (error) => {
-              this.inputPicking = null;
-
-              this.isScannerBlocked = false;
-              this.processFinishError({
-                focusInput: {
-                  playSound: true
-                },
-                toast: {
-                  position: PositionsToast.BOTTOM,
-                  message: error.error.errors
-                }
-              });
-
-              this.getPendingListByPicking(this.pickingId)
-                .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
-                  if (res.code === 200 || res.code === 201) {
-                    this.listProducts = res.data;
-                    if (this.listProducts.length > 0) {
-                      this.setNexProductToScan(this.listProducts[0]);
-                    } else {
-                      this.showNexProductToScan(false);
-                      setTimeout(() => {
-                        this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-                        this.dataToWrite = 'CONTENEDOR';
-
-                        this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
-                      }, 2 * 1000);
-                    }
-                  }
-                });
-            };
-
-            if (this.typePicking === 1) {
-              this.inventoryService.postPickingDirect(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
-            } else if (this.typePicking === 2) {
-              this.inventoryService.postPickingConsolidated(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
-            } else {
-              this.inventoryService.postPickingOnlineStore(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
-            }
+            // this.inventoryService.postPickingReturn(picking).then(await (async (res: InventoryModel.ResponsePicking) => {
+            //   if (res.code === 200 || res.code === 201) {
+            //     this.listProducts = res.data.shoePickingPending;
+            //     this.productsScanned.push(dataWrited);
+            //     this.inputPicking = null;
+            //
+            //     this.isScannerBlocked = false;
+            //     this.processFinishOk({
+            //       focusInput: {
+            //         playSound: true
+            //       },
+            //       toast: {
+            //         position: PositionsToast.BOTTOM,
+            //         message: `Producto ${dataWrited} escaneado y añadido el embalaje.`,
+            //         duration: TimesToastType.DURATION_SUCCESS_TOAST_2000
+            //       }
+            //     });
+            //
+            //     if (this.listProducts.length > 0) {
+            //       this.setNexProductToScan(this.listProducts[0]);
+            //     } else {
+            //       this.showNexProductToScan(false);
+            //       setTimeout(() => {
+            //         this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+            //         this.dataToWrite = 'CONTENEDOR';
+            //
+            //         this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end,
+            //           TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
+            //       }, 2 * 1000);
+            //     }
+            //   } else {
+            //     this.inputPicking = null;
+            //
+            //     this.isScannerBlocked = false;
+            //     this.processFinishError({
+            //       focusInput: {
+            //         playSound: true
+            //       },
+            //       toast: {
+            //         position: PositionsToast.BOTTOM,
+            //         message: res.errors
+            //       }
+            //     });
+            //
+            //     this.getPendingListByPicking(this.pickingId)
+            //       .subscribe((res2: ShoesPickingModel.ResponseListByPicking) => {
+            //         if (res2.code === 200 || res2.code === 201) {
+            //           this.listProducts = res2.data;
+            //           if (this.listProducts.length > 0) {
+            //             this.setNexProductToScan(this.listProducts[0]);
+            //           } else {
+            //             this.showNexProductToScan(false);
+            //             setTimeout(() => {
+            //               this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+            //               this.dataToWrite = 'CONTENEDOR';
+            //
+            //               this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
+            //             }, 2 * 1000);
+            //           }
+            //         }
+            //       });
+            //   }
+            // }), (error) => {
+            //   this.inputPicking = null;
+            //
+            //   this.isScannerBlocked = false;
+            //   this.processFinishError({
+            //     focusInput: {
+            //       playSound: true
+            //     },
+            //     toast: {
+            //       position: PositionsToast.BOTTOM,
+            //       message: error.error.errors
+            //     }
+            //   });
+            //
+            //   this.getPendingListByPicking(this.pickingId)
+            //     .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+            //       if (res.code === 200 || res.code === 201) {
+            //         this.listProducts = res.data;
+            //         if (this.listProducts.length > 0) {
+            //           this.setNexProductToScan(this.listProducts[0]);
+            //         } else {
+            //           this.showNexProductToScan(false);
+            //           setTimeout(() => {
+            //             this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+            //             this.dataToWrite = 'CONTENEDOR';
+            //
+            //             this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
+            //           }, 2 * 1000);
+            //         }
+            //       }
+            //     });
+            // }).catch((error) => {
+            //   this.inputPicking = null;
+            //
+            //   this.isScannerBlocked = false;
+            //   this.processFinishError({
+            //     focusInput: {
+            //       playSound: true
+            //     },
+            //     toast: {
+            //       position: PositionsToast.BOTTOM,
+            //       message: error.error.errors
+            //     }
+            //   });
+            //
+            //   this.getPendingListByPicking(this.pickingId)
+            //     .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+            //       if (res.code === 200 || res.code === 201) {
+            //         this.listProducts = res.data;
+            //         if (this.listProducts.length > 0) {
+            //           this.setNexProductToScan(this.listProducts[0]);
+            //         } else {
+            //           this.showNexProductToScan(false);
+            //           setTimeout(() => {
+            //             this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+            //             this.dataToWrite = 'CONTENEDOR';
+            //
+            //             this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
+            //           }, 2 * 1000);
+            //         }
+            //       }
+            //     });
+            // });
           } else {
             this.inputPicking = null;
             this.dataToWrite = 'CONTENEDOR';
@@ -607,93 +573,92 @@ export class TextareaComponent implements OnInit {
         if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER
           || this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER_OLD) {
           this.loadingMessageComponent.show(true, `Comprobando ${dataWrited}`);
-          this.postCheckContainerProduct(dataWrited, this.nexProduct.inventory.id)
-            .subscribe((res: InventoryModel.ResponseCheckContainer) => {
-              if (res.code === 200) {
-                let productNotFoundId = this.nexProduct.product.id;
-                this.putProductNotFound(this.pickingId, productNotFoundId)
-                  .subscribe((res3: ShoesPickingModel.ResponseProductNotFound) => {
-                    if (res3.code === 200 || res3.code === 201) {
-                      this.scanContainerToNotFound = null;
-                      this.dataToWrite = "PRODUCTO";
-
-                      this.isScannerBlocked = false;
-                      this.processFinishOk({
-                        focusInput: {
-                          playSound: true
-                        },
-                        toast: {
-                          position: PositionsToast.BOTTOM,
-                          message: 'El producto ha sido reportado como no encontrado',
-                          duration: TimesToastType.DURATION_SUCCESS_TOAST_1500
-                        }
-                      });
-
-                      this.getPendingListByPicking(this.pickingId)
-                        .subscribe((res2: ShoesPickingModel.ResponseListByPicking) => {
-                          if (res2.code === 200 || res2.code === 201) {
-                            this.listProducts = res2.data;
-                            if (this.listProducts.length > 0) {
-                              this.setNexProductToScan(this.listProducts[0]);
-                            } else {
-                              this.showNexProductToScan(false);
-                              setTimeout(() => {
-                                this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-                                this.dataToWrite = 'CONTENEDOR';
-
-                                this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM)
-                              }, 2 * 1000);
-                            }
-                          }
-                        });
-                    } else {
-                      this.isScannerBlocked = false;
-                      this.processFinishError({
-                        focusInput: {
-                          playSound: true
-                        },
-                        toast: {
-                          position: PositionsToast.BOTTOM,
-                          message: 'Ha ocurrido un error al intentar reportar el producto como no encontrado.'
-                        }
-                      });
-                    }
-                  }, error => {
-                    this.isScannerBlocked = false;
-                    this.processFinishError({
-                      focusInput: {
-                        playSound: true
-                      },
-                      toast: {
-                        position: PositionsToast.BOTTOM,
-                        message: 'El código escaneado no corresponde a la ubicación del producto.'
-                      }
-                    });
-                  });
-              } else {
-                this.isScannerBlocked = false;
-                this.processFinishError({
-                  focusInput: {
-                    playSound: true
-                  },
-                  toast: {
-                    position: PositionsToast.BOTTOM,
-                    message: 'El código escaneado no corresponde a la ubicación del producto'
-                  }
-                });
-              }
-            }, (error) => {
-              this.isScannerBlocked = false;
-              this.processFinishError({
-                focusInput: {
-                  playSound: true
-                },
-                toast: {
-                  position: PositionsToast.BOTTOM,
-                  message: 'El código escaneado no corresponde a la ubicación del producto.'
-                }
-              });
-            });
+          // this.postCheckContainerProduct(dataWrited, this.nexProduct.inventory.id).subscribe((res: InventoryModel.ResponseCheckContainer) => {
+          //     if (res.code === 200) {
+          //       let productNotFoundId = this.nexProduct.product.id;
+          //       this.putProductNotFound(this.pickingId, productNotFoundId)
+          //         .subscribe((res3: ShoesPickingModel.ResponseProductNotFound) => {
+          //           if (res3.code === 200 || res3.code === 201) {
+          //             this.scanContainerToNotFound = null;
+          //             this.dataToWrite = "PRODUCTO";
+          //
+          //             this.isScannerBlocked = false;
+          //             this.processFinishOk({
+          //               focusInput: {
+          //                 playSound: true
+          //               },
+          //               toast: {
+          //                 position: PositionsToast.BOTTOM,
+          //                 message: 'El producto ha sido reportado como no encontrado',
+          //                 duration: TimesToastType.DURATION_SUCCESS_TOAST_1500
+          //               }
+          //             });
+          //
+          //             this.getPendingListByPicking(this.pickingId)
+          //               .subscribe((res2: ShoesPickingModel.ResponseListByPicking) => {
+          //                 if (res2.code === 200 || res2.code === 201) {
+          //                   this.listProducts = res2.data;
+          //                   if (this.listProducts.length > 0) {
+          //                     this.setNexProductToScan(this.listProducts[0]);
+          //                   } else {
+          //                     this.showNexProductToScan(false);
+          //                     setTimeout(() => {
+          //                       this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+          //                       this.dataToWrite = 'CONTENEDOR';
+          //
+          //                       this.intermediaryService.presentToastSuccess(this.literalsJailPallet[this.typePacking].scan_to_end, TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM)
+          //                     }, 2 * 1000);
+          //                   }
+          //                 }
+          //               });
+          //           } else {
+          //             this.isScannerBlocked = false;
+          //             this.processFinishError({
+          //               focusInput: {
+          //                 playSound: true
+          //               },
+          //               toast: {
+          //                 position: PositionsToast.BOTTOM,
+          //                 message: 'Ha ocurrido un error al intentar reportar el producto como no encontrado.'
+          //               }
+          //             });
+          //           }
+          //         }, error => {
+          //           this.isScannerBlocked = false;
+          //           this.processFinishError({
+          //             focusInput: {
+          //               playSound: true
+          //             },
+          //             toast: {
+          //               position: PositionsToast.BOTTOM,
+          //               message: 'El código escaneado no corresponde a la ubicación del producto.'
+          //             }
+          //           });
+          //         });
+          //     } else {
+          //       this.isScannerBlocked = false;
+          //       this.processFinishError({
+          //         focusInput: {
+          //           playSound: true
+          //         },
+          //         toast: {
+          //           position: PositionsToast.BOTTOM,
+          //           message: 'El código escaneado no corresponde a la ubicación del producto'
+          //         }
+          //       });
+          //     }
+          //   }, (error) => {
+          //     this.isScannerBlocked = false;
+          //     this.processFinishError({
+          //       focusInput: {
+          //         playSound: true
+          //       },
+          //       toast: {
+          //         position: PositionsToast.BOTTOM,
+          //         message: 'El código escaneado no corresponde a la ubicación del producto.'
+          //       }
+          //     });
+          //   });
         } else {
           this.isScannerBlocked = false;
           this.processFinishError({
@@ -780,7 +745,7 @@ export class TextareaComponent implements OnInit {
     }));
   }
 
-  private setNexProductToScan(nextProduct: ShoesPickingModel.ShoesPicking) {
+  private setNexProductToScan(nextProduct: ReturnProduct) {
     this.nexProduct = nextProduct;
   }
 
@@ -958,7 +923,7 @@ export class TextareaComponent implements OnInit {
   private sealPackingFinal(listCarriers: string[], packingReferenceLast: string) {
     this.loadingMessageComponent.show(true, 'Finalizando proceso y precintando embalajes');
     this.postVerifyPacking({
-      status: 3,
+      status: 4,
       pickingId: this.pickingId,
       packingReference: packingReferenceLast
     }).subscribe((res) => {
@@ -1038,7 +1003,7 @@ export class TextareaComponent implements OnInit {
 
   private endProcessPacking(packingReference: any) {
     this.postVerifyPacking({
-      status: 3,
+      status: 4,
       pickingId: this.pickingId,
       packingReference: packingReference
     })

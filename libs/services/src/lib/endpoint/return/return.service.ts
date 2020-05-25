@@ -18,6 +18,7 @@ export class ReturnService {
   private postSearchUrl = environment.apiBase+'/returns/search';
   private postSaveUrl = environment.apiBase+'/returns/save';
   private postLoadUrl = environment.apiBase+'/returns/load';
+  private postLoadWithProductsUrl = environment.apiBase+'/returns/load-with-products';
   private getOptionsUrl = environment.apiBase+'/returns/options';
   private getFilterOptionsUrl = environment.apiBase+'/returns/filter-options';
 
@@ -35,6 +36,10 @@ export class ReturnService {
 
   postLoad(params: {returnId: number}): Promise<LoadResponse> {
     return this.requestsProvider.post(this.postLoadUrl, params);
+  }
+
+  postLoadWithProducts(params: {returnId: number}): Promise<LoadResponse> {
+    return this.requestsProvider.post(this.postLoadWithProductsUrl, params);
   }
 
   getFilterOptions(): Promise<FilterOptionsResponse> {

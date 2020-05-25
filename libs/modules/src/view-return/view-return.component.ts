@@ -10,6 +10,7 @@ import Brand = BrandModel.Brand;
 import {AuthenticationService} from "@suite/services";
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 import {PickingProvider} from "../../../services/src/providers/picking/picking.provider";
+import ReturnPacking = ReturnModel.ReturnPacking;
 
 @Component({
   selector: 'suite-view-return',
@@ -81,6 +82,10 @@ export class ViewReturnComponent implements OnInit {
 
   getBrandNameList(brands: Brand[]): string{
     return brands.map(brand => brand.name).join('/');
+  }
+
+  getPackingNameList(returnPackings: ReturnPacking[]): string{
+    return returnPackings.map(returnPacking => returnPacking.packing.reference).join('/');
   }
 
   async changeStatus(status: number) {

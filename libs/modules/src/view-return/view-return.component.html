@@ -9,7 +9,7 @@
       <ion-col size="6">
         <ion-item>
           <ion-label position="stacked" color="dark">Jaulas contenedoras</ion-label>
-          <ion-input [(ngModel)]="return.packings" disabled></ion-input>
+          <ion-input disabled>{{getPackingNameList(return.packings)}}</ion-input>
         </ion-item>
       </ion-col>
       <ion-col size="6">

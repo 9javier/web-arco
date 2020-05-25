@@ -10,6 +10,12 @@ import Carrier = CarrierModel.Carrier;
 import Brand = BrandModel.Brand;
 import ReturnType = ReturnTypeModel.ReturnType;
 import Provider = ProviderModel.Provider;
+import { ModelModel, ProductModel, SizeModel} from "@suite/services";
+import Product = ProductModel.Product;
+import Model = ModelModel.Model;
+import Size = SizeModel.Size;
+import {ShoesPickingModel} from "./ShoesPicking";
+import Inventory = ShoesPickingModel.Inventory;
 
 export namespace ReturnModel{
 
@@ -31,14 +37,31 @@ export namespace ReturnModel{
     observations: string,
     lastStatus: number,
     user: User,
-    packings: Carrier[],
+    packings: ReturnPacking[],
     amountPackages: number,
     shipper: string,
     datePredictedPickup: string,
     datePickup: string,
-    printTagPackages: boolean
+    printTagPackages: boolean,
+    products?: ReturnProduct[]
   }
-  
+
+  export interface ReturnPacking {
+    id: number,
+    return: Return,
+    packing: Carrier,
+  }
+
+  export interface ReturnProduct {
+    id: number,
+    returnManufacturer: Return,
+    product: Product,
+    model: Model,
+    size: Size,
+    status: number,
+    inventory: Inventory
+  }
+
   export interface SearchParameters {
     filters: Filters,
     order: Order,
