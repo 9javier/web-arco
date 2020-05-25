@@ -149,6 +149,8 @@ export class ListProductsCarrierComponent implements OnInit {
       && packingProduct.sorterControlProduct.warehouseDestiny
       && packingProduct.sorterControlProduct.warehouseDestiny.reference) {
       reference = packingProduct.sorterControlProduct.warehouseDestiny.reference;
+    } else if(packingProduct && packingProduct.package && packingProduct.package.order && packingProduct.package.order.destinationShop && packingProduct.package.order.destinationShop.reference){
+      reference = packingProduct.package.order.destinationShop.reference;
     }
     return reference;
   }
