@@ -223,4 +223,17 @@ export class NewReturnComponent implements OnInit {
     });
     await modal.present();
   }
+
+  public selectUnitiesItems() {
+    let isDefective = false;
+    if (this.return.type && this.return.type.defective) {
+      isDefective = true;
+    }
+
+    const warehouseId = this.return.warehouse.id;
+    const providerId = this.return.provider && this.return.provider.id;
+    const brandIds = this.return.brands.map(b => b.id).join(',');
+
+    this.router.navigate(['new-return', 'unities', this.return.id], { queryParams: {defective: isDefective, warehouse: warehouseId, provider: providerId, brands: brandIds} });
+  }
 }
