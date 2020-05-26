@@ -70,7 +70,7 @@ export class MenuComponent implements OnInit {
     },*/
     {
       title: 'Logística',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'filing',
       children: [
@@ -102,7 +102,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Olas de trabajo',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'hammer',
       children: [
@@ -140,7 +140,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Gestión de usuarios',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'contacts',
       children: [
@@ -172,7 +172,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Control de exposición',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'cart',
       children: [
@@ -194,7 +194,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Defectuosos',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'paper',
       children: [
@@ -237,7 +237,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Devoluciones fábrica',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'return-left',
       children: [
@@ -280,7 +280,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Picking tiendas',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'cart',
       children: [
@@ -294,7 +294,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Configuración',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'options',
       children: [
@@ -362,7 +362,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Sorter',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'apps',
       children: [
@@ -408,7 +408,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Recepción de fábrica',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'archive',
       children: [
@@ -547,7 +547,7 @@ export class MenuComponent implements OnInit {
     },*/
     {
       title: 'Productos',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'basket',
       children: [
@@ -606,7 +606,7 @@ export class MenuComponent implements OnInit {
       title: 'Pedidos online',
       icon: 'basket',
       type: 'wrapper',
-      open: true,
+      open: false,
       children: [
         {
           title: 'Generar etiquetas de envio',

@@ -119,6 +119,7 @@ public class MatrixSimpleActivity extends Activity {
     ScanditSDK.setActivityStarted(matrixSimple);
 
     if(packingReference != null) ScanditSDK.setPacking(packingReference);
+    if(title.equals("Ubicar defectuosos")) ScanditSDK.setFixedText();
   }
 
   @Override
