@@ -63,6 +63,7 @@ export namespace InventoryModel {
       warehouse: any,
       carrier?: any,
       locationType?: any
+      deliveryRequestExternalId?: string
   }
 
   export interface ResponseSearchInContainer extends Request.Success{
