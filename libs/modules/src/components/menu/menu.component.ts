@@ -249,6 +249,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Listado de registro de devoluciones'
         },
         {
+          title: 'Listado Históricos',
+          id: 'returns-historic',
+          url: '/returns-historic',
+          icon: 'list-box',
+          tooltip: 'Listado de históricos de devoluciones'
+        },
+        {
           title: 'Listado Seguimiento Devoluciones',
           id: 'return-tracking-list',
           url: '/return-tracking-list',

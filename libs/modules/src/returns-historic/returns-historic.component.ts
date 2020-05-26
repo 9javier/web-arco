@@ -21,11 +21,11 @@ import { BehaviorSubject, of, Observable } from 'rxjs';
 import {IntermediaryService} from "@suite/services";
 
 @Component({
-  selector: 'suite-return-tracking-list',
-  templateUrl: './return-tracking-list.component.html',
-  styleUrls: ['./return-tracking-list.component.scss']
+  selector: 'suite-returns-historic',
+  templateUrl: './returns-historic.component.html',
+  styleUrls: ['./returns-historic.component.scss']
 })
-export class ReturnTrackingListComponent implements OnInit {
+export class ReturnsHistoricComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -71,9 +71,10 @@ export class ReturnTrackingListComponent implements OnInit {
     public router: Router,
     private returnService: ReturnService,
     private intermediaryService: IntermediaryService
+
   ) {
     this.router.events.subscribe((val) => {
-      if(val instanceof NavigationEnd && val && val.url == '/return-tracking-list'){
+      if(val instanceof NavigationEnd && val && val.url == '/returns-historic'){
         if(typeof this.returns !== 'undefined'){
           this.reset();
         }
@@ -206,7 +207,7 @@ export class ReturnTrackingListComponent implements OnInit {
       order: this.order,
       pagination: this.pagination
     };
-    this.returnService.postSearchHistoricFalse(parameters).then((response: SearchResponse) => {
+    this.returnService.postSearchHistoricTrue(parameters).then((response: SearchResponse) => {
       if(response.code == 200){
         this.dataSource = new MatTableDataSource<SupplierConditionModel.SupplierCondition>(response.data.result);
         this.returns = response.data.result;
@@ -306,7 +307,7 @@ export class ReturnTrackingListComponent implements OnInit {
         order: this.order,
         pagination: this.pagination
       };
-      this.returnService.getFileExcell(parameters).pipe(
+      this.returnService.getFileExcellHistoric(parameters).pipe(
         catchError(error => of(error)),
         // map(file => file.error.text)
       ).subscribe((data) => {

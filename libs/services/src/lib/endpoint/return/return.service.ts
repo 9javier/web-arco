@@ -19,11 +19,13 @@ import {switchMap} from "rxjs/operators";
 })
 export class ReturnService {
 
-  private postSearchUrl = environment.apiBase+'/returns/search';
+  private postSearchHistoricFalseUrl = environment.apiBase+'/returns/search/false';
+  private postSearchHistoricTrueUrl = environment.apiBase+'/returns/search';
   private postSaveUrl = environment.apiBase+'/returns/save';
   private postLoadUrl = environment.apiBase+'/returns/load';
   private getOptionsUrl = environment.apiBase+'/returns/options';
   private getFilterOptionsUrl = environment.apiBase+'/returns/filter-options';
+  private sendexcellHistoric = environment.apiBase+'/returns/export-to-excel-historic';
   private sendexcell = environment.apiBase+'/returns/export-to-excel';
   private postGetDefectiveProductsUrl = environment.apiBase + '/returns/products/defective';
   private postGetProductsUrl = environment.apiBase + '/returns/products';
@@ -36,8 +38,12 @@ export class ReturnService {
     private auth: AuthenticationService
   ) {}
 
-  postSearch(params: SearchParameters): Promise<SearchResponse> {
-    return this.requestsProvider.post(this.postSearchUrl, params);
+  postSearchHistoricFalse(params: SearchParameters): Promise<SearchResponse> {
+    return this.requestsProvider.post(this.postSearchHistoricFalseUrl, params);
+  }
+
+  postSearchHistoricTrue(params: SearchParameters): Promise<SearchResponse> {
+    return this.requestsProvider.post(this.postSearchHistoricTrueUrl, params);
   }
 
   postSave(params: {return: Return}): Promise<SaveResponse> {
@@ -54,6 +60,14 @@ export class ReturnService {
 
   getOptions(): Promise<OptionsResponse> {
     return this.requestsProvider.get(this.getOptionsUrl);
+  }
+
+  getFileExcellHistoric(parameters: SearchParameters) {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post(this.sendexcellHistoric, parameters, { headers, responseType: 'blob' });
+    }));
   }
 
   getFileExcell(parameters: SearchParameters) {

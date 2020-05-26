@@ -32,7 +32,7 @@ export namespace ReturnModel{
     observations: string,
     lastStatus: number,
     user: User,
-    packings: Carrier[],
+    //packings: Carrier[],
     amountPackages: number,
     shipper: string,
     datePredictedPickup: string,

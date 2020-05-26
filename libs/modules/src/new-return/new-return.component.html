@@ -7,20 +7,20 @@
           <ion-input disabled>{{return.id == 0 ? 'Este campo se rellenará automáticamente al guardar.' : return.id}}</ion-input>
         </ion-item>
       </ion-col>
-      <ion-col size="6" class="button-col" *ngIf="return.id">
-        <ion-button (click)="selectUnitiesItems()">Seleccionar unidades</ion-button>
+      <ion-col size="6" class="button-col">
+        <ion-button [disabled]="isHistoric" (click)="selectUnitiesItems()">Seleccionar unidades</ion-button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-item (click)="openShowSelectableList(1)" class="item-selectable">
+        <ion-item [disabled]="isHistoric" (click)="openShowSelectableList(1)" class="item-selectable">
           <ion-label>Tipo</ion-label>
           <ion-label>{{return.type ? return.type.name : ''}}</ion-label>
           <ion-icon name="ios-arrow-forward" slot="end"></ion-icon>
         </ion-item>
       </ion-col>
       <ion-col>
-        <ion-item (click)="openShowSelectableList(2)" class="item-selectable">
+        <ion-item [disabled]="isHistoric" (click)="openShowSelectableList(2)" class="item-selectable">
           <ion-label>Almacén</ion-label>
           <ion-label>{{return.warehouse ? return.warehouse.name : ''}}</ion-label>
           <ion-icon name="ios-arrow-forward" slot="end"></ion-icon>
@@ -31,14 +31,14 @@
       <ion-col>
         <ion-row class="no-padding">
           <ion-col class="no-padding">
-            <ion-item (click)="openShowSelectableList(3)" class="item-selectable">
+            <ion-item [disabled]="isHistoric" (click)="openShowSelectableList(3)" class="item-selectable">
               <ion-label>Proveedor</ion-label>
               <ion-label>{{return.provider ? return.provider.name : ''}}</ion-label>
               <ion-icon name="ios-arrow-forward" slot="end"></ion-icon>
             </ion-item>
           </ion-col>
           <ion-col class="no-padding center-contents" *ngIf="thereAreConditions()" size="3">
-            <ion-button (click)="selectCondition()">Condiciones</ion-button>
+            <ion-button [disabled]="isHistoric" (click)="selectCondition()">Condiciones</ion-button>
           </ion-col>
         </ion-row>
       </ion-col>
@@ -51,7 +51,7 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-item>
+        <ion-item [disabled]="isHistoric">
           <ion-label position="stacked">Marcas</ion-label>
           <ion-input *ngIf="!return.provider" disabled placeholder="Debe seleccionar un proveedor"></ion-input>
           <ion-select *ngIf="return.provider" [interfaceOptions]="{cssClass: 'wide-alert'}" [selectedText]="return.brands ? getBrandNameList(return.brands) : ''" placeholder="Seleccione las marcas" multiple (ionChange)="return.brands = $event.detail.value">
@@ -68,7 +68,7 @@
             </ion-item>
           </ion-col>
           <ion-col class="no-padding">
-            <ion-item>
+            <ion-item [disabled]="isHistoric">
               <ion-label position="stacked">Cambiar estado</ion-label>
               <ion-select [selectedText]="''" placeholder="Seleccione un nuevo estado" (ionChange)="changeStatus($event.detail.value)">
                 <ion-select-option *ngFor="let status of [1,2,3,4,5,6]" [value]="status">{{getStatusName(status)}}</ion-select-option>
@@ -80,7 +80,7 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-item class="item-date">
+        <ion-item class="item-date" [disabled]="isHistoric">
           <ion-label position="stacked">Devolver antes de</ion-label>
           <input matInput [matDatepicker]="pickerDateReturnBefore" [(ngModel)]="return.dateReturnBefore" placeholder="Seleccione una fecha">
           <mat-datepicker-toggle matSuffix [for]="pickerDateReturnBefore"></mat-datepicker-toggle>
@@ -88,7 +88,7 @@
         </ion-item>
       </ion-col>
       <ion-col>
-        <ion-item class="item-date">
+        <ion-item class="item-date" [disabled]="isHistoric">
           <ion-label position="stacked">Fecha último estado</ion-label>
           <input matInput [matDatepicker]="pickerDateLastStatus" [(ngModel)]="return.dateLastStatus" disabled placeholder="Esta fecha se rellenará automáticamente">
           <mat-datepicker-toggle matSuffix [for]="pickerDateLastStatus"></mat-datepicker-toggle>
@@ -100,7 +100,7 @@
       <ion-col>
         <ion-item>
           <ion-label position="stacked">Correo de contacto</ion-label>
-          <ion-input [(ngModel)]="return.email"></ion-input>
+          <ion-input [disabled]="isHistoric" [(ngModel)]="return.email"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
@@ -114,19 +114,19 @@
       <ion-col>
         <ion-item>
           <ion-label position="stacked">Nº Bultos</ion-label>
-          <ion-input [(ngModel)]="return.amountPackages"></ion-input>
+          <ion-input [disabled]="isHistoric" [(ngModel)]="return.amountPackages"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="stacked">Agencia transportista</ion-label>
-          <ion-input [(ngModel)]="return.shipper"></ion-input>
+          <ion-input [disabled]="isHistoric" [(ngModel)]="return.shipper"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-item class="item-date">
+        <ion-item class="item-date" [disabled]="isHistoric">
           <ion-label position="stacked">Fecha de recogida</ion-label>
           <input matInput [matDatepicker]="pickerDatePickup" [(ngModel)]="return.datePickup" disabled placeholder="Esta fecha se rellenará más adelante">
           <mat-datepicker-toggle matSuffix [for]="pickerDatePickup"></mat-datepicker-toggle>
@@ -134,7 +134,7 @@
         </ion-item>
       </ion-col>
       <ion-col>
-        <ion-item class="item-date">
+        <ion-item class="item-date" [disabled]="isHistoric">
           <ion-label position="stacked">Fecha prevista de recogida</ion-label>
           <input matInput [matDatepicker]="pickerDatePredictedPickup" [(ngModel)]="return.datePredictedPickup">
           <mat-datepicker-toggle matSuffix [for]="pickerDatePredictedPickup"></mat-datepicker-toggle>
@@ -144,7 +144,7 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-item>
+        <ion-item [disabled]="isHistoric">
           <ion-label position="stacked">Observaciones</ion-label>
           <ion-textarea rows="6" cols="20" placeholder="Introduzca aquí sus observaciones" [(ngModel)]="return.observations" type="text"></ion-textarea>
         </ion-item>
@@ -187,11 +187,12 @@
 
 <ion-footer>
   <ion-toolbar>
-    <ion-button matTooltip="Imprimir/enviar albarán" matTooltipClass="tooltip" slot="start" fill="clear"><ion-icon name="print" slot="start" ></ion-icon> albarán</ion-button>
-    <ion-button matTooltip="Adjuntar archivos/imágenes" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="!archiveList" (click)="searchArchive()" ><ion-icon name="attach" slot="start"></ion-icon> archivos/imágenes</ion-button>
-    <ion-button matTooltip="Ver imagen de albarán de agencia" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="!delivery_noteList" (click)="searchDelivery_note()" ><ion-icon name="image" slot="start"></ion-icon> albarán agencia</ion-button>
+    <ion-button matTooltip="Imprimir/enviar albarán" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="isHistoric"><ion-icon name="print" slot="start"></ion-icon> albarán</ion-button>
+    <ion-button matTooltip="Adjuntar archivos/imágenes" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="!archiveList || isHistoric" (click)="searchArchive()"><ion-icon name="attach" slot="start"></ion-icon> archivos/imágenes</ion-button>
+    <ion-button matTooltip="Ver imagen de albarán de agencia" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="!delivery_noteList || isHistoric" (click)="searchDelivery_note()"><ion-icon name="image" slot="start"></ion-icon> albarán agencia</ion-button>
 
-    <ion-button slot="end" color="light" (click)="router.navigateByUrl('/return-tracking-list')">Cancelar</ion-button>
-    <ion-button slot="end" color="primary" [disabled]="!allFieldsFilled()" (click)="save()">Guardar</ion-button>
+    <ion-button *ngIf="!isHistoric" slot="end" color="light" (click)="router.navigateByUrl('/return-tracking-list')">Cancelar</ion-button>
+    <ion-button *ngIf="isHistoric" slot="end" color="light" (click)="router.navigateByUrl('/returns-historic')">Cancelar</ion-button>
+    <ion-button slot="end" color="primary" [disabled]="!allFieldsFilled()||isHistoric" (click)="save()">Guardar</ion-button>
   </ion-toolbar>
 </ion-footer>

@@ -51,6 +51,7 @@ export class NewReturnComponent implements OnInit {
   signatureList: boolean = false;
   displayArchiveList: boolean = false;
   displayDeliveryNoteList: boolean = false;
+  isHistoric;
 
   private listItemsSelected: any[] = [];
   private itemForList: string = null;
@@ -76,6 +77,9 @@ export class NewReturnComponent implements OnInit {
     this.getOptions();
 
     const returnId: number = parseInt(this.route.snapshot.paramMap.get('id'));
+    if(this.route.snapshot.paramMap.get('isHistoric')){
+      this.isHistoric = this.route.snapshot.paramMap.get('isHistoric');
+    }
     if (returnId) {
       this.load(returnId);
       this.archiveList = true;
@@ -94,7 +98,6 @@ export class NewReturnComponent implements OnInit {
         id: 0,
         lastStatus: 1,
         observations: "",
-        packings: [],
         printTagPackages: false,
         provider: null,
         shipper: "",
@@ -233,7 +236,11 @@ export class NewReturnComponent implements OnInit {
     let object = this.incidenceForm.value;
     this.returnService.postSave(object).then((response: SaveResponse) => {
       if(response.code == 200){
-        this.router.navigateByUrl('/return-tracking-list')
+        if(this.isHistoric){
+          this.router.navigateByUrl('/returns-historic')
+        }else{
+          this.router.navigateByUrl('/return-tracking-list')
+        }
       }else{
         console.error(response);
       }

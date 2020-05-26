@@ -139,6 +139,10 @@ export * from './return-types/return-types.module';
 export * from './return-tracking-list/return-tracking-list.component';
 export * from './return-tracking-list/return-tracking-list.module';
 
+/**returns-historic */
+export * from './returns-historic/returns-historic.component';
+export * from './returns-historic/returns-historic.module';
+
 export * from './new-return/new-return.component';
 export * from './new-return/new-return.module';
 
