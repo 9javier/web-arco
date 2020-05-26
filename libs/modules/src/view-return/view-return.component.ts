@@ -180,7 +180,9 @@ export class ViewReturnComponent implements OnInit {
       this.incidenceForm.addControl('delivery_notesFileIds', new FormControl(delivery_notes));
     }
     let object = this.incidenceForm.value;
-    this.returnService.postSave(object).then((response: SaveResponse) => {
+    this.return.archives = this.incidenceForm.value.archivesFileIds;
+    this.return.delivery_notes = this.incidenceForm.value.delivery_notesFileIds;
+    this.returnService.postSave(this.return).then((response: SaveResponse) => {
       if(response.code == 200){
         this.router.navigateByUrl('/return-pending-list')
       }else{
@@ -194,8 +196,8 @@ export class ViewReturnComponent implements OnInit {
       if (response.code == 200) {
         this.return = response.data;
         this.pickingProvider.currentReturnPickingId = this.return.id;
-        this.archives = this.return.archives;
-        this.delivery_notes = this.return.delivery_notes;
+        this.archives = this.return.archives || [];
+        this.delivery_notes = this.return.delivery_notes || [];
         if(this.archives.length > 0){
           this.displayArchiveList = true;
         }
@@ -255,8 +257,14 @@ export class ViewReturnComponent implements OnInit {
     this.return.dateLastStatus = String(new Date());
   }
 
-  allFieldsFilled(): boolean{
-    return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
+  allFieldsFilled(): boolean {
+    if (this.return && this.return.status == 4) {
+      return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.amountPackages > 0 && this.return.shipper && this.return.shipper != '');
+    } else if (this.return && this.return.status == 5) {
+      return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.datePredictedPickup);
+    } else {
+      return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
+    }
   }
 
   takePhoto() {
