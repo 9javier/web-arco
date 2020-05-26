@@ -453,4 +453,16 @@ export class ViewReturnComponent implements OnInit {
   public formatDate(date: string) {
     return this.dateTimeParserService.dateMonthYear(date);
   }
+
+  public startPicking() {
+    if (this.return && this.return.type && !this.return.type.defective) {
+      this.returnService
+        .postSearchAndAssignProducts(this.return.id)
+        .subscribe((res) => {
+          this.router.navigateByUrl('picking/return');
+        }, (e) => {})
+    } else {
+      this.router.navigateByUrl('picking/return');
+    }
+  }
 }
