@@ -103,7 +103,7 @@ export class TextareaComponent implements OnInit {
             if (!(activePackings && activePackings.length > 0)) {
               activePackings = this.pickingSelected.packings.filter(packings => packings.packing.status == 1);
             }
-            this.packingReference = activePackings[0].packing.reference;
+            this.packingReference = activePackings.length > 0 ? activePackings[0].packing.reference : null;
           }
           this.literalsJailPallet = this.pickingProvider.literalsJailPallet;
 
