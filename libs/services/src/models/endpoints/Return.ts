@@ -43,7 +43,9 @@ export namespace ReturnModel{
     datePredictedPickup: string,
     datePickup: string,
     printTagPackages: boolean,
-    products?: ReturnProduct[]
+    products?: ReturnProduct[],
+    archives?: (any)[],
+    delivery_notes?: (any)[],
   }
 
   export interface ReturnPacking {
@@ -67,7 +69,7 @@ export namespace ReturnModel{
     order: Order,
     pagination: Pagination
   }
-  
+
   export interface SearchResponse {
     message?: string,
     code?: number,

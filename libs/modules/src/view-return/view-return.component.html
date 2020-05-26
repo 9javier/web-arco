@@ -134,13 +134,55 @@
       </ion-col>
     </ion-row>
     <ion-row>
+      <ion-col>
+        <ion-item *ngIf="archiveList" (click)="showArchiveList()" lines="none">
+          <ion-label class="label-text">Archivos</ion-label>
+          <ion-icon slot="end" *ngIf="displayArchiveList" name="arrow-down"></ion-icon>
+          <ion-icon slot="end" *ngIf="!displayArchiveList" name="arrow-up"></ion-icon>
+        </ion-item>
+        <ion-list *ngIf="archiveList && displayArchiveList">
+          <ion-item  lines="none" *ngFor="let item of archives; let i = index">
+            <ion-img (click)="onOpenReviewModal(item)"  slot="start" [src]="baseUrlPhoto + item.pathIcon"></ion-img>
+            <ion-button slot="end"(click)="deleteImage(item, i, archives)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item *ngIf="delivery_noteList" (click)="showDeliveryNoteList()" lines="none">
+          <ion-label class="label-text">Albaranes de agencia</ion-label>
+          <ion-icon slot="end" *ngIf="displayDeliveryNoteList" name="arrow-down"></ion-icon>
+          <ion-icon slot="end" *ngIf="!displayDeliveryNoteList" name="arrow-up"></ion-icon>
+        </ion-item>
+        <ion-list *ngIf="delivery_noteList && displayDeliveryNoteList">
+          <ion-item  lines="none" *ngFor="let item of delivery_notes; let i = index">
+            <ion-img (click)="onOpenReviewModal(item)"  slot="start" [src]="baseUrlPhoto + item.pathIcon"></ion-img>
+            <ion-button slot="end"(click)="deleteImage(item, i, delivery_notes)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-button matTooltip="Imprimir/enviar albarán" fill="clear">
         <ion-icon name="print"></ion-icon>
         albarán
       </ion-button>
-      <ion-button matTooltip="Adjuntar archivos/imágenes" fill="clear">
+      <ion-button (click)="searchDeliveryNote()" matTooltip="Adjuntar albarán de agencia" fill="clear">
         <ion-icon name="attach"></ion-icon>
-        archivos/imágenes
+        albarán de agencia
+      </ion-button>
+      <ion-button (click)="searchArchive()" matTooltip="Adjuntar archivos/imágenes" fill="clear">
+        <ion-icon name="attach"></ion-icon>
+        archivo/imágen
+      </ion-button>
+      <ion-button (click)="takePhoto()"  matTooltip="Sacar foto" fill="clear">
+        <ion-icon name="camera"></ion-icon>
+        foto
       </ion-button>
     </ion-row>
     <ion-row>
