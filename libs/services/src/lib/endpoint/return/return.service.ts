@@ -47,7 +47,7 @@ export class ReturnService {
     return this.requestsProvider.post(this.postSearchHistoricTrueUrl, params);
   }
 
-  postSave(params: {return: Return}): Promise<SaveResponse> {
+  postSave(params): Promise<SaveResponse> {
     return this.requestsProvider.post(this.postSaveUrl, params);
   }
 
