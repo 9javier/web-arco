@@ -7,9 +7,16 @@ import {ActivatedRoute, Router} from "@angular/router";
 import LoadResponse = ReturnModel.LoadResponse;
 import {BrandModel} from "../../../services/src/models/endpoints/Brand";
 import Brand = BrandModel.Brand;
-import {AuthenticationService, UserModel, WarehouseModel} from "@suite/services";
+import {
+  AuthenticationService, environment,
+  IntermediaryService,
+  UploadFilesService,
+  UserModel,
+  WarehouseModel
+} from "@suite/services";
 import Warehouse = WarehouseModel.Warehouse;
 import OptionsResponse = ReturnModel.OptionsResponse;
+import FilesResponse = ReturnModel.FilesResponse;
 import {ReturnTypeModel} from "../../../services/src/models/endpoints/ReturnType";
 import ReturnType = ReturnTypeModel.ReturnType;
 import {ProviderModel} from "../../../services/src/models/endpoints/Provider";
@@ -20,6 +27,10 @@ import {SelectConditionComponent} from "./select-condition/select-condition.comp
 import {SupplierConditionModel} from "../../../services/src/models/endpoints/SupplierCondition";
 import SupplierCondition = SupplierConditionModel.SupplierCondition;
 import {SelectableListComponent} from "./modals/selectable-list/selectable-list.component";
+import {DropFilesComponent} from "../drop-files/drop-files.component";
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import {DropFilesService} from "../../../services/src/lib/endpoint/drop-files/drop-files.service";
+import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 
 @Component({
   selector: 'suite-new-return',
@@ -27,11 +38,19 @@ import {SelectableListComponent} from "./modals/selectable-list/selectable-list.
   styleUrls: ['./new-return.component.scss']
 })
 export class NewReturnComponent implements OnInit {
-
+  private baseUrlPhoto = environment.apiBasePhoto;
   return: Return;
   types: ReturnType[];
   warehouses: Warehouse[];
   providers: Provider[];
+  archives: Array<any> = [];
+  delivery_notes: Array<any> = [];
+  incidenceForm: FormGroup;
+  archiveList: boolean = false;
+  delivery_noteList: boolean = false;
+  signatureList: boolean = false;
+  displayArchiveList: boolean = false;
+  displayDeliveryNoteList: boolean = false;
 
   private listItemsSelected: any[] = [];
   private itemForList: string = null;
@@ -41,14 +60,26 @@ export class NewReturnComponent implements OnInit {
     public router: Router,
     private returnService: ReturnService,
     private authenticationService: AuthenticationService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private intermediary: IntermediaryService,
+    private dropFilesService: DropFilesService,
+    private uploadService: UploadFilesService,
+    private fb: FormBuilder
   ) {}
 
   async ngOnInit() {
+    this.archiveList = false;
+    this.delivery_noteList = false;
+    this.archives = [];
+    this.delivery_notes = [];
+
     this.getOptions();
+
     const returnId: number = parseInt(this.route.snapshot.paramMap.get('id'));
     if (returnId) {
       this.load(returnId);
+      this.archiveList = true;
+      this.delivery_noteList = true;
     } else {
       this.return = {
         amountPackages: 0,
@@ -73,9 +104,58 @@ export class NewReturnComponent implements OnInit {
         unitsSelected: 0,
         user: await this.getCurrentUser(),
         userLastStatus: await this.getCurrentUser(),
-        warehouse: null
+        warehouse: null,
+        archives: [],
+        delivery_notes: []
       };
     }
+
+    this.dropFilesService.getImage().subscribe(resp => {
+      if (resp) {
+        if(resp.type=='archive') {
+          this.archives.push(resp.file);
+        }else{
+          if(resp.type=='delivery_note') {
+            this.delivery_notes.push(resp.file);
+          }
+        }
+        if(this.archives.length > 0){
+          this.displayArchiveList = true;
+        }
+        if(this.delivery_notes.length > 0){
+          this.displayDeliveryNoteList = true;
+        }
+      }
+    });
+
+  }
+
+  initForm() {
+    this.incidenceForm = this.fb.group({
+        amountPackages: this.return && this.return.amountPackages ? [this.return.amountPackages] : [0],
+        brands: [this.return.brands],
+        dateLastStatus: [this.return.dateLastStatus],
+        dateLimit: [this.return.dateLimit],
+        datePickup: [this.return.datePickup],
+        datePredictedPickup: [this.return.datePredictedPickup],
+        dateReturnBefore: [this.return.dateReturnBefore],
+        email: [this.return.email],
+        history: [this.return.history],
+        id: [this.return.id],
+        lastStatus: [this.return.lastStatus],
+        observations: [this.return.observations],
+        packings: [this.return.packings],
+        printTagPackages: [this.return.printTagPackages],
+        provider: [this.return.provider],
+        shipper: [this.return.shipper],
+        status: [this.return.status],
+        type: [this.return.type],
+        unitsPrepared: [this.return.unitsPrepared],
+        unitsSelected: [this.return.unitsSelected],
+        user: [this.return.user],
+        userLastStatus: [this.return.userLastStatus],
+        warehouse: [this.return.warehouse]
+    });
   }
 
   async getCurrentUser() {
@@ -84,8 +164,74 @@ export class NewReturnComponent implements OnInit {
     return user;
   }
 
+  openArchiveList() {
+    this.archiveList = !this.archiveList;
+  }
+
+  openDeliveryNoteList() {
+    this.archiveList = !this.archiveList;
+  }
+
+  showArchiveList() {
+    this.displayArchiveList = !this.displayArchiveList;
+  }
+
+  showDeliveryNoteList() {
+    this.displayDeliveryNoteList = !this.displayDeliveryNoteList;
+  }
+
+  async openReviewImage(item) {
+    const modal = await this.modalController.create({
+      component: ModalReviewComponent,
+      componentProps: {
+        data: item
+      }
+    });
+    await modal.present();
+  }
+
+  deleteImage(item, index, arr) {
+    this.intermediary.presentLoading()
+    this.uploadService.deleteFile(item.id).subscribe(
+      resp => {
+        this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
+        arr.splice(index, 1);
+        if (this.archives.length === 0) {
+          this.openArchiveList()
+        }
+        if (this.delivery_notes.length === 0) {
+          this.openDeliveryNoteList()
+        }
+        //this.signature = false;
+      },
+      err => {
+        this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
+        this.intermediary.dismissLoading()
+      },
+      () => {
+        this.intermediary.dismissLoading()
+      }
+    )
+  }
+
   save(){
-    this.returnService.postSave({return: this.return}).then((response: SaveResponse) => {
+
+    if (this.archives.length > 0) {
+      let archives = [];
+      this.archives.forEach(elem => {
+        archives.push({ id: elem.id });
+      });
+      this.incidenceForm.addControl('archivesFileIds', new FormControl(archives));
+    }
+    if (this.delivery_notes.length > 0) {
+      let delivery_notes = [];
+      this.delivery_notes.forEach(elem => {
+        delivery_notes.push({ id: elem.id });
+      });
+      this.incidenceForm.addControl('delivery_notesFileIds', new FormControl(delivery_notes));
+    }
+    let object = this.incidenceForm.value;
+    this.returnService.postSave(object).then((response: SaveResponse) => {
       if(response.code == 200){
         this.router.navigateByUrl('/return-tracking-list')
       }else{
@@ -99,6 +245,15 @@ export class NewReturnComponent implements OnInit {
       if (response.code == 200) {
         this.return = response.data;
         this.return.provider.brands = this.providers.filter(provider => provider.id == this.return.provider.id)[0].brands;
+        this.archives = this.return.archives;
+        this.delivery_notes = this.return.delivery_notes;
+        if(this.archives.length > 0){
+          this.displayArchiveList = true;
+        }
+        if(this.delivery_notes.length > 0){
+          this.displayDeliveryNoteList = true;
+        }
+        this.initForm();
       } else {
         console.error(response);
       }
@@ -236,4 +391,21 @@ export class NewReturnComponent implements OnInit {
 
     this.router.navigate(['new-return', 'unities', this.return.id], { queryParams: {defective: isDefective, warehouse: warehouseId, provider: providerId, brands: brandIds} });
   }
+
+  async searchArchive() {
+    const modal = await this.modalController.create({
+      component: DropFilesComponent,
+      componentProps: {type: 'archive'}
+    });
+    await modal.present();
+  }
+
+  async searchDelivery_note() {
+    const modal = await this.modalController.create({
+      component: DropFilesComponent,
+      componentProps: {type: 'delivery_note'}
+    });
+    await modal.present();
+  }
+
 }

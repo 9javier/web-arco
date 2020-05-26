@@ -65,7 +65,6 @@ export class ChangeStateComponent implements OnInit {
     private modalController: ModalController,
     private navParams: NavParams,
     private fb: FormBuilder,
-    private intermediaryService: IntermediaryService,
     private dropFilesService: DropFilesService,
     private uploadService: UploadFilesService,
 
