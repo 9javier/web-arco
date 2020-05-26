@@ -21,7 +21,7 @@ export class NewReturnUnitiesComponent implements OnInit {
 
   private returnId: number = null;
 
-  private isLoadingData: boolean = false;
+  isLoadingData: boolean = false;
 
   private isDefective: boolean = false;
   private warehouseId: number = null;
