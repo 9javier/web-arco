@@ -579,7 +579,7 @@ export class TextareaComponent implements OnInit {
                     if (res3.code === 200 || res3.code === 201) {
                       this.scanContainerToNotFound = null;
                       this.dataToWrite = "PRODUCTO";
-
+                      this.pickingSelected.unitsSelected -= 1;
                       this.isScannerBlocked = false;
                       this.processFinishOk({
                         focusInput: {
