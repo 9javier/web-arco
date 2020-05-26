@@ -1,0 +1,87 @@
+<form *ngIf="showFilters" [formGroup]="filters">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-label>ID:</ion-label>
+        <suite-tags-input placeholder="ID" [options]="filterOptions.ids" formControlName="ids" multiple="true"></suite-tags-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>Proveedor:</ion-label>
+        <suite-tags-input placeholder="Proveedor" [options]="filterOptions.providerIds" formControlName="providerIds" multiple="true"></suite-tags-input>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6">
+        <ion-label>Fecha Máxima:</ion-label>
+        <suite-tags-input placeholder="Fecha Máxima" [options]="filterOptions.datesLimit" formControlName="datesLimit" multiple="true"></suite-tags-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>Estado:</ion-label>
+        <suite-tags-input placeholder="Estado" [options]="filterOptions.statuses" formControlName="statuses" multiple="true"></suite-tags-input>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6">
+        <ion-label>Uds. preparadas:</ion-label>
+        <suite-tags-input placeholder="Uds. Preparadas" [options]="filterOptions.unitsPrepared" formControlName="unitsPrepared" multiple="true"></suite-tags-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>Uds. seleccionadas:</ion-label>
+        <suite-tags-input placeholder="Uds. Seleccionadas" [options]="filterOptions.unitsSelected" formControlName="unitsSelected" multiple="true"></suite-tags-input>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6">
+        <ion-label>Campo de ordenación:</ion-label>
+        <ion-item>
+          <ion-select interface="popover" [value]="order.field" (ionChange)="order.field = $event.detail.value">
+            <ion-select-option value="id">ID</ion-select-option>
+            <ion-select-option value="provider">Proveedor</ion-select-option>
+            <ion-select-option value="dateLimit">Fecha Máxima</ion-select-option>
+            <ion-select-option value="status">Estado</ion-select-option>
+            <ion-select-option value="unitsPrepared">Unidades</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>Tipo de ordenación:</ion-label>
+        <ion-item>
+          <ion-select interface="popover" [value]="order.direction" (ionChange)="order.direction = $event.detail.value">
+            <ion-select-option value="ASC">Ascendente</ion-select-option>
+            <ion-select-option value="DESC">Descendente</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col class="btn-remove" size="6">
+        <ion-button (click)="reset()">Borrar filtros</ion-button>
+      </ion-col>
+      <ion-col class="btn-apply" size="6">
+        <ion-button (click)="loadReturns()">Aplicar filtros</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
+
+<ion-content>
+  <ion-grid class="no-vertical-padding">
+    <div class="row-container" *ngFor="let ret of returns" (click)="router.navigate(['/view-return', {id: ret.id}])">
+      <ion-row nowrap >
+        <ion-col size="33">{{ret.id}}</ion-col>
+        <ion-col size="34">{{ret.provider.name}}</ion-col>
+        <ion-col size="33" class="text-align-end">{{getFormattedDate(ret.dateLimit)}}</ion-col>
+      </ion-row>
+      <ion-row nowrap>
+        <ion-col size="50">{{getStatusName(ret.status)}}</ion-col>
+        <ion-col size="50" class="text-align-end">{{ret.unitsPrepared+'/'+ret.unitsSelected}}</ion-col>
+      </ion-row>
+    </div>
+  </ion-grid>
+</ion-content>
+
+<mat-paginator></mat-paginator>

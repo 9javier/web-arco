@@ -10,6 +10,12 @@ import Carrier = CarrierModel.Carrier;
 import Brand = BrandModel.Brand;
 import ReturnType = ReturnTypeModel.ReturnType;
 import Provider = ProviderModel.Provider;
+import { ModelModel, ProductModel, SizeModel} from "@suite/services";
+import Product = ProductModel.Product;
+import Model = ModelModel.Model;
+import Size = SizeModel.Size;
+import {ShoesPickingModel} from "./ShoesPicking";
+import Inventory = ShoesPickingModel.Inventory;
 import {HttpRequestModel} from "./HttpRequest";
 
 export namespace ReturnModel{
@@ -32,14 +38,31 @@ export namespace ReturnModel{
     observations: string,
     lastStatus: number,
     user: User,
-    //packings: Carrier[],
+    packings: ReturnPacking[],
     amountPackages: number,
     shipper: string,
     datePredictedPickup: string,
     datePickup: string,
     printTagPackages: boolean,
+    products?: ReturnProduct[],
     archives?: (any)[],
     delivery_notes?: (any)[],
+  }
+
+  export interface ReturnPacking {
+    id: number,
+    return: Return,
+    packing: Carrier,
+  }
+
+  export interface ReturnProduct {
+    id: number,
+    returnManufacturer: Return,
+    product: Product,
+    model: Model,
+    size: Size,
+    status: number,
+    inventory: Inventory
   }
 
   export interface SearchParameters {
@@ -73,6 +96,7 @@ export namespace ReturnModel{
       datesLastStatus: string[],
       usersLastStatus: string[],
       unitsPrepared: number[],
+      unitsSelected: number[]
     },
     error?: any,
     errors?: any
@@ -108,15 +132,16 @@ export namespace ReturnModel{
 
   export interface Filters {
     ids: number[],
-    typeIds: number[],
+    typeIds?: number[],
     providerIds: number[],
-    brandIds: number[],
+    brandIds?: number[],
     datesLimit: Date[],
     warehouseIds: number[],
     statuses: number[],
-    datesLastStatus: Date[],
-    userIdsLastStatus: number[],
-    unitsPrepared: number[]
+    datesLastStatus?: Date[],
+    userIdsLastStatus?: number[],
+    unitsPrepared: number[],
+    unitsSelected?: number[]
   }
 
   export interface Order {

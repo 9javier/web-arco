@@ -143,8 +143,14 @@ export * from './return-tracking-list/return-tracking-list.module';
 export * from './returns-historic/returns-historic.component';
 export * from './returns-historic/returns-historic.module';
 
+export * from './return-pending-list/return-pending-list.component';
+export * from './return-pending-list/return-pending-list.module';
+
 export * from './new-return/new-return.component';
 export * from './new-return/new-return.module';
+
+export * from './view-return/view-return.component';
+export * from './view-return/view-return.module';
 
 /**returns-list */
 export * from './returns-list/returns-list.component';
@@ -214,6 +220,10 @@ export * from './positioning-manual-online/positioning-manual-online.module';
 /**Manual Picking */
 export * from './picking-manual/picking-manual.component';
 export * from './picking-manual/picking-manual.module';
+
+/**Return Picking */
+export * from './picking-return/picking-return.component';
+export * from './picking-return/picking-return.module';
 
 /**List Pickings with Products */
 export * from './list-picking/list-picking.component';

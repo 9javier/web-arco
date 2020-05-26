@@ -286,14 +286,16 @@ export class NewReturnComponent implements OnInit {
       case 1:
         return 'Orden devolución';
       case 2:
-        return 'En proceso';
+        return 'Pendiente';
       case 3:
-        return 'Preparado';
+        return 'En proceso';
       case 4:
-        return 'Pendiente recogida';
+        return 'Preparado';
       case 5:
-        return 'Recogido';
+        return 'Pendiente recogida';
       case 6:
+        return 'Recogido';
+      case 7:
         return 'Facturado';
       default:
         return 'Desconocido'
@@ -317,7 +319,7 @@ export class NewReturnComponent implements OnInit {
 
   thereAreConditions(): boolean{
     if(this.return.provider){
-      return this.return.provider.brands.map(brand => {if(brand.condition) return brand.condition}).length > 0;
+      return this.return.provider.brands.filter(brand => brand.condition != null).length > 0;
     }else{
       return false;
     }

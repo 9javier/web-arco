@@ -71,7 +71,7 @@
             <ion-item [disabled]="isHistoric">
               <ion-label position="stacked">Cambiar estado</ion-label>
               <ion-select [selectedText]="''" placeholder="Seleccione un nuevo estado" (ionChange)="changeStatus($event.detail.value)">
-                <ion-select-option *ngFor="let status of [1,2,3,4,5,6]" [value]="status">{{getStatusName(status)}}</ion-select-option>
+                <ion-select-option *ngFor="let status of [1,2,3,4,5,6,7]" [value]="status">{{getStatusName(status)}}</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-col>
