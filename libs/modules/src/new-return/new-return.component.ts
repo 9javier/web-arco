@@ -30,6 +30,7 @@ import {DropFilesComponent} from "../drop-files/drop-files.component";
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import {DropFilesService} from "../../../services/src/lib/endpoint/drop-files/drop-files.service";
 import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
+import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 @Component({
   selector: 'suite-new-return',
@@ -64,7 +65,8 @@ export class NewReturnComponent implements OnInit {
     private intermediary: IntermediaryService,
     private dropFilesService: DropFilesService,
     private uploadService: UploadFilesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dateTimeParserService: DateTimeParserService
   ) {}
 
   async ngOnInit() {
@@ -417,4 +419,7 @@ export class NewReturnComponent implements OnInit {
     await modal.present();
   }
 
+  public formatDate(date: string) {
+    return this.dateTimeParserService.dateMonthYear(date);
+  }
 }
