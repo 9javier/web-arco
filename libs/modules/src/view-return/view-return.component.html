@@ -2,24 +2,19 @@
   <ion-grid *ngIf="return">
     <ion-row>
       <ion-col class="center-contents">
-        <ion-button [disabled]="![2,3].includes(return.status)" (click)="this.router.navigateByUrl('picking/return')">Iniciar picking</ion-button>
+        <ion-button class="btn-start" fill="clear" [disabled]="![2,3].includes(return.status)" (click)="this.router.navigateByUrl('picking/return')">Iniciar picking <ion-icon slot="end" name="play"></ion-icon></ion-button>
       </ion-col>
     </ion-row>
+    <mat-divider class="divider-top"></mat-divider>
+
     <ion-row>
-      <ion-col size="6">
-        <ion-item>
-          <ion-label position="stacked" color="dark">Jaulas contenedoras</ion-label>
-          <ion-input disabled>{{getPackingNameList(return.packings)}}</ion-input>
-        </ion-item>
-      </ion-col>
       <ion-col size="6">
         <ion-item>
           <ion-label position="stacked">Nº Bultos</ion-label>
           <ion-input [(ngModel)]="return.amountPackages"></ion-input>
         </ion-item>
       </ion-col>
-    </ion-row>
-    <ion-row>
+
       <ion-col size="6">
         <ion-item class="item-date">
           <ion-label position="stacked">Fecha prevista recogida</ion-label>
@@ -28,22 +23,16 @@
           <mat-datepicker #pickerDatePredictedPickup></mat-datepicker>
         </ion-item>
       </ion-col>
+    </ion-row>
+
+    <ion-row>
       <ion-col size="6">
         <ion-item>
           <ion-label position="stacked">Agencia transportista</ion-label>
           <ion-input [(ngModel)]="return.shipper"></ion-input>
         </ion-item>
       </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col size="6">
-        <ion-item>
-          <ion-button matTooltip="Ver imagen de albarán de agencia" fill="clear" class="button-item">
-            <ion-icon name="image"></ion-icon>
-            albarán agencia
-          </ion-button>
-        </ion-item>
-      </ion-col>
+
       <ion-col size="6">
         <ion-item>
           <ion-label position="stacked">Cambiar estado</ion-label>
@@ -53,103 +42,140 @@
         </ion-item>
       </ion-col>
     </ion-row>
+
     <ion-row>
-      <ion-col size="6">
+      <ion-col size="12" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked" color="dark">Jaulas contenedoras</ion-label>
+          <ion-input disabled>{{getPackingNameList(return.packings)}}</ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" class="col-delivery-note">
+        <ion-button matTooltip="Ver imagen de albarán de agencia" fill="clear" class="button-item">
+          <ion-icon name="image" slot="end"></ion-icon>
+          albarán agencia
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <mat-divider></mat-divider>
+
+    <ion-row>
+      <ion-col size="6" class="disabled-col">
         <ion-item>
           <ion-label position="stacked">ID</ion-label>
           <ion-input disabled>{{return.id}}</ion-input>
         </ion-item>
       </ion-col>
-      <ion-col size="6">
+      <ion-col size="6" class="disabled-col">
         <ion-item>
           <ion-label position="stacked">Unidades</ion-label>
-          <ion-input disabled>{{return.unitsPrepared+'/'+return.unitsSelected}}</ion-input>
+          <ion-input disabled>{{return.unitsPrepared+' / '+return.unitsSelected}}</ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
+
     <ion-row>
-      <ion-col size="6">
+      <ion-col size="6" class="disabled-col">
         <ion-item>
           <ion-label position="stacked">Tipo</ion-label>
           <ion-input disabled>{{return.type.name}}</ion-input>
         </ion-item>
       </ion-col>
-      <ion-col size="6">
+      <ion-col size="6" class="disabled-col">
         <ion-item>
           <ion-label position="stacked">Almacén</ion-label>
           <ion-input disabled>{{return.warehouse.name}}</ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
+
     <ion-row>
-      <ion-col size="6">
+      <ion-col size="6" class="disabled-col">
         <ion-item>
           <ion-label position="stacked">Proveedor</ion-label>
           <ion-input disabled>{{return.provider.name}}</ion-input>
         </ion-item>
       </ion-col>
-      <ion-col size="6">
+      <ion-col size="6" class="disabled-col">
         <ion-item>
           <ion-label position="stacked">Marcas</ion-label>
           <ion-input disabled>{{getBrandNameList(return.brands)}}</ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
+
     <ion-row>
-      <ion-col size="6">
+      <ion-col size="6" class="disabled-col">
         <ion-item>
           <ion-label position="stacked">Correo de contacto</ion-label>
           <ion-input disabled>{{return.email}}</ion-input>
         </ion-item>
       </ion-col>
-      <ion-col size="6">
+      <ion-col size="6" class="disabled-col">
         <ion-item class="item-date">
-          <ion-label position="stacked" color="medium">Devolver antes de</ion-label>
-          <input matInput [matDatepicker]="pickerDateReturnBefore" [(ngModel)]="return.dateReturnBefore" disabled placeholder="Seleccione una fecha">
-          <mat-datepicker-toggle matSuffix [for]="pickerDateReturnBefore"></mat-datepicker-toggle>
-          <mat-datepicker #pickerDateReturnBefore></mat-datepicker>
+          <ion-label position="stacked" color="medium">Devolver antes del</ion-label>
+          <ion-input disabled>{{return.dateReturnBefore ? formatDate(return.dateReturnBefore) : 'Seleccione una fecha'}}</ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
+
     <ion-row>
-      <ion-col size="6">
+      <ion-col size="6" class="disabled-col">
         <ion-item>
           <ion-label position="stacked">Estado</ion-label>
           <ion-input disabled>{{getStatusName(return.status)}}</ion-input>
         </ion-item>
       </ion-col>
-      <ion-col size="6">
+      <ion-col size="6" class="disabled-col">
         <ion-item>
           <ion-label position="stacked">Usuario</ion-label>
           <ion-input disabled>{{return.user.name}}</ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
-    <ion-row>
-      <ion-col>
+
+    <ion-row *ngIf="return.observations && return.observations != ''">
+      <ion-col class="disabled-col">
         <ion-item>
           <ion-label position="stacked">Observaciones</ion-label>
-          <ion-textarea rows="6" cols="20" type="text" disabled>{{return.observations}}</ion-textarea>
+          <ion-textarea disabled>{{return.observations}}</ion-textarea>
         </ion-item>
       </ion-col>
     </ion-row>
+
     <ion-row>
-      <ion-button matTooltip="Imprimir/enviar albarán" fill="clear">
-        <ion-icon name="print"></ion-icon>
-        albarán
-      </ion-button>
-      <ion-button matTooltip="Adjuntar archivos/imágenes" fill="clear">
-        <ion-icon name="attach"></ion-icon>
-        archivos/imágenes
-      </ion-button>
-    </ion-row>
-    <ion-row>
-      <ion-col size="6" class="center-contents">
-        <ion-button color="light" (click)="router.navigateByUrl('/return-pending-list')">Cancelar</ion-button>
+      <ion-col size="12" class="col-delivery-note">
+        <ion-button fill="clear" class="button-item">
+          <ion-icon name="attach" slot="end"></ion-icon>
+          archivos/imágenes
+        </ion-button>
       </ion-col>
-      <ion-col size="6" class="center-contents">
-        <ion-button color="primary" [disabled]="!allFieldsFilled()" (click)="save()">Guardar</ion-button>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" class="col-delivery-note">
+        <ion-button fill="clear" class="button-item">
+          <ion-icon name="print" slot="end"></ion-icon>
+          albarán
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-row>
+      <ion-col size="6" class="center-contents">
+        <ion-button class="btn-cancel" fill="clear" (click)="router.navigateByUrl('/return-pending-list')">Cancelar</ion-button>
+      </ion-col>
+      <ion-col size="6" class="center-contents">
+        <ion-button class="btn-save" color="primary" [disabled]="!allFieldsFilled()" (click)="save()">Guardar</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

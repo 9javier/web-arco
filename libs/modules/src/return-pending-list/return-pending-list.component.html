@@ -71,14 +71,31 @@
 <ion-content>
   <ion-grid class="no-vertical-padding">
     <div class="row-container" *ngFor="let ret of returns" (click)="router.navigate(['/view-return', {id: ret.id}])">
-      <ion-row nowrap >
-        <ion-col size="33">{{ret.id}}</ion-col>
-        <ion-col size="34">{{ret.provider.name}}</ion-col>
-        <ion-col size="33" class="text-align-end">{{getFormattedDate(ret.dateLimit)}}</ion-col>
-      </ion-row>
-      <ion-row nowrap>
-        <ion-col size="50">{{getStatusName(ret.status)}}</ion-col>
-        <ion-col size="50" class="text-align-end">{{ret.unitsPrepared+'/'+ret.unitsSelected}}</ion-col>
+      <ion-row>
+        <ion-col size="15" class="col-id">
+          #{{ret.id}}
+        </ion-col>
+
+        <ion-col size="65">
+          <ion-row>
+            <ion-col>
+              {{ret.provider.name}}
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col class="col-status">
+              {{getStatusName(ret.status)}}
+            </ion-col>
+            <ion-col>
+              {{getFormattedDate(ret.dateLimit)}}
+            </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <ion-col size="20" class="col-unities">
+          {{ret.unitsPrepared+' / '+ret.unitsSelected}}
+        </ion-col>
       </ion-row>
     </div>
   </ion-grid>

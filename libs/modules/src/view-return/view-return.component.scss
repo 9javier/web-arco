@@ -33,10 +33,15 @@ ion-input{
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.button-item{
-  height: 56px;
-  margin-left: -5px;
+
+ion-col.col-delivery-note {
+  padding: 0;
+  .button-item{
+    height: 36px;
+    width: 100%;
+  }
 }
+
 .center-contents{
   text-align: center;
   margin-top: auto;
@@ -66,5 +71,35 @@ ion-item.item-date {
     width: 100%;
     text-align: end;
     margin-top: 10px;
+  }
+}
+
+ion-button.btn-start, ion-button.btn-save, ion-button.btn-cancel {
+  width: 100%;
+}
+
+mat-divider {
+  margin-bottom: 8px;
+  margin-top: 8px;
+}
+
+mat-divider.divider-top {
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+ion-item {
+  ion-label {
+    opacity: 1;
+  }
+}
+
+ion-col.disabled-col {
+  ion-item {
+    background-color: var(--bg-disabled) !important;
+    --ion-background-color: var(--bg-disabled) !important;
+    ion-label {
+      opacity: 1;
+    }
   }
 }

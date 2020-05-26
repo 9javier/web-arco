@@ -12,6 +12,7 @@ import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.p
 import {PickingProvider} from "../../../services/src/providers/picking/picking.provider";
 import ReturnPacking = ReturnModel.ReturnPacking;
 import {Events} from "@ionic/angular";
+import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 @Component({
   selector: 'suite-view-return',
@@ -29,7 +30,8 @@ export class ViewReturnComponent implements OnInit {
     private pickingProvider: PickingProvider,
     private returnService: ReturnService,
     private toolbarProvider: ToolbarProvider,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private dateTimeParserService: DateTimeParserService
   ) {}
 
   async ngOnInit() {
@@ -109,4 +111,7 @@ export class ViewReturnComponent implements OnInit {
     return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
   }
 
+  public formatDate(date: string) {
+    return this.dateTimeParserService.dateMonthYear(date);
+  }
 }

@@ -18,6 +18,15 @@ ion-content{
     text-overflow: ellipsis;
   }
 
+  .col-id, .col-unities {
+    text-align: center;
+    margin: auto;
+  }
+
+  .col-status {
+    color: var(--ion-color-secondary)
+  }
+
   .row-container{
     padding-top: 5px;
     border-bottom-style: solid;
