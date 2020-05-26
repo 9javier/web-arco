@@ -23,7 +23,7 @@ export class NewReturnUnitiesComponent implements OnInit {
 
   isLoadingData: boolean = false;
 
-  private isDefective: boolean = false;
+  isDefective: boolean = false;
   private warehouseId: number = null;
   private providerId: number = null;
   private brandIds: number[] = [];
