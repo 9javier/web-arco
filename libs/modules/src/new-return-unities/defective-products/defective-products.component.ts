@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {ReturnModel} from "../../../../services/src/models/endpoints/Return";
-import {validators} from "@suite/common-modules";
+import {validators} from "../../utils/validators";
 import {MatTableDataSource} from "@angular/material/table";
 
 @Component({

@@ -16,7 +16,6 @@ import {
 } from "@suite/services";
 import Warehouse = WarehouseModel.Warehouse;
 import OptionsResponse = ReturnModel.OptionsResponse;
-import FilesResponse = ReturnModel.FilesResponse;
 import {ReturnTypeModel} from "../../../services/src/models/endpoints/ReturnType";
 import ReturnType = ReturnTypeModel.ReturnType;
 import {ProviderModel} from "../../../services/src/models/endpoints/Provider";
@@ -94,6 +93,7 @@ export class NewReturnComponent implements OnInit {
         datePredictedPickup: "",
         dateReturnBefore: "",
         email: "",
+        packings: [],
         history: false,
         id: 0,
         lastStatus: 1,

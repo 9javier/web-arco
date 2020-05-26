@@ -189,7 +189,7 @@ export class ReturnPendingListComponent implements OnInit {
       order: this.order,
       pagination: this.pagination
     };
-    this.returnService.postSearch(parameters).then((response: SearchResponse) => {
+    this.returnService.postSearchHistoricFalse(parameters).then((response: SearchResponse) => {
       if (response.code == 200) {
         this.returns = response.data.result;
         this.paginator.length = response.data.count;
