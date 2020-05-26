@@ -196,6 +196,9 @@ var ScanditMatrixSimple = {
   setTextPickingStores: function (show, text) {
     exec(null, null, PLUGIN_NAME, "matrixPickingStoresSetText", [show, text]);
   },
+  setFixedText: function (text) {
+    exec(null, null, PLUGIN_NAME, "matrixSimpleSetFixedText", [text]);
+  },
   /**
    *
    * @param show
