@@ -188,17 +188,9 @@ export class TextareaComponent implements OnInit {
       if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
         if (this.processInitiated && this.lastCarrierScanned == dataWrited) {
           if (this.listProducts && this.listProducts.length > 0) {
-            if (this.typePicking === 1) {
-              this.alertSealPackingIntermediate(dataWrited);
-            } else {
-              this.endProcessIntermediate(dataWrited);
-            }
+            this.endProcessIntermediate(dataWrited);
           } else {
-            if (this.typePicking === 1) {
-              this.alertSealPackingFinal(dataWrited);
-            } else {
-              this.endProcessPacking(dataWrited);
-            }
+            this.endProcessPacking(dataWrited);
           }
         } else {
           this.carrierService.getSingle(this.lastCodeScanned).pipe()
@@ -260,13 +252,7 @@ export class TextareaComponent implements OnInit {
                                   this.setNexProductToScan(this.listProducts[0]);
                                   this.showTextStartScanPacking(false, this.typePacking, '');
                                 } else if (res.data.packingStatus === 4) {
-                                  if (this.typePicking === 1) {
-                                    this.loadingMessageComponent.show(false);
-                                    this.alertSealPackingIntermediate(this.jailReference);
-                                  } else {
-                                    this.loadingMessageComponent.show(false);
-                                    this.endProcessIntermediate(this.jailReference);
-                                  }
+                                  this.endProcessIntermediate(this.jailReference);
                                 } else {
                                   this.processInitiated = false;
                                   this.inputPicking = null;
@@ -379,11 +365,7 @@ export class TextareaComponent implements OnInit {
                       }
                     });
                   } else {
-                    if (this.typePicking === 1) {
-                      this.alertSealPackingFinal(dataWrited);
-                    } else {
-                      this.endProcessPacking(dataWrited);
-                    }
+                    this.endProcessPacking(dataWrited);
                   }
                 }
               } else {
@@ -696,17 +678,9 @@ export class TextareaComponent implements OnInit {
 
   private fullPacking(){
     if (this.listProducts && this.listProducts.length > 0) {
-      if (this.typePicking === 1) {
-        this.alertSealPackingIntermediate(this.lastCarrierScanned);
-      } else {
-        this.endProcessIntermediate(this.lastCarrierScanned);
-      }
+      this.endProcessIntermediate(this.lastCarrierScanned);
     } else {
-      if (this.typePicking === 1) {
-        this.alertSealPackingFinal(this.lastCarrierScanned);
-      } else {
-        this.endProcessPacking(this.lastCarrierScanned);
-      }
+      this.endProcessPacking(this.lastCarrierScanned);
     }
   }
 
@@ -837,63 +811,6 @@ export class TextareaComponent implements OnInit {
     return await alertWarning.present();
   }
 
-  async alertSealPackingFinal(packingReference: string) {
-    this.inventoryService.getPendingSeal(this.pickingId).then(async (res: InventoryModel.ResponseGlobal) => {
-      const pendingSealCarrier = res.data;
-      const listPackingReferences = pendingSealCarrier.filter(c => { return c != null && c.packing != null && c.packing[0] != null }).map(c => c.packing[0].reference);
-
-      if (listPackingReferences && listPackingReferences.length > 0) {
-        const listPackingReferencesToShow = listPackingReferences.join('<br/>');
-
-        const alertWarning = await this.alertController.create({
-          header: 'Atención',
-          message: `<b>¿Desea precintar los embalajes utilizados?</b></br></br>${listPackingReferencesToShow}`,
-          backdropDismiss: false,
-          buttons: [
-            {
-              text: 'No',
-              handler: () => {
-                this.endProcessPacking(packingReference);
-              }
-            },
-            {
-              text: 'Si',
-              handler: () => {
-                this.sealPackingFinal(listPackingReferences, packingReference);
-              }
-            }]
-        });
-
-        return await alertWarning.present();
-      } else {
-        this.endProcessPacking(packingReference);
-      }
-    });
-  }
-
-  async alertSealPackingIntermediate(packingReference: string) {
-    const alertWarning = await this.alertController.create({
-      header: 'Atención',
-      message: `¿Desea precintar el embalaje ${packingReference}?`,
-      backdropDismiss: false,
-      buttons: [
-        {
-          text: 'No',
-          handler: () => {
-            this.endProcessIntermediate(this.jailReference);
-          }
-        },
-        {
-          text: 'Si',
-          handler: () => {
-            this.sealPackingIntermediate(packingReference);
-          }
-        }]
-    });
-
-    return await alertWarning.present();
-  }
-
   private endProcessIntermediate(dataWrite: any) {
     this.processInitiated = false;
     this.inputPicking = null;
@@ -915,87 +832,6 @@ export class TextareaComponent implements OnInit {
 
     this.showNexProductToScan(false);
     this.showTextStartScanPacking(true, this.typePacking, '', true);
-  }
-
-  private sealPackingFinal(listCarriers: string[], packingReferenceLast: string) {
-    this.loadingMessageComponent.show(true, 'Finalizando proceso y precintando embalajes');
-    this.postVerifyPacking({
-      status: 4,
-      pickingId: this.pickingId,
-      packingReference: packingReferenceLast
-    }).subscribe((res) => {
-      if (listCarriers && listCarriers.length > 0) {
-        this.carrierService.postSealList(listCarriers).subscribe(async () => {
-          this.inputPicking = null;
-
-          this.isScannerBlocked = false;
-          this.processFinishOk({
-            toast: {
-              message: 'Proceso finalizado correctamente.',
-              duration: TimesToastType.DURATION_SUCCESS_TOAST_1500,
-              position: PositionsToast.BOTTOM
-            },
-            playSound: true
-          });
-
-          this.showTextEndScanPacking(false, this.typePacking, this.jailReference);
-          this.clearTimeoutCleanLastCodeScanned();
-
-          setTimeout(() => {
-            this.location.back();
-            this.events.publish('picking:remove');
-          }, 1.5 * 1000);
-        });
-      } else {
-        this.inputPicking = null;
-
-        this.isScannerBlocked = false;
-        this.processFinishOk({
-          toast: {
-            message: 'Proceso finalizado correctamente.',
-            duration: TimesToastType.DURATION_SUCCESS_TOAST_1500,
-            position: PositionsToast.BOTTOM
-          },
-          playSound: true
-        });
-
-        this.showTextEndScanPacking(false, this.typePacking, this.jailReference);
-        this.clearTimeoutCleanLastCodeScanned();
-
-        setTimeout(() => {
-          this.location.back();
-          this.events.publish('picking:remove');
-        }, 1.5 * 1000);
-      }
-    }, (error) => {
-      this.inputPicking = null;
-
-      let errorMessage = error.error.errors;
-      if (error.error.code === 404) {
-        errorMessage = this.literalsJailPallet[this.typePacking].not_registered;
-      }
-      this.isScannerBlocked = false;
-      this.processFinishError({
-        toast: {
-          message: errorMessage,
-          position: PositionsToast.BOTTOM
-        },
-        focusInput: {
-          playSound: true
-        }
-      });
-
-      this.clearTimeoutCleanLastCodeScanned();
-    });
-  }
-
-  private sealPackingIntermediate(packingReference: any) {
-    if (packingReference && packingReference.length > 0) {
-      this.loadingMessageComponent.show(true, 'Precintando embalaje');
-      this.carrierService.postSealList(Array(packingReference)).subscribe(async () => {
-        this.endProcessIntermediate(this.jailReference);
-      });
-    }
   }
 
   private endProcessPacking(packingReference: any) {
