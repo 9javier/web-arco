@@ -54,7 +54,7 @@
 
     <ion-row>
       <ion-col size="12" class="col-delivery-note">
-        <ion-button matTooltip="Ver imagen de albarán de agencia" fill="clear" class="button-item">
+        <ion-button matTooltip="Añadir de albarán de agencia" fill="clear" class="button-item" (click)="searchDeliveryNote()">
           <ion-icon name="image" slot="end"></ion-icon>
           albarán agencia
         </ion-button>
@@ -191,16 +191,6 @@
         </ion-button>
       </ion-col>
     </ion-row>
-
-    <ion-row>
-      <ion-col size="12" class="col-delivery-note">
-        <ion-button fill="clear" class="button-item">
-          <ion-icon name="print" slot="end"></ion-icon>
-          albarán
-        </ion-button>
-      </ion-col>
-    </ion-row>
-
     <ion-row>
       <ion-col size="12" class="col-delivery-note">
         <ion-button (click)="takePhoto()"  fill="clear" class="button-item">

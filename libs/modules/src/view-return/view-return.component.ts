@@ -313,7 +313,7 @@ export class ViewReturnComponent implements OnInit {
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
-      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+      sourceType: this.camera.PictureSourceType.CAMERA,
       correctOrientation: true
     }
     this.camera.getPicture(options).then((imageData) => {
