@@ -90,7 +90,7 @@ export namespace ReturnModel{
       types: string[],
       providers: string[],
       brands: string[],
-      datesLimit: string[],
+      datesReturnBefore: string[],
       warehouses: string[],
       statuses: number[],
       datesLastStatus: string[],

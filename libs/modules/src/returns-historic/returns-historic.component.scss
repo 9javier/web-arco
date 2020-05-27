@@ -1,4 +1,20 @@
 ion-content{
+
+  th.title {
+    padding-right: 12px;
+
+    suite-filter-button{
+      text-align: end;
+      position: absolute;
+      top: 19px;
+      right: 28px;
+    }
+  }
+  div.title {
+    border-right: 1px solid var(--ion-color-secondary);
+    padding-right: 40px;
+  }
+
   ion-item {
     ion-label+ion-input {
       text-align: right;

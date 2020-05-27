@@ -19,6 +19,7 @@ import * as Filesave from 'file-saver';
 import { map, catchError } from 'rxjs/operators';
 import { BehaviorSubject, of, Observable } from 'rxjs';
 import {IntermediaryService} from "@suite/services";
+import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 @Component({
   selector: 'suite-returns-historic',
@@ -60,7 +61,7 @@ export class ReturnsHistoricComponent implements OnInit {
   };
   order: Order = {
     field: 'id',
-    direction: 'ASC'
+    direction: 'DESC'
   };
   pagination: Pagination = {
     limit: this.pagerValues[0],
@@ -70,7 +71,8 @@ export class ReturnsHistoricComponent implements OnInit {
   constructor(
     public router: Router,
     private returnService: ReturnService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private dateTimeParserService: DateTimeParserService
 
   ) {
     this.router.events.subscribe((val) => {
@@ -142,7 +144,7 @@ export class ReturnsHistoricComponent implements OnInit {
               }
             })
           })(),
-          datesLimit: response.data.datesLimit.map(data => {
+          datesLimit: response.data.datesReturnBefore.map(data => {
             const date = JSON.parse(data);
             return {
               id: date,
@@ -257,11 +259,10 @@ export class ReturnsHistoricComponent implements OnInit {
     }
   }
 
-  getFormattedDate(value: string): string{
-    if(value && value != ''){
-      const date = new Date(value);
-      return date.getDay()+'/'+date.getMonth()+'/'+date.getFullYear();
-    }else{
+  getFormattedDate(value: string): string {
+    if (value && value != '') {
+      return this.dateTimeParserService.dateMonthYear(value);
+    } else {
       return '';
     }
   }
@@ -285,7 +286,7 @@ export class ReturnsHistoricComponent implements OnInit {
     };
     this.order = {
       field: 'id',
-      direction: 'ASC'
+      direction: 'DESC'
     };
     this.pagination = {
       limit: this.pagerValues[0],
