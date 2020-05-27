@@ -12,6 +12,15 @@
     </td>
   </ng-container>
 
+  <ng-container matColumnDef="brand_name">
+    <th mat-header-cell *matHeaderCellDef>
+      <span class="title">Marca</span>
+    </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.product.brand.name }}
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="model_ref">
     <th mat-header-cell *matHeaderCellDef>
       <span class="title">Artículo</span>
@@ -48,12 +57,12 @@
     </td>
   </ng-container>
 
-  <ng-container matColumnDef="defect_reason">
+  <ng-container matColumnDef="defect_type">
     <th mat-header-cell *matHeaderCellDef>
-      <span class="title">Talla</span>
+      <span class="title">Defecto</span>
     </th>
     <td mat-cell *matCellDef="let element">
-      {{ element.defective.reason }}
+      {{ element.defective.type }}
     </td>
   </ng-container>
 

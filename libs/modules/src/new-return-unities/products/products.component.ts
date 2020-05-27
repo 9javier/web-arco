@@ -13,7 +13,7 @@ export class ProductsComponent implements OnInit {
 
   @Output() changeItemsSelected = new EventEmitter();
 
-  public tColumns: string[] = ['model_ref', 'model_name', 'commercial', 'size', 'unities', 'select'];
+  public tColumns: string[] = ['brand_name', 'model_ref', 'model_name', 'commercial', 'size', 'unities', 'select'];
   public tData: MatTableDataSource<ReturnModel.GetProducts> = new MatTableDataSource<ReturnModel.GetProducts>([]);
 
   public tAllSelected: boolean = false;

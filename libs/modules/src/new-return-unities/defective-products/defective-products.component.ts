@@ -13,7 +13,7 @@ export class DefectiveProductsComponent implements OnInit {
 
   @Output() changeItemsSelected = new EventEmitter();
 
-  public tColumns: string[] = ['product', 'model_ref', 'model_name', 'commercial', 'size', 'defect_reason', 'select'];
+  public tColumns: string[] = ['product', 'brand_name', 'model_ref', 'model_name', 'commercial', 'size', 'defect_type', 'select'];
   public tData: MatTableDataSource<ReturnModel.GetDefectiveProductsResults> = new MatTableDataSource<ReturnModel.GetDefectiveProductsResults>([]);
 
   public tAllSelected: boolean = false;
