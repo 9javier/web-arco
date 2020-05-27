@@ -245,9 +245,13 @@ export class NewReturnComponent implements OnInit {
     }
     let object = this.incidenceForm.value;
 
-    this.return.archives = this.incidenceForm.value.archivesFileIds;
-    this.return.delivery_notes = this.incidenceForm.value.delivery_notesFileIds;
-
+    this.return.archives = this.incidenceForm.value.archivesFileIds ? this.incidenceForm.value.archivesFileIds : [];
+    this.return.delivery_notes = this.incidenceForm.value.delivery_notesFileIds ? this.incidenceForm.value.delivery_notesFileIds : [];
+    if(this.return.brands){
+      for (let brand of this.return.brands) {
+        if(brand.condition) delete brand.condition;
+      }
+    }
     this.returnService.postSave(this.return).then((response: SaveResponse) => {
       if(response.code == 200){
         if(this.isHistoric){
