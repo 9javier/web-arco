@@ -328,8 +328,9 @@
   <ion-list *ngIf="scanSettings && scanSettings.symbologies && uiSettings">
     <ion-list-header>HD Mode</ion-list-header>
     <ion-item>
-      <ion-label>Enable HD</ion-label>
+      <ion-label class="toggleName">Enable HD</ion-label>
       <ion-toggle [(ngModel)]="scanSettings.highDensityModeEnabled" item-right></ion-toggle>
+      <ion-label class="toggle" *ngIf="scanSettings.highDensityModeEnabled">Sí</ion-label>
     </ion-item>
   </ion-list>
 </ion-content>
