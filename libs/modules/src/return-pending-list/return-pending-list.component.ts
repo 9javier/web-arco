@@ -52,7 +52,7 @@ export class ReturnPendingListComponent implements OnInit {
   });
   order: Order = {
     field: 'id',
-    direction: 'ASC'
+      direction: 'DESC'
   };
   pagination: Pagination = {
     limit: 10,
@@ -253,7 +253,7 @@ export class ReturnPendingListComponent implements OnInit {
     });
     this.order= {
       field: 'id',
-      direction: 'ASC'
+      direction: 'DESC'
     };
     this.pagination = {
       limit: 10,

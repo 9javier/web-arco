@@ -61,7 +61,7 @@ export class ReturnTrackingListComponent implements OnInit {
   };
   order: Order = {
     field: 'id',
-    direction: 'ASC'
+    direction: 'DESC'
   };
   pagination: Pagination = {
     limit: this.pagerValues[0],
@@ -289,7 +289,7 @@ export class ReturnTrackingListComponent implements OnInit {
     };
     this.order = {
       field: 'id',
-      direction: 'ASC'
+      direction: 'DESC'
     };
     this.pagination = {
       limit: this.pagerValues[0],
