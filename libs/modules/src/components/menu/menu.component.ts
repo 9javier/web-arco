@@ -592,6 +592,13 @@ export class MenuComponent implements OnInit {
           url: '/print/product/relabel',
           icon: 'barcode',
           tooltip: 'Imprimir nuevas etiquetas de productos introduciendo el código manualmente'
+        },
+        {
+          title: 'Paquetes Recibidos',
+          id: 'package-received',
+          url: '/package-received',
+          icon: 'archive',
+          tooltip: 'Listado de paquetes recepcionados'
         }
       ]
     },

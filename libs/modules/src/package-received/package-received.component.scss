@@ -1,0 +1,222 @@
+ion-select {
+  max-width: 100%;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.mat-cell,
+.mat-header-cell {
+  padding: 10px 10px 10px 0;
+}
+
+ion-label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+div.list-header-filters-mobile {
+  ion-grid {
+    .header-mobile {
+      padding: 0 0 0 16px;
+      height: 56px;
+
+      ion-col {
+        height: 56px;
+      }
+
+      ion-col.check-all, ion-col.information, ion-col.filters-mobile {
+        padding: 0;
+        div.check-all, div.information, div.filters-mobile {
+          display: table;
+          height: 56px;
+          ion-checkbox, h5, i {
+            display: table-cell;
+            vertical-align: middle;
+            margin: 0;
+          }
+        }
+        div.information {
+          width: 100%;
+        }
+        div.filters-mobile {
+          margin: auto;
+          text-align: center;
+          width: 32px;
+          i {
+            width: 32px;
+            height: 32px;
+          }
+        }
+        div.filters-mobile.filters-opened {
+          padding: 12px 0;
+          i {
+            background-color: black;
+            color: white;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+
+    form {
+      position: absolute;
+      background: white;
+      z-index: 3;
+      width: 100vw;
+      left: 0;
+      border: 1px solid #eee;
+    }
+  }
+
+  ion-col.btn-remove {
+    ion-button {
+      --background: white;
+      background: white;
+      color: var(--ion-color-primary);
+    }
+  }
+  ion-col.btn-remove, ion-col.btn-apply {
+    text-align: center;
+  }
+}
+
+div.list-items-mobile {
+  height: calc(100vh - 56px - 66px - 64px); // 56px from header - 66 from list header - 64px from paginator
+  overflow: auto;
+
+  mat-expansion-panel-header.custom-panel-header {
+    padding: 0 11px 0 16px;
+    height: auto !important;
+    color: black;
+
+    ion-row.custom-panel-header {
+      padding: 5px 0;
+
+      ion-col.check-print {
+        padding: 0;
+      }
+
+      ion-col.content-prices-header {
+        padding: 0;
+        ion-row.row-title-prices {
+          width: 100%;
+          ion-col {
+            padding: 0;
+          }
+          ion-col.status {
+            width: 100%;
+            text-align: end;
+          }
+        }
+
+        mat-panel-description.panel-description {
+          display: block;
+          ion-row.row-family-lifestyle-size, ion-row.row-price-stock {
+            width: 100%;
+            margin-top: 8px;
+            ion-col {
+              padding: 0;
+              p {
+                margin: 0;
+              }
+            }
+            ion-col.size {
+              color: #979797;
+              text-align: end;
+            }
+            ion-col.price {
+              p.final-price {
+                color: black;
+                font-weight: 500;
+              }
+            }
+            ion-col.stock {
+              width: 100%;
+              text-align: end;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  div.my-expansion-panel-body {
+    padding-top: 8px;
+    img.img-product-mobile {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+}
+
+div.portrait-section {
+  height: 100vh;
+  div.filters-mobile {
+    height: 56px;
+  }
+  div.container-table-mobile {
+    width: 100vw;
+    overflow: auto;
+    height: calc(100vh - 56px - 56px); // 56px from header - 56 from filters text
+    table {
+      height: 100%;
+      width: auto;
+    }
+  }
+}
+
+td.column-img-product-desktop {
+  width: 94px;
+  padding: 5px 16px 5px 10px;
+  height: 56px;
+  img.img-product-desktop {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.footer-products {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+.footer-products:before {
+  background: none;
+}
+.horizontal-fab {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  margin-bottom: 64px;
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}
+
+mat-paginator {
+  height: 64px;
+}
+
+.information{
+  text-align: center;
+}
+
+ion-toggle {
+  vertical-align: bottom;
+  padding-top: 19px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+}
+
+ion-row.list-products.hydrated {
+  margin: -5% 0% -8% 0% !important;
+}
