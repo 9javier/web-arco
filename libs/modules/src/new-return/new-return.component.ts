@@ -113,6 +113,15 @@ export class NewReturnComponent implements OnInit {
         archives: [],
         delivery_notes: []
       };
+
+      this.archives = this.return.archives;
+      this.delivery_notes = this.return.delivery_notes;
+      this.displayArchiveList = false;
+      this.displayDeliveryNoteList = false;
+      this.initForm();
+
+      this.archiveList = true;
+      this.delivery_noteList = true;
     }
 
     this.dropFilesService.getImage().subscribe(resp => {
@@ -220,7 +229,6 @@ export class NewReturnComponent implements OnInit {
   }
 
   save(){
-
     if (this.archives.length > 0) {
       let archives = [];
       this.archives.forEach(elem => {
@@ -236,7 +244,11 @@ export class NewReturnComponent implements OnInit {
       this.incidenceForm.addControl('delivery_notesFileIds', new FormControl(delivery_notes));
     }
     let object = this.incidenceForm.value;
-    this.returnService.postSave(object).then((response: SaveResponse) => {
+
+    this.return.archives = this.incidenceForm.value.archivesFileIds;
+    this.return.delivery_notes = this.incidenceForm.value.delivery_notesFileIds;
+
+    this.returnService.postSave(this.return).then((response: SaveResponse) => {
       if(response.code == 200){
         if(this.isHistoric){
           this.router.navigateByUrl('/returns-historic')
@@ -266,7 +278,9 @@ export class NewReturnComponent implements OnInit {
       } else {
         console.error(response);
       }
-    }).catch(console.error);
+    }).catch((e) => {
+      console.error(e);
+    });
   }
 
   getOptions(){
