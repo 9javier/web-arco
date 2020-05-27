@@ -13,6 +13,7 @@ import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.p
 import {AuthenticationService} from "@suite/services";
 import {TagsInputOption} from "../components/tags-input/models/tags-input-option.model";
 import {FormBuilder, FormGroup} from "@angular/forms";
+import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 @Component({
   selector: 'suite-return-pending-list',
@@ -66,7 +67,8 @@ export class ReturnPendingListComponent implements OnInit {
     private returnService: ReturnService,
     private toolbarProvider: ToolbarProvider,
     private formBuilder: FormBuilder,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private dateTimeParserService: DateTimeParserService
   ) {}
 
   async ngOnInit() {
@@ -127,7 +129,7 @@ export class ReturnPendingListComponent implements OnInit {
               hide: false
             }
           }),
-          datesLimit: response.data.datesLimit.map(data => {
+          datesLimit: response.data.datesReturnBefore.map(data => {
             const date = JSON.parse(data);
             return {
               id: date,
@@ -222,11 +224,10 @@ export class ReturnPendingListComponent implements OnInit {
     }
   }
 
-  getFormattedDate(value: string): string{
-    if(value && value != ''){
-      const date = new Date(value);
-      return date.getDay()+'/'+date.getMonth()+'/'+date.getFullYear();
-    }else{
+  getFormattedDate(value: string): string {
+    if (value && value != '') {
+      return this.dateTimeParserService.dateMonthYear(value);
+    } else {
       return '';
     }
   }

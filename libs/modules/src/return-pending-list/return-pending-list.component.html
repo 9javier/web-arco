@@ -87,8 +87,11 @@
             <ion-col class="col-status">
               {{getStatusName(ret.status)}}
             </ion-col>
-            <ion-col>
-              {{getFormattedDate(ret.dateLimit)}}
+          </ion-row>
+
+          <ion-row *ngIf="ret.dateReturnBefore">
+            <ion-col class="col-status">
+              Devolver antes de {{getFormattedDate(ret.dateReturnBefore)}}
             </ion-col>
           </ion-row>
         </ion-col>

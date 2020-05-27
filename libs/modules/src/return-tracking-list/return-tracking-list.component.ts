@@ -143,7 +143,7 @@ export class ReturnTrackingListComponent implements OnInit {
               }
             })
           })(),
-          datesLimit: response.data.datesLimit.map(data => {
+          datesLimit: response.data.datesReturnBefore.map(data => {
             const date = JSON.parse(data);
             return {
               id: date,
