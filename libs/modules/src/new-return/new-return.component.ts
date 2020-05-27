@@ -228,7 +228,9 @@ export class NewReturnComponent implements OnInit {
     )
   }
 
-  save(){
+  async save() {
+    await this.intermediary.presentLoadingNew('Guardando devolución...');
+
     if (this.archives.length > 0) {
       let archives = [];
       this.archives.forEach(elem => {
@@ -243,26 +245,31 @@ export class NewReturnComponent implements OnInit {
       });
       this.incidenceForm.addControl('delivery_notesFileIds', new FormControl(delivery_notes));
     }
-    let object = this.incidenceForm.value;
 
     this.return.archives = this.incidenceForm.value.archivesFileIds ? this.incidenceForm.value.archivesFileIds : [];
     this.return.delivery_notes = this.incidenceForm.value.delivery_notesFileIds ? this.incidenceForm.value.delivery_notesFileIds : [];
+
     if(this.return.brands){
       for (let brand of this.return.brands) {
         if(brand.condition) delete brand.condition;
       }
     }
+
     this.returnService.postSave(this.return).then((response: SaveResponse) => {
-      if(response.code == 200){
-        if(this.isHistoric){
+      this.intermediary.dismissLoadingNew();
+      if (response.code == 200) {
+        if (this.isHistoric) {
           this.router.navigateByUrl('/returns-historic')
-        }else{
+        } else {
           this.router.navigateByUrl('/return-tracking-list')
         }
-      }else{
+      } else {
         console.error(response);
       }
-    }).catch(console.error);
+    }).catch((e) => {
+      console.error(e);
+      this.intermediary.dismissLoadingNew();
+    });
   }
 
   load(returnId: number){

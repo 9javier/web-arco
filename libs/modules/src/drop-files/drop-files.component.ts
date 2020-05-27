@@ -1,14 +1,10 @@
-import { BehaviorSubject, of, Observable } from 'rxjs';
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange, Sort } from '@angular/material';
-import * as Filesave from 'file-saver';
-import * as _ from 'lodash';
-import { parse } from 'querystring';
-import { NgxFileDropModule } from  'ngx-file-drop' ;
+import { Component } from '@angular/core';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { DropFilesService } from '../../../services/src/lib/endpoint/drop-files/drop-files.service';
-import { Platform, ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { IntermediaryService } from '../../../services/src/';
+import {TimesToastType} from "../../../services/src/models/timesToastType";
+import {PositionsToast} from "../../../services/src/models/positionsToast.type";
 
 @Component({
   selector: 'suite-drop-files',
@@ -26,10 +22,11 @@ export class DropFilesComponent {
     ) {
   }
 
-  public dropped(files: NgxFileDropEntry[]) {
+  public async dropped(files: NgxFileDropEntry[]) {
+    await this.intermediary.presentLoadingNew('Guardando archivo...');
+
     this.files = files;
     for (const droppedFile of files) {
-
       // Is it a file?
       if (droppedFile.fileEntry.isFile) {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
@@ -37,54 +34,39 @@ export class DropFilesComponent {
           // Here you can access the real file
           console.log(droppedFile.relativePath, file);
           // You could upload it like this:
-          const formData = new FormData()
+          const formData = new FormData();
           formData.append('file', file, droppedFile.relativePath);
-          if(this.type=='archive'){
+          if (this.type == 'archive') {
             this.dropFileSrv.uploadReturnArchive(formData).subscribe(
               resp => {
-                this.dropFileSrv.setImage(resp.data)
-                this.modalController.dismiss()
+                this.dropFileSrv.setImage(resp.data);
+                this.intermediary.presentToastSuccess('Archivo subido y guardado correctamente en el repositorio.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+                this.modalController.dismiss();
               },
               err => {
-                this.intermediary.presentToastError('ocurrio un erro al subir la imagen')
-                this.intermediary.dismissLoading()
-              },
-              () => {
-                this.intermediary.presentToastSuccess('Imagen guardada exitosamente')
-                this.intermediary.dismissLoading()
-              }
-            );
-          }else{
-            if(this.type=='delivery_note'){
+                this.intermediary.presentToastError('Ha ocurrido un error al intentar subir el archivo al repositorio.', PositionsToast.TOP, TimesToastType.DURATION_ERROR_TOAST);
+              }, () => this.intermediary.dismissLoadingNew());
+          } else {
+            if (this.type == 'delivery_note') {
               this.dropFileSrv.uploadReturnDeliveryNote(formData).subscribe(
                 resp => {
-                  this.dropFileSrv.setImage(resp.data)
-                  this.modalController.dismiss()
+                  this.dropFileSrv.setImage(resp.data);
+                  this.intermediary.presentToastSuccess('Archivo subido y guardado correctamente en el repositorio.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+                  this.modalController.dismiss();
                 },
                 err => {
-                  this.intermediary.presentToastError('ocurrio un erro al subir la imagen')
-                  this.intermediary.dismissLoading()
-                },
-                () => {
-                  this.intermediary.presentToastSuccess('Imagen guardada exitosamente')
-                  this.intermediary.dismissLoading()
-                }
-              );
-            }else{
+                  this.intermediary.presentToastError('Ha ocurrido un error al intentar subir el archivo al repositorio.', PositionsToast.TOP, TimesToastType.DURATION_ERROR_TOAST);
+                }, () => this.intermediary.dismissLoadingNew());
+            } else {
               this.dropFileSrv.uploadFile(formData).subscribe(
                 resp => {
-                  this.dropFileSrv.setImage(resp.data)
-                  this.modalController.dismiss()
+                  this.dropFileSrv.setImage(resp.data);
+                  this.intermediary.presentToastSuccess('Archivo subido y guardado correctamente en el repositorio.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+                  this.modalController.dismiss();
                 },
                 err => {
-                  this.intermediary.presentToastError('ocurrio un erro al subir la imagen')
-                  this.intermediary.dismissLoading()
-                },
-                () => {
-                  this.intermediary.presentToastSuccess('Imagen guardada exitosamente')
-                  this.intermediary.dismissLoading()
-                }
-              );
+                  this.intermediary.presentToastError('Ha ocurrido un error al intentar subir el archivo al repositorio.', PositionsToast.TOP, TimesToastType.DURATION_ERROR_TOAST);
+                }, () => this.intermediary.dismissLoadingNew());
             }
           }
         });
