@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RegistryDetailsComponent } from './product-details.component';
+import { SelectScrollbarComponent } from './select-scrollbar.component';
 
-describe('ProductDetailsComponent', () => {
-  let component: RegistryDetailsComponent;
-  let fixture: ComponentFixture<RegistryDetailsComponent>;
+describe('SelectScrollbarComponent', () => {
+  let component: SelectScrollbarComponent;
+  let fixture: ComponentFixture<SelectScrollbarComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RegistryDetailsComponent ]
+      declarations: [ SelectScrollbarComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RegistryDetailsComponent);
+    fixture = TestBed.createComponent(SelectScrollbarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
