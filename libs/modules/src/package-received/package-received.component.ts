@@ -122,19 +122,7 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
   }
 
   async refresh() {
-    this.isStoreUser = await this.authenticationService.isStoreUser();
-    if (this.isStoreUser) {
-      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
-    }
-
-    this.getWarehouses();
-
-    this.getFilters();
-    this.selectedForm = this.formBuilder.group({
-      selector: false
-    }, {
-      validators: validators.haveItems("toSelect")
-    });
+    this.ngOnInit();
   }
 
   switchPrintAllStock() {
@@ -268,7 +256,7 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
   }
 
   applyFilters() {
-    console.log(this.form.get('date').value);
+    console.log(this.form.get('uniqueCode').value);
     if (this.pauseListenFormChange) return;
     clearTimeout(this.requestTimeout);
     this.paginatorComponent.pageIndex = 0;
@@ -284,10 +272,17 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
         this.uniqueCode = filters.uniqueCode;
         this.deliveryRequest = filters.deliveryRequest;
         this.origin = filters.origin;
-        this.date = filters.date.map(date => {
+        let dateFilters = filters.date.map(date => {
           return { id: date.id, name: this.dateTimeParserService.date(date.name) };
-        });;
-        console.log(this.date);
+        });
+        let dataDate = dateFilters.map(data => {
+          return {
+            id:data.id,
+            name:data.name
+          }
+        });
+        this.date = this.uniqueDatesArray(dataDate);
+        console.log('fechas', this.date);
         this.applyFilters();
     });
   }
@@ -595,4 +590,25 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
   //   this.form.patchValue({ tariffId: id });
   // }
   //#endregion
+
+  uniqueDatesArray(listArray: Array<any>) {
+    let uniquesArray = [];
+    let counting = 0;
+    let found = false;
+
+    for (let i = 0; i < listArray.length; i++) {
+      for (let y = 0; y < uniquesArray.length; y++) {
+        if (listArray[i].name == uniquesArray[y].name) {
+          found = true;
+        }
+      }
+      counting++;
+      if (counting == 1 && found == false) {
+          uniquesArray.push(listArray[i]);
+      }
+      found = false;
+      counting = 0;
+    }
+    return uniquesArray;
+  }
 }
