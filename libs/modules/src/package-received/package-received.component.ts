@@ -11,7 +11,6 @@ import {
   WarehousesService,
   WarehouseService,
   ProductsService, AuthenticationService, WarehouseModel, PackageReceivedService
-
 } from '@suite/services';
 
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
@@ -25,6 +24,8 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
 import { isNgTemplate } from '@angular/compiler';
 // import {DateTimeParserService} from "../../services/src/lib/date-time-parser/date-time-parser.service";
 import {DateTimeParserService} from  "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'suite-package-received',
@@ -611,4 +612,9 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
     }
     return uniquesArray;
   }
+
+  formattedDate(date) {
+    return moment(date).format("DD/MM/YYYY")
+  }
+
 }

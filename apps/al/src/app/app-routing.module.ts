@@ -390,6 +390,14 @@ const routes: Routes = [
       name: 'Manejo de defectos'
     }
   },
+  {
+    path: 'package-received',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/package-received/package-received.module#PackageReceivedModule',
+    data: {
+      name: 'Pedidos Recibidos'
+    }
+  },
 
 ];
 

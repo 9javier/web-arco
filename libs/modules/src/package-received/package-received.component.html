@@ -85,17 +85,8 @@
         <div class="list-header-filters-mobile">
           <ion-grid *ngIf="mobileVersionTypeList == 'list'">
             <ion-row class="header-mobile">
-              <ion-col [formGroup]="selectedForm" size="1" class="check-all">
-                <div class="check-all">
-                  <ion-checkbox formControlName="selector" (ionChange)="selectAll($event)" *ngIf="status != 3">
-                  </ion-checkbox>
-                </div>
-              </ion-col>
-              <ion-col size="9" class="information">
-                <div class="information">
-                  <ion-toggle (ionChange)="switchPrintAllStock()"></ion-toggle>
-                  <span>Imp. nº stock</span>
-                </div>
+              <ion-col size="10">
+                <div></div>
               </ion-col>
               <ion-col size="2" class="filters-mobile" (click)="openFiltersMobile()">
                 <div class="filters-mobile" [ngClass]="showFiltersMobileVersion ? 'filters-opened' : ''">
@@ -148,28 +139,31 @@
         </div>
         <div class="list-items-mobile">
           <mat-accordion multi="false" *ngFor="let package of packages; let i = index">
-            <mat-expansion-panel >
+            <mat-expansion-panel *ngIf=" package.orderPackage.productsQuantity != 0" >
               <mat-expansion-panel-header class="custom-panel-header">
                 <ion-grid>
                   <ion-row class="custom-panel-header">
-                    <ion-col size="1" class="check-print">
-                      <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
-                        (click)="$event.stopPropagation();itemSelected(price.id);">
-                      </ion-checkbox>
-                    </ion-col>
-                    <ion-col size="11" class="content-prices-header">
+                    <ion-col size="12" class="content-prices-header">
                       <mat-panel-title>
                         <ion-row class="row-title-prices">
-                          <ion-col class="product" size="12">
-                            Paquete: {{package?.uniqueCode}}
+                          <ion-col class="product" size="7">
+                            Bulto: {{package?.uniqueCode}}
+                          </ion-col>
+                          <ion-col class="product" size="5">
+                            Cant: {{package?.orderPackage?.productsQuantity}}
                           </ion-col>
                         </ion-row>
                       </mat-panel-title>
                       <mat-panel-description class="panel-description">
                         <ion-row class="row-family-lifestyle-size">
-                          <ion-col class="family-lifestyle" size="9">
+                          <ion-col class="family-lifestyle" size="7">
                             <p>
                               Pedido: {{package?.deliveryRequestExternalId}}
+                            </p>
+                          </ion-col>
+                          <ion-col class="family-lifestyle" size="5">
+                            <p>
+                              {{formattedDate(package?.createdAt)}}
                             </p>
                           </ion-col>
                         </ion-row>
