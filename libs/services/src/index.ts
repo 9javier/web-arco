@@ -169,7 +169,4 @@ export * from './models/endpoints/opl-transports.model'
 //opl-expeditions
 export * from './lib/endpoint/expedition/expedition.service'
 
-//opl-expeditions
-export * from './lib/endpoint/package-received/package-received.service'
-
 

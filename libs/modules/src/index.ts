@@ -456,8 +456,3 @@ export * from './order-no-processed/order-no-processed.module'
 /**Transportes */
 export * from './expeditions-inside/expedition-inside.component'
 export * from './expeditions-inside/expedition-inside.module'
-
-
-/**List Packages */
-export * from './package-received/package-received.component'
-export * from './package-received/package-received.module'
