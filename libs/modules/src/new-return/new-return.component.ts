@@ -447,4 +447,11 @@ export class NewReturnComponent implements OnInit {
   public formatDate(date: string) {
     return this.dateTimeParserService.dateMonthYear(date);
   }
+
+  deliveryNote(){
+    //generar/descargar/imprimir pdf albarán
+    //preguntar al usuario si quiere incluir las fotos
+    //formato distinto dependiendo si es de tipo defectuoso
+  }
+
 }
