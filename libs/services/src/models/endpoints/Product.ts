@@ -33,7 +33,8 @@ export namespace ProductModel {
     uniqueCode: string,
     destinationShop: PackageDestinationShop,
     expedition: PackageExpedition
-    deliveryRequestId:number
+    deliveryRequestId:number,
+    deliveryRequestExternalId:number,
   }
 
   export interface PackageDestinationShop {

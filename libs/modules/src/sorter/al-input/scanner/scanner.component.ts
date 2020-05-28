@@ -207,11 +207,15 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
       this.focusToInput(true, 'error');
     } else {
-      if (true == true) {
+      if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrote,this.itemReferencesProvider.codeValue.PACKAGE)) {
+        this.addScannerRackButton();
+        await this.intermediaryService.presentLoading('Registrando entrada de paquete...');
+        this.inputProductInSorter(dataWrote);
+      } else if(this.itemReferencesProvider.checkSpecificCodeValue(dataWrote,this.itemReferencesProvider.codeValue.PRODUCT)){
         this.addScannerRackButton();
         await this.intermediaryService.presentLoading('Registrando entrada de producto...');
         this.inputProductInSorter(dataWrote);
-      } else {
+      }else{
         await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', PositionsToast.BOTTOM);
         this.focusToInput(true, 'error');
       }
@@ -222,7 +226,14 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.timeoutToQuickUser();
     const setWayAsWrong = async () => {
       // Request to server to notify that las product was set in a wrong way and reset the sorter notify led
-      const productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
+    
+      let productRef;
+      if(this.productScanned !=null){
+         productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
+      }else if(this.packageScanned != null){
+        productRef = this.packageScanned.uniqueCode;
+      }
+
       if (productRef) {
         this.sorterExecutionService
           .postWrongWay({ way: this.idLastWaySet, productReference: productRef })
@@ -325,8 +336,8 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
                 reference: resData.product.order.destinationShop.reference,
                 name: resData.product.order.destinationShop.name
               }:null,
-              product: resData.product.order.deliveryRequestId ?{
-                id: resData.product.order.deliveryRequestId,
+              product: resData.product.order.deliveryRequestExternalId ?{
+                id: resData.product.order.deliveryRequestExternalId,
               }: null
             };
             this.messageGuide ='';
