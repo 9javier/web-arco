@@ -274,6 +274,8 @@ export namespace ReturnModel{
     brands: number[]
   }
   export interface GetDefectiveProductsFilters {
+    products: {id: number, value: string, name: string}[],
+    brands: {id: number, value: string, name: string}[],
     modelReferences: {id: number, value: string, name: string}[],
     modelNames: {id: number, value: string, name: string}[],
     commercials: {id: number, value: string, name: string}[],

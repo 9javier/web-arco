@@ -36,7 +36,7 @@ export class NewReturnUnitiesComponent implements OnInit {
       page: 0
     },
     sort: {
-      field: 'unitiesAssigned',
+      field: 'id',
       direction: 'DESC'
     }
   };
@@ -100,6 +100,40 @@ export class NewReturnUnitiesComponent implements OnInit {
       brands: this.brandIds
     };
     if (this.isDefective) {
+      if (filters) {
+        if (filters.products && filters.products.length > 0) {
+          params.filters.products = filters.products;
+        } else {
+          delete params.filters.products;
+        }
+        if (filters.brands && filters.brands.length > 0) {
+          params.filters.brands = filters.brands;
+        } else {
+          delete params.filters.brands;
+        }
+        if (filters.modelProducts && filters.modelProducts.length > 0) {
+          params.filters.modelProducts = filters.modelProducts;
+        } else {
+          delete params.filters.modelProducts;
+        }
+        if (filters.models && filters.models.length > 0) {
+          params.filters.models = filters.models;
+        } else {
+          delete params.filters.models;
+        }
+        if (filters.commercials && filters.commercials.length > 0) {
+          params.filters.commercials = filters.commercials;
+        } else {
+          delete params.filters.commercials;
+        }
+        if (filters.sizes && filters.sizes.length > 0) {
+          params.filters.sizes = filters.sizes;
+        } else {
+          delete params.filters.sizes;
+        }
+        params.filters.sort = filters.sort;
+      }
+
       this.returnService
         .postGetDefectiveProducts(params)
         .subscribe((res) => {
@@ -115,7 +149,7 @@ export class NewReturnUnitiesComponent implements OnInit {
         this.returnService
           .postGetDefectiveProductsFilters(paramsFilters)
           .subscribe((res) => {
-
+            this.defectiveProductsList.loadFilters(res.data);
           });
       }
     } else {
@@ -228,7 +262,7 @@ export class NewReturnUnitiesComponent implements OnInit {
 
   public resetFilters() {
     if (this.isDefective) {
-      // this.defectiveProductsList.resetFilters();
+      this.defectiveProductsList.resetFilters();
     } else {
       this.productsList.resetFilters();
     }
@@ -236,7 +270,7 @@ export class NewReturnUnitiesComponent implements OnInit {
 
   public resetSort() {
     if (this.isDefective) {
-      // this.defectiveProductsList.resetSort();
+      this.defectiveProductsList.resetSort();
     } else {
       this.productsList.resetSort();
     }
@@ -249,7 +283,7 @@ export class NewReturnUnitiesComponent implements OnInit {
         page: 0
       },
       sort: {
-        field: 'unitiesAssigned',
+        field: 'id',
         direction: 'DESC'
       }
     };
