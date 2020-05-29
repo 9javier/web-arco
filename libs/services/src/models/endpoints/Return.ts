@@ -268,6 +268,31 @@ export namespace ReturnModel{
     }
   }
 
+  export interface GetProductsFiltersParams {
+    warehouse: number,
+    provider: number,
+    brands: number[]
+  }
+  export interface GetDefectiveProductsFilters {
+    modelReferences: {id: number, value: string, name: string}[],
+    modelNames: {id: number, value: string, name: string}[],
+    commercials: {id: number, value: string, name: string}[],
+    sizes: {id: number, value: string, name: string}[]
+  }
+  export interface GetProductsFilters {
+    brands: {id: number, value: string, name: string}[],
+    modelReferences: {id: number, value: string, name: string}[],
+    modelNames: {id: number, value: string, name: string}[],
+    commercials: {id: number, value: string, name: string}[],
+    sizes: {id: number, value: string, name: string}[]
+  }
+  export interface GetDefectiveProductsFiltersResponse extends HttpRequestModel.Response {
+    data: GetDefectiveProductsFilters
+  }
+  export interface GetProductsFiltersResponse extends HttpRequestModel.Response {
+    data: GetProductsFilters
+  }
+
   export interface AssignDefectiveProductsParams {
     returnId: number,
     itemsToReturn: {
