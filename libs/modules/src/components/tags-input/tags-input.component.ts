@@ -18,7 +18,7 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
   @Input() literalmixed: boolean = false;
 
   @Input() set options(options) {
-    if (options.length) {
+    if (options && options.length) {
       this._options = options.map(option => {
 
         if (this.literalmixed) {

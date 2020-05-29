@@ -96,6 +96,49 @@ mat-expansion-panel {
   }
 }
 
-.contact.ng-star-inserted {
-  margin-top: -13% !important;
+.content-select i{
+  position: absolute;
+  margin-top: 8px;
+  margin-right: 8px;
+  right: 20px;
+  top: calc(50% - 13px);
+  width: 8px;
+  height: 8px;
+  display: block;
+  border-left:4px solid #808080;
+  border-bottom:4px solid #808080;
+  transform: rotate(-45deg); /* Giramos el cuadrado */
+  transition: all 0.25s ease;
+}
+
+.label-text{
+  font-weight: bold;
+}
+
+.toolbar-buttons {
+  height: 60px !important;
+}
+
+.contact{
+  ion-list {
+    border-top: 1px solid #dedede !important
+  }
+  h2 {
+    margin-top: 0px !important;
+  }
+  ion-item {
+    border: 1px solid #dedede !important
+  }
+}
+
+.capture-sign {
+  ion-item {
+    border: 1px solid #dedede !important
+  }
+}
+
+.capture-photos {
+  ion-item {
+    border: 1px solid #dedede !important
+  }
 }

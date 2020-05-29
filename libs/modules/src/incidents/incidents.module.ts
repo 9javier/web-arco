@@ -17,6 +17,7 @@ import { ReviewImagesComponent } from './components/review-images/review-images.
 import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-keyboard.module';
 import { SelectScrollbarComponent } from './components/select-scrollbar/select-scrollbar.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatTooltipModule } from "@angular/material";
 
 @NgModule({
   declarations: [IncidentsComponent, PhotoModalComponent, InputCodesComponent, SelectScrollbarComponent],
@@ -32,8 +33,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     CdkTableModule,
     SignatureModule,
     DropFilesModule,
-    ScrollingModule
-
+    ScrollingModule,
+    MatTooltipModule
   ],
   exports: [
 

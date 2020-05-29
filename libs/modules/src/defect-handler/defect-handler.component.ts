@@ -13,6 +13,7 @@ import { TagsInputOption } from '../components/tags-input/models/tags-input-opti
 import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
 import { DetailsRegisterComponent } from './details-register/details-register.component';
 import { PrintTicketService } from '../../../services/src/lib/print-ticket/print-ticket.service';
+import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'suite-defect-handler',
@@ -73,8 +74,8 @@ export class DefectHandlerComponent implements OnInit {
       limit: this.pagerValues[0]
     }),
     orderby: this.formBuilder.group({
-      type: 1,
-      order: "asc"
+      type: 2,
+      order: "desc"
     })
   });
   length: any;
@@ -87,9 +88,17 @@ export class DefectHandlerComponent implements OnInit {
     private formBuilder: FormBuilder,
     private printTicketService: PrintTicketService,
     private incidentsService: IncidentsService,
+    private toolbarProvider: ToolbarProvider,
   ) { }
 
   ionViewWillEnter() {
+    this.toolbarProvider.optionsActions.next([
+      {
+        icon: 'funnel',
+        label: 'Filtros',
+        action: () => this.showFiltersMobileVersion = !this.showFiltersMobileVersion
+      }
+    ]);
     if (this.ngInit == false) {
       this.getList(this.form);
     }
@@ -119,8 +128,8 @@ export class DefectHandlerComponent implements OnInit {
       defectTypeChild: [],
       warehouse: [],
       orderby: this.formBuilder.group({
-        type: 1,
-        order: "asc"
+        type: 2,
+        order: "desc"
       })
     }
   }
@@ -139,8 +148,8 @@ export class DefectHandlerComponent implements OnInit {
       defectTypeChild: [],
       warehouse: [],
       orderby: this.formBuilder.group({
-        type: 1,
-        order: "asc"
+        type: 2,
+        order: "desc"
       })
     })
   }
