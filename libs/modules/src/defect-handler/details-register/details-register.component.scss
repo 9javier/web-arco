@@ -96,10 +96,6 @@ mat-expansion-panel {
   }
 }
 
-.contact.ng-star-inserted {
-  margin-top: -13% !important;
-}
-
 .content-select i{
   position: absolute;
   margin-top: 8px;
@@ -121,4 +117,28 @@ mat-expansion-panel {
 
 .toolbar-buttons {
   height: 60px !important;
+}
+
+.contact{
+  ion-list {
+    border-top: 1px solid #dedede !important
+  }
+  h2 {
+    margin-top: 0px !important;
+  }
+  ion-item {
+    border: 1px solid #dedede !important
+  }
+}
+
+.capture-sign {
+  ion-item {
+    border: 1px solid #dedede !important
+  }
+}
+
+.capture-photos {
+  ion-item {
+    border: 1px solid #dedede !important
+  }
 }

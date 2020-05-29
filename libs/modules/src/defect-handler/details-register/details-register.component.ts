@@ -171,6 +171,27 @@ export class DetailsRegisterComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.incidenceForm = this.fb.group({
+      id: [0],
+      productId: [0],
+      productReference: [""],
+      dateDetection: [""],
+      observations: [""],
+      factoryReturn: [false],
+      statusManagementDefectId: [0],
+      defectTypeParentId: [0],
+      defectTypeChildId: [0],
+      defectZoneParentId: [0],
+      defectZoneChildId: [0],
+      signFileId: [0],
+      contact: this.fb.group({
+        name: [''],
+        info: [''],
+      })
+
+    })
+
     this.container = this.navParams.data.container;
     this.warehouseId = this.navParams.data.warehouseId;
     this.listWarehouses = this.warehouseService.listWarehouses;
@@ -359,8 +380,8 @@ export class DetailsRegisterComponent implements OnInit {
       if(this.registry.defectTypeParent) {
         this.defectTypeP = this.registry.defectTypeParent;
         this.defectParentId = this.registry.defectTypeParent.id;
-        this.defectChildId = this.registry.defectTypeChild.id;
-        this.defectTypeC = this.registry.defectTypeChild;
+        this.defectChildId = this.registry.defectTypeChild && this.registry.defectTypeChild.id ? this.registry.defectTypeChild.id : 0;
+        this.defectTypeC = this.registry.defectTypeChild ? this.registry.defectTypeChild : null;
         this.defectiveManagementService.getShow(this.defectParentId).subscribe(data => {
           this.defectChildsOfParent = data.defectTypeChild;
         });
@@ -368,8 +389,8 @@ export class DetailsRegisterComponent implements OnInit {
       if(this.registry.defectZoneParent) {
         this.defectZoneP = this.registry.defectZoneParent;
         this.defectZoneParentId = this.registry.defectZoneParent.id;
-        this.defectZoneChildId = this.registry.defectZoneChild.id;
-        this.defectZoneC = this.registry.defectZoneChild;
+        this.defectZoneChildId = this.registry.defectZoneChild && this.registry.defectZoneChild.id ? this.registry.defectZoneChild.id : 0;
+        this.defectZoneC = this.registry.defectZoneChild ? this.registry.defectZoneChild : null;
         this.defectiveZonesService.getShow(this.defectZoneParentId).subscribe(data => {
           this.defectZonesChildsOfParent = data.defectZoneChild;
         });
@@ -387,6 +408,7 @@ export class DetailsRegisterComponent implements OnInit {
         this.barcodeRoute = navigation.extras.state['reference'];
       }
       this.initDinamicFields();
+      this.defectStatus = this.registry.statusManagementDefect;
     });
   }
 
@@ -395,7 +417,11 @@ export class DetailsRegisterComponent implements OnInit {
   }
 
   async closeWithoutSave() {
-    await this.presentModelConfirmClose();
+    if(this.isStateChange()){
+      await this.presentModelConfirmClose();
+    } else {
+      await this.modalController.dismiss();
+    }
   }
 
 
@@ -539,9 +565,11 @@ export class DetailsRegisterComponent implements OnInit {
   }
 
   selectChangeStatus(defectStatus) {
-    this.defectStatus = defectStatus.data;
-    this.managementId = defectStatus.data;
-    this.gestionChange(this.defectStatus);
+    if(defectStatus && defectStatus.data){
+      this.defectStatus = defectStatus.data;
+      this.managementId = defectStatus.data;
+      this.gestionChange(this.defectStatus);
+    }
   }
 
   gestionChange(e) {
@@ -575,6 +603,10 @@ export class DetailsRegisterComponent implements OnInit {
     }
 
     this.selectGestionState = true;
+  }
+
+  isStateChange(){
+    return this.registry.statusManagementDefect && this.defectStatus && this.registry.statusManagementDefect.id != this.defectStatus.id;
   }
 
   send() {
@@ -684,24 +716,26 @@ export class DetailsRegisterComponent implements OnInit {
 
   clearVariables(type?: number) {
     if (!type) {
-      this.incidenceForm.patchValue({
-        id: this.registry.id,
-        productReference: this.registry.product.id,
-        dateDetection: moment().format("YYYY-MM-DD"),
-        observations: '',
-        factoryReturn: false,
-        statusManagementDefectId: 0,
-        defectTypeParentId: 0,
-        defectTypeChildId: 0,
-        defectZoneParentId: 0,
-        defectZoneChildId: 0,
-        photosFileIds: [],
-        signFileId: 0,
-        contact: {
-          name: '',
-          info: ''
-        }
-      });
+      if(this.incidenceForm){
+        this.incidenceForm.patchValue({
+          id: this.registry.id,
+          productReference: this.registry.product.id,
+          dateDetection: moment().format("YYYY-MM-DD"),
+          observations: '',
+          factoryReturn: false,
+          statusManagementDefectId: 0,
+          defectTypeParentId: 0,
+          defectTypeChildId: 0,
+          defectZoneParentId: 0,
+          defectZoneChildId: 0,
+          photosFileIds: [],
+          signFileId: 0,
+          contact: {
+            name: '',
+            info: ''
+          }
+        });
+      }
       this.signatures = null;
       this.uploadService.setSignature(null);
       this.photos = [];

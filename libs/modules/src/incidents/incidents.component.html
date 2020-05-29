@@ -52,6 +52,10 @@
         <ion-label class="content-select" style="text-align: center" *ngIf="defectZoneC">{{ defectZoneC.name }} <i></i></ion-label>
       </ion-item>
 
+      <ion-item>
+        <ion-textarea formControlName="observations" placeholder="Observaciones..." [readonly]="barcodeRoute!=null"></ion-textarea>
+      </ion-item>
+
       <div *ngIf="requireContact == true" class="contact">
         <div formGroupName="contact">
           <ion-item lines="none">
@@ -111,9 +115,6 @@
           </ion-button>
         </ion-item>
       </ion-list>
-      <ion-item>
-        <ion-textarea formControlName="observations" placeholder="Observaciones..." [readonly]="barcodeRoute!=null"></ion-textarea>
-      </ion-item>
     </ng-template>
   </form>
 </ion-content>

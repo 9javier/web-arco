@@ -14,6 +14,7 @@
     </ion-toolbar>
 </ion-header>
 <ion-content>
+  <span *ngIf="isStateChange()" data-modal-defects-change-state></span>
     <ion-segment [(ngModel)]="section">
         <ion-segment-button value="information">
             <ion-label>Información</ion-label>
@@ -24,101 +25,93 @@
     </ion-segment>
   <form [formGroup]="incidenceForm">
     <div *ngIf="section == 'information'">
-        <ion-list class="ion-padding">
+        <ion-list class="">
           <ion-item>
             <ion-label>
-              Usuario: {{registry?.user?.name}}
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              Almacén: {{registry?.warehouse ? (registry?.warehouse.reference + " - " + registry?.warehouse.name) : ""}}
+              <span>Artículo: {{registry?.product?.model?.reference}}</span>
+              <span class="ion-float-right">T: {{registry?.product?.size?.name}}</span>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              Modelo: {{registry?.product?.model?.reference}}
+              Marca: <span class="ion-float-right">{{registry?.product?.model?.brand?.name}}</span>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
-              Talla: {{registry?.product?.size?.name}}
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              Marca: {{registry?.product?.model?.brand?.name}}
-            </ion-label>
-          </ion-item>
-          <ion-item *ngIf="registry?.factoryReturn">
-            <ion-label>
-              Color: {{registry?.product?.model?.color?.name}}
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              Producto: {{registry?.product?.reference}}
-            </ion-label>
-          </ion-item>
-          <ion-item *ngIf="registry?.factoryReturn">
-            <ion-label>
-              Devolución a Fábrica: {{ registry?.factoryReturn ? 'Si' : 'No' }}
-            </ion-label>
-          </ion-item>
-          <ion-item *ngIf="registry?.statusManagementDefect">
-            <ion-label>
-              Estado actual: {{registry.statusManagementDefect.name}}
+              Producto: <span class="ion-float-right">{{registry?.product?.reference}}</span>
             </ion-label>
           </ion-item>
 
           <ion-item (click)="clickSelectPopover($event, 'status')">
-            <ion-label class="label-text">Estado nuevo:</ion-label>
+            <ion-label class="label-text">Estado gestión:</ion-label>
             <ion-label class="content-select" style="text-align: center" *ngIf="!defectStatus"><font color="#808080">Selecciona</font> <i></i></ion-label>
             <ion-label class="content-select" style="text-align: center" *ngIf="defectStatus">{{ defectStatus.name }} <i></i></ion-label>
           </ion-item>
-          <ion-item (click)="clickSelectPopover($event, 'typeP')" [disabled]="barcodeRoute!=null || selectGestionState == false">
+          <ion-item (click)="clickSelectPopover($event, 'typeP')" [disabled]=!isStateChange()>
             <ion-label class="ion-text-capitalize label-text">Defecto</ion-label>
             <ion-label class="content-select" style="text-align: center" *ngIf="!defectTypeP"><font color="#808080">Selecciona</font> <i></i></ion-label>
             <ion-label class="content-select" style="text-align: center" *ngIf="defectTypeP">{{ defectTypeP.name }} <i></i></ion-label>
           </ion-item>
 
-          <ion-item (click)="clickSelectPopover($event, 'typeC')" [disabled]="registry.defectTypeParent==null  || selectGestionState == false">
+          <ion-item (click)="clickSelectPopover($event, 'typeC')" [disabled]=!isStateChange()>
             <ion-label class="ion-text-capitalize label-text">Subdefecto</ion-label>
             <ion-label class="content-select" style="text-align: center" *ngIf="!defectTypeC"><font color="#808080">Selecciona</font> <i></i></ion-label>
             <ion-label class="content-select" style="text-align: center" *ngIf="defectTypeC">{{ defectTypeC.name }} <i></i></ion-label>
           </ion-item>
 
-          <ion-item (click)="clickSelectPopover($event, 'zoneP')" [disabled]="barcodeRoute!=null  || selectGestionState == false">
+          <ion-item (click)="clickSelectPopover($event, 'zoneP')" [disabled]=!isStateChange()>
             <ion-label class="ion-text-capitalize label-text">Zona</ion-label>
             <ion-label class="content-select" style="text-align: center" *ngIf="!defectZoneP"><font color="#808080">Selecciona</font> <i></i></ion-label>
             <ion-label class="content-select" style="text-align: center" *ngIf="defectZoneP">{{ defectZoneP.name }} <i></i></ion-label>
           </ion-item>
 
-          <ion-item (click)="clickSelectPopover($event, 'zoneC')" [disabled]="registry.defectZoneParent==null || selectGestionState == false">
+          <ion-item (click)="clickSelectPopover($event, 'zoneC')" [disabled]=!isStateChange()>
             <ion-label class="ion-text-capitalize label-text">Subzona</ion-label>
             <ion-label class="content-select" style="text-align: center" *ngIf="!defectZoneC"><font color="#808080">Selecciona</font> <i></i></ion-label>
             <ion-label class="content-select" style="text-align: center" *ngIf="defectZoneC">{{ defectZoneC.name }} <i></i></ion-label>
           </ion-item>
-          <ion-item *ngIf="selectGestionState == true">
-            <ion-textarea placeholder="Observaciones..." formControlName="observations" type="text"></ion-textarea><br>
+          <ion-item>
+            <ion-textarea [placeholder]="registry.observations != '' ? '' : 'Observaciones...'" [readonly]=!isStateChange() formControlName="observations" type="text" value="{{registry.observations}}"></ion-textarea>
           </ion-item>
-          <br><br>
 
-          <div *ngIf="requireContact == true && selectGestionState == true" class="contact">
-            <div formGroupName = "contact">
+          <div *ngIf="requireContact == true && isStateChange()" class="contact">
+            <div formGroupName="contact">
               <ion-item lines="none">
-                <ion-label class="ion-text-capitalize label-text">Contacto</ion-label>
-                <ion-input type="text" formControlName="name"  (keyup)="onKeyName($event)" placeholder="Nombre" maxlength="50"></ion-input>
+                <ion-label class="ion-text-capitalize label-text">Contacto</ion-label><br>
               </ion-item>
               <ion-item lines="none">
-                <ion-input type="text" formControlName="info" (keyup)="onKeyInfo($event)" placeholder="Tlf./Email"></ion-input><br>
+                <ion-input type="text" formControlName="name" (keyup)="onKeyName($event)" placeholder="Nombre"
+                           maxlength="50"></ion-input><br>
+              </ion-item>
+              <ion-item lines="none">
+                <ion-input type="text" formControlName="info" (keyup)="onKeyInfo($event)" placeholder="Tlf/Email"
+                           maxlength="50"></ion-input><br>
               </ion-item>
             </div>
           </div>
 
-          <div *ngIf="selectGestionState == true">
+          <div *ngIf="requireContact == true && !isStateChange()" class="contact">
+            <ion-list>
+              <ion-list-header>
+                <h2>Contacto</h2>
+              </ion-list-header>
+              <ion-item>
+                <ion-label>
+                  Nombre: {{ registry?.contact?.name }}
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  Tlf./Email: {{ registry?.contact?.info }}
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </div>
 
-            <ion-item lines="none" *ngIf="requirePhoto == true" lines="none">
+          <div class="capture-photos">
+
+            <ion-item lines="none" *ngIf="requirePhoto == true && isStateChange()" lines="none">
               <ion-label class="ion-text-capitalize label-text">capturar / buscar fotos</ion-label>
               <ion-button (click)="takePhoto()" class="icon-camare">
                 <ion-icon name="camera"></ion-icon>
@@ -128,7 +121,7 @@
               </ion-button>
             </ion-item>
 
-            <ion-item *ngIf="requirePhoto && photoList" (click)="showPhotoList()" lines="none">
+            <ion-item *ngIf="requirePhoto && photoList && isStateChange()" (click)="showPhotoList()" lines="none">
               <ion-label class="label-text">Fotos añadidas</ion-label>
               <ion-icon slot="end" *ngIf="displayPhotoList" name="arrow-down"></ion-icon>
               <ion-icon slot="end" *ngIf="!displayPhotoList" name="arrow-up"></ion-icon>
@@ -144,8 +137,8 @@
 
           </div>
 
-          <div *ngIf="selectGestionState == true">
-            <ion-item lines="none" *ngIf="requireOk == true">
+          <div class="capture-sign">
+            <ion-item lines="none" *ngIf="requireOk == true && isStateChange()">
               <ion-label lines="none" class="ion-text-capitalize label-text">generar firma</ion-label>
               <ion-button (click)="signModal()">
                 <ion-icon name="finger-print"></ion-icon>
@@ -166,7 +159,7 @@
             </ion-list>
           </div>
 
-          <mat-expansion-panel *ngIf="registry?.statusManagementDefect?.requirePhoto && registry?.photos?.length > 0">
+          <mat-expansion-panel *ngIf="this.requirePhoto && registry?.photos?.length > 0">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 Fotos
@@ -177,7 +170,7 @@
             </ion-item>
           </mat-expansion-panel>
           <br/>
-          <mat-expansion-panel *ngIf="registry?.statusManagementDefect?.requireOk && registry?.signature?.pathMedium">
+          <mat-expansion-panel *ngIf="this.requireOk && registry?.signature?.pathMedium">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 Firma
