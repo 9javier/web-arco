@@ -5,7 +5,7 @@
               <ion-icon name="close" class="toogleArrow"></ion-icon>
           </ion-button>
       </ion-buttons>
-      <ion-title>{{type=='archive' ? 'Subir Archivos' : 'Subir Fotos'}}</ion-title>
+      <ion-title>{{type=='archive' ? 'Subir Archivos' : 'Subir Albaranes'}}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content style="height:100%;">
@@ -23,5 +23,16 @@
           </ion-content>
       </ng-template>
   </ngx-file-drop>
+  <ion-item *ngIf="this.images?.length > 0" lines="none">
+    <ion-label class="label-text">{{type=='archive' ? 'Archivos actuales' : 'Albaranes actuales'}}</ion-label>
+  </ion-item>
+  <ion-list>
+    <ion-item lines="none" *ngFor="let item of images; let i = index">
+      <ion-img (click)="openReviewImage(item)" slot="start" [src]="baseUrlPhoto + item.pathIcon"></ion-img>
+      <ion-button slot="end" (click)="deleteImage(item, i, images)">
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
 </ion-content>
 
