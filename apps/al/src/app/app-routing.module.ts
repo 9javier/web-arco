@@ -83,7 +83,14 @@ const routes: Routes = [
     data: {
       name: 'Manifiesto transportista'
     }
-
+  },
+  {
+    path: 'order-no-processed',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/order-no-processed/order-no-processed.module#OrderNoProcesse2dModule',
+    data: {
+      name: 'Órdenes no procesadas'
+    }
   },
   {
     path: 'labels-manual',
@@ -198,6 +205,11 @@ const routes: Routes = [
     path: 'picking/manual',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/picking-manual/picking-manual.module#PickingManualModule'
+  },
+  {
+    path: 'picking/return',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/picking-return/picking-return.module#PickingReturnModule'
   },
   {
     path: 'tariff',
@@ -325,6 +337,22 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/sorter/sorter.module#SorterModule',
     data: {
       name: 'sorter'
+    }
+  },
+  {
+    path: 'return-pending-list',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/return-pending-list/return-pending-list.module#ReturnPendingListModule',
+    data: {
+      name: 'Listado Devoluciones Pendientes'
+    }
+  },
+  {
+    path: 'view-return',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/view-return/view-return.module#ViewReturnModule',
+    data: {
+      name: 'Consultar Devolución'
     }
   },
   {

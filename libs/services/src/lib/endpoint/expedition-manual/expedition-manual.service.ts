@@ -22,7 +22,7 @@ export class ExpeditionManualService {
     this.baseUrl = environment.apiSorter;
     this.getTrasnports = `${this.baseUrl}/expeditions-manual/get-transports`;
     this.epxeditionManualStore = `${this.baseUrl}/expeditions-manual/store`;
-    this.getIncidences = `${this.baseUrl}/expeditions-manual/get-incidence`;
+    this.getIncidences = `${this.baseUrl}/expeditions-manual/get-expedition-inside`;
     this.getFilter = `${this.baseUrl}/expeditions-manual/get-incidence-filters`;
     this.getIncidenceById = `${this.baseUrl}/expeditions-manual/get-incidence-id`;
   }

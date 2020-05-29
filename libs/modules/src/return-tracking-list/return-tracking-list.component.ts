@@ -15,6 +15,11 @@ import FilterOptionsResponse = ReturnModel.FilterOptionsResponse;
 import {NavigationEnd, Router} from "@angular/router";
 import {SupplierConditionModel} from "../../../services/src/models/endpoints/SupplierCondition";
 import {MatTableDataSource} from "@angular/material/table";
+import * as Filesave from 'file-saver';
+import { map, catchError } from 'rxjs/operators';
+import { BehaviorSubject, of, Observable } from 'rxjs';
+import {IntermediaryService} from "@suite/services";
+import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 @Component({
   selector: 'suite-return-tracking-list',
@@ -56,7 +61,7 @@ export class ReturnTrackingListComponent implements OnInit {
   };
   order: Order = {
     field: 'id',
-    direction: 'ASC'
+    direction: 'DESC'
   };
   pagination: Pagination = {
     limit: this.pagerValues[0],
@@ -65,7 +70,9 @@ export class ReturnTrackingListComponent implements OnInit {
 
   constructor(
     public router: Router,
-    private returnService: ReturnService
+    private returnService: ReturnService,
+    private intermediaryService: IntermediaryService,
+    private dateTimeParserService: DateTimeParserService
   ) {
     this.router.events.subscribe((val) => {
       if(val instanceof NavigationEnd && val && val.url == '/return-tracking-list'){
@@ -136,7 +143,7 @@ export class ReturnTrackingListComponent implements OnInit {
               }
             })
           })(),
-          datesLimit: response.data.datesLimit.map(data => {
+          datesLimit: response.data.datesReturnBefore.map(data => {
             const date = JSON.parse(data);
             return {
               id: date,
@@ -201,7 +208,7 @@ export class ReturnTrackingListComponent implements OnInit {
       order: this.order,
       pagination: this.pagination
     };
-    this.returnService.postSearch(parameters).then((response: SearchResponse) => {
+    this.returnService.postSearchHistoricFalse(parameters).then((response: SearchResponse) => {
       if(response.code == 200){
         this.dataSource = new MatTableDataSource<SupplierConditionModel.SupplierCondition>(response.data.result);
         this.returns = response.data.result;
@@ -234,28 +241,31 @@ export class ReturnTrackingListComponent implements OnInit {
 
   getStatusName(status: number): string{
     switch(status){
+      case 0:
+        return '';
       case 1:
         return 'Orden devolución';
       case 2:
-        return 'En proceso';
+        return 'Pendiente';
       case 3:
-        return 'Preparado';
+        return 'En proceso';
       case 4:
-        return 'Pendiente recogida';
+        return 'Preparado';
       case 5:
-        return 'Recogido';
+        return 'Pendiente recogida';
       case 6:
+        return 'Recogido';
+      case 7:
         return 'Facturado';
       default:
         return 'Desconocido'
     }
   }
 
-  getFormattedDate(value: string): string{
-    if(value && value != ''){
-      const date = new Date(value);
-      return date.getDay()+'/'+date.getMonth()+'/'+date.getFullYear();
-    }else{
+  getFormattedDate(value: string): string {
+    if (value && value != '') {
+      return this.dateTimeParserService.dateMonthYear(value);
+    } else {
       return '';
     }
   }
@@ -279,7 +289,7 @@ export class ReturnTrackingListComponent implements OnInit {
     };
     this.order = {
       field: 'id',
-      direction: 'ASC'
+      direction: 'DESC'
     };
     this.pagination = {
       limit: this.pagerValues[0],
@@ -289,5 +299,27 @@ export class ReturnTrackingListComponent implements OnInit {
     this.paginator.pageIndex = 0;
     this.loadFilters();
     this.loadReturns();
+  }
+
+  /**
+   * @description Eviar parametros y recibe un archivo excell
+   */
+  async fileExcell() {
+    this.intermediaryService.presentLoading('Descargando Archivo Excel').then(()=>{
+      const parameters: SearchParameters = {
+        filters: this.filters,
+        order: this.order,
+        pagination: this.pagination
+      };
+      this.returnService.getFileExcell(parameters).pipe(
+        catchError(error => of(error)),
+        // map(file => file.error.text)
+      ).subscribe((data) => {
+        const blob = new Blob([data], { type: 'application/octet-stream' });
+        Filesave.saveAs(blob, `${Date.now()}.xlsx`);
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastSuccess('Archivo descargado')
+      }, error => console.log(error));
+    });
   }
 }

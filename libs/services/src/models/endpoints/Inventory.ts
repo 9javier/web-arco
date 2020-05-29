@@ -2,6 +2,9 @@ import {Request} from './request';
 import {ShoesPickingModel} from "./ShoesPicking";
 import {FiltersModel} from "@suite/services";
 import {HttpRequestModel} from "./HttpRequest";
+import {ReturnModel} from "./Return";
+import ReturnProduct = ReturnModel.ReturnProduct;
+
 export namespace InventoryModel {
 
   export interface Picking {
@@ -63,6 +66,7 @@ export namespace InventoryModel {
       warehouse: any,
       carrier?: any,
       locationType?: any
+      deliveryRequestExternalId?: string
   }
 
   export interface ResponseSearchInContainer extends Request.Success{
@@ -159,6 +163,12 @@ export namespace InventoryModel {
       inventory?: ShoesPickingModel.ShoesPicking,
       shoePickingPending?: ShoesPickingModel.ShoesPicking[]
     };
+    message: string;
+    code: number;
+  }
+
+  export interface ResponsePickingReturn extends HttpRequestModel.Response {
+    data?: ReturnProduct[];
     message: string;
     code: number;
   }

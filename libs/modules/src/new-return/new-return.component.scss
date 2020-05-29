@@ -1,8 +1,47 @@
-ion-col.button-col {
-  text-align: start;
-  margin-top: auto;
-  margin-bottom: auto;
+ion-content {
+  ion-item {
+    ion-label {
+      opacity: 1;
+    }
+  }
+
+  ion-grid {
+    ion-row {
+      ion-button.btn-select-unities {
+        margin: 0;
+        height: 36px;
+      }
+
+      ion-col.disabled-col {
+        ion-item {
+          background-color: var(--bg-disabled) !important;
+          --ion-background-color: var(--bg-disabled) !important;
+          ion-label {
+            opacity: 1;
+          }
+        }
+      }
+    }
+
+    div.div-btn-item {
+      height: 67px;
+      width: 100%;
+      ion-button {
+        margin: 0;
+        height: 67px;
+        width: 100%;
+      }
+    }
+
+    mat-divider {
+      margin: 16px 4px;
+    }
+  }
 }
+
+
+
+
 ion-item.item-selectable {
   height: 67px;
   ion-label {

@@ -13,6 +13,18 @@
     </ion-grid>
   </div>
 
+  <div class="product-scanned" *ngIf="processStarted && packageScanned && !needScanNewPacking">
+    <ion-grid>
+      <ion-row>
+        <ion-col>Pedido: {{ packageScanned.product?.id }}</ion-col>
+        <ion-col></ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>Bulto: {{ packageScanned.uniqueCode }}</ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
   <!-- Header with the destiny for the packing to scan -->
   <div class="product-scanned new-packing-scan" *ngIf="needScanNewPacking">
     <p>Nuevo embalaje para <b>{{ destinyCodeToGetPacking == 'incidence' ? 'INCIDENCIAS' : destinyCodeToGetPacking }}</b></p>
@@ -25,6 +37,16 @@
       <div class="content-labels">
         <div id="label-reference" class="label-destiny main-text">{{productScanned.destinyWarehouse.reference}}</div>
         <div id="label-name" class="label-destiny info-text">{{productScanned.destinyWarehouse.name}}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Block to show when the package scanned has a destiny assigned and the destiny has a way assigned in sorter -->
+  <div class="content-destiny-color" *ngIf="processStarted && packageScanned && !isWaitingWayWillFree && !productScanWithException">
+    <div class="content-color" [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}">
+      <div class="content-labels">
+        <div id="label-reference" class="label-destiny main-text">{{packageScanned.destinyWarehouse.reference}}</div>
+        <div id="label-name" class="label-destiny info-text">{{packageScanned.destinyWarehouse.name}}</div>
       </div>
     </div>
   </div>
@@ -70,11 +92,24 @@
   <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted && !productScanned && !productScanWithException">{{messageGuide}}</p>
 
   <!-- Input where set the new code -->
-  <input hideKeyboard *ngIf="(!productScanned && !productScanWithException) || needScanNewPacking" id="input" class="input-sorter" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="inputValue">
+  <input hideKeyboard *ngIf="(!productScanned && !packageScanned && !productScanWithException) || needScanNewPacking" id="input" class="input-sorter" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="inputValue">
 </div>
 
 <!-- Actions to show when the product scanned has a destiny assigned and the destiny has a way assigned in sorter -->
 <ion-footer *ngIf="processStarted && productScanned && !productScanWithException">
+  <ion-button [disabled]="isWaitingWayWillFree" expand="full" color="danger" (click)="wrongWay()">
+    <p>CARRIL EQUIV.</p>
+  </ion-button>
+  <ion-button expand="full" color="dark" (click)="presentScannerRackModal()">
+    <p>SALTAR SORTER</p>
+  </ion-button>
+  <ion-button [disabled]="isWaitingWayWillFree" expand="full" color="dark" (click)="fullWay()">
+    <p>NO CABE CAJA</p>
+  </ion-button>
+</ion-footer>
+
+<!-- Actions to show when the package scanned has a destiny assigned and the destiny has a way assigned in sorter -->
+<ion-footer *ngIf="processStarted && packageScanned && !productScanWithException">
   <ion-button [disabled]="isWaitingWayWillFree" expand="full" color="danger" (click)="wrongWay()">
     <p>CARRIL EQUIV.</p>
   </ion-button>

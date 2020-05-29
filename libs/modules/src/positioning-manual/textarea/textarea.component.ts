@@ -153,7 +153,10 @@ export class TextareaComponent implements OnInit {
         this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
         this.inputPositioning = null;
         this.errorMessage = null;
-      } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PRODUCT) {
+      } else if (
+        this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PRODUCT ||
+        this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PACKAGE)
+      ) {
         let params: any = {
           productReference: dataWrited,
           warehouseId: warehouseId,

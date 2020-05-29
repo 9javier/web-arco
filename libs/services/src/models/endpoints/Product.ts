@@ -14,7 +14,39 @@ export namespace ProductModel {
     model: ModelModel.Model;
     size: SizeModel.Size;
     brand: BrandModel.Brand;
-    season: SeasonModel.Season
+    season: SeasonModel.Season,
+    product: ProductModel.Package,
+    uniqueCode:string,
+    order: ProductModel.Package     
+  }
+
+  // export interface Package {
+  //   id?: number;
+  //   uniqueCode: string;
+  //   initialWarehouse: WarehouseModel.Warehouse;
+  //   model: ModelModel.Model;
+  //   size: SizeModel.Size;
+  //   brand: BrandModel.Brand;
+  //   season: SeasonModel.Season
+  // }
+  export interface Package {
+    uniqueCode: string,
+    destinationShop: PackageDestinationShop,
+    expedition: PackageExpedition
+    deliveryRequestId:number,
+    deliveryRequestExternalId:number,
+  }
+
+  export interface PackageDestinationShop {
+    id: number,
+    name: string,
+    reference: string,
+  }
+
+  export interface PackageExpedition {
+    id:number,
+    barcode: string,
+    status: number,
   }
 
   export interface ProductShoesUnit {

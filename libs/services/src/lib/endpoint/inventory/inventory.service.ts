@@ -31,6 +31,7 @@ export class InventoryService {
 
   private postGlobalUrl: string = environment.apiBase + "/processes/positioner-main/global";
   private postPickingDirectUrl: string = environment.apiBase + "/processes/picking-main/direct";
+  private postPickingReturnUrl: string = environment.apiBase + "/processes/picking-main/return";
   private postPendingSealUrl: string = environment.apiBase + "/processes/picking-main/pending-seal";
   private postPickingConsolidatedUrl: string = environment.apiBase + '/processes/picking-main/consolidated';
   private postPickingOnlineStoreUrl: string = environment.apiBase + '/processes/picking-main/ot';
@@ -154,6 +155,10 @@ export class InventoryService {
 
   postPickingDirect(picking: InventoryModel.Picking): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postPickingDirectUrl, picking);
+  }
+
+  postPickingReturn(picking: InventoryModel.Picking): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postPickingReturnUrl, picking);
   }
 
   postPickingConsolidated(picking: InventoryModel.Picking): Promise<HttpRequestModel.Response> {

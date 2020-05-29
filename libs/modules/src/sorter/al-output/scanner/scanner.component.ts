@@ -21,7 +21,6 @@ import { CarrierService } from '../../../../../services/src/lib/endpoint/carrier
 import { ListasProductosComponent } from 'libs/modules/src/picking-manual/lista/listas-productos/listas-productos.component';
 import { ListProductsCarrierComponent } from '../../../components/list-products-carrier/list-products-carrier.component';
 import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
-
 @Component({
   selector: 'sorter-output-scanner',
   templateUrl: './scanner.component.html',
@@ -218,11 +217,17 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
       if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PACKING) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {
-          this.audioProvider.playDefaultError();
-          await this.intermediaryService.presentToastError('Código de producto erróneo.');
-          this.focusToInput();
-        } else {
 
+          if(this.itemReferencesProvider.checkSpecificCodeValue(dataWrote,this.itemReferencesProvider.codeValue.PACKAGE)){
+            //is package
+            this.scannPackage(dataWrote);
+          }else{
+            //code invalid
+            this.audioProvider.playDefaultError();
+            await this.intermediaryService.presentToastError('Código de producto erróneo.');
+            this.focusToInput();
+          }
+        } else {
           this.carrier.getSingle(dataWrote).subscribe(data => {
             this.lastJailPackingInventories = data.packingInventorys;
             if(data.packingInventorys.length > 0 && !test){
@@ -254,6 +259,21 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  async scannPackage(dataWrote){
+    if (this.processStarted && this.infoSorterOperation.packingReference) {
+      this.outputProductFromSorter(dataWrote);
+    } else if (this.packingIsFull) {
+      this.audioProvider.playDefaultError();
+      await this.intermediaryService.presentToastError('Escanea el nuevo embalaje a utilizar antes de continuar con los productos.');
+      this.focusToInput();
+    } else {
+      this.audioProvider.playDefaultError();
+      await this.intermediaryService.presentToastError('Escanea el embalaje a utilizar antes de comenzar con los productos.');
+      this.focusToInput();
+    }
+  }
+  
 
   generateVariablesList() {
     this.intermediaryService.dismissLoading();
@@ -512,123 +532,127 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   private async outputProductFromSorter(productReference: string) {
+    console.log(productReference);
     await this.intermediaryService.presentLoading('Comprobando producto escaneado...');
 
-    this.sorterOutputService
-      .postScanProductPutInPacking({
-        productReference,
-        packingReference: this.infoSorterOperation.packingReference,
-        wayId: this.infoSorterOperation.wayId,
-        fullPacking: this.packingIsFull,
-        incidenceProcess: this.wrongCodeScanned,
-        stopButtonPressed: this.stopButtonPressed
-      })
-      .then(async (res: SorterOutputModel.ResponseScanProductPutInPacking) => {
-        if (res.code === 201) {
-          await this.intermediaryService.dismissLoading();
+    await this.sorterOutputService.postScanProductPutInPackings({
+      productReference,
+      packingReference: this.infoSorterOperation.packingReference,
+      wayId: this.infoSorterOperation.wayId,
+      fullPacking: this.packingIsFull,
+      incidenceProcess: this.wrongCodeScanned,
+      stopButtonPressed: this.stopButtonPressed
+    }).subscribe(res => {
 
-          if (res.data.processStopped && !this.wrongCodeScanned) {
-            this.audioProvider.playDefaultOk();
-            await this.intermediaryService.presentToastSuccess('Proceso de salida finalizado.', 2000);
-            this.stopExecutionOutput(this.stopButtonPressed);
+      this.intermediaryService.dismissLoading();
+      if (res.processStopped != undefined && !this.wrongCodeScanned) {
+        this.audioProvider.playDefaultOk();
+        this.intermediaryService.presentToastSuccess('Proceso de salida finalizado.', 2000);
+        this.stopExecutionOutput(this.stopButtonPressed);
+      } else {
+        if (this.wrongCodeScanned) {
+
+          let resData = res;
+          this.messageGuide = 'ESCANEAR ARTÍCULO';
+          if (!resData.productInSorter) {
+
+            this.lastProductScannedChecking = null;
+            this.audioProvider.playDefaultError();
+            this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`);
+            this.focusToInput();
           } else {
-            if (this.wrongCodeScanned) {
-              let resData = res.data;
-              this.messageGuide = 'ESCANEAR ARTÍCULO';
-              if (!resData.productInSorter) {
-                this.lastProductScannedChecking = null;
-                this.audioProvider.playDefaultError();
-                await this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`);
+            this.infoPackageOrProduct(resData);
+            this.hideLeftButtonFooter = false;
+            this.hideRightButtonFooter = false;
+            if (this.lastProductScannedChecking.destinyWarehouse.id !== this.infoSorterOperation.destinyWarehouse.id) {
+              this.audioProvider.playDefaultError();
+              this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`);
+              if (resData.wayWithIncidences) {
                 this.focusToInput();
               } else {
-                this.lastProductScannedChecking = {
-                  reference: resData.product.reference,
-                  destinyWarehouse: {
-                    id: resData.warehouse.id,
-                    name: resData.warehouse.name,
-                    reference: resData.warehouse.reference
-                  },
-                  model: {
-                    reference: resData.product.model.reference
-                  },
-                  size: {
-                    name: resData.product.size.name
-                  }
-                };
-                this.hideLeftButtonFooter = false;
-                this.hideRightButtonFooter = false;
-                if (this.lastProductScannedChecking.destinyWarehouse.id !== this.infoSorterOperation.destinyWarehouse.id) {
-                  this.audioProvider.playDefaultError();
-                  await this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`);
-                  if (resData.wayWithIncidences) {
-                    this.focusToInput();
-                  } else {
-                    this.outputWithIncidencesClear = true;
-                    this.hideLeftButtonFooter = true;
-                  }
-                } else {
-                  this.audioProvider.playDefaultOk();
-                  await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`, 2000);
-                  if (resData.wayWithIncidences) {
-                    this.focusToInput();
-                  } else {
-                    this.outputWithIncidencesClear = true;
-                    this.hideLeftButtonFooter = true;
-                  }
-                }
+                this.outputWithIncidencesClear = true;
+                this.hideLeftButtonFooter = true;
               }
             } else {
               this.audioProvider.playDefaultOk();
-              await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`, 2000);
-              if (this.packingIsFull) {
-
-                this.lastProductScanned = true;
-                this.setPackingAsFull();
-              } else if(this.stopButtonPressed){
-                this.router.navigate(['sorter/output']);
-              } else {
-
-                this.hideLeftButtonFooter = false;
-                this.hideRightButtonFooter = false;
-
-                this.isFirstProductScanned = true;
-                this.messageGuide = 'ESCANEAR ARTÍCULO';
+              this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`, 2000);
+              if (resData.wayWithIncidences) {
                 this.focusToInput();
+              } else {
+                this.outputWithIncidencesClear = true;
+                this.hideLeftButtonFooter = true;
               }
             }
           }
         } else {
-          this.audioProvider.playDefaultError();
-          let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
-          if (res.errors) {
-            errorMessage = res.errors;
+          this.audioProvider.playDefaultOk();
+          this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`, 2000);
+          if (this.packingIsFull) {
+
+            this.lastProductScanned = true;
+            this.setPackingAsFull();
+          } else if (this.stopButtonPressed) {
+            this.router.navigate(['sorter/output']);
+          } else {
+
+            this.hideLeftButtonFooter = false;
+            this.hideRightButtonFooter = false;
+
+            this.isFirstProductScanned = true;
+            this.messageGuide = 'ESCANEAR ARTÍCULO';
+            this.focusToInput();
           }
-          await this.intermediaryService.presentToastError(errorMessage);
-          await this.intermediaryService.dismissLoading();
-          this.focusToInput();
         }
-      }, async (error) => {
-        this.audioProvider.playDefaultError();
-        let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        await this.intermediaryService.presentToastError(errorMessage);
-        await this.intermediaryService.dismissLoading();
-        this.focusToInput();
-      })
-      .catch(async (error) => {
-        this.audioProvider.playDefaultError();
-        let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        await this.intermediaryService.presentToastError(errorMessage);
-        await this.intermediaryService.dismissLoading();
-        this.focusToInput();
-      });
+      }
+
+    }, async (error) => {
+      this.audioProvider.playDefaultError();
+      let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
+      if (error.error && error.error.errors) {
+        errorMessage = error.error.errors;
+      }
+      await this.intermediaryService.presentToastError(errorMessage);
+      await this.intermediaryService.dismissLoading();
+      this.focusToInput();
+
+    });
+
   }
 
+  infoPackageOrProduct(resData){
+    if(resData.product.reference != undefined){
+      this.lastProductScannedChecking = {
+        reference: resData.product.reference,
+        destinyWarehouse: {
+          id: resData.warehouse.id,
+          name: resData.warehouse.name,
+          reference: resData.warehouse.reference
+        },
+        model: {
+          reference: resData.product.model ? resData.product.model.reference : ''
+        },
+        size: {
+          name: resData.product.size.name
+        }
+      };
+    }else{
+      this.lastProductScannedChecking = {
+        reference: resData.product.uniqueCode,
+        destinyWarehouse: {
+          id: resData.warehouse.id,
+          name: resData.warehouse.name,
+          reference: resData.warehouse.reference
+        },
+        model: {
+          reference: ''
+        },
+
+      };
+    }
+  }
+
+
+   
   private async setPackingAsFull() {
 
     await this.intermediaryService.presentLoading('Registrado embalaje como lleno...');

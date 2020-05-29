@@ -16,11 +16,26 @@
     <mat-list [ngClass]="destinyPacking ? 'product-list-smaller' : ''">
       <mat-list-item *ngFor="let packingProduct of packingProducts">
         <span class="text-reference">{{getReferenceWarehouse(packingProduct)}}</span>
-        <h3 matLine><b>{{packingProduct.product.reference}}</b></h3>
-        <p matLine>
+
+        <!-- Reference of the product/package -->
+        <h3 matLine *ngIf="packingProduct.product"><b>{{packingProduct.product.reference}}</b></h3>
+        <h3 matLine *ngIf="packingProduct.package">
+          <b>Referencia: {{packingProduct.package.uniqueCode}}</b>
+          <button mat-raised-button color="primary" style="margin-left: 45%"> Bulto </button>
+        </h3>
+
+        <!-- Number of the order -->
+        <p matLine *ngIf="packingProduct.package">
+          <span> Pedido: {{packingProduct.package.order.deliveryRequestExternalId}} </span>
+        </p>
+
+        <!-- Reference of the model and brand name -->
+        <p matLine *ngIf="packingProduct.product">
           <span> {{packingProduct.product.model.reference}} - {{packingProduct.product.model.brand.name}} </span>
         </p>
-        <p matLine>
+
+        <!-- Size number -->
+        <p matLine *ngIf="packingProduct.product">
           <span> T - {{packingProduct.product.size.name}} </span>
         </p>
       </mat-list-item>
