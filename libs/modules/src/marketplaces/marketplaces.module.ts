@@ -68,6 +68,33 @@ const routes: Routes = [
       name: 'Miniprecios'
     }
   },
+  {
+    path: 'amazon/catalog',
+    component: CatalogComponent,
+    data: {
+      name: 'Amazon'
+    }
+  },{
+    path: 'amazon/mapping',
+    component: MappingsComponent,
+    data: {
+      name: 'Amazon'
+    }
+  },
+  {
+    path: 'amazon/rules',
+    component: RulesComponent,
+    data: {
+      name: 'Amazon'
+    }
+  },
+  {
+    path: 'amazon/security-stocks',
+    component: SecurityStocksComponent,
+    data: {
+      name: 'Amazon'
+    }
+  },
 
   //-----------
   {

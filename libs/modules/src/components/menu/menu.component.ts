@@ -519,6 +519,33 @@ export class MenuComponent implements OnInit {
           ]
         },
         {
+          title: 'Amazon',
+          open: false,
+          type: 'wrapper',
+          id: 'amazon',
+          icon: 'add-circle-outline',
+          thirdLevel: true,
+          children: [
+            {
+              title: 'Mapeos',
+              id: 'a-mapping',
+              url: '/marketplaces/amazon/mapping',
+              icon: 'code'
+            },{
+              title: 'Reglas',
+              id: 'a-rules',
+              url: '/marketplaces/amazon/rules',
+              icon: 'code-working'
+            },
+            {
+              title: 'Catálogo',
+              id: 'a-catalog',
+              url: '/marketplaces/amazon/catalog',
+              icon: 'apps'
+            }
+          ]
+        },
+        {
           title: 'Prioridad de Tienda',
           id: 'store-priority',
           url: '/marketplaces/store-priority',

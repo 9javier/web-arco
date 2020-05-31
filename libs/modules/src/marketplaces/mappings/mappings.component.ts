@@ -127,11 +127,11 @@ export class MappingsComponent implements OnInit {
 
       if (results[0] && results[0].length) {
         results[0].forEach(brand => {
-          if (brand.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
-            this.dataSourceBrands.push({
-              avelonData: {id: brand.externalId, name: brand.name.trim()},
-              marketData: {id: -1, name: null}
-            });
+          if (brand.market_filters.find(marketId => (marketId.marketId == this.market))) {
+          this.dataSourceBrands.push({
+            avelonData: {id: brand.externalId, name: brand.name.trim()},
+            marketData: {id: -1, name: null}
+          });
           }
         });
         this.dataSourceBrands.sort((a, b) => (a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0));
@@ -142,11 +142,11 @@ export class MappingsComponent implements OnInit {
 
       if (results[1] && results[1].length) {
         results[1].forEach(color => {
-          if (color.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
-            this.dataSourceColors.push({
-              avelonData: {id: color.externalId, name: color.name.trim()},
-              marketData: {id: -1, name: null}
-            });
+          if (color.market_filters.find(marketId => (marketId.marketId == this.market))) {
+          this.dataSourceColors.push({
+            avelonData: {id: color.externalId, name: color.name.trim()},
+            marketData: {id: -1, name: null}
+          });
           }
         });
         this.dataSourceColors.sort((a, b) => (a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0));
@@ -157,22 +157,22 @@ export class MappingsComponent implements OnInit {
 
       if (results[2] && results[2].length) {
         results[2].forEach(size => {
-          if (size.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
-            if (this.dataSourceSizes.length) {
-              if (!this.dataSourceSizes.find(searchSize => {
-                return searchSize.avelonData.name.trim() === size.name.trim();
-              })) {
-                this.dataSourceSizes.push({
-                  avelonData: {id: size.name.trim(), name: size.name.trim()},
-                  marketData: {id: -1, name: null}
-                });
-              }
-            } else {
+          if (size.market_filters.find(marketId => (marketId.marketId == this.market))) {
+          if (this.dataSourceSizes.length) {
+            if (!this.dataSourceSizes.find(searchSize => {
+              return searchSize.avelonData.name.trim() === size.name.trim();
+            })) {
               this.dataSourceSizes.push({
                 avelonData: {id: size.name.trim(), name: size.name.trim()},
                 marketData: {id: -1, name: null}
               });
             }
+          } else {
+            this.dataSourceSizes.push({
+              avelonData: {id: size.name.trim(), name: size.name.trim()},
+              marketData: {id: -1, name: null}
+            });
+          }
           }
         });
 
@@ -212,13 +212,13 @@ export class MappingsComponent implements OnInit {
 
       if (results[3] && results[3].length) {
         results[3].forEach(feature => {
-          if (feature.marketsIds.find(marketId => (marketId == this.marketExternalId))) {
-            if (feature.dataGroup == "2" || feature.dataGroup == "5" || feature.dataGroup == "7" || feature.dataGroup == "9" || feature.dataGroup == "10") {
-              this.dataSourceFeatures.push({
-                avelonData: {id: feature.externalId, name: feature.name.trim(), group: feature.dataGroup},
-                marketData: {id: -1, name: null}
-              });
-            }
+          if (feature.market_filters.find(marketId => (marketId.marketId == this.market))) {
+          if (feature.dataGroup == "2" || feature.dataGroup == "5" || feature.dataGroup == "7" || feature.dataGroup == "9" || feature.dataGroup == "10") {
+            this.dataSourceFeatures.push({
+              avelonData: {id: feature.externalId, name: feature.name.trim(), group: feature.dataGroup},
+              marketData: {id: -1, name: null}
+            });
+          }
           }
         });
         this.dataSourceFeatures.sort((a, b) => (parseInt(a.avelonData.group) > parseInt(b.avelonData.group)) ? 1 : ((parseInt(b.avelonData.group) > parseInt(a.avelonData.group)) ? -1 : ((a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0))));
@@ -232,7 +232,7 @@ export class MappingsComponent implements OnInit {
   }
 
   updateDataSaved() {
-    this.marketplacesService.getMapDataRules(this.market).subscribe(data => {
+    this.marketplacesService.getMapDataRules().subscribe(data => {
       if (data) {
         this.dataDBsave = data;
       } else {
@@ -240,112 +240,114 @@ export class MappingsComponent implements OnInit {
       }
 
       this.dataDBsave.forEach(item => {
-        switch (item.typeMapped) {
-          case 2:
-            let dataFeature = this.dataSourceFeatures;
+        if (item.marketId == this.market) {
+          switch (item.typeMapped) {
+            case 2:
+              let dataFeature = this.dataSourceFeatures;
 
-            let featureMarket = {id: -1, name: null};
+              let featureMarket = {id: -1, name: null};
 
-            this.featuresList.forEach(feature => {
-              if (feature.id == item.marketDataId) {
-                featureMarket = feature;
-              }
-            });
-
-            dataFeature.forEach(data => {
-              if (data.avelonData.id == item.originDataId && data.avelonData.group == item.aditionalMapInfo) {
-                data.marketData = {
-                  id: featureMarket.id,
-                  name: featureMarket.name
+              this.featuresList.forEach(feature => {
+                if (feature.id == item.marketDataId) {
+                  featureMarket = feature;
                 }
-              }
-            });
+              });
 
-            this.dataSourceFeatures = dataFeature;
-            this.dataSourceMappingFeatures.data = this.dataSourceFeatures;
-            if (this.featureSearched && this.featureSearched.trim() != '') {
-              this.searchOnMappingList('feature');
-            }
-            break;
-          case 3:
-            let dataColor = this.dataSourceColors;
-
-            let colorMarket = {id: -1, name: null};
-
-
-            this.colorsList.forEach(color => {
-              if (color.id == item.marketDataId) {
-                colorMarket = color;
-              }
-            });
-
-            dataColor.forEach(data => {
-              if (data.avelonData.id == item.originDataId) {
-                data.marketData = {
-                  id: colorMarket.id,
-                  name: colorMarket.name
+              dataFeature.forEach(data => {
+                if (data.avelonData.id == item.originDataId && data.avelonData.group == item.aditionalMapInfo) {
+                  data.marketData = {
+                    id: featureMarket.id,
+                    name: featureMarket.name
+                  }
                 }
+              });
+
+              this.dataSourceFeatures = dataFeature;
+              this.dataSourceMappingFeatures.data = this.dataSourceFeatures;
+              if (this.featureSearched && this.featureSearched.trim() != '') {
+                this.searchOnMappingList('feature');
               }
-            });
+              break;
+            case 3:
+              let dataColor = this.dataSourceColors;
 
-            this.dataSourceColors = dataColor;
-            this.dataSourceMappingColors.data = this.dataSourceColors;
-            if (this.colorSearched && this.colorSearched.trim() != '') {
-              this.searchOnMappingList('color');
-            }
-            break;
-          case 4:
-            let dataSize = this.dataSourceSizes;
+              let colorMarket = {id: -1, name: null};
 
-            let sizeMarket = {id: -1, name: null};
 
-            this.sizesList.forEach(size => {
-              if (size.id == item.marketDataId) {
-                sizeMarket = size;
-              }
-            });
-
-            dataSize.forEach(data => {
-              if (data.avelonData.id == item.originDataId) {
-                data.marketData = {
-                  id: sizeMarket.id,
-                  name: sizeMarket.name
+              this.colorsList.forEach(color => {
+                if (color.id == item.marketDataId) {
+                  colorMarket = color;
                 }
-              }
-            });
+              });
 
-            this.dataSourceSizes = dataSize;
-            this.dataSourceMappingSizes.data = this.dataSourceSizes;
-            if (this.sizeSearched && this.sizeSearched.trim() != '') {
-              this.searchOnMappingList('size');
-            }
-            break;
-          case 5:
-            let dataBrand = this.dataSourceBrands;
-
-            let brandMarket = {id: -1, name: null};
-
-            this.brandsList.forEach(brand => {
-              if (brand.id == item.marketDataId) {
-                brandMarket = brand;
-              }
-            });
-
-            dataBrand.forEach(data => {
-              if (data.avelonData.id == item.originDataId) {
-                data.marketData = {
-                  id: brandMarket.id,
-                  name: brandMarket.name
+              dataColor.forEach(data => {
+                if (data.avelonData.id == item.originDataId) {
+                  data.marketData = {
+                    id: colorMarket.id,
+                    name: colorMarket.name
+                  }
                 }
-              }
-            });
+              });
 
-            this.dataSourceBrands = dataBrand;
-            this.dataSourceMappingBrands.data = this.dataSourceBrands;
-            if (this.brandSearched && this.brandSearched.trim() != '') {
-              this.searchOnMappingList('brand');
-            }
-            break;
+              this.dataSourceColors = dataColor;
+              this.dataSourceMappingColors.data = this.dataSourceColors;
+              if (this.colorSearched && this.colorSearched.trim() != '') {
+                this.searchOnMappingList('color');
+              }
+              break;
+            case 4:
+              let dataSize = this.dataSourceSizes;
+
+              let sizeMarket = {id: -1, name: null};
+
+              this.sizesList.forEach(size => {
+                if (size.id == item.marketDataId) {
+                  sizeMarket = size;
+                }
+              });
+
+              dataSize.forEach(data => {
+                if (data.avelonData.id == item.originDataId) {
+                  data.marketData = {
+                    id: sizeMarket.id,
+                    name: sizeMarket.name
+                  }
+                }
+              });
+
+              this.dataSourceSizes = dataSize;
+              this.dataSourceMappingSizes.data = this.dataSourceSizes;
+              if (this.sizeSearched && this.sizeSearched.trim() != '') {
+                this.searchOnMappingList('size');
+              }
+              break;
+            case 5:
+              let dataBrand = this.dataSourceBrands;
+
+              let brandMarket = {id: -1, name: null};
+
+              this.brandsList.forEach(brand => {
+                if (brand.id == item.marketDataId) {
+                  brandMarket = brand;
+                }
+              });
+
+              dataBrand.forEach(data => {
+                if (data.avelonData.id == item.originDataId) {
+                  data.marketData = {
+                    id: brandMarket.id,
+                    name: brandMarket.name
+                  }
+                }
+              });
+
+              this.dataSourceBrands = dataBrand;
+              this.dataSourceMappingBrands.data = this.dataSourceBrands;
+              if (this.brandSearched && this.brandSearched.trim() != '') {
+                this.searchOnMappingList('brand');
+              }
+              break;
+          }
         }
       });
     });

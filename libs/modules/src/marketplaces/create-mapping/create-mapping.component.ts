@@ -30,7 +30,7 @@ export class CreateMappingComponent implements OnInit {
   }
 
   getMap() {
-    this.marketplacesService.getMapDataRules(1).subscribe(data => {
+    this.marketplacesService.getMapDataRules().subscribe(data => {
       if(data) {
         console.log(data)
       } else {

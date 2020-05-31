@@ -12,10 +12,10 @@ export class MarketplacesService {
 
   private apiBase = environment.apiRule;
   private apiMiddleware = environment.apiMiddleware;
-  private getMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap/marketId/";
-  private postMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap";
-  private updateMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap/";
-  private deleteMapDataRulesUrl = this.apiMiddleware + "/api/v1/ruleDataMap/";
+  private getMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
+  private postMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
+  private updateMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
+  private deleteMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
   private getMapEntitiesUrl = this.apiBase + "/api/EnumMetadata/get/mapentity";
   private getRulesFilterTypesUrl = this.apiBase + "/api/EnumMetadata/get/rulefiltertype";
   private getRulesFilterUrl = this.apiBase + "/api/RuleFilter";
@@ -27,10 +27,10 @@ export class MarketplacesService {
   private postRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration";
   private updateRulesConfigurationsUrl = this.apiMiddleware + "/api/v1/ruleConfiguration/";
   private getRulesConfigurationsByIdUrl = this.apiBase + "/api/RuleConfiguration/{{id}}";
-  private getBrandsRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/5";
-  private getColorsRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/3";
-  private getFeaturesRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/2";
-  private getSizesRuleFilters = this.apiMiddleware + "/api/v1/ruleFilter/type/4";
+  private getBrandsRuleFilters = this.apiBase + "/api/RuleFilter/5";
+  private getColorsRuleFilters = this.apiBase + "/api/RuleFilter/3";
+  private getFeaturesRuleFilters = this.apiBase + "/api/RuleFilter/2";
+  private getSizesRuleFilters = this.apiBase + "/api/RuleFilter/4";
   private postProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
   private getProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
   private getProductCatalogUrl = this.apiMiddleware + "/api/v1/product";
@@ -52,8 +52,8 @@ export class MarketplacesService {
     }));
   }
 
-  getMapDataRules(market): Observable<any> {
-    return this.http.get<any>(this.getMapDataRulesUrl + market , {}).pipe(map(response => {
+  getMapDataRules(): Observable<any> {
+    return this.http.get<any>(this.getMapDataRulesUrl , {}).pipe(map(response => {
       return response;
     }));
   }
