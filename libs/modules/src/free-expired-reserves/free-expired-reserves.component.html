@@ -1,0 +1,372 @@
+<ion-content>
+  <suite-responsive-layout>
+    <div portrait class="portrait-section" [ngStyle]="{height: mobileVersionTypeList == 'table' ? '100vh' : 'auto'}">
+      <div *ngIf="mobileVersionTypeList == 'table'">
+        <div class="filters-mobile">
+          <span>Filtros aquí</span>
+        </div>
+        <div class="container-table-mobile">
+          <table mat-table [dataSource]="dataSource">
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+            <ng-container matColumnDef="select" [formGroup]="selectedForm" sticky>
+              <th mat-header-cell *matHeaderCellDef>
+                <ion-checkbox *ngIf="status != 3" formControlName="selector" (ionChange)="selectAll($event)">
+                </ion-checkbox>
+              </th>
+              <td mat-cell *matCellDef="let label;let i = index" (click)="prevent($event)">
+                <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+                  <ion-checkbox (click)="itemSelected(label.id)" *ngIf="label.status != 3"
+                                [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                </ng-template>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="model">
+              <th mat-header-cell *matHeaderCellDef>
+                Código de artículo
+              </th>
+              <td mat-cell *matCellDef="let price">
+                {{ price.model.reference }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="range">
+              <th mat-header-cell *matHeaderCellDef>
+                Rango de talla
+              </th>
+              <td mat-cell *matCellDef="let price">
+                {{ processProductSizesRange(price) }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="family">
+              <th mat-header-cell *matHeaderCellDef>
+                familia
+              </th>
+              <td mat-cell *matCellDef="let price">
+
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="lifestyle">
+              <th mat-header-cell *matHeaderCellDef>
+                lifestyle
+              </th>
+              <td mat-cell *matCellDef="let price">
+
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="brand">
+              <th mat-header-cell *matHeaderCellDef>
+                marca
+              </th>
+              <td mat-cell *matCellDef="let price">
+                {{ price?.model?.brand?.name }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>
+                Precio tarifa
+              </th>
+              <td mat-cell *matCellDef="let price">
+                {{ getFinalPrice(price) }}€
+              </td>
+            </ng-container>
+
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="mobileVersionTypeList == 'list'">
+        <div class="list-header-filters-mobile">
+          <ion-grid *ngIf="mobileVersionTypeList == 'list'">
+            <ion-row class="header-mobile">
+              <ion-col [formGroup]="selectedForm" size="1" class="check-all">
+                <div class="check-all">
+                  <ion-checkbox formControlName="selector" (ionChange)="selectAll($event)" *ngIf="status != 3">
+                  </ion-checkbox>
+                </div>
+              </ion-col>
+              <ion-col size="9" class="information">
+                <div class="information">
+                  <ion-toggle (ionChange)="switchPrintAllStock()"></ion-toggle>
+                  <span>Imp. nº stock</span>
+                </div>
+              </ion-col>
+              <ion-col size="2" class="filters-mobile" (click)="openFiltersMobile()">
+                <div class="filters-mobile" [ngClass]="showFiltersMobileVersion ? 'filters-opened' : ''">
+                  <i class="material-icons">filter_list</i>
+                </div>
+              </ion-col>
+            </ion-row>
+            <form *ngIf="showFiltersMobileVersion" [formGroup]="form">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-label>Referencia:</ion-label>
+                    <suite-tags-input placeholder="Referencia" [options]="models" formControlName="models"
+                      multiple="true"></suite-tags-input>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-label>Marca:</ion-label>
+                    <suite-tags-input placeholder="Marca" [options]="brands" formControlName="brands" multiple="true">
+                    </suite-tags-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-label>Temporada:</ion-label>
+                    <suite-tags-input placeholder="Temporada" [options]="seasons" formControlName="seasons"
+                      multiple="true"></suite-tags-input>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-label>Color:</ion-label>
+                    <suite-tags-input placeholder="Color" [options]="colors" formControlName="colors" multiple="true">
+                    </suite-tags-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-label>Familia:</ion-label>
+                    <suite-tags-input placeholder="Familia" [options]="families" formControlName="families"
+                      multiple="true"></suite-tags-input>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-label>Lifestyle:</ion-label>
+                    <suite-tags-input placeholder="Lifestyle" [options]="lifestyles" formControlName="lifestyles"
+                      multiple="true"></suite-tags-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-label>Ordenar:</ion-label>
+                    <ion-item formGroupName="orderby">
+                      <ion-select formControlName="type" interface="popover">
+                        <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}
+                        </ion-select-option>
+                      </ion-select>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-label>Talla:</ion-label>
+                    <suite-tags-input [literal]="true" placeholder="Talla" [options]="sizes" formControlName="sizes"
+                      multiple="true">
+                    </suite-tags-input>
+                  </ion-col>
+
+                </ion-row>
+
+                <ion-row>
+                  <ion-col class="btn-remove" size="6">
+                    <ion-button (click)="clearFilters()">
+                      Borra Filtros
+                    </ion-button>
+                  </ion-col>
+                  <ion-col class="btn-apply" size="6">
+                    <ion-button (click)="applyFilters()">
+                      Aplicar Filtros
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </form>
+          </ion-grid>
+        </div>
+        <div class="list-items-mobile">
+          <mat-accordion multi="false" *ngFor="let price of prices;let i = index">
+            <mat-expansion-panel [hideToggle]="!getPhotoUrl(price)" [disabled]="!getPhotoUrl(price)">
+              <mat-expansion-panel-header class="custom-panel-header">
+                <ion-grid>
+                  <ion-row class="custom-panel-header">
+                    <ion-col size="1" class="check-print">
+                      <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
+                        (click)="$event.stopPropagation();itemSelected(price.id);">
+                      </ion-checkbox>
+                    </ion-col>
+                    <ion-col size="11" class="content-prices-header">
+                      <mat-panel-title>
+                        <ion-row class="row-title-prices">
+                          <ion-col class="product" size="8">
+                            {{price?.model?.reference}} - {{ price?.model?.brand?.name }}
+                          </ion-col>
+                        </ion-row>
+                      </mat-panel-title>
+                      <mat-panel-description class="panel-description">
+                        <ion-row class="row-family-lifestyle-size">
+                          <ion-col class="family-lifestyle" size="9">
+                            <p>
+                              {{getFamilyAndLifestyle(price)}}
+                            </p>
+                          </ion-col>
+                          <ion-col class="size" size="3">
+                            {{ processProductSizesRange(price) }}
+                          </ion-col>
+                        </ion-row>
+                        <ion-row class="row-price-stock">
+                          <ion-col class="price" size="6">
+                            <p class="final-price">
+                              {{getFinalPrice(price)}}€
+                            </p>
+                          </ion-col>
+
+                        </ion-row>
+                      </mat-panel-description>
+                    </ion-col>
+
+                  </ion-row>
+                </ion-grid>
+              </mat-expansion-panel-header>
+              <div class="my-expansion-panel-body" *ngIf="getPhotoUrl(price)">
+                <img class="img-product-mobile" [src]="getPhotoUrl(price)">
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </div>
+    </div>
+
+    <div landscape>
+      <ion-text color="primary">
+        <suite-breadcrumb></suite-breadcrumb>
+      </ion-text>
+      <form [formGroup]="form">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="2" size-xs="6" size-md="3">
+              <ion-label>Referencia:</ion-label>
+              <suite-tags-input placeholder="Referencia" [options]="models" formControlName="models" multiple="true">
+              </suite-tags-input>
+            </ion-col>
+            <ion-col size="2" size-xs="6" size-md="3">
+              <ion-label>Marca:</ion-label>
+              <suite-tags-input placeholder="Marca" [options]="brands" formControlName="brands" multiple="true">
+              </suite-tags-input>
+            </ion-col>
+            <ion-col size="2" size-xs="6" size-md="3">
+              <ion-label>Temporada:</ion-label>
+              <suite-tags-input placeholder="Temporada" [options]="seasons" formControlName="seasons" multiple="true">
+              </suite-tags-input>
+            </ion-col>
+            <ion-col size="2" size-xs="6" size-md="3">
+              <ion-label>Color:</ion-label>
+              <suite-tags-input placeholder="Color" [options]="colors" formControlName="colors" multiple="true">
+              </suite-tags-input>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" size-xs="6" size-md="3">
+              <ion-label>Familia:</ion-label>
+              <suite-tags-input placeholder="Familia" [options]="families" formControlName="families" multiple="true">
+              </suite-tags-input>
+            </ion-col>
+            <ion-col size="2" size-xs="6" size-md="3">
+              <ion-label>Lifestyle:</ion-label>
+              <suite-tags-input placeholder="Lifestyle" [options]="lifestyles" formControlName="lifestyles"
+                multiple="true"></suite-tags-input>
+            </ion-col>
+            <ion-col size="2" size-xs="6" size-md="3">
+              <ion-label>Ordenar:</ion-label>
+              <ion-item formGroupName="orderby">
+                <ion-select formControlName="type" interface="popover">
+                  <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+
+          </ion-row>
+        </ion-grid>
+      </form>
+
+      <table mat-table [dataSource]="dataSource">
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <ng-container matColumnDef="select" [formGroup]="selectedForm">
+          <th mat-header-cell *matHeaderCellDef>
+            <ion-checkbox *ngIf="status != 3" formControlName="selector" (ionChange)="selectAll($event)">
+            </ion-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let label;let i = index" (click)="prevent($event)">
+            <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+                            <ion-checkbox (click)="itemSelected(label.id)"
+                                          [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+            </ng-template>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="model">
+          <th mat-header-cell *matHeaderCellDef>
+            Código artículo
+          </th>
+          <td mat-cell *matCellDef="let price">
+            {{ price?.model?.reference }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="range">
+          <th mat-header-cell *matHeaderCellDef>
+            Rango de talla
+          </th>
+          <td mat-cell *matCellDef="let price">
+            {{ processProductSizesRange(price) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="family">
+          <th mat-header-cell *matHeaderCellDef>
+            familia
+          </th>
+          <td mat-cell *matCellDef="let price">
+            {{ price.model.family ? price.model.family.name : '' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lifestyle">
+          <th mat-header-cell *matHeaderCellDef>
+            lifestyle
+          </th>
+          <td mat-cell *matCellDef="let price">
+            {{ price.model.lifestyle ? price.model.lifestyle.name : '' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="brand">
+          <th mat-header-cell *matHeaderCellDef>
+            marca
+          </th>
+          <td mat-cell *matCellDef="let price">
+            {{ price?.model?.brand?.name }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>
+            Precio tarifa
+          </th>
+          <td mat-cell *matCellDef="let price">
+            {{ getFinalPrice(price) }}€
+          </td>
+        </ng-container>
+
+      </table>
+    </div>
+  </suite-responsive-layout>
+  <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+
+</ion-content>
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end"  class="horizontal-fab">
+    <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="refresh()"><i
+      class="material-icons">refresh</i></ion-fab-button>
+    <ion-fab-button (click)="printPrices(prices, null)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+      <ion-icon name="print"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>

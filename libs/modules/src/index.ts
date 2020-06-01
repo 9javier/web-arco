@@ -244,6 +244,10 @@ export * from './prices/prices.module';
 export * from './new-products/new-products.component';
 export * from './new-products/new-products.module';
 
+/**Free Expired Reserves */
+export * from './free-expired-reserves/free-expired-reserves.component';
+export * from './free-expired-reserves/free-expired-reserves.module';
+
 /**New Products */
 export * from './list-new-products/list-new-products.component';
 export * from './list-new-products/list-new-products.module';
