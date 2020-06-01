@@ -113,6 +113,15 @@
       </ion-col>
     </ion-row>
 
+    <ion-row>
+      <ion-col>
+        <ion-item [disabled]="isHistoric">
+          <ion-label position="stacked">Observaciones Operario</ion-label>
+          <ion-textarea rows="6" cols="20" placeholder="Introduzca aquí sus observaciones" [(ngModel)]="return.operatorObservations" type="text"></ion-textarea>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
     <mat-divider></mat-divider>
 
     <ion-row>

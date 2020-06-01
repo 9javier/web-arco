@@ -138,11 +138,11 @@
       </ion-col>
     </ion-row>
 
-    <ion-row *ngIf="return.observations && return.observations != ''">
-      <ion-col class="disabled-col">
+    <ion-row *ngIf="return.operatorObservations && return.operatorObservations != ''">
+      <ion-col>
         <ion-item>
-          <ion-label position="stacked">Observaciones</ion-label>
-          <ion-textarea disabled>{{return.observations}}</ion-textarea>
+          <ion-label position="stacked">Observaciones Operario</ion-label>
+          <ion-textarea [(ngModel)]="return.operatorObservations"></ion-textarea>
         </ion-item>
       </ion-col>
     </ion-row>

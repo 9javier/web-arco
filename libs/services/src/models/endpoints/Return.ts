@@ -36,6 +36,7 @@ export namespace ReturnModel{
     dateReturnBefore: string,
     email: string,
     observations: string,
+    operatorObservations: string,
     lastStatus: number,
     user: User,
     packings: ReturnPacking[],
