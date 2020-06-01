@@ -3,8 +3,8 @@
   <ion-grid>
     <div *ngFor="let reserve of reserves">
       <ion-row>
-        <ion-col>
-          <ion-checkbox></ion-checkbox>
+        <ion-col size="auto">
+          <ion-checkbox [(ngModel)]="reserve.selected" (ionChange)="checkboxChange()"></ion-checkbox>
         </ion-col>
         <ion-col>{{reserve.model.name}}</ion-col>
         <ion-col class="right">{{reserve.size.name}}</ion-col>
@@ -20,7 +20,7 @@
     <ion-fab-button *ngIf="selected" (click)="free()" matTooltip="Liberar" >
       <ion-icon name="ios-link"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button (click)="load()" matTooltip="Actualizar">
+    <ion-fab-button (click)="refresh()" matTooltip="Actualizar">
       <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
   </ion-fab>

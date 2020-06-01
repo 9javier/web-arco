@@ -723,7 +723,7 @@ export class MenuComponent implements OnInit {
         {
           title: 'Liberar Reservas Expiradas',
           id: 'free-expired-reserves',
-          icon: 'qr-scanner',
+          icon: 'ios-link',
           url: '/free-expired-reserves',
           tooltip: 'Liberar reservas expiradas mediante escaneo con cámara'
         },

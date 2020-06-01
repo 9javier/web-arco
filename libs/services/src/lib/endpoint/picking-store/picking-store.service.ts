@@ -9,6 +9,8 @@ import {RequestsProvider} from "../../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 import {DeliveryRequestModel} from "../../../models/endpoints/DeliveryRequest";
 import ExpiredReservesResponse = DeliveryRequestModel.ExpiredReservesResponse;
+import {ReturnModel} from "../../../models/endpoints/Return";
+import Pagination = ReturnModel.Pagination;
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +28,7 @@ export class PickingStoreService {
   private getLoadRejectionReasonsUrl = environment.apiBase + '/processes/picking-store/lines-request-reasons-reject';
   private postRejectRequestUrl = environment.apiBase + '/processes/picking-store/line-request-reject';
   private postCancelRequestUrl = environment.apiBase + '/delivery-request/cancel';
-  private getExpiredReservesUrl = environment.apiBase + '/delivery-request/expired-reserves';
+  private postExpiredReservesUrl = environment.apiBase + '/delivery-request/expired-reserves';
   private postLineRequestDisassociateUrl = environment.apiBase + '/processes/picking-store/line-request-disassociate';
   private postVentilateUrl = environment.apiBase + '/processes/picking-store/ventilate';
 
@@ -36,8 +38,8 @@ export class PickingStoreService {
     private requestsProvider: RequestsProvider
   ) {}
 
-  getExpiredReserves(): Promise<ExpiredReservesResponse>{
-    return this.requestsProvider.get(this.getExpiredReservesUrl);
+  getExpiredReserves(parameters: {pagination: Pagination}): Promise<ExpiredReservesResponse>{
+    return this.requestsProvider.post(this.postExpiredReservesUrl, parameters);
   }
 
   getByProductReference(parameters: PickingStoreModel.ProductReference) : Promise<HttpRequestModel.Response>{

@@ -34,7 +34,7 @@ export namespace DeliveryRequestModel {
   export interface ExpiredReservesResponse {
     message?: string,
     code?: number,
-    data?: DeliveryRequest[],
+    data?: [DeliveryRequest[], number],
     error?: any,
     errors?: any
   }
