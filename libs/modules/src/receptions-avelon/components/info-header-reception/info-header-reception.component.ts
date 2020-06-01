@@ -64,13 +64,7 @@ export class InfoHeaderReceptionComponent implements OnInit {
         }
       });
 
-    this.virtualKeyboardService
-      .openVirtualKeyboard({type: Type.DELIVERY_NOTE, placeholder: placeholderText, initialValue: initialValue})
-      .then((popover: any) => {
-        popover.onDidDismiss().then(() => {
-          keyboardEventEmitterSubscribe.unsubscribe();
-        });
-      });
+    this.virtualKeyboardService.openVirtualKeyboard({type: Type.DELIVERY_NOTE, placeholder: placeholderText, initialValue: initialValue}, () => keyboardEventEmitterSubscribe.unsubscribe());
   }
 
   public removeDeliveryNote(event) {
@@ -90,7 +84,7 @@ export class InfoHeaderReceptionComponent implements OnInit {
       this.date = formattedDate;
     }
     this.shipper = expedition.shipper;
-    this.states = this.stringStates(expedition.states);
+    this.states = expedition.states ? this.stringStates(expedition.states) : null;
     this.deliveryNoteInput.nativeElement.value = deliveryNote;
   }
   //endregion

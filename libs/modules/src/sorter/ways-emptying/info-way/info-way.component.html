@@ -1,7 +1,7 @@
 <div class="container" [ngStyle]="{'height': height || 'auto', 'width': width || 'auto'}" *ngIf="way">
   <ion-item>
     <ion-label>Calle {{way.number}} <span *ngIf="wayWithIncidences" class="with-incidence">(con incidencias)</span></ion-label>
-    <ion-label slot="end" class="qty-prods">{{listProducts.length}} productos</ion-label>
+    <ion-label slot="end" class="qty-prods">{{listProducts.length + listPackages.length}} productos</ion-label>
   </ion-item>
 
   <ion-item>
@@ -13,7 +13,7 @@
     <ion-spinner name="dots"></ion-spinner>
   </div>
 
-  <mat-accordion *ngIf="listProducts && listProducts.length > 0">
+  <mat-accordion *ngIf="(listProducts && listProducts.length > 0) || (listPackages && listPackages.length > 0)">
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>Productos</mat-panel-title>
@@ -22,12 +22,22 @@
       <ion-list class="list-products">
         <ion-item *ngFor="let product of listProducts">
           <span *ngIf="product">
-            {{product.model.reference}} - {{product.model.name}} / T-{{product.size.name}} <span *ngIf="product.with_incidence" class="with-incidence">(sospechoso)</span>
+            Referencia: {{product.model.reference}} || {{product.model.name}} / T-{{product.size.name}} <span *ngIf="product.with_incidence" class="with-incidence">(sospechoso)</span>
           </span>
           <span *ngIf="!product">
             <b>Producto desconocido</b>
           </span>
+        </ion-item>        
+
+        <ion-item *ngFor="let package of listPackages">
+          <span *ngIf="package && package.uniqueCode!=undefinded">
+            Paquete: {{package.uniqueCode}} || {{package.order.deliveryRequestExternalId}}
+          </span>
+          <span *ngIf="!package">
+            <b>Paquete desconocido</b>
+          </span>
         </ion-item>
+
       </ion-list>
     </mat-expansion-panel>
   </mat-accordion>

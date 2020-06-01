@@ -5,7 +5,9 @@ export namespace GlobalVariableModel{
         id?:number;
         type:number;
         value:string;
-        error?: boolean
+        tooltip?:string;
+        error?: boolean;
+        typeObject?:{name?:string, type?:string, tooltip?:string}
     }
 
     export interface Response extends Request.Success{

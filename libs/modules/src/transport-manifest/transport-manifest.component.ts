@@ -15,23 +15,29 @@ import {OpExpeditionType} from "./enums/OplExpeditionStatusEnums";
 export class TransportManifestComponent implements OnInit {
   displayedColumns: string[]=['id','date','barcode','scanner'];
   dataSource
-
+  init:boolean =false;
   constructor(
     private toolbarProvider: ToolbarProvider,
     private intermediaryService: IntermediaryService,
     private labelsService: LabelsService,
     private router: Router
   ) { }
+  
+  ionViewWillEnter(){
+    if(this.init == false){
+      this.getListAlerts();
+    }
+  }
 
   ngOnInit() {
+    this.init = true;  
     this.toolbarProvider.currentPage.next("Listado de alertas") 
-    this.getListAlerts();   
+    this.getListAlerts();
   }
   
   async getListAlerts(){
     await this.intermediaryService.presentLoading("Cargando alertas");
     this.labelsService.getListAlertsExpedition().subscribe(result =>{
-      console.log(result);
       let data=[];
       let c=0;
       result.forEach(element => {
@@ -44,13 +50,13 @@ export class TransportManifestComponent implements OnInit {
       this.intermediaryService.dismissLoading();
     },
     async (err) => {
-      console.log(err);
       await this.intermediaryService.dismissLoading();
     });
   }
 
   goScanner(row){
     if(row.status == OpExpeditionType.LABEL_ERROR_RESOLVED){
+      this.ngOnDestroy();
       this.router.navigateByUrl('/order-preparation/id/'+row.id);
     }
   }
@@ -59,5 +65,9 @@ export class TransportManifestComponent implements OnInit {
     this.getListAlerts();
   }
 
+  ngOnDestroy(){
+    this.dataSource = null;
+    this.init=false;
+  }
   
 }

@@ -4,6 +4,7 @@ import {SorterProvider} from "../../../../../services/src/providers/sorter/sorte
 import {ItemReferencesProvider} from "../../../../../services/src/providers/item-references/item-references.provider";
 import {CarrierService, IntermediaryService, InventoryModel, InventoryService} from "@suite/services";
 import {ProductSorterModel} from "../../../../../services/src/models/endpoints/ProductSorter";
+import {PackageSorterModel} from "../../../../../services/src/models/endpoints/PackageSorter";
 import {SorterInputService} from "../../../../../services/src/lib/endpoint/sorter-input/sorter-input.service";
 import {InputSorterModel} from "../../../../../services/src/models/endpoints/InputSorter";
 import {SorterExecutionService} from "../../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
@@ -41,6 +42,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   lastProductIsToBusyWay: boolean = false;
 
   productScanned: ProductSorterModel.ProductSorter = null;
+  packageScanned: PackageSorterModel.ProductSorter = null;
 
   productScanWithException: boolean = false;
   destinyForProductScanWithException: boolean = false;
@@ -111,7 +113,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     const scannerModal = await this.modalCtrl.create({
       component: ScannerRackComponent,
       componentProps: {
-        'productScanned': this.productScanned
+        'productScanned': this.productScanned != null && this.productScanned != undefined ? this.productScanned : this.packageScanned 
       }
     });
 
@@ -125,7 +127,11 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         if (this.lastProductIsToBusyWay) {
           this.checkWayWillFree(this.idLastWaySet, this.productToSetInSorter);
         } else {
-          this.checkProductInWay(this.productScanned.reference);
+          if(this.productScanned != undefined && this.productScanned != undefined){
+            this.checkProductInWay(this.productScanned.reference);
+          }else{
+            this.checkProductInWay(this.packageScanned.uniqueCode);
+          }
         }
       } else {
         this.isWaitingSorterFeedback = false;
@@ -201,11 +207,15 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
       this.focusToInput(true, 'error');
     } else {
-      if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PRODUCT) {
+      if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrote,this.itemReferencesProvider.codeValue.PACKAGE)) {
+        this.addScannerRackButton();
+        await this.intermediaryService.presentLoading('Registrando entrada de paquete...');
+        this.inputProductInSorter(dataWrote);
+      } else if(this.itemReferencesProvider.checkSpecificCodeValue(dataWrote,this.itemReferencesProvider.codeValue.PRODUCT)){
         this.addScannerRackButton();
         await this.intermediaryService.presentLoading('Registrando entrada de producto...');
         this.inputProductInSorter(dataWrote);
-      } else {
+      }else{
         await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', PositionsToast.BOTTOM);
         this.focusToInput(true, 'error');
       }
@@ -216,7 +226,14 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.timeoutToQuickUser();
     const setWayAsWrong = async () => {
       // Request to server to notify that las product was set in a wrong way and reset the sorter notify led
-      const productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
+    
+      let productRef;
+      if(this.productScanned !=null){
+         productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
+      }else if(this.packageScanned != null){
+        productRef = this.packageScanned.uniqueCode;
+      }
+
       if (productRef) {
         this.sorterExecutionService
           .postWrongWay({ way: this.idLastWaySet, productReference: productRef })
@@ -285,33 +302,56 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       .then(async (res: InputSorterModel.ResponseProductScan) => {
         let resCode = res.code;
         if (resCode == 200) {
+          //Respuesta
           const resData = res.data as InputSorterModel.ProductScan;
           this.productToSetInSorter = productReference;
           this.messageGuide = 'COLOQUE EL ARTÍCULO EN LA CALLE INDICADA';
+          if(resData.product.reference != undefined && resData.product.reference != null){
+            //Product
+            this.productScanned = {
+              reference: resData.product.reference,
+              model: {
+                reference: resData.product.model ? resData.product.model.reference : ''
+              },
+              size: {
+                name: resData.product.size ? resData.product.size.name : ''
+              },
+              destinyWarehouse: resData.warehouse ? {
+                id: resData.warehouse.id,
+                reference: resData.warehouse.reference,
+                name: resData.warehouse.name
+              } : null
+            };
+          }else{
+            //package
+            const resData = res.data as InputSorterModel.ProductScan;
 
+            this.packageScanned = {
+              uniqueCode: resData.product.uniqueCode,
+              model: {
+                reference: resData.product.uniqueCode
+              },
+              destinyWarehouse: resData.product.order.destinationShop ? {
+                id: resData.product.order.destinationShop.id,
+                reference: resData.product.order.destinationShop.reference,
+                name: resData.product.order.destinationShop.name
+              }:null,
+              product: resData.product.order.deliveryRequestExternalId ?{
+                id: resData.product.order.deliveryRequestExternalId,
+              }: null
+            };
+            this.messageGuide ='';
+          }
           await this.intermediaryService.dismissLoading();
           this.processStarted = true;
-          this.productScanned = {
-            reference: resData.product.reference,
-            model: {
-              reference: resData.product.model.reference
-            },
-            size: {
-              name: resData.product.size.name
-            },
-            destinyWarehouse: resData.warehouse ? {
-              id: resData.warehouse.id,
-              reference: resData.warehouse.reference,
-              name: resData.warehouse.name
-            } : null
-          };
+          
           this.idLastWaySet = (<ExecutionSorterModel.ExecutionWay>resData.way).zoneWay.ways.id;
 
           this.lastProductIsToBusyWay = resData.wayBusyByAnotherUser;
           if (resData.wayBusyByAnotherUser) {
             this.checkWayWillFree(this.idLastWaySet, this.productToSetInSorter);
           } else {
-            await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000, PositionsToast.BOTTOM);
+            await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del `+( this.productScanned ? 'producto.': 'paquete.'), 2000, PositionsToast.BOTTOM);
             this.checkProductInWay(productReference);
           }
           this.focusToInput(true, 'ok');
@@ -488,6 +528,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.productToSetInSorter = null;
     this.messageGuide = 'ESCANEE EL SIGUIENTE ARTÍCULO';
     this.productScanned = null;
+    this.packageScanned = null;
     this.focusToInput();
   }
 

@@ -23,6 +23,16 @@
       padding: 5px;
       border-radius: 5px;
 
+      .scroll-container {
+        height: 100%;
+        padding-top: 0;
+        width: 200px;
+
+        ion-item {
+          --inner-border-width: 0;
+        }
+      }
+
       ion-list {
         height: 100%;
         padding-top: 0;

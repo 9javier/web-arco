@@ -25,22 +25,21 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
   ngOnInit() {}
 
   processTitleWorkwave() : string {
-    if(this.workWave.warehouses.length > 0) {
-      return this.workWave.warehouses
-        .filter((warehouse) => {
-          return warehouse.status == 1;
-        })
-        .map((warehouse) => {
-          return warehouse.warehouse.reference + ' ' + warehouse.warehouse.name;
-        })
-        .join(', ');
+    const warehouses = this.workWave.warehouses.filter(warehouse => warehouse.status == 1);
+    if(warehouses.length > 0) {
+      return warehouses.map(warehouse => warehouse.warehouse.reference + ' ' + warehouse.warehouse.name).join(', ');
     }else{
-      return 'DOMICILIO';
+      return 'ONLINE';
     }
   }
 
   getTypeShippingOrderString(line: number) : string {
     let type = this.workWave.typeShippingOrder;
+    if(!type){
+      return "";
+    } else if(type == 6){
+      return "";
+    }
     if (line == 1) {
       if (type == 1) {
         return "Reposición";

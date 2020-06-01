@@ -5,7 +5,7 @@
         <ion-icon name="close" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ registry.data.id }}</ion-title>
+    <ion-title>{{ registry?.data?.warehouse?.reference }}/{{registry?.data?.warehouseDefectIdentifier}}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -57,12 +57,7 @@
           </ion-input><br>
         </ion-item>
         <ion-item lines="none">
-          <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo"
-            maxlength="50"></ion-input><br>
-        </ion-item>
-        <ion-item lines="none">
-          <ion-input type="number" formControlName="phone" (keyup)="onKeyTel($event)" placeholder="Teléfono"
-            maxlength="25"></ion-input>
+          <ion-input type="text" formControlName="info" (keyup)="onKeyInfo($event)" placeholder="Tlf./Email"></ion-input><br>
         </ion-item>
       </div>
     </div>

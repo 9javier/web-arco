@@ -5,7 +5,7 @@
         <ion-icon name="close" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ registry.id }}</ion-title>
+    <ion-title>{{ registry?.warehouse?.reference }}/{{registry?.warehouseDefectIdentifier}}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -22,22 +22,14 @@
     <ion-list class="ion-padding">
       <ion-item>
         <ion-label>
-          Usuario: {{registry?.user?.name}}
+          <span>Usuario: {{registry?.user?.name}}</span>
+          <span class="ion-float-right">Almacén: {{registry?.warehouse ? (registry?.warehouse.reference + " - " + registry?.warehouse.name) : ""}}</span>
         </ion-label>
       </ion-item>
       <ion-item>
         <ion-label>
-          Almacén: {{registry?.warehouse ? (registry?.warehouse.reference + " - " + registry?.warehouse.name) : ""}}
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          Modelo: {{registry?.product?.model?.reference}}
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          Talla: {{registry?.product?.size?.name}}
+          <span>Modelo: {{registry?.product?.model?.reference}}</span>
+          <span class="ion-float-right">T: {{registry?.product?.size?.name}}</span>
         </ion-label>
       </ion-item>
       <ion-item>
@@ -45,19 +37,9 @@
           Marca: {{registry?.product?.model?.brand?.name}}
         </ion-label>
       </ion-item>
-      <ion-item *ngIf="registry?.factoryReturn">
-        <ion-label>
-          Color: {{registry?.product?.model?.color?.name}}
-        </ion-label>
-      </ion-item>
       <ion-item>
         <ion-label>
           Producto: {{registry?.product?.reference}}
-        </ion-label>
-      </ion-item>
-      <ion-item *ngIf="registry?.factoryReturn">
-        <ion-label>
-          Devolución a Fábrica: {{registry?.factoryReturn ? 'Si' : 'No'}}
         </ion-label>
       </ion-item>
       <ion-item *ngIf="registry.statusManagementDefect">
@@ -65,18 +47,17 @@
           Estado: {{registry.statusManagementDefect.name}}
         </ion-label>
       </ion-item>
-      <ion-item *ngIf="registry.defectTypeParent && registry.defectTypeChild">
+      <ion-item *ngIf="registry.defectTypeParent">
         <ion-label>
-          Defecto: {{registry.defectTypeParent.name}} - {{registry.defectTypeChild.name}}
+          Defecto: {{registry?.defectTypeParent?.name}} - {{registry?.defectTypeChild?.name}}
         </ion-label>
       </ion-item>
-      <ion-item *ngIf="registry.defectZoneParent && registry.defectZoneChild">
+      <ion-item *ngIf="registry.defectZoneParent">
         <ion-label>
-          Zona: {{registry.defectZoneParent.name}} - {{registry.defectZoneChild.name}}
+          Zona: {{registry?.defectZoneParent?.name}} - {{registry?.defectZoneChild?.name}}
         </ion-label>
       </ion-item>
       <ion-item class="observations">
-        <ion-label>Observaciones:</ion-label>
         <ion-textarea class="text-observations" type="text" rows="4" value="{{registry?.observations}}" readonly="true">
         </ion-textarea>
       </ion-item>
@@ -92,12 +73,7 @@
           </ion-item>
           <ion-item>
             <ion-label>
-              Correo: {{ registry?.contact?.email }}
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              Teléfono: {{ registry?.contact?.phone }}
+              Tlf./Email: {{ registry?.contact?.info }}
             </ion-label>
           </ion-item>
         </ion-list>
@@ -134,7 +110,7 @@
             Usuario: {{ historical?.user?.name }}
           </p>
           <p>
-            Fecha de Detección: {{ historical?.updatedAt | date:"dd/MM/yyyy HH:mm:ss" }}
+            Fecha: {{ historical?.updatedAt | date:"dd/MM/yyyy HH:mm:ss" }}
           </p>
         </div>
         <mat-expansion-panel>
@@ -162,12 +138,7 @@
               </ion-item>
               <ion-item>
                 <ion-label>
-                  Correo: {{ historical?.contact?.email }}
-                </ion-label>
-              </ion-item>
-              <ion-item>
-                <ion-label>
-                  Teléfono: {{ historical?.contact?.phone }}
+                  Tlf./Email: {{ historical?.contact?.info }}
                 </ion-label>
               </ion-item>
             </ion-list>

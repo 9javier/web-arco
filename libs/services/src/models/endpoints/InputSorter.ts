@@ -25,6 +25,8 @@ export namespace InputSorterModel {
     way: WaySorterModel.WaySorter | ExecutionSorterModel.ExecutionWay,
     product: ProductModel.Product,
     wayBusyByAnotherUser: boolean
+    order:ProductModel.Package
+    expedition: ProductModel.Package
   }
 
   export interface ProductScanException {
@@ -84,5 +86,19 @@ export namespace InputSorterModel {
   }
   export interface ResponseCheckWayIsFree extends HttpRequestModel.Response {
     data: CheckWayIsFree
+  }
+
+  // export interface PackageScan {
+  //   warehouse: WarehouseModel.Warehouse,
+  //   zone: ZoneSorterModel.ZoneSorter,
+  //   sorterExecution: ExecutionSorterModel.Execution,
+  //   color: ColorSorterModel.ColorSorter,
+  //   way: WaySorterModel.WaySorter | ExecutionSorterModel.ExecutionWay,
+  //   product: ProductModel.Package,
+  //   wayBusyByAnotherUser: boolean
+  // }
+  export interface PackageScan {
+    product: ProductModel.Package,
+    order: ProductModel.Package
   }
 }

@@ -5,7 +5,8 @@
         [height]="'40vh'"
         [width]="'100%'"
         (listOfIdsWays)="listOfIdsWays = $event"
-        (columnSelected)="columnSelected($event)">
+        (columnSelected)="columnSelected($event)"
+        (loadActiveSorter)="loadActiveSorter()">
       </sorter-matrix-emptying>
 
       <suite-sorter-actions-emptying

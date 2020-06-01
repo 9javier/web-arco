@@ -1,0 +1,9 @@
+export enum OpExpeditionType {
+	GENERATED_IN_AC = 1,
+	LOCKED = 2,
+	UNLOCKED = 3,
+	GENERATED_TAG = 4,
+	LABEL_GENERATION_ERROR = 5,
+	LABEL_ERROR_RESOLVED = 6,
+	SENT
+}

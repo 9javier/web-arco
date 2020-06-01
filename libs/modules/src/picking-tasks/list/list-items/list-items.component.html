@@ -7,7 +7,7 @@
   </mat-grid-tile>
 
   <mat-grid-tile colspan="7" class="destinies-list">
-    <div class="tile-value">
+    <div class="tile-value" *ngIf="(pickingAssignment.typePicking && pickingAssignment.typePicking.id != 3) || !pickingAssignment.typePicking">
       <p>
         <span class="store-ref">
           {{ pickingAssignment.destinyProducts[0].reference }}&nbsp;
@@ -16,6 +16,28 @@
       </p>
       <p *ngIf="pickingAssignment.destinyProducts.length > 1" (click)="showStoresPopover($event)"
         class="show-stores-list">
+        Ver más
+      </p>
+    </div>
+    <div class="tile-value" *ngIf="pickingAssignment.typePicking && pickingAssignment.typePicking.id == 3 && pickingAssignment.destinyProducts[0].reference == 'ONLINE'">
+      <p>
+        <span class="store-ref">
+          {{ pickingAssignment.destinyProducts[0].reference }}&nbsp;
+        </span>
+      </p>
+      <p *ngIf="pickingAssignment.destinyProducts.length > 1" (click)="showStoresPopover($event)"
+         class="show-stores-list">
+        Ver más
+      </p>
+    </div>
+    <div class="tile-value" *ngIf="pickingAssignment.typePicking && pickingAssignment.typePicking.id == 3 && pickingAssignment.destinyProducts[0].reference != 'ONLINE'">
+      <p>
+        <span class="store-ref">
+          PETICIONES TIENDA&nbsp;
+        </span>
+      </p>
+      <p (click)="showStoresPopover($event)"
+         class="show-stores-list">
         Ver más
       </p>
     </div>

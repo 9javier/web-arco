@@ -41,6 +41,28 @@ export class DropFilesService {
     }));
   }
 
+  uploadReturnArchive(data):Observable<any>{
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      const currentToken = token;
+      const headers = new HttpHeaders({ Authorization: currentToken });
+      return this.http.post(this.uploadFileUrl+'?type=archives',data, { headers: headers}).pipe(map(response=>{
+        // console.log(response);
+        return response;
+      }));
+    }));
+  }
+
+  uploadReturnDeliveryNote(data):Observable<any>{
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      const currentToken = token;
+      const headers = new HttpHeaders({ Authorization: currentToken });
+      return this.http.post(this.uploadFileUrl+'?type=delivery_notes',data, { headers: headers}).pipe(map(response=>{
+        // console.log(response);
+        return response;
+      }));
+    }));
+  }
+
   setImage(file){
     this.image.next(file);
   }

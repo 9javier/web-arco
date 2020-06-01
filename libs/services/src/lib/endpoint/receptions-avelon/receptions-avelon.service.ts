@@ -5,6 +5,7 @@ import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpRequestModel} from '../../../models/endpoints/HttpRequest';
 import {Observable, BehaviorSubject} from "rxjs";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class ReceptionsAvelonService {
 
   receptionsUrl: string = `${environment.apiBase}/reception`;
   getAllProvidersUrl: string = `${environment.apiBase}/avelonProviders/all`;
+  postMarkAsPrintedUrl: string = `${environment.apiBase}/reception/mark-as-printed`;
   postIsProviderAvailableUrl: string = `${environment.apiBase}/avelonProviders`;
   urlReception: string = `${environment.apiBase}/reception/expedition/lines-destiny-impress/blocked`;
   checkExpeditionsByNumberAndProviderUrl: string = `${environment.apiBase}/avelonProviders/check/expedition/provider`;
@@ -21,35 +23,39 @@ export class ReceptionsAvelonService {
   postLoadSizesUrl: string = `${environment.apiBase}/reception/sizes/list`;
   private postReloadModelsListUrl: string = `${environment.apiBase}/reception/models/list`;
   makeReceptionFreeUrl: string = `${this.receptionsUrl}/free`;
+  postCreateIncidenceForNotPrintsUrl: string = `${this.receptionsUrl}/no-printed/incidence`;
 
-  private models = new BehaviorSubject([]); 
+  private models = new BehaviorSubject([]);
   private models$ = this.models.asObservable()
-  private brands = new BehaviorSubject([]); 
+  private brands = new BehaviorSubject([]);
   private brands$ = this.brands.asObservable()
-  private sizes = new BehaviorSubject([]); 
+  private sizes = new BehaviorSubject([]);
   private sizes$ = this.sizes.asObservable()
-  private colors = new BehaviorSubject([]); 
+  private colors = new BehaviorSubject([]);
   private colors$ = this.colors.asObservable()
-  private emit = new BehaviorSubject({}); 
+  private emit = new BehaviorSubject({});
   private emit$ = this.emit.asObservable()
-  private emitSize = new BehaviorSubject({}); 
+  private emitSize = new BehaviorSubject({});
   private emitSize$ = this.emitSize.asObservable();
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private requestsProvider: RequestsProvider
   ) {}
 
   //region API Requests
-  getReceptions(providerId: number) {
+  getReceptions(providerId: number, typeVisualization: number) {
     const body: ReceptionAvelonModel.GetProvider = {
-      providerId
+      providerId,
+      typeVisualization
     };
     return this.http.post<HttpRequestModel.Response>(`${this.receptionsUrl}/all`, body).pipe(map(resp => resp.data));
   }
 
-  getReceptionsNotifiedProviders(providerId: number) {
+  getReceptionsNotifiedProviders(providerId: number, typeVisualization: number) {
     const body: ReceptionAvelonModel.GetProvider = {
-      providerId
+      providerId,
+      typeVisualization
     };
     return this.http.post<HttpRequestModel.Response>(`${this.receptionsUrl}/all-with-notified`, body).pipe(map(resp => resp.data));
   }
@@ -60,6 +66,10 @@ export class ReceptionsAvelonService {
 
   printReceptionLabel(body: ReceptionAvelonModel.ParamsToPrint) {
     return this.http.post<HttpRequestModel.Response>(`${this.receptionsUrl}/print-reception-label`, body).pipe(map(resp => resp.data));
+  }
+
+  markAsPrinted(parameters): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postMarkAsPrintedUrl, parameters);
   }
 
   makeReceptionFree(body: ReceptionAvelonModel.ParamsToPrint) {
@@ -89,6 +99,10 @@ export class ReceptionsAvelonService {
   postReloadModelsList(params: ReceptionAvelonModel.ParamsReloadModelsList): Observable<ReceptionAvelonModel.ResponseReloadModelsList> {
     return this.http.post<ReceptionAvelonModel.ResponseReloadModelsList>(this.postReloadModelsListUrl, params);
   }
+
+  postCreateIncidenceForNotPrints(params: {references: string[]}): Observable<any> {
+    return this.http.post<any>(this.postCreateIncidenceForNotPrintsUrl, params);
+  }
   //endregion
 
   //region Data getter and setter
@@ -98,7 +112,7 @@ export class ReceptionsAvelonService {
   getModelsList(){
     return this.models$
   }
-  
+
   setBrandsList(data: Array<any>){
     this.brands.next(data)
   }
@@ -123,7 +137,7 @@ export class ReceptionsAvelonService {
   getEmitList(){
     return this.emit$
   }
-  
+
   setEmitSizes(data: any){
     this.emitSize.next(data)
   }

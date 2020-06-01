@@ -35,10 +35,12 @@ public class MatrixSimpleActivity extends Activity {
     String title = "AL Krack";
     String backgroundTitle = "#FFFFFF";
     String colorTitle = "#424242";
+    String packingReference = null;
     if (b != null) {
       title = b.getString("title", "AL Krack");
       backgroundTitle = b.getString("backgroundTitle", "#FFFFFF");
       colorTitle = b.getString("colorTitle", "#424242");
+      packingReference = b.getString("packingReference", "none");
     }
 
     String package_name = getApplication().getPackageName();
@@ -115,6 +117,9 @@ public class MatrixSimpleActivity extends Activity {
 
     matrixSimple = this;
     ScanditSDK.setActivityStarted(matrixSimple);
+
+    if(packingReference != null) ScanditSDK.setPacking(packingReference);
+    if(title.equals("Ubicar defectuosos")) ScanditSDK.setFixedText();
   }
 
   @Override

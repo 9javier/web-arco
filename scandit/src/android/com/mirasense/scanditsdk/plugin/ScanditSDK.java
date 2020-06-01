@@ -25,6 +25,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 
@@ -45,6 +46,8 @@ import org.json.JSONException;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.content.res.Resources;
@@ -110,6 +113,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_SIMPLE_SHOW_TEXT_START_SCAN_PACKING = "matrixSimpleShowTextStartScanPacking";
   private static final String MATRIX_SIMPLE_SHOW_TEXT_END_SCAN_PACKING = "matrixSimpleShowTextEndScanPacking";
   private static final String MATRIX_SIMPLE_SHOW_FIXED_TEXT_BOTTOM = "matrixSimpleShowFixedTextBottom";
+  private static final String MATRIX_SIMPLE_SET_FIXED_TEXT = "matrixSimpleSetFixedText";
   private static final String MATRIX_PICKING_STORES_LOAD_PRODUCTS = "matrixPickingStoresLoadProducts";
   private static final String MATRIX_PICKING_STORES_SET_TEXT= "matrixPickingStoresSetText";
   private static final String MATRIX_PICKING_STORES_FINISH = "matrixPickingStoresFinish";
@@ -639,10 +643,12 @@ public class ScanditSDK extends CordovaPlugin {
       String title = "";
       String backgroundTitle = "";
       String colorTitle = "";
+      String packingReference = "";
       try {
         title = args.getString(0);
         backgroundTitle = args.getString(1);
         colorTitle = args.getString(2);
+        packingReference = args.getString(3);
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -650,6 +656,7 @@ public class ScanditSDK extends CordovaPlugin {
       b.putString("title", title);
       b.putString("backgroundTitle", backgroundTitle);
       b.putString("colorTitle", colorTitle);
+      b.putString("packingReference", packingReference);
       Intent intent = new Intent(this.cordova.getActivity(), MatrixSimpleActivity.class);
       intent.putExtras(b);
       this.cordova.startActivityForResult(this, intent, 6);
@@ -916,31 +923,47 @@ public class ScanditSDK extends CordovaPlugin {
 
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
+          ImageButton arrowBack = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("arrow_back_button", "id", packageName));
+          ImageView laserButton = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("laserButton", "id", packageName));
+          LinearLayout forceCameraBottomHalf = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("forceCameraBottomHalf", "id", packageName));
+          LinearLayout sideCameraOcclusion = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("sideCameraOcclusion", "id", packageName));
+          LinearLayout bottomCameraOcclusion = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("bottomCameraOcclusion", "id", packageName));
           LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", packageName));
-          TextView tvLocationText = rlInfoProduct.findViewById(resources.getIdentifier("tvLocationText", "id", packageName));
+          LinearLayout fabOptions = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("fabOptions", "id", packageName));
+          FloatingActionButton fabOpenOptions = fabOptions.findViewById(resources.getIdentifier("fabOpenOptions", "id", packageName));
+          FloatingActionButton fabCloseOptions = fabOptions.findViewById(resources.getIdentifier("fabCloseOptions", "id", packageName));
+          LinearLayout fabSubOptions = fabOptions.findViewById(resources.getIdentifier("fabSubOptions", "id", packageName));
+          FloatingActionButton fabPositioning = fabSubOptions.findViewById(resources.getIdentifier("fabPositioning", "id", packageName));
+          FloatingActionButton fabFullPacking = fabSubOptions.findViewById(resources.getIdentifier("fabFullPacking", "id", packageName));
+          FloatingActionButton fabNotFound = fabSubOptions.findViewById(resources.getIdentifier("fabNotFound", "id", packageName));
           TextView tvLocation = rlInfoProduct.findViewById(resources.getIdentifier("tvLocation", "id", packageName));
-          TextView tvManufacturerText = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturerText", "id", packageName));
           TextView tvManufacturer = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturer", "id", packageName));
-          TextView tvModelText = rlInfoProduct.findViewById(resources.getIdentifier("tvModelText", "id", packageName));
           TextView tvModel = rlInfoProduct.findViewById(resources.getIdentifier("tvModel", "id", packageName));
           TextView tvSizeText = rlInfoProduct.findViewById(resources.getIdentifier("tvSizeText", "id", packageName));
           TextView tvSize = rlInfoProduct.findViewById(resources.getIdentifier("tvSize", "id", packageName));
-          Button btnNotFound = rlInfoProduct.findViewById(resources.getIdentifier("btnNotFound", "id", packageName));
+          TextView tvQuantityActual = rlInfoProduct.findViewById(resources.getIdentifier("tvQuantityActual", "id", packageName));
+          TextView tvQuantityText = rlInfoProduct.findViewById(resources.getIdentifier("tvQuantityText", "id", packageName));
+          TextView tvQuantityTotal = rlInfoProduct.findViewById(resources.getIdentifier("tvQuantityTotal", "id", packageName));
 
           if (actionBarMatrixSimple != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionBarMatrixSimple.setElevation(0);
           }
+          arrowBack.setVisibility(View.GONE);
+          forceCameraBottomHalf.setVisibility(View.VISIBLE);
           rlInfoProduct.setVisibility(View.VISIBLE);
+          fabOptions.setVisibility(View.VISIBLE);
+          sideCameraOcclusion.setVisibility(View.GONE);
+          laserButton.setVisibility(View.VISIBLE);
+          bottomCameraOcclusion.setBackgroundColor(0x00000000);
           rlInfoProduct.setBackgroundDrawable(new ColorDrawable(Color.parseColor(fBackground)));
-          tvLocationText.setTextColor(Color.parseColor(fColor));
           tvLocation.setTextColor(Color.parseColor(fColor));
-          tvManufacturerText.setTextColor(Color.parseColor(fColor));
           tvManufacturer.setTextColor(Color.parseColor(fColor));
-          tvModelText.setTextColor(Color.parseColor(fColor));
           tvModel.setTextColor(Color.parseColor(fColor));
           tvSizeText.setTextColor(Color.parseColor(fColor));
           tvSize.setTextColor(Color.parseColor(fColor));
-          btnNotFound.setTextColor(Color.parseColor(fColor));
+          tvQuantityActual.setTextColor(Color.parseColor(fColor));
+          tvQuantityText.setTextColor(Color.parseColor(fColor));
+          tvQuantityTotal.setTextColor(Color.parseColor(fColor));
 
           try {
             String location = "";
@@ -948,6 +971,9 @@ public class ScanditSDK extends CordovaPlugin {
             String modelProduct = fProduct.getJSONObject("product").getJSONObject("model").getString("reference");
             String brandProduct = fProduct.getJSONObject("product").getJSONObject("model").getJSONObject("brand").getString("name");
             String sizeProduct = fProduct.getJSONObject("product").getJSONObject("size").getString("name");
+            String actualQuantity = fProduct.getJSONObject("quantity").getString("actual");
+            String totalQuantity = fProduct.getJSONObject("quantity").getString("total");
+            String packingReference = fProduct.getJSONObject("packing").getString("reference");
             if (fProduct.getJSONObject("inventory").has("rack") && !fProduct.getJSONObject("inventory").isNull("rack") && fProduct.getJSONObject("inventory").has("container") && !fProduct.getJSONObject("inventory").isNull("container")) {
               location = fProduct.getJSONObject("inventory").getJSONObject("container").getString("reference");
 
@@ -964,9 +990,12 @@ public class ScanditSDK extends CordovaPlugin {
             tvManufacturer.setText(brandProduct);
             tvModel.setText(modelProduct);
             tvSize.setText(sizeProduct);
+            tvQuantityActual.setText(actualQuantity);
+            tvQuantityTotal.setText(totalQuantity);
 
             final String fLocation = location;
-            btnNotFound.setOnClickListener(view -> {
+
+            fabNotFound.setOnClickListener(view -> {
               AlertDialog.Builder builderWarningProduct404 = new AlertDialog.Builder(MatrixSimpleActivity.matrixSimple);
               builderWarningProduct404
                 .setTitle("Atención")
@@ -1014,6 +1043,48 @@ public class ScanditSDK extends CordovaPlugin {
               pResult.setKeepCallback(true);
               mCallbackContextMatrixSimple.sendPluginResult(pResult);
             });
+            fabPositioning.setOnClickListener(view -> {
+              JSONObject jsonObject = new JSONObject();
+              try {
+                jsonObject.put("result", true);
+                jsonObject.put("action", "redirect_positioning");
+              } catch (JSONException e) {}
+              PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+              pResult.setKeepCallback(true);
+              mCallbackContextMatrixSimple.sendPluginResult(pResult);
+            });
+            fabFullPacking.setOnClickListener(view -> {
+              JSONObject jsonObject = new JSONObject();
+              try {
+                jsonObject.put("result", true);
+                JSONObject jsonObjectBarcode = new JSONObject();
+                jsonObjectBarcode.put("data", packingReference);
+                jsonObject.put("barcode", jsonObjectBarcode);
+              } catch (JSONException e) {}
+              PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+              pResult.setKeepCallback(true);
+              mCallbackContextMatrixSimple.sendPluginResult(pResult);
+            });
+            fabOpenOptions.setOnClickListener(view -> {
+              fabOpenOptions.setVisibility(View.GONE);
+              fabCloseOptions.setVisibility(View.VISIBLE);
+              fabSubOptions.setVisibility(View.VISIBLE);
+            });
+            fabCloseOptions.setOnClickListener(view -> {
+              fabSubOptions.setVisibility(View.GONE);
+              fabCloseOptions.setVisibility(View.GONE);
+              fabOpenOptions.setVisibility(View.VISIBLE);
+            });
+            laserButton.setOnClickListener(view -> {
+              JSONObject jsonObject = new JSONObject();
+              try {
+                jsonObject.put("result", true);
+                jsonObject.put("action", "laser_mode");
+              } catch (JSONException e) {}
+              PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+              pResult.setKeepCallback(true);
+              mCallbackContextMatrixSimple.sendPluginResult(pResult);
+            });
           } catch (JSONException e) {
             e.printStackTrace();
           }
@@ -1033,11 +1104,47 @@ public class ScanditSDK extends CordovaPlugin {
 
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
+          ImageButton arrowBack = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("arrow_back_button", "id", packageName));
+          ImageView laserButton = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("laserButton", "id", packageName));
+          TextView title = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("action_bar_title", "id", packageName));
           LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", packageName));
+          LinearLayout fabOptions = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("fabOptions", "id", packageName));
+          LinearLayout forceCameraBottomHalf = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("forceCameraBottomHalf", "id", packageName));
+          LinearLayout sideCameraOcclusion = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("sideCameraOcclusion", "id", packageName));
+          LinearLayout bottomCameraOcclusion = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("bottomCameraOcclusion", "id", packageName));
+
+          laserButton.setOnClickListener(view -> {
+            JSONObject jsonObject = new JSONObject();
+            try {
+              jsonObject.put("result", true);
+              jsonObject.put("action", "laser_mode");
+            } catch (JSONException e) {}
+            PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+            pResult.setKeepCallback(true);
+            mCallbackContextMatrixSimple.sendPluginResult(pResult);
+          });
+
           if (fShow) {
             rlInfoProduct.setVisibility(View.VISIBLE);
+            fabOptions.setVisibility(View.VISIBLE);
+            forceCameraBottomHalf.setVisibility(View.VISIBLE);
+            laserButton.setVisibility(View.VISIBLE);
+            sideCameraOcclusion.setVisibility(View.GONE);
+            bottomCameraOcclusion.setBackgroundColor(0x00000000);
+            arrowBack.setVisibility(View.GONE);
           } else {
             rlInfoProduct.setVisibility(View.GONE);
+            fabOptions.setVisibility(View.GONE);
+            forceCameraBottomHalf.setVisibility(View.GONE);
+            sideCameraOcclusion.setVisibility(View.VISIBLE);
+            bottomCameraOcclusion.setBackgroundColor(0xa6000000);
+            if(title.getText().equals("Tareas de Picking")){
+              arrowBack.setVisibility(View.GONE);
+              laserButton.setVisibility(View.VISIBLE);
+            }else{
+              arrowBack.setVisibility(View.VISIBLE);
+              laserButton.setVisibility(View.GONE);
+            }
           }
         }
       });
@@ -1120,9 +1227,17 @@ public class ScanditSDK extends CordovaPlugin {
             tvPackingEnd.setVisibility(View.VISIBLE);
 
             if (fPackingType == 1) {
-              endScan = "Escanea la Jaula " + fPackingReference + " para finalizar el proceso de picking.";
+              if (fPackingReference.isEmpty() || fPackingReference.equals("")) {
+                endScan = "Escanea la Jaula para finalizar el proceso de picking.";
+              } else {
+                endScan = "Escanea la Jaula " + fPackingReference + " para finalizar el proceso de picking.";
+              }
             } else {
-              endScan = "Escanea el Pallet " + fPackingReference + " para finalizar el proceso de picking.";
+              if (fPackingReference.isEmpty() || fPackingReference.equals("")) {
+                endScan = "Escanea el Pallet para finalizar el proceso de picking.";
+              } else {
+                endScan = "Escanea el Pallet " + fPackingReference + " para finalizar el proceso de picking.";
+              }
             }
             tvPackingEnd.setText(endScan);
           } else {
@@ -1156,6 +1271,31 @@ public class ScanditSDK extends CordovaPlugin {
           } else {
             tvBottomText.setText("");
             tvBottomText.setVisibility(View.GONE);
+          }
+        }
+      });
+    } else if (action.equals(MATRIX_SIMPLE_SET_FIXED_TEXT)) {
+
+      String text = "";
+      try {
+        text = args.getString(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final String fText = text;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", packageName));
+
+          if (!fText.equals("")) {
+            tvPackingStart.setText(fText);
+            tvPackingStart.setVisibility(View.VISIBLE);
+          } else {
+            tvPackingStart.setText("");
+            tvPackingStart.setVisibility(View.GONE);
           }
         }
       });
@@ -2082,6 +2222,28 @@ public class ScanditSDK extends CordovaPlugin {
     PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
     pResult.setKeepCallback(true);
     mCallbackContextMatrixSimple.sendPluginResult(pResult);
+  }
+
+  public static void setPacking(String packingReference) {
+    JSONObject jsonObject = new JSONObject();
+    try {
+      jsonObject.put("result", true);
+      JSONObject jsonObjectBarcode = new JSONObject();
+      jsonObjectBarcode.put("data", packingReference);
+      jsonObject.put("barcode", jsonObjectBarcode);
+    } catch (JSONException e) {}
+    PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+    pResult.setKeepCallback(true);
+    ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+  }
+
+  static void setFixedText() {
+    final View viewDataMatrixSimpleFinal = viewDataMatrixSimple;
+    final String fText = "Escanee un embalaje para comenzar.";
+
+    TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", packageName));
+    tvPackingStart.setText(fText);
+    tvPackingStart.setVisibility(View.VISIBLE);
   }
 
   public static void setActivityStarted(Activity activity) {

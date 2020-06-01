@@ -128,6 +128,30 @@ export * from './defective-registry/defective-registry.module';
 export * from './defective-historic/defective-historic.component';
 export * from './defective-historic/defective-historic.module';
 
+/**supplier-conditions */
+export * from './supplier-conditions/supplier-conditions.component';
+export * from './supplier-conditions/supplier-conditions.module';
+
+/**return-types */
+export * from './return-types/return-types.component';
+export * from './return-types/return-types.module';
+
+export * from './return-tracking-list/return-tracking-list.component';
+export * from './return-tracking-list/return-tracking-list.module';
+
+/**returns-historic */
+export * from './returns-historic/returns-historic.component';
+export * from './returns-historic/returns-historic.module';
+
+export * from './return-pending-list/return-pending-list.component';
+export * from './return-pending-list/return-pending-list.module';
+
+export * from './new-return/new-return.component';
+export * from './new-return/new-return.module';
+
+export * from './view-return/view-return.component';
+export * from './view-return/view-return.module';
+
 /**returns-list */
 export * from './returns-list/returns-list.component';
 export * from './returns-list/returns-list.module';
@@ -196,6 +220,10 @@ export * from './positioning-manual-online/positioning-manual-online.module';
 /**Manual Picking */
 export * from './picking-manual/picking-manual.component';
 export * from './picking-manual/picking-manual.module';
+
+/**Return Picking */
+export * from './picking-return/picking-return.component';
+export * from './picking-return/picking-return.module';
 
 /**List Pickings with Products */
 export * from './list-picking/list-picking.component';
@@ -280,6 +308,10 @@ export * from './user-time/user-time.module'
 export * from './print-received-product/print-received-product.component';
 export * from './print-received-product/print-received-product.module';
 
+/**Unfit Online Products*/
+export * from './unfit-online-products/unfit-online-products.component';
+export * from './unfit-online-products/unfit-online-products.module';
+
 /**Agency */
 export * from './agency/agency.component';
 export * from './agency/agency.module';
@@ -287,6 +319,10 @@ export * from './agency/agency.module';
 /**Global variables */
 export * from './global-variables/global-variables.component';
 export * from './global-variables/global-variables.module';
+
+/**Workwave config menu */
+export * from './workwave-config-menu/workwave-config-menu.component';
+export * from './workwave-config-menu/workwave-config-menu.module';
 
 /** List Pickings with Products Rebuild */
 export * from './list-picking-rebuild/list-picking-rebuild.component';
@@ -418,6 +454,22 @@ export * from './requested-products/requested-products.module'
 //Unlock Expeditions
 export * from './unlock-expeditions/unlock-expeditions.component'
 export * from './unlock-expeditions/unlock-expeditions.module'
+
+export * from './transports-orders/transports-orders.component'
+export * from './transports-orders/transports-orders.module'
+
+/**Transportes */
+export * from './transports-expeditions/transports-expeditions.component'
+export * from './transports-expeditions/transports-expeditions.module'
+
+
+/**Órdenes no procesadas */
+export * from './order-no-processed/order-no-processed.component'
+export * from './order-no-processed/order-no-processed.module'
+
+/**Transportes */
+export * from './expeditions-inside/expedition-inside.component'
+export * from './expeditions-inside/expedition-inside.module'
 
 //// *marketplaces
 

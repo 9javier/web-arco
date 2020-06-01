@@ -30,8 +30,7 @@ export class ChangeStateComponent implements OnInit {
   registry;
   barcode = "64565465645655";
   txtName = ""
-  txtEmail = "";
-  txtTel = "";
+  txtInfo = "";
   apiURL: string = environment.uploadFiles + '?type=defects'
   imgData: string;
   img: any;
@@ -66,7 +65,6 @@ export class ChangeStateComponent implements OnInit {
     private modalController: ModalController,
     private navParams: NavParams,
     private fb: FormBuilder,
-    private intermediaryService: IntermediaryService,
     private dropFilesService: DropFilesService,
     private uploadService: UploadFilesService,
 
@@ -149,25 +147,25 @@ export class ChangeStateComponent implements OnInit {
       observations: [this.registry.data.observations],
       factoryReturn: [false],
       statusManagementDefectId: [this.registry.data.statusManagementDefect.id],
-      defectTypeChildId: [this.registry.data.defectTypeChild.id],
-      defectTypeZoneChildId: [this.registry.data.defectZoneChild.id],
+      defectTypeChildId: this.registry.data && this.registry.data.defectTypeChild && this.registry.data.defectTypeChild.id > 0 ? [this.registry.data.defectTypeChild.id] : [0],
+      defectTypeZoneChildId: this.registry.data && this.registry.data.defectZoneChild && this.registry.data.defectZoneChild.id > 0 ? [this.registry.data.defectZoneChild.id] : [0],
       signFileId: [0],
       contact: this.fb.group({
         name: [this.registry.data.contact.name],
-        email: [this.registry.data.contact.email],
-        phone: [this.registry.data.contact.phone]
+        info: [this.registry.data.contact.info],
       })
 
     })
 
-    this.txtName = this.registry.data.contact.name;
-    this.txtEmail = this.registry.data.contact.email;
-    this.txtTel = this.registry.data.contact.phone;
-    console.log("TEST::this.registry.data", this.registry.data)
-    this.ParentAndChild = this.registry.data.defectTypeParent.name + " - "
-      + this.registry.data.defectTypeChild.name;
-    this.ZoneAndChild = this.registry.data.defectZoneParent.name + " - "
-      + this.registry.data.defectZoneParent.name;
+    this.txtName = this.registry.data && this.registry.data.contact && this.registry.data.contact.name ? this.registry.data.contact.name : "";
+    this.txtInfo = this.registry.data && this.registry.data.contact && this.registry.data.contact.info ? this.registry.data.contact.info : "";
+
+    this.ParentAndChild = "";
+    this.ZoneAndChild = "";
+    if(this.registry && this.registry.data && this.registry.data.defectTypeParent && this.registry.data.defectTypeParent.name) this.ParentAndChild +=  this.registry.data.defectTypeParent.name;
+    if(this.registry && this.registry.data && this.registry.data.defectTypeChild && this.registry.data.defectTypeChild.name) this.ParentAndChild +=  "-"+this.registry.data.defectTypeChild.name;
+    if(this.registry && this.registry.data && this.registry.data.defectZoneParent && this.registry.data.defectZoneParent.name) this.ZoneAndChild +=  this.registry.data.defectZoneParent.name;
+    if(this.registry && this.registry.data && this.registry.data.defectZoneChild && this.registry.data.defectZoneChild.name) this.ZoneAndChild +=  "-"+this.registry.data.defectZoneChild.name;
 
   }
 
@@ -185,20 +183,6 @@ export class ChangeStateComponent implements OnInit {
       console.log("name false");
       msg = "Nombre debe tener minimo 4 digítos...";
       validation = false;
-    } if (this.txtEmail.length < 1) {
-      msg = "Campo email vacío";
-      validation = false;
-    }
-    if (this.txtTel.length < 6) {
-      console.log("telefono false");
-      msg = "Teléfono debe tener minimo 6 digítos...";
-      validation = false;
-    }
-    if (!regex.test(this.txtEmail)) {
-      console.log("email validation true");
-      msg = "Email invalido...";
-      validation = false;
-      console.log("email false");
     }
 
     if (msg == undefined) {
@@ -280,23 +264,19 @@ export class ChangeStateComponent implements OnInit {
   onKeyName(event) {
     this.txtName = event.target.value;
   }
-  onKeyEmail(event) {
-    this.txtEmail = event.target.value;
-  }
-  onKeyTel(event) {
-    this.txtTel = event.target.value;
+  onKeyInfo(event) {
+    this.txtInfo = event.target.value;
   }
 
   async sendToIncidents() {
 
-    this.incidenceForm.value.contact.phone = this.txtTel + "";
+    this.incidenceForm.value.contact.info = this.txtInfo + "";
     this.incidenceForm.patchValue({
       statusManagementDefectId: this.managementId,
     })
 
 
     let This = this;
-
     This.incidentsService.addRegistry(this.incidenceForm.value).subscribe(
       resp => {
 
@@ -319,8 +299,7 @@ export class ChangeStateComponent implements OnInit {
           signFileId: 0,
           contact: {
             name: '',
-            email: '',
-            phone: ''
+            info: ''
           }
         })
         this.photos = [];
@@ -341,7 +320,6 @@ export class ChangeStateComponent implements OnInit {
   }
 
   async sendToDefectsWithoutContact(object) {
-
 
     let This = this;
     This.incidentsService.addRegistry(object).subscribe(
@@ -569,8 +547,7 @@ export class ChangeStateComponent implements OnInit {
         signFileId: 0,
         contact: {
           name: '',
-          email: '',
-          phone: ''
+          info: ''
         }
       });
       this.signatures = null;

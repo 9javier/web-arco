@@ -21,6 +21,8 @@ export class DefectiveManagementComponent implements OnInit {
   groupsToSelect: DefectiveManagementModel.DefectiveManagementParent[] = [];
   groupsChildrenToSelect: DefectiveManagementChildModel.DefectiveManagementChild[] = [];
   groupsDefectiveManagement: DefectiveManagementModel.DefectiveManagementParent[];
+  thereAreChanges: boolean;
+  groupsDefectiveManagementOriginal: DefectiveManagementModel.DefectiveManagementParent[];
 
   constructor(
     private defectiveManagementService: DefectiveManagementService,
@@ -30,6 +32,7 @@ export class DefectiveManagementComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    this.thereAreChanges = false;
     await this.getData();
   }
 
@@ -46,6 +49,9 @@ export class DefectiveManagementComponent implements OnInit {
         item.addedChild = true;
         item.open = item.id === this.openParentId;
       });
+
+      this.groupsDefectiveManagementOriginal = JSON.parse(JSON.stringify(this.groupsDefectiveManagement));
+      this.thereAreChanges = false;
 
       this.intermediaryService.dismissLoading();
     }, (e) => { }, () => {
@@ -255,5 +261,46 @@ export class DefectiveManagementComponent implements OnInit {
 
   openGroup(parentId: number) {
     this.openParentId = parentId;
+  }
+
+  storeChanges(){
+    if(!this.thereAreChanges){
+      if(JSON.stringify(this.groupsDefectiveManagement) !== JSON.stringify(this.groupsDefectiveManagementOriginal)){
+        this.thereAreChanges = true;
+      }
+    }else{
+      if(JSON.stringify(this.groupsDefectiveManagement) === JSON.stringify(this.groupsDefectiveManagementOriginal)){
+        this.thereAreChanges = false;
+      }
+    }
+  }
+
+  async saveChanges() {
+    let atLeastOneChangeDetected: boolean = false;
+    //save
+    for (let i = 0; i < this.groupsDefectiveManagement.length; i++) {
+      const nParent: any = this.groupsDefectiveManagement[i];
+      const oParent: any = this.groupsDefectiveManagementOriginal[i];
+      if (JSON.stringify(nParent) !== JSON.stringify(oParent)) {
+        await this.defectiveManagementService.newUpdate(this.groupsDefectiveManagement[i].id , nParent);
+        atLeastOneChangeDetected = true;
+      }
+      for (let j = 0; j < this.groupsDefectiveManagement[i].defectTypeChild.length; j++) {
+        const nChild: any = this.groupsDefectiveManagement[i].defectTypeChild[j];
+        const oChild: any = this.groupsDefectiveManagementOriginal[i].defectTypeChild[j];
+        if (JSON.stringify(nChild) !== JSON.stringify(oChild)) {
+          nChild['defectTypeParent'] = this.groupsDefectiveManagement[i].id;
+          await this.defectiveManagementService.newUpdateChild(nChild);
+          atLeastOneChangeDetected = true;
+        }
+      }
+    }
+    //get data
+    await this.getData();
+    if(atLeastOneChangeDetected){
+      await this.intermediaryService.presentToastSuccess('Cambios guardados con éxito');
+    }else{
+      await this.intermediaryService.presentToastError('Error: no se han encontrado cambios que guardar.')
+    }
   }
 }

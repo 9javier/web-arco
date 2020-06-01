@@ -20,18 +20,17 @@
       </ion-row>
     </ion-grid>
   </form>
-
-  <ion-row class="fab-row-actions">
-
-    <ion-col size="2" offset="10">
-      <ion-fab id="btnSave" (click)="submit(); btnOnClick('btnPrintPrices');" [matTooltipDisabled]="showTooltip" matTooltip="Guardar Ajustes" matTooltipClass="tooltip" matTooltipPosition="left">
-        <ion-fab-button color="light">
-          <ion-icon name="save"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
-    </ion-col>
-
-  </ion-row>
   <suite-utils></suite-utils>
 
 </ion-content>
+
+<ion-fab vertical="bottom" horizontal="end">
+  <ion-fab-button matTooltip="Guardar configuración" matTooltipClass="tooltip" (click)="submit()">
+    <ion-icon name="save"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<ion-fab vertical="bottom" horizontal="start">
+  <ion-fab-button matTooltip="Enviar comandos configuración a impresora Zebra" matTooltipClass="tooltip" (click)="sendZebraCommands()">
+    <ion-icon name="print"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

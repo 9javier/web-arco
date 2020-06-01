@@ -77,6 +77,7 @@ export namespace PickingModel {
     updatedAt: string,
     id: number,
     typeGeneration: number,
+    typePicking: number,
     status: number,
     packingId: number,
     packingType: number,

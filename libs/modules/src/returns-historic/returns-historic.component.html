@@ -1,0 +1,190 @@
+<ion-content>
+  <div class="mat-table-wrapper-overflow-x">
+    <table mat-table [dataSource]="dataSource">
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="router.navigate(['/new-return', {id: row.id, isHistoric: true}])"></tr>
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef class="title">
+          <div class="title">
+            <span (click)="orderBy('id')">id</span>
+            <suite-filter-button
+              class="filter"
+              [title]="'Id'"
+              [listItems]="filterOptions.ids"
+              [isFiltering]="filters.ids.length > 0"
+              (applyFilters)="applyFilters($event, 'ids')">
+            </suite-filter-button>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.id }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef class="title">
+          <div class="title">
+            <span (click)="orderBy('type')">Tipo</span>
+            <suite-filter-button
+              class="filter"
+              [title]="'Tipo'"
+              [listItems]="filterOptions.typeIds"
+              [isFiltering]="filters.typeIds.length > 0"
+              (applyFilters)="applyFilters($event, 'typeIds')">
+            </suite-filter-button>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.type.name }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="provider">
+        <th mat-header-cell *matHeaderCellDef class="title">
+          <div class="title">
+            <span (click)="orderBy('provider')">Proveedor</span>
+            <suite-filter-button
+              class="filter"
+              [title]="'Proveedor'"
+              [listItems]="filterOptions.providerIds"
+              [isFiltering]="filters.providerIds.length > 0"
+              (applyFilters)="applyFilters($event, 'providerIds')">
+            </suite-filter-button>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.provider.name }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="brand">
+        <th mat-header-cell *matHeaderCellDef class="title">
+          <div class="title">
+            <span (click)="orderBy('brand')">Marcas</span>
+            <suite-filter-button
+              class="filter"
+              [title]="'Marcas'"
+              [listItems]="filterOptions.brandIds"
+              [isFiltering]="filters.brandIds.length > 0"
+              (applyFilters)="applyFilters($event, 'brandIds')">
+            </suite-filter-button>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="getBrandNameList(element.brands)">
+          {{getBrandNameList(element.brands)}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="maxDate">
+        <th mat-header-cell *matHeaderCellDef class="title">
+          <div class="title">
+            <span (click)="orderBy('dateLimit')">Fecha Máx</span>
+            <suite-filter-button
+              class="filter"
+              [title]="'Fecha Máx'"
+              [listItems]="filterOptions.datesLimit"
+              [isFiltering]="filters.datesLimit.length > 0"
+              (applyFilters)="applyFilters($event, 'datesLimit')">
+            </suite-filter-button>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{getFormattedDate(element.dateReturnBefore)}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="warehouse">
+        <th mat-header-cell *matHeaderCellDef class="title">
+          <div class="title">
+            <span (click)="orderBy('warehouse')">Almacén</span>
+            <suite-filter-button
+              class="filter"
+              [title]="'Almacén'"
+              [listItems]="filterOptions.warehouseIds"
+              [isFiltering]="filters.warehouseIds.length > 0"
+              (applyFilters)="applyFilters($event, 'warehouseIds')">
+            </suite-filter-button>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.warehouse.reference }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef class="title">
+          <div class="title">
+            <span (click)="orderBy('status')">Estado</span>
+            <suite-filter-button
+              class="filter"
+              [title]="'Estado'"
+              [listItems]="filterOptions.statuses"
+              [isFiltering]="filters.statuses.length > 0"
+              (applyFilters)="applyFilters($event, 'statuses')">
+            </suite-filter-button>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="getStatusName(element.status)">
+          {{ getStatusName(element.status) }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="ueDate">
+        <th mat-header-cell *matHeaderCellDef class="title">
+          <div class="title">
+            <span (click)="orderBy('dateLastStatus')">Fecha UE</span>
+            <suite-filter-button
+              class="filter"
+              [title]="'Fecha UE'"
+              [listItems]="filterOptions.datesLastStatus"
+              [isFiltering]="filters.datesLastStatus.length > 0"
+              (applyFilters)="applyFilters($event, 'datesLastStatus')">
+            </suite-filter-button>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ getFormattedDate(element.dateLastStatus) }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="ueUser">
+        <th mat-header-cell *matHeaderCellDef class="title">
+          <div class="title">
+            <span (click)="orderBy('userLastStatus')">Usuario UE</span>
+            <suite-filter-button
+              class="filter"
+              [title]="'Usuario UE'"
+              [listItems]="filterOptions.userIdsLastStatus"
+              [isFiltering]="filters.userIdsLastStatus.length > 0"
+              (applyFilters)="applyFilters($event, 'userIdsLastStatus')">
+            </suite-filter-button>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.userLastStatus.name }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="unities">
+        <th mat-header-cell *matHeaderCellDef class="title">
+          <div class="title">
+            <span (click)="orderBy('unitsPrepared')">Unidades</span>
+            <suite-filter-button
+              class="filter"
+              [title]="'Unidades'"
+              [listItems]="filterOptions.unitsPrepared"
+              [isFiltering]="filters.unitsPrepared.length > 0"
+              (applyFilters)="applyFilters($event, 'unitsPrepared')">
+            </suite-filter-button>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.unitsPrepared }}
+        </td>
+      </ng-container>
+    </table>
+  </div>
+
+  <mat-paginator></mat-paginator>
+</ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed" class="horizontal-fab">
+  <ion-fab-button (click)="fileExcell()" matTooltip="Descargar Excel" matTooltipClass="tooltip" color="primary" >
+    <ion-icon name="document"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-button (click)="reset()" matTooltip="Reset">
+    <ion-icon name="refresh"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

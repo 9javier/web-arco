@@ -35,7 +35,7 @@ export class ReceptionScanditService {
 
   private refenceProductToPrint: string = null;
   private requestedProductId: number = null;
-
+  private oPOrderPackage = false;
   constructor(
     private router: Router,
     private alertController: AlertController,
@@ -82,22 +82,27 @@ export class ReceptionScanditService {
             timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
             this.scannerPaused = true;
-            switch (this.itemReferencesProvider.checkCodeValue(code)) {
-              case this.itemReferencesProvider.codeValue.PACKING:
-                this.processPackingScanned(code);
-                break;
-              case this.itemReferencesProvider.codeValue.PRODUCT:
-                ScanditMatrixSimple.showFixedTextBottom(false, '');
-                this.processProductScanned(code);
-                break;
-              default:
-                ScanditMatrixSimple.setText(
-                  'Necesita escanear un código de Jaula o Pallet para hacer una recepción.',
-                  this.scanditProvider.colorsMessage.error.color,
-                  this.scanditProvider.colorText.color,
-                  18);
-                this.hideTextMessage(1500);
-                setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
+            if(!this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PACKAGE )){
+              switch (this.itemReferencesProvider.checkCodeValue(code)) {
+                case this.itemReferencesProvider.codeValue.PACKING:
+                  this.processPackingScanned(code);
+                  break;
+                case this.itemReferencesProvider.codeValue.PRODUCT:
+                  ScanditMatrixSimple.showFixedTextBottom(false, '');
+                  this.processProductScanned(code);
+                  break;
+                default:
+                  ScanditMatrixSimple.setText(
+                    'Necesita escanear un código de Jaula o Pallet para hacer una recepción.',
+                    this.scanditProvider.colorsMessage.error.color,
+                    this.scanditProvider.colorText.color,
+                    18);
+                  this.hideTextMessage(1500);
+                  setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
+              }
+            }else{
+              ScanditMatrixSimple.showFixedTextBottom(false, '');
+              this.processProductScanned(code);
             }
           }
         } else if (response.action) {
@@ -163,7 +168,7 @@ export class ReceptionScanditService {
       this.receptionProvider.typePacking = 1;
     } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PALLET)) {
       this.receptionProvider.typePacking = 2;
-    } else {
+    } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PACKAGE)) {
       this.receptionProvider.typePacking = 3;
     }
 
@@ -240,7 +245,8 @@ export class ReceptionScanditService {
             setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
           }
         });
-    }
+  }
+   
   }
 
   private processProductScanned(code: string) {
@@ -365,6 +371,8 @@ export class ReceptionScanditService {
             ScanditMatrixSimple.showWarning(true, 'El producto escaneado corresponde a un producto solicitado a otra tienda.', 'requested_attended', 'Atendido', 'No atender');
           } else if (response.data.hasNewProducts && !hideAlerts) {
             ScanditMatrixSimple.showWarning(true, `El producto escaneado es nuevo en la tienda. ¿Quiere imprimir su código de exposición ahora?`, 'new_product_expo', 'Sí', 'No');
+          } else if(response.data.isNoOnline) {
+            ScanditMatrixSimple.showWarning(true, 'El producto escaneado ['+referenceProduct+'] no es apto para la venta online.', 'no_online', 'Aceptar', '');
           } else {
             this.refenceProductToPrint = null;
             this.scannerPaused = false;

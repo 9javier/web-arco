@@ -4,13 +4,12 @@
 }
 
 ion-content {
-  form {
-    width: 100%;
-    mat-form-field {
-      width: 100%;
-    }
-
+  mat-card {
+    margin-bottom: 16px;
     mat-card-actions {
+      margin-bottom: 0;
+      padding-bottom: 0;
+
       .spinner {
         padding-right: 36px;
       }

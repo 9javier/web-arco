@@ -228,7 +228,9 @@
                                 "input": "apps/sga/src/theme/variables.scss"
                             }
                         ],
-                        "scripts": [],
+                      "scripts": [
+                        "libs/assets/js/BrowserPrint-2.0.0.75.min.js"
+                      ],
                         "es5BrowserSupport": true
                     },
                     "configurations": {

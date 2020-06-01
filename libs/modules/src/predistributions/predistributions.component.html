@@ -122,19 +122,13 @@
         <mat-cell *matCellDef="let element" class="info-product">{{element.model.lifestyle.name}}  </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="distribution">
-        <mat-header-cell class="my-sticky-col info-status date-status" *matHeaderCellDef>
-          <div>Reservado</div>
-          <ng-container *ngIf="dataSource !== undefined" >
-            <div class="my-sticky-col info-status date-status">
-              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? reservedToggle() : null"
-                            [checked]="selectionReserved.hasValue() && isAllSelectedReserved()"
-                            [indeterminate]="selectionReserved.hasValue() && !isAllSelectedReserved()"
-                            [aria-label]="checkboxLabelReserved()">
-              </mat-checkbox>
-            </div>
-          </ng-container>
+      <ng-container matColumnDef="reserved">
+        <mat-header-cell class="my-sticky-col info-status date-status" *matHeaderCellDef mat-sort-header>Reservado
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonReserved [title]="'Reservado'"
+                               [listItems]="entities.reserved"
+                               [isFiltering]="isFilteringReserved != entities.reserved.length"
+                               (applyFilters)="applyFilters($event, 'reserved')">
+          </suite-filter-button>
         </mat-header-cell>
         <mat-cell class="my-sticky-col info-status date-status" *matCellDef="let row; let i = index">
           <ng-container *ngIf="dataSource !== undefined" >
@@ -146,20 +140,15 @@
             </mat-checkbox>
           </ng-container>
         </mat-cell>
+
       </ng-container>
-      <ng-container matColumnDef="reserved">
-        <mat-header-cell class="my-sticky-col info-status time-status" *matHeaderCellDef>
-          <div>Bloqueada</div>
-          <ng-container *ngIf="dataSource !== undefined">
-            <div class="my-sticky-col info-status time-status">
-              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? predistributionToggle() : null"
-                            [checked]="selectionPredistribution.hasValue() && isAllSelectedPredistribution()"
-                            [indeterminate]="selectionPredistribution.hasValue() && !isAllSelectedPredistribution()"
-                            [aria-label]="checkboxLabelPredistribution()">
-              </mat-checkbox>
-            </div>
-          </ng-container>
+      <ng-container matColumnDef="block">
+        <mat-header-cell class="my-sticky-col info-status time-status" *matHeaderCellDef mat-sort-header>Bloqueado
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonBlock [title]="'Bloqueado'"
+                               [listItems]="entities.block"
+                               [isFiltering]="isFilteringBlock != entities.block.length"
+                               (applyFilters)="applyFilters($event, 'block')">
+          </suite-filter-button>
         </mat-header-cell>
         <mat-cell class="my-sticky-col info-status time-status" *matCellDef="let row; let i = index">
           <ng-container *ngIf="dataSource !== undefined">
@@ -189,7 +178,7 @@
 </ion-content>
 <ion-footer>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="refreshPredistributions()">
+    <ion-fab-button matTooltip="Recargar datos" matTooltipClass="tooltip" (click)="refreshPredistributions()">
       <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
     <ion-fab-button matTooltip="Guardar Predistibuciones" matTooltipClass="tooltip" (click)="savePredistributions()">

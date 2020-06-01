@@ -23,6 +23,9 @@ import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
 import { LoadingMessageComponent } from "../../components/loading-message/loading-message.component";
+import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
+import * as toolbarProvider from "../../../../services/src/providers/toolbar/toolbar.provider";
+import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
 
 @Component({
   selector: 'suite-textarea',
@@ -53,6 +56,7 @@ export class TextareaComponent implements OnInit {
   literalsJailPallet: any = null;
   scanContainerToNotFound: string = null;
   intervalCleanLastCodeScanned = null;
+  pickingSelected: PickingModel.Picking;
 
   private postVerifyPackingUrl = environment.apiBase + "/processes/picking-main/packing";
   private getPendingListByPickingUrl = environment.apiBase + "/processes/picking-main/shoes/{{id}}/pending";
@@ -79,12 +83,16 @@ export class TextareaComponent implements OnInit {
     private keyboardService: KeyboardService,
     private carrierService: CarrierService,
     private modalCtrl: ModalController,
+    private scanditService: ScanditService,
+    private toolbarProvider: toolbarProvider.ToolbarProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.focusToInput();
   }
 
   ngOnInit() {
+    this.addCameraButton();
+    this.pickingSelected = this.pickingProvider.pickingSelectedToStart;
     this.pickingId = this.pickingProvider.pickingId;
     this.listProducts = this.pickingProvider.listProducts;
 
@@ -110,6 +118,69 @@ export class TextareaComponent implements OnInit {
       this.processInitiated = true;
       this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
     }
+
+    this.scanditService.laserMode.subscribe(pacRef => {
+      if(pacRef == ''){
+        this.processInitiated = false;
+        this.inputPicking = null;
+        this.jailReference = null;
+        this.dataToWrite = 'CONTENEDOR';
+        this.packingReference = this.jailReference;
+        this.isScannerBlocked = false;
+        this.showNexProductToScan(false);
+        this.showTextStartScanPacking(true, this.typePacking, '', true);
+      }else{
+        this.listProducts = this.pickingProvider.listProducts;
+        this.isScannerBlocked = true;
+        document.getElementById('input-ta').blur();
+        this.lastCodeScanned = pacRef;
+        if (this.timeoutStarted) {
+          clearTimeout(this.timeoutStarted);
+        }
+        this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+        this.inputPicking = null;
+        this.timeLastCodeScanned = new Date().getTime();
+        this.lastCarrierScanned = pacRef;
+        this.loadingMessageComponent.show(true);
+        if (this.itemReferencesProvider.checkSpecificCodeValue(pacRef, this.itemReferencesProvider.codeValue.JAIL)) {
+          this.typePacking = 1;
+        } else if (this.itemReferencesProvider.checkSpecificCodeValue(pacRef, this.itemReferencesProvider.codeValue.PALLET)) {
+          this.typePacking = 2;
+        } else {
+          this.typePacking = 3;
+        }
+        this.processInitiated = true;
+        this.jailReference = pacRef;
+        this.dataToWrite = 'PRODUCTO';
+        if (!this.packingReference) {
+          this.packingReference = this.jailReference;
+        }
+        this.isScannerBlocked = false;
+        this.processFinishOk({
+          focusInput: {
+            playSound: true
+          },
+          toast: {
+            duration: TimesToastType.DURATION_SUCCESS_TOAST_2000,
+            position: PositionsToast.BOTTOM,
+            message: `${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`
+          }
+        });
+        this.setNexProductToScan(this.listProducts[0]);
+        this.showTextStartScanPacking(false, this.typePacking, '');
+      }
+    });
+  }
+
+  addCameraButton(){
+    const buttons = [{
+      icon: 'camera',
+      label: 'Cámara',
+      action: () => {
+        this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, this.listProducts, this.pickingProvider.pickingSelectedToStart.packingType, this.pickingProvider.typePicking, this.packingReference);
+      }
+    }];
+    this.toolbarProvider.optionsActions.next(buttons);
   }
 
   private async modalList(jaula: string) {
@@ -422,7 +493,7 @@ export class TextareaComponent implements OnInit {
                   },
                   toast: {
                     position: PositionsToast.BOTTOM,
-                    message: `Producto ${dataWrited} escaneado y añadido ${this.literalsJailPallet[this.typePacking].toThe}.`,
+                    message: `Producto ${dataWrited} escaneado y añadido el embalaje.`,
                     duration: TimesToastType.DURATION_SUCCESS_TOAST_2000
                   }
                 });
@@ -658,6 +729,22 @@ export class TextareaComponent implements OnInit {
     } else if (event.keyCode === 13 && this.isScannerBlocked) {
       this.inputPicking = null;
       this.focusToInput();
+    }
+  }
+
+  private fullPacking(){
+    if (this.listProducts && this.listProducts.length > 0) {
+      if (this.typePicking === 1) {
+        this.alertSealPackingIntermediate(this.lastCarrierScanned);
+      } else {
+        this.endProcessIntermediate(this.lastCarrierScanned);
+      }
+    } else {
+      if (this.typePicking === 1) {
+        this.alertSealPackingFinal(this.lastCarrierScanned);
+      } else {
+        this.endProcessPacking(this.lastCarrierScanned);
+      }
     }
   }
 
@@ -942,7 +1029,7 @@ export class TextareaComponent implements OnInit {
 
   private sealPackingIntermediate(packingReference: any) {
     if (packingReference && packingReference.length > 0) {
-      this.loadingMessageComponent.show(true, 'Precintando Jaula');
+      this.loadingMessageComponent.show(true, 'Precintando embalaje');
       this.carrierService.postSealList(Array(packingReference)).subscribe(async () => {
         this.endProcessIntermediate(this.jailReference);
       });

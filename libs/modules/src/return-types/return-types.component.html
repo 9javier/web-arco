@@ -1,0 +1,71 @@
+<ion-content padding="true">
+  <div class="mat-table-wrapper-overflow-x">
+    <table mat-table [dataSource]="dataSource">
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+      <tr mat-row  *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <ng-container matColumnDef="names">
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('name')">Nombre</span>
+          <suite-filter-button #filterButtonNames class="filter" [title]="'Nombres'" [listItems]="names"
+                               [isFiltering]="isFilteringNames != names.length" (applyFilters)="applyFilters($event, 'names')">
+          </suite-filter-button>
+        </th>
+        <td mat-cell *matCellDef="let element" (click)="updateReturnTypes($event, element)">
+          {{ element?.name}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="defective">
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('defective')">Defectuoso</span>
+          <suite-filter-button #filterButtonDefective class="filter" [title]="'Defectuoso'" [listItems]="defective"
+                               [isFiltering]="isFilteringDefective != defective.length" (applyFilters)="applyFilters($event, 'defective')">
+          </suite-filter-button>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element?.defective && element?.defective==true ? 'Sí' : 'No' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="select" [formGroup]="selectedForm">
+        <th mat-header-cell *matHeaderCellDef>
+          <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let element;let i = index" (click)="prevent($event)">
+          <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+            <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
+                          (click)="itemSelected(element)"></ion-checkbox>
+          </ng-template>
+        </td>
+      </ng-container>
+
+    </table>
+  </div>
+
+  <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+
+</ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+  <ion-fab-button matTooltip="Eliminar tipo de devolución" matTooltipClass="tooltip" (click)="presentAlertDeleteConfirm()" *ngIf="selectedForm['controls']?.toSelect
+   && selectedForm.valid" color="danger">
+    <i class="material-icons">delete</i>
+  </ion-fab-button>
+
+  <ion-fab-button matTooltip="Crear tipo de devolución" matTooltipClass="tooltip" (click)="addReturnTypes($event)"><i
+    class="material-icons">add</i>
+  </ion-fab-button>
+
+  <ion-fab-button matTooltip="Recargar datos" matTooltipClass="tooltip" (click)="refreshReturnTypes()">
+    <ion-icon name="refresh"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+
+
+
+
+

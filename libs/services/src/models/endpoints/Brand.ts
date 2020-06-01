@@ -1,3 +1,6 @@
+import {SupplierConditionModel} from "./SupplierCondition";
+import SupplierCondition = SupplierConditionModel.SupplierCondition;
+
 export namespace BrandModel {
 
   export interface Brand {
@@ -8,7 +11,8 @@ export namespace BrandModel {
     datasetHash: string,
     name: string,
     supplierName: string,
-    providerId?: number
+    providerId?: number,
+    condition?: SupplierCondition
   }
 
 }

@@ -1,4 +1,4 @@
 <ion-content padding [ngClass]="{'without-order': isReceptionWithoutOrder}">
-  <form-expedition-info (checkExpedition)="searchExpeditions($event)" [isReceptionWithoutOrder]="isReceptionWithoutOrder"></form-expedition-info>
+  <form-expedition-info (checkExpedition)="searchExpeditions($event)" (resumeLastExpedition)="resumeLastExpedition($event)" [isReceptionWithoutOrder]="isReceptionWithoutOrder"></form-expedition-info>
   <form-expedition-provider (checkExpedition)="searchExpeditions($event)" [isReceptionWithoutOrder]="isReceptionWithoutOrder"></form-expedition-provider>
 </ion-content>

@@ -18,8 +18,12 @@
 
 <ion-content>
   <mat-list>
-    <mat-list-item matRipple (click)="selectItem(item)" *ngFor="let item of listItems">
+    <mat-list-item matRipple (click)="selectItem(item)" *ngFor="let item of paginatedListItems">
       <h4 mat-line [ngClass]="{'green': item.color == 'green', 'orange': item.color == 'orange', 'red': item.color == 'red'}">{{item.name}}</h4>
     </mat-list-item>
   </mat-list>
+
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>

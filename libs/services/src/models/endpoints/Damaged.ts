@@ -7,16 +7,18 @@ export namespace DamagedModel {
   }
 
   export interface Classifications {
-    createdAt: string,
-    updatedAt: string,
+    createdAt?: string,
+    updatedAt?: string,
     id: number,
-    defectType: number,
+    name?: string,
+    defectType?: number,
     ticketEmit: boolean,
     passHistory: boolean,
     requirePhoto: boolean,
     requireContact: boolean,
     requireOk: boolean,
-    allowOrders: boolean
+    allowOrders: boolean,
+    shippedFallback: boolean
   }
 
   export interface Status {

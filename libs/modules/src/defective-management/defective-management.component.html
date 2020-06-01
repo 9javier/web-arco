@@ -8,10 +8,16 @@
         <mat-accordion multi="false">
           <mat-expansion-panel *ngFor="let defect of groupsDefectiveManagement; let i = index" (opened)="openGroup(defect.id)" [expanded]="defect.open">
             <mat-expansion-panel-header>
-              <mat-panel-title>
+              <mat-panel-title style="min-width: 200px">
                 <ion-checkbox style="margin-right: 5px" (click)="activateDelete(defect)"></ion-checkbox>
                 {{ defect.name }}
               </mat-panel-title>
+              <mat-panel-description style="margin-left: 100px">
+                <ion-checkbox style="margin-right: 5px;margin-left: 20px" [(ngModel)]="defect.includeInIncidenceTicket" (ionChange)="storeChanges()"></ion-checkbox>
+                Incluir en ticket incidencia
+                <ion-checkbox style="margin-right: 5px;margin-left: 20px" [(ngModel)]="defect.includeInDeliveryNote" (ionChange)="storeChanges()"></ion-checkbox>
+                Incluir en albarán devolución
+              </mat-panel-description>
             </mat-expansion-panel-header>
 
             <ion-item class="no-border">
@@ -20,11 +26,25 @@
               <ion-button slot="end" color="danger" *ngIf="defect.deletedChild" (click)="presentDeleteChildrenAlert(defect.id)"><ion-icon name="trash"></ion-icon></ion-button>
               <h2>Subtipos</h2>
             </ion-item>
-            <mat-selection-list *ngFor="let child of defect.defectTypeChild">
-              <mat-list-option (click)="onChanged(i, defect.id, child)" >
-                <p>{{ child.name }}</p>
-              </mat-list-option>
-            </mat-selection-list>
+            <ion-grid>
+              <ion-row>
+                <ion-col></ion-col>
+                <ion-col class="centerText">Incluir en ticket incidencia</ion-col>
+                <ion-col class="centerText">Incluir en albarán devolución</ion-col>
+              </ion-row>
+              <ion-row *ngFor="let child of defect.defectTypeChild">
+                <ion-col>
+                  <ion-checkbox class="innerCheckbox" (click)="onChanged(i, defect.id, child)"></ion-checkbox>
+                  {{child.name}}
+                </ion-col>
+                <ion-col class="centerText">
+                  <ion-checkbox [(ngModel)]="child.includeInIncidenceTicket" (ionChange)="storeChanges()"></ion-checkbox>
+                </ion-col>
+                <ion-col class="centerText">
+                  <ion-checkbox [(ngModel)]="child.includeInDeliveryNote" (ionChange)="storeChanges()"></ion-checkbox>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
             <p class="ion-text-center" *ngIf="defect.defectTypeChild.length === 0"> No existen datos</p>
           </mat-expansion-panel>
         </mat-accordion>
@@ -43,5 +63,9 @@
   <div style="height: 5px"></div>
   <ion-fab-button matTooltip="Eliminar" matTooltipClass="tooltip" *ngIf="toSelectGroup" (click)="presentDeleteAlert()" color="danger">
     <ion-icon name="trash"></ion-icon>
+  </ion-fab-button>
+  <div style="height: 5px"></div>
+  <ion-fab-button matTooltip="Guardar cambios" matTooltipClass="tooltip" *ngIf="thereAreChanges" (click)="saveChanges()">
+    <ion-icon name="save"></ion-icon>
   </ion-fab-button>
 </ion-fab>

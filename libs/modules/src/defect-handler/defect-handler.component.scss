@@ -23,8 +23,20 @@ ion-text {
     width: 100%;
   }
 
+  th.mat-header-cell:first-of-type {
+    padding-left: 8px !important;
+  }
+  td.mat-cell:first-of-type {
+    padding-left: 8px !important;
+  }
+
   .mat-cell, .mat-header-cell {
-    padding: 10px 10px 10px 0;
+    padding: 0px 4px 0px 0px;
+    max-width: fit-content !important;
+  }
+
+  .mat-cell:first-of-type, mat-footer-cell:first-of-type, mat-header-cell:first-of-type {
+    padding-left: 4px !important;
   }
 
   .bt-right{

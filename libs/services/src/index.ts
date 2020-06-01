@@ -159,3 +159,14 @@ export * from './lib/endpoint/incidents/incidents.service';
 
 // uploas file
 export * from './lib/endpoint/ulpload-files/upload-files.service';
+
+// opl-transports
+
+export * from  './lib/endpoint/opl-transports/opl-transports.service'
+export * from './models/endpoints/opl-transports.model'
+
+
+//opl-expeditions
+export * from './lib/endpoint/expedition/expedition.service'
+
+

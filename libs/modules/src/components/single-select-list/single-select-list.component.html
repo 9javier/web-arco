@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" matInput [placeholder]="filterListValue" [(ngModel)]="searchText" (ngModelChange)="changeSearchData()">
+      <button mat-button *ngIf="searchText" mat-icon-button aria-label="Clear" (click)="resetSearchBar()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <cdk-virtual-scroll-viewport itemSize="50" minBufferPx="1000" maxBufferPx="2000" class="scroll-container">
+    <div matRipple (click)="selectItem(item)" *cdkVirtualFor="let item of listItems">
+      <p>{{item.value}}</p>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</ion-content>

@@ -1,0 +1,97 @@
+ion-content {
+  ion-item {
+    ion-label {
+      opacity: 1;
+    }
+  }
+
+  ion-grid {
+    ion-row {
+      ion-button.btn-select-unities {
+        margin: 0;
+        height: 36px;
+      }
+
+      ion-col.disabled-col {
+        ion-item {
+          background-color: var(--bg-disabled) !important;
+          --ion-background-color: var(--bg-disabled) !important;
+          ion-label {
+            opacity: 1;
+          }
+        }
+      }
+    }
+
+    div.div-btn-item {
+      height: 67px;
+      width: 100%;
+      ion-button {
+        margin: 0;
+        height: 67px;
+        width: 100%;
+      }
+    }
+
+    mat-divider {
+      margin: 16px 4px;
+    }
+  }
+}
+
+
+
+
+ion-item.item-selectable {
+  height: 67px;
+  ion-label {
+    margin-top: 23px;
+    margin-bottom: 22px;
+  }
+}
+ion-label{
+  font-weight: bold;
+}
+
+span{
+  margin-right: auto;
+}
+
+ion-toggle{
+  padding: 5px;
+}
+
+.no-padding{
+  padding: 0;
+}
+
+.center-contents{
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+ion-fab-button{
+  margin-top: 10px;
+}
+
+.wide-alert{
+  --width: 422px;
+  --max-width: 422px;
+}
+
+ion-item.item-date {
+  ion-label {
+    max-height: 15px;
+  }
+  input {
+    height: 39px;
+  }
+  mat-datepicker-toggle {
+    position: absolute;
+    right: 16px;
+    top: 13px;
+    width: 100%;
+    text-align: end;
+  }
+}

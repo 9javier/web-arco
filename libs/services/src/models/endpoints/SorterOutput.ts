@@ -38,7 +38,8 @@ export namespace SorterOutputModel {
     packingReference: string,
     wayId: number,
     fullPacking: boolean,
-    incidenceProcess: boolean
+    incidenceProcess: boolean,
+    stopButtonPressed: boolean
   }
   export interface ScanProductPutInPacking {
     processStopped?: boolean,
@@ -115,7 +116,8 @@ export namespace SorterOutputModel {
     with_incidences?: boolean,
     way: WaySorterModel.WaySorter,
     warehouse: WarehouseModel.Warehouse,
-    products: ProductInSorterWithIncidence[]
+    products: ProductInSorterWithIncidence[],
+    packages: any
   }
   export interface ResponseGetProductsByWay extends HttpRequestModel.Response {
     data: GetProductsByWay

@@ -1,7 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { GlobalVariableService, GlobalVariableModel, IntermediaryService } from '@suite/services';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {GlobalVariableService, GlobalVariableModel, IntermediaryService, JailModel} from '@suite/services';
 import { FormBuilder } from '@angular/forms';
-import {Events} from "@ionic/angular";
+import {Events, ModalController} from "@ionic/angular";
+import {UsersReplenishmentGlobalVarComponent} from "../global-variables/users-replenishment-global-var/users-replenishment-global-var.component";
+import {EmployeeService} from "../../../services/src/lib/endpoint/employee/employee.service";
+import EmployeeReplenishment = EmployeeModel.EmployeeReplenishment;
+import {EmployeeModel} from "../../../services/src/models/endpoints/Employee";
+import {MatPaginator} from "@angular/material";
+import {PrinterService} from "../../../services/src/lib/printer/printer.service";
+import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-store/picking-store.service";
+import {PickingStoreModel} from "../../../services/src/models/endpoints/PickingStore";
+declare const BrowserPrint: any;
 
 @Component({
   selector: 'suite-global-variables',
@@ -11,23 +20,43 @@ import {Events} from "@ionic/angular";
 export class GlobalVariablesComponent implements OnInit {
 
   listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
-  private listTypesFromDb: Array<{ id: number, name: string }> = [];
+  private listTypesFromDb: Array<{ id: number, name: string, workwave: boolean, type: string, tooltip: string }> = [];
   private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
   private countLoadOfVariables: number = 0;
+  private listReasons;
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  employees: EmployeeReplenishment[];
+  filters: {
+    name: string,
+    replenishment: string,
+    order: string
+  };
+  employeesToShow: any;
 
   constructor(
     private events: Events,
     private globalVariableService: GlobalVariableService,
+    private pickingStoreService: PickingStoreService,
     private formBuilder: FormBuilder,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private modalController: ModalController,
+    private employeeService: EmployeeService,
+    private printerService: PrinterService,
   ) { }
 
   ngOnInit() {
     this.intermediaryService.presentLoading();
 
     this.getTypes();
+    this.getReasonVariable();
     this.getGlobalVariables();
-
+    this.filters = {
+      name: '',
+      replenishment: 'yes',
+      order: 'ASC'
+    };
+    this.search();
     this.events.subscribe('load_of_variables', () => {
       this.countLoadOfVariables++;
       if (this.countLoadOfVariables == 2) {
@@ -52,15 +81,27 @@ export class GlobalVariablesComponent implements OnInit {
           }
         }
         if (!isTypeCreated) {
-          this.listVariables.push({ type: type.id, value: null });
+          this.listVariables.push({ type: type.id, typeObject: type, value: null, tooltip: null });
         }
       }
     } else {
       this.listVariables = this.listVariablesFromDb;
     }
-    this.listVariables.sort((a, b) => {
-      return a.type < b.type ? -1 : 1;
-    })
+    this.listVariables.sort((a,b) => {
+      if ( a && a.typeObject && b && b.typeObject && a.typeObject.type < b.typeObject.type ){
+        return -1;
+      }
+      if ( a && a.typeObject && b && b.typeObject && a.typeObject.type > b.typeObject.type ){
+        return 1;
+      }
+      if ( a && a.typeObject && b && b.typeObject && a.typeObject.name < b.typeObject.name ){
+        return -1;
+      }
+      if ( a && a.typeObject && b && b.typeObject && a.typeObject.name > b.typeObject.name ){
+        return 1;
+      }
+      return 0;
+    });
   }
 
   getGlobalVariables() {
@@ -86,12 +127,41 @@ export class GlobalVariablesComponent implements OnInit {
       });
   }
 
+  getReasonVariable() {
+    this.pickingStoreService
+      .getLoadRejectionReasons()
+      .then((res: PickingStoreModel.ResponseLoadRejectionReasons) => {
+        let resData: Array<PickingStoreModel.RejectionReasons> = res.data;
+        this.listReasons = resData;
+      }, (error) => {
+        console.error('Error::Subscribe::pickingStoreService::getLoadRejectionReasons', error);
+      })
+      .catch((error) => {
+        console.error('Error::Subscribe::pickingStoreService::getLoadRejectionReasons', error);
+      });
+
+  }
+
   getTypeById(id) : string {
     let type = this.listTypesFromDb.find((type) => {
       return type.id == id;
     });
 
     return type.name || '';
+  }
+  getGeneralTypeById(id) : string {
+    let type = this.listTypesFromDb.find((type) => {
+      return type.id == id;
+    });
+
+    return type.type || '';
+  }
+  getTooltipById(id) : string {
+    let type = this.listTypesFromDb.find((type) => {
+      return type.id == id;
+    });
+
+    return type.tooltip || '';
   }
 
   updateVariables() {
@@ -107,6 +177,7 @@ export class GlobalVariablesComponent implements OnInit {
     if (variablesToUpdate.length == this.listVariables.length) {
       this.intermediaryService.presentLoading('Actualizando las variables...').then(() => {
         this.globalVariableService.store(variablesToUpdate).subscribe((res) => {
+          this.search();
           this.getTypes();
           this.getGlobalVariables();
           this.intermediaryService.dismissLoading();
@@ -119,6 +190,89 @@ export class GlobalVariablesComponent implements OnInit {
     } else {
       this.intermediaryService.presentToastError('Inicialice todas las variables del sistema.');
     }
+  }
+
+  async usersReplenishment(){
+    const modal = await this.modalController.create({component: UsersReplenishmentGlobalVarComponent});
+
+    modal.onDidDismiss().then(async response => {
+      if (response.data) {
+        await this.intermediaryService.presentLoading('Cargando...');
+        this.employeeService.store(response.data).then(async response => {
+          if(response.code == 200){
+            this.search();
+            await this.intermediaryService.dismissLoading();
+            await this.intermediaryService.presentToastSuccess('Los cambios se han guardado correctamente.');
+          }else{
+            console.error(response);
+            await this.intermediaryService.dismissLoading();
+          }
+        }, async error => {
+          console.error(error);
+          await this.intermediaryService.dismissLoading();
+        }).catch(async error => {
+          console.error(error);
+          await this.intermediaryService.dismissLoading();
+        });
+      }
+    });
+
+    await modal.present();
+  }
+
+  search(){
+      const searchParameters = {
+        name: this.filters.name,
+        replenishment: this.filters.replenishment,
+        pagination: {
+          page: 1,
+          limit: 10,
+          sortType: this.filters.order
+        }
+      };
+      this.employeeService.search(searchParameters).then(async response => {
+        if(response.code == 200){
+          this.employees = response.data[0];
+          this.employeesToShow = this.employees.map( employee => {
+            return employee.name;
+          }).join(', ');
+        }
+      });
+  }
+
+  async sendZebraCommands(){
+    await this.intermediaryService.presentLoading("Guardando configuración...",() => {
+      console.log("BrowserPrint::sendZebraCommands");
+      const commandsToSend = "! U1 setvar \"power.inactivity_timeout\" \"0\"\n" + "! U1 setvar \"power.low_battery_timeout\" \"0\"\"\n" +
+        "! U1 setvar \"\"media.type\"\" \"\"label\"\"\n" + "! U1 setvar \"\"media.sense_mode\"\" \"\"gap\"\"\n" + "~jc^xa^jus^xz";
+      if(BrowserPrint){
+        BrowserPrint.getDefaultDevice("printer", (device) => {
+          console.log("BrowserPrint::device", device);
+          if(device){
+            console.log("BrowserPrint::send", commandsToSend)
+            device.send(commandsToSend, (data) => {
+              console.log("BrowserPrint::data", data);
+              this.intermediaryService.dismissLoading();
+            }, (e) => {
+              this.intermediaryService.dismissLoading();
+              console.log("BrowserPrint::Error send", e);
+              this.intermediaryService.presentToastError('Error enviando datos a la impresora');
+            });
+          } else {
+            this.intermediaryService.dismissLoading();
+            this.intermediaryService.presentToastError('No hay impresora por defecto de Browser Print');
+          }
+        }, (error) => {
+          this.intermediaryService.dismissLoading();
+          console.log("BrowserPrint::Error send", error);
+          this.intermediaryService.presentToastError('Error enviando datos a la impresora');
+        });
+      } else {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError('Browser Print no instalado');
+        console.log("BrowserPrint not installed")
+      }
+    });
   }
 
 }

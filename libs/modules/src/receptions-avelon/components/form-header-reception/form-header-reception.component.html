@@ -11,6 +11,7 @@
           <i slot="end" class="material-icons" id="expeditionKeyboard">keyboard</i>
         </form>
         <loading-button #loadingButtonExpedition id="loadingButtonExpedition" label="COMPROBAR" labelLoading="COMPROBANDO"></loading-button>
+        <loading-button *ngIf="lastExepeditionQueried && lastExepeditionQueried.reference" #loadingButtonResumeExpedition id="loadingButtonResumeExpedition" [label]="'CONTINUAR #' + lastExepeditionQueried.reference" labelLoading="COMPROBANDO" [isDisabled]="false" (clickButton)="clickResumeExpedition()"></loading-button>
       </div>
     </div>
 
@@ -25,6 +26,14 @@
           <i slot="end" class="material-icons" id="providerKeyboard">keyboard</i>
         </form>
         <loading-button #loadingButtonProvider id="loadingButtonProvider" label="CONSULTAR" labelLoading="CONSULTANDO"></loading-button>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-top: 20px;">
+    <div class="col">
+      <span>Prueba de impresión de etiqueta en impresora Zebra</span>
+      <div class="row">
+        <ion-button (click)="printZebraTest()">IMPRIMIR ETIQUETA</ion-button>
       </div>
     </div>
   </div>

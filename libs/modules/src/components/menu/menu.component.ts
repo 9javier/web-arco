@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, NgZone } from '@angular/core';
 import { app, environment } from '../../../../services/src/environments/environment';
-import {AuthenticationService, Oauth2Service, TariffService, WarehouseModel} from '@suite/services';
+import { AuthenticationService, Oauth2Service, TariffService, WarehouseModel } from '@suite/services';
 import { Router } from '@angular/router';
 import { ScanditService } from "../../../../services/src/lib/scandit/scandit.service";
 import { ReceptionScanditService } from "../../../../services/src/lib/scandit/reception/reception.service";
@@ -11,10 +11,11 @@ import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 import { LoginComponent } from '../../login/login.page';
 import { AuditMultipleScanditService } from "../../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
-import {AlertPopoverComponent} from "../alert-popover/alert-popover.component";
-import {WarehouseReceptionAlertService} from "../../../../services/src/lib/endpoint/warehouse-reception-alert/warehouse-reception-alert.service";
+import { AlertPopoverComponent } from "../alert-popover/alert-popover.component";
+import { WarehouseReceptionAlertService } from "../../../../services/src/lib/endpoint/warehouse-reception-alert/warehouse-reception-alert.service";
 import Warehouse = WarehouseModel.Warehouse;
-import {LocalStorageProvider} from "../../../../services/src/providers/local-storage/local-storage.provider";
+import { LocalStorageProvider } from "../../../../services/src/providers/local-storage/local-storage.provider";
+import { PickingStoreService } from "../../../../services/src/lib/endpoint/picking-store/picking-store.service";
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -35,7 +36,8 @@ interface MenuSectionItem {
   notification?: boolean
   children?: (MenuSectionGroupItem | MenuSectionItem)[];
   header?: boolean
-  tooltip?: string
+  tooltip?: string,
+  amount?: number
 }
 
 @Component({
@@ -57,16 +59,19 @@ export class MenuComponent implements OnInit {
   iconsDirection = 'start';
   displaySmallSidebar = false;
   currentRoute: string = "";
+
+  pickingTasksStoresAmount: number = 0;
+
   sgaPages: MenuItemList = [
-    {
+/*    {
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
       icon: 'time'
-    },
+    },*/
     {
       title: 'Logística',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'filing',
       children: [
@@ -98,7 +103,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Olas de trabajo',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'hammer',
       children: [
@@ -136,7 +141,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Gestión de usuarios',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'contacts',
       children: [
@@ -168,7 +173,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Control de exposición',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'cart',
       children: [
@@ -190,7 +195,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Defectuosos',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'paper',
       children: [
@@ -232,8 +237,8 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Devoluciones',
-      open: true,
+      title: 'Devoluciones fábrica',
+      open: false,
       type: 'wrapper',
       icon: 'return-left',
       children: [
@@ -243,12 +248,40 @@ export class MenuComponent implements OnInit {
           url: '/returns-list',
           icon: 'list-box',
           tooltip: 'Listado de registro de devoluciones'
+        },
+        {
+          title: 'Listado Históricos',
+          id: 'returns-historic',
+          url: '/returns-historic',
+          icon: 'list-box',
+          tooltip: 'Listado de históricos de devoluciones'
+        },
+        {
+          title: 'Listado Seguimiento Devoluciones',
+          id: 'return-tracking-list',
+          url: '/return-tracking-list',
+          icon: 'list',
+          tooltip: 'Listado de seguimiento de devoluciones'
+        },
+        {
+          title: 'Condiciones proveedores',
+          id: 'supplier-conditions',
+          url: '/supplier-conditions',
+          icon: 'list-box',
+          tooltip: 'Listado de condiciones de proveedores'
+        },
+        {
+          title: 'Tipos de devoluciones',
+          id: 'return-types',
+          url: '/return-types',
+          icon: 'list-box',
+          tooltip: 'Listado de tipos de devoluciones'
         }
       ]
     },
     {
       title: 'Picking tiendas',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'cart',
       children: [
@@ -262,7 +295,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Configuración',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'options',
       children: [
@@ -336,7 +369,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Sorter',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'apps',
       children: [
@@ -367,13 +400,13 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Auditorias',
+      title: 'Control de embalajes',
       open: false,
       type: 'wrapper',
       icon: 'ribbon',
       children: [
         {
-          title: 'Lista de auditorias',
+          title: 'Lista Control Embalajes',
           id: 'audit-sga',
           url: '/audits',
           icon: 'list-box'
@@ -382,7 +415,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Recepción de fábrica',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'archive',
       children: [
@@ -585,22 +618,42 @@ export class MenuComponent implements OnInit {
           url: '/unlock-expeditions',
           icon: 'unlock',
           tooltip: 'Desbloquear expediciones'
-        }
+        },
+        {
+          title: 'Ordenes de transportes',
+          id: 'package',
+          url: '/transport-orders',
+          icon: 'car',
+          tooltip: 'Ordenes'
+        },
+        {
+          title: 'Transportes de expediciones',
+          id: 'transports',
+          url: '/transports',
+          icon: 'bus',
+          tooltip: 'Transportes de expediciones'
+        },
+        {
+          title: 'Pedidos Internos',
+          id: 'expedition-inside',
+          url: '/expedition-inside',
+          icon: 'folder'
+        },
       ]
-    }
+    },
   ];
 
   alPages: MenuItemList = [
-    {
+/*    {
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
       icon: 'time',
       tooltip: 'Registrar hora de entrada y salida'
-    },
+    },*/
     {
       title: 'Productos',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'basket',
       children: [
@@ -633,6 +686,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Listado de todos los productos solicitados que se han recibido'
         },
         {
+          title: 'Productos no aptos online',
+          id: 'unfit-online-products',
+          url: '/unfit-online-products',
+          icon: 'archive',
+          tooltip: 'Listado de productos no aptos online'
+        },
+        {
           title: 'Reetiquetado productos',
           id: 'print-product',
           url: 'print/product/relabel',
@@ -650,9 +710,9 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Pedidos online',
-      icon:'basket',
+      icon: 'basket',
       type: 'wrapper',
-      open: true,
+      open: false,
       children: [
         {
           title: 'Generar etiquetas de envio',
@@ -667,6 +727,13 @@ export class MenuComponent implements OnInit {
           url: '/list-alerts',
           icon: 'notifications',
           tooltip: 'listado de incidencias'
+        },
+        {
+          title: 'Órdenes no procesadas',
+          id: 'order-no-processed',
+          url: '/order-no-processed',
+          icon: 'barcode',
+          tooltip: 'Órdenes no procesadas'
         },
 
       ]
@@ -730,13 +797,13 @@ export class MenuComponent implements OnInit {
           id: 'positioning-manual',
           tooltip: 'Escanear artículos mediante láser para ubicar'
         },
-        {
+/*        {
           title: 'Ubicar no aptos online',
           icon: 'locate',
           url: '/positioning/manual-online',
           id: 'positioning-manual-online',
           tooltip: 'Ubicar productos no aptos online'
-        },
+        },*/
         {
           title: 'Traspasos',
           id: 'picking-task-store',
@@ -749,7 +816,8 @@ export class MenuComponent implements OnInit {
           id: 'picking-tasks-stores',
           icon: 'qr-scanner',
           url: '/picking-tasks-stores',
-          tooltip: 'Listado de peticiones pendientes de realizar'
+          tooltip: 'Listado de peticiones pendientes de realizar',
+          amount: this.pickingTasksStoresAmount
         },
         {
           title: 'Asociar pares a embalajes',
@@ -759,18 +827,18 @@ export class MenuComponent implements OnInit {
           tooltip: 'Asociar pares procesados para traspasos a embalajes y precintarlos'
         },
         {
-          title: 'Tareas de picking con cámara',
+          title: 'Ubicar defectuosos',
+          id: 'defective-positioning',
+          icon: 'warning',
+          url: 'defective-positioning',
+          tooltip: 'Escanear artículos defectuosos mediante cámara para ubicar'
+        },
+        {
+          title: 'Tareas de Picking',
           id: 'picking-task',
           icon: 'qr-scanner',
           url: '/picking-tasks',
-          tooltip: 'Tareas de picking asignadas para realizarlas con el escáner de la cámara'
-        },
-        {
-          title: 'Tareas de picking con láser',
-          icon: 'qr-scanner',
-          url: '/picking-tasks/manual',
-          id: 'picking-tasks-manual',
-          tooltip: 'Tareas de picking asignadas para realizarlas con el láser'
+          tooltip: 'Tareas de picking asignadas'
         },
         {
           title: 'Verificación de artículos',
@@ -852,6 +920,12 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      id: 'return-pending-list',
+      title: 'Devoluciones Pendientes',
+      icon: 'return-left',
+      url: '/return-pending-list'
+    },
+    {
       title: 'Picking y Ventilación',
       open: false,
       type: 'wrapper',
@@ -896,17 +970,17 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Auditorias',
+      title: 'Control de embalajes',
       open: false,
       type: 'wrapper',
       icon: 'ribbon',
       children: [
         {
-          title: 'Lista de auditorias',
+          title: 'Lista Control Embalajes',
           id: 'audit-al',
           url: '/audits',
           icon: 'list-box',
-          tooltip: 'Listado de auditorías realizadas'
+          tooltip: 'Listado de controles de embalajes realizados'
         },
         {
           title: 'Revisiones Pendientes',
@@ -954,9 +1028,9 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      id:'incidents',
+      id: 'incidents',
       title: 'Defectuosos',
-      icon:'warning',
+      icon: 'warning',
       url: '/defect-handler'
     },
     {
@@ -966,11 +1040,11 @@ export class MenuComponent implements OnInit {
       icon: 'build',
       children: [
         {
-          title: 'Ajustes',
+          title: 'Código impresora',
           id: 'settings',
           url: '/settings',
           icon: 'cog',
-          tooltip: 'Ajustes de configuración de la aplicación. Ej: Mac de la impresora'
+          tooltip: 'Mac de la impresora'
         }
       ]
     },
@@ -1002,8 +1076,8 @@ export class MenuComponent implements OnInit {
     private popoverController: PopoverController,
     private warehouseReceptionAlertService: WarehouseReceptionAlertService,
     private localStorageProvider: LocalStorageProvider,
-    private zona: NgZone
-
+    private zona: NgZone,
+    private pickingStoreService: PickingStoreService
   ) {
     this.loginService.availableVersion.subscribe(res => {
       this.versionUpdate = res;
@@ -1017,7 +1091,7 @@ export class MenuComponent implements OnInit {
     this.menuTitle.emit(item.title);
   }
 
-  setTitle(title){
+  setTitle(title) {
     this.toolbarProvider.currentPage.next(title);
   }
 
@@ -1030,20 +1104,17 @@ export class MenuComponent implements OnInit {
    */
   filterPages(dictionary) {
     dictionary = JSON.parse(JSON.stringify(dictionary));
-    this.newTariffs();
     if(app.name == 'al') {
+      this.newTariffs();
+      this.getPickingTasksStoresAmount();
       this.zona.run(() => {
         setInterval(() => {
           this.newTariffs();
+          this.getPickingTasksStoresAmount();
         }, 5 * 60 * 1000);
       });
     }
-    let logoutItem = dictionary['user-time'] ? ({
-      title: 'Cerrar sesión',
-      id: 'logout',
-      url: '/user-time/logout',
-      icon: 'log-out'
-    }) : ({
+    let logoutItem = ({
       title: 'Cerrar sesión',
       id: 'logout',
       url: '/logout',
@@ -1124,15 +1195,15 @@ export class MenuComponent implements OnInit {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
       this.checkAlertsAndRedirect();
-    } else if(p.url === 'audits/scan'){
+    } else if (p.url === 'audits/scan') {
       this.auditMultipleScanditService.init();
     }
   }
 
   async checkAlertsAndRedirect() {
     const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
-    if(currentWarehouse){
-      this.warehouseReceptionAlertService.check({warehouseId: currentWarehouse.id}).then(async response => {
+    if (currentWarehouse) {
+      this.warehouseReceptionAlertService.check({ warehouseId: currentWarehouse.id }).then(async response => {
         if (response.code == 200 && typeof response.data == 'boolean') {
           if (response.data) {
             await this.localStorageProvider.set('hideAlerts', false);
@@ -1155,7 +1226,7 @@ export class MenuComponent implements OnInit {
       }, error => {
         console.error(error);
       });
-    }else{
+    } else {
       console.error('Current warehouse not found.');
     }
   }
@@ -1178,9 +1249,11 @@ export class MenuComponent implements OnInit {
       this.productInfoScanditService.init();
     } else if (p.url === 'positioning') {
       this.scanditService.positioning();
+    } else if (p.url === 'defective-positioning'){
+      this.scanditService.defectivePositioning();
     } else if (p.url === 'audits/scan') {
       this.auditMultipleScanditService.init();
-    }else {
+    } else {
       this.returnTitle(p);
     }
     if (p.id === 'workwaves-scheduled-1') {
@@ -1221,33 +1294,58 @@ export class MenuComponent implements OnInit {
   /**
    * Listen changes in form to resend the request for search
    */
-  newTariffs() {
-    this.tariffService
-      .getNewTariff()
-      .then(tariff => {
-        if (tariff.code == 200) {
-          let newTariff = tariff.data;
-          /**save the data and format the dates */
-          this.alPages.forEach((item, i) => {
-            if ((<any>item).id == "tarifas") {
-              (<any>item).notification = newTariff;
-              (<any>item).children.forEach((child, j) => {
-                if ((<any>child).id == "tariff-al") {
-                  (<any>child).notification = newTariff;
-                }
-              });
-            }
-          });
-        } else {
-          console.error('Error to try check if exists new tariffs', tariff);
-        }
-    }, (error) => {
-        console.error('Error to try check if exists new tariffs', error);
-    })
+  async newTariffs() {
+    const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
+    if(currentWarehouse){
+      this.tariffService
+        .getNewTariff()
+        .then(tariff => {
+          if (tariff.code == 200) {
+            let newTariff = tariff.data;
+            /**save the data and format the dates */
+            this.alPages.forEach((item, i) => {
+              if ((<any>item).id == "tarifas") {
+                (<any>item).notification = newTariff;
+                (<any>item).children.forEach((child, j) => {
+                  if ((<any>child).id == "tariff-al") {
+                    (<any>child).notification = newTariff;
+                  }
+                });
+              }
+            });
+          } else {
+            console.error('Error to try check if exists new tariffs', tariff);
+          }
+        }, (error) => {
+          console.error('Error to try check if exists new tariffs', error);
+        })
+    }
   }
 
-  checkIfChildrenHasNewTariffs(element): boolean {
-    return !!element.children.find(c => c.notification)
+  async getPickingTasksStoresAmount(){
+    const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
+    if(currentWarehouse){
+      this.pickingStoreService.getLineRequestsStoreOnlineAmount().then(response => {
+        if(response.code == 200){
+          for(let page of this.alPages){
+            if(page.children){
+              for(let child of page.children){
+                if(child.amount || child.amount == 0){
+                  child.amount = response.data;
+                  return;
+                }
+              }
+            }
+          }
+        }else{
+          console.error(response);
+        }
+      },console.error).catch(console.error);
+    }
+  }
+
+  checkIfChildrenNotification(element): boolean {
+    return !!element.children.find(c => c.notification || (c.amount && c.amount > 0));
   }
 
 }

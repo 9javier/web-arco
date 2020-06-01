@@ -1,10 +1,13 @@
 <mat-grid-list cols="12" rowHeight="64px">
   <mat-grid-tile colspan="4" rowspan="1">
-    <div class="tile-value">
+    <div class="tile-value" *ngIf="pickingHistory.workWavesOrderWarehouses.length > 0">
       <span class="store-ref">
         {{pickingHistory.workWavesOrderWarehouses[0].warehouse.reference}}&nbsp;
       </span>
       {{pickingHistory.workWavesOrderWarehouses[0].warehouse.name}}
+    </div>
+    <div class="tile-value" *ngIf="pickingHistory.workWavesOrderWarehouses.length == 0">
+      ONLINE
     </div>
   </mat-grid-tile>
 

@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  printerRequired: true,
   apiBase: 'http://192.168.254.111:8080/api',
   apiLogisticOperator: 'http://192.168.254.111:3051/api',
   apiSorter: 'http://192.168.254.111:8080/api',
@@ -8,6 +9,7 @@ export const environment = {
   apiMiddleware: "http://192.168.254.111:3002",
   apiBasePhoto: 'http://192.168.254.111:8080',
   uploadFiles: 'http://192.168.254.111:8080/api/upload-files',
+  downloadPdf: 'http://192.168.254.111:8080',
   urlDownloadApp: 'https://drive.google.com/open?id=16DZzQ1hIArX5GF5oZtTpx3ltiPfCvw2K',
   sga:{
     client_id:"krack-client-sga",

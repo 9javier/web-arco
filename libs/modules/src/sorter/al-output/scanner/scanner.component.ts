@@ -20,7 +20,7 @@ import {Events} from "@ionic/angular";
 import { CarrierService } from '../../../../../services/src/lib/endpoint/carrier/carrier.service';
 import { ListasProductosComponent } from 'libs/modules/src/picking-manual/lista/listas-productos/listas-productos.component';
 import { ListProductsCarrierComponent } from '../../../components/list-products-carrier/list-products-carrier.component';
-
+import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
 @Component({
   selector: 'sorter-output-scanner',
   templateUrl: './scanner.component.html',
@@ -36,6 +36,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   wrongCodeScanned: boolean = false;
   lastProductScannedChecking: ProductSorterModel.ProductSorter = null;
   packingIsFull: boolean = false;
+  stopButtonPressed: boolean = false;
   hideLeftButtonFooter: boolean = true;
   hideRightButtonFooter: boolean = true;
   lastProductScanned: boolean = false;
@@ -43,13 +44,14 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   isWaitingSorterFeedback = false;
 
   ULTIMA_JAULA:string;
+  lastJailPackingInventories: any[];
   lastWarehouse = null;
   lastWarehouseReference = null;
   ultimaReferenza:string;
   alerta:boolean;
 
   listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
-  private listTypesFromDb: Array<{ id: number, name: string }> = [];
+  private listTypesFromDb: Array<{ id: number, name: string, workwave: boolean, type: string, tooltip: string }> = [];
   private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
   private countLoadOfVariables: number = 0;
   private readonly SECONDS_COUNTDOWN_TO_CONFIRM_EMPTY_WAY: number = 3;
@@ -82,6 +84,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     private sorterOutputService: SorterOutputService,
     private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
+    private toolbarProvider: ToolbarProvider,
     private keyboardService: KeyboardService,
     private carrier: CarrierService,
     public  events: Events,
@@ -102,6 +105,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.addStopButton();
     this.infoSorterOperation = this.sorterProvider.infoSorterOutputOperation;
     this.getTypes();
     this.getGlobalVariables();
@@ -112,6 +116,30 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.launchIncidenceBeep = false;
     this.wayIsEmpty = true;
     this.events.publish('sorter:refresh', this.wayIsEmpty);
+    this.toolbarProvider.optionsActions.next([]);
+  }
+
+  addStopButton() {
+    const buttons = [
+      {
+        icon: 'hand',
+        label: 'Detener proceso',
+        action: async () => {
+          if(this.wrongCodeScanned){
+            await this.presentModalCancelOutputWithIncidence();
+          } else {
+            if(this.isFirstProductScanned) {
+              await this.presentModalCancelOutput();
+            }else{
+              if(this.messageGuide == 'ESCANEAR 1º ARTÍCULO' && this.lastJailPackingInventories && this.lastJailPackingInventories.length == 0){
+                this.carrier.postPackingEmpty(this.ULTIMA_JAULA, null);
+              }
+              this.router.navigate(['sorter/output']);
+            }
+          }
+        }
+      }];
+    this.toolbarProvider.optionsActions.next(buttons);
   }
 
   focusToInput() {
@@ -155,13 +183,21 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         }
       }
 
+      if(data.data == 'positioning/manual' && data.role == 'navigate'){
+        this.router.navigate(['sorter/output']).then(()=>{
+          this.toolbarProvider.currentPage.next('Ubicar/escanear con láser');
+          this.toolbarProvider.optionsActions.next([]);
+          this.router.navigate(['positioning/manual']);
+        });
+      }
+
     })
     modal.present();
   }
 
   async keyUpInput(event?,test = false) {
     let dataWrote = (this.inputValue || "").trim();
-    
+
     this.ultimaReferenza = dataWrote;
 
     if (event.keyCode === 13 || test && dataWrote) {
@@ -181,12 +217,19 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
       if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PACKING) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {
-          this.audioProvider.playDefaultError();
-          await this.intermediaryService.presentToastError('Código de producto erróneo.');
-          this.focusToInput();
-        } else {
 
+          if(this.itemReferencesProvider.checkSpecificCodeValue(dataWrote,this.itemReferencesProvider.codeValue.PACKAGE)){
+            //is package
+            this.scannPackage(dataWrote);
+          }else{
+            //code invalid
+            this.audioProvider.playDefaultError();
+            await this.intermediaryService.presentToastError('Código de producto erróneo.');
+            this.focusToInput();
+          }
+        } else {
           this.carrier.getSingle(dataWrote).subscribe(data => {
+            this.lastJailPackingInventories = data.packingInventorys;
             if(data.packingInventorys.length > 0 && !test){
               this.modalList(dataWrote)
             }else{
@@ -217,6 +260,21 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     }
   }
 
+  async scannPackage(dataWrote){
+    if (this.processStarted && this.infoSorterOperation.packingReference) {
+      this.outputProductFromSorter(dataWrote);
+    } else if (this.packingIsFull) {
+      this.audioProvider.playDefaultError();
+      await this.intermediaryService.presentToastError('Escanea el nuevo embalaje a utilizar antes de continuar con los productos.');
+      this.focusToInput();
+    } else {
+      this.audioProvider.playDefaultError();
+      await this.intermediaryService.presentToastError('Escanea el embalaje a utilizar antes de comenzar con los productos.');
+      this.focusToInput();
+    }
+  }
+  
+
   generateVariablesList() {
     this.intermediaryService.dismissLoading();
     if (this.listVariablesFromDb.length !== this.listTypesFromDb.length) {
@@ -232,7 +290,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           }
         }
         if (!isTypeCreated) {
-          this.listVariables.push({ type: type.id, value: null });
+          this.listVariables.push({ type: type.id, value: null, tooltip: null });
         }
       }
     } else {
@@ -262,9 +320,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       });
   }
 
-  async emptyWay() {
-    let showModalWithCount = async () => {
-
+  async emptyWay(finish?: boolean) {
+    let showModalWithCount = async (finish?: boolean) => {
       let globalVar = 5;
       let textCountdown = 'Revisa para confirmar que la calle está completamente vacía.<br/>';
       let globalFound = this.listVariables.find( global => {
@@ -285,7 +342,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
       let buttonOk = {
         text: 'Confirmar',
-        handler: () => this.jaulaLlena()
+        handler: () => this.jaulaLlena(finish)
         // handler: () => this.setWayAsEmpty()
 
       };
@@ -324,7 +381,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       .then(async (res: SorterOutputModel.ResponseBlockSorterWay) => {
         if (res.code === 200) {
           await this.intermediaryService.dismissLoading();
-          showModalWithCount();
+          showModalWithCount(finish);
         } else {
           let errorMessage = 'Ha ocurrido un error al intentar bloquear los procesos en la calle actual.';
           if (res.errors) {
@@ -475,120 +532,127 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   private async outputProductFromSorter(productReference: string) {
+    console.log(productReference);
     await this.intermediaryService.presentLoading('Comprobando producto escaneado...');
 
-    this.sorterOutputService
-      .postScanProductPutInPacking({
-        productReference,
-        packingReference: this.infoSorterOperation.packingReference,
-        wayId: this.infoSorterOperation.wayId,
-        fullPacking: this.packingIsFull,
-        incidenceProcess: this.wrongCodeScanned
-      })
-      .then(async (res: SorterOutputModel.ResponseScanProductPutInPacking) => {
-        if (res.code === 201) {
-          await this.intermediaryService.dismissLoading();
+    await this.sorterOutputService.postScanProductPutInPackings({
+      productReference,
+      packingReference: this.infoSorterOperation.packingReference,
+      wayId: this.infoSorterOperation.wayId,
+      fullPacking: this.packingIsFull,
+      incidenceProcess: this.wrongCodeScanned,
+      stopButtonPressed: this.stopButtonPressed
+    }).subscribe(res => {
 
-          if (res.data.processStopped && !this.wrongCodeScanned) {
-            this.audioProvider.playDefaultOk();
-            await this.intermediaryService.presentToastSuccess('Proceso de salida finalizado.', 2000);
-            this.stopExecutionOutput();
+      this.intermediaryService.dismissLoading();
+      if (res.processStopped != undefined && !this.wrongCodeScanned) {
+        this.audioProvider.playDefaultOk();
+        this.intermediaryService.presentToastSuccess('Proceso de salida finalizado.', 2000);
+        this.stopExecutionOutput(this.stopButtonPressed);
+      } else {
+        if (this.wrongCodeScanned) {
+
+          let resData = res;
+          this.messageGuide = 'ESCANEAR ARTÍCULO';
+          if (!resData.productInSorter) {
+
+            this.lastProductScannedChecking = null;
+            this.audioProvider.playDefaultError();
+            this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`);
+            this.focusToInput();
           } else {
-            if (this.wrongCodeScanned) {
-              let resData = res.data;
-              this.messageGuide = 'ESCANEAR ARTÍCULO';
-              if (!resData.productInSorter) {
-                this.lastProductScannedChecking = null;
-                this.audioProvider.playDefaultError();
-                await this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`);
+            this.infoPackageOrProduct(resData);
+            this.hideLeftButtonFooter = false;
+            this.hideRightButtonFooter = false;
+            if (this.lastProductScannedChecking.destinyWarehouse.id !== this.infoSorterOperation.destinyWarehouse.id) {
+              this.audioProvider.playDefaultError();
+              this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`);
+              if (resData.wayWithIncidences) {
                 this.focusToInput();
               } else {
-                this.lastProductScannedChecking = {
-                  reference: resData.product.reference,
-                  destinyWarehouse: {
-                    id: resData.warehouse.id,
-                    name: resData.warehouse.name,
-                    reference: resData.warehouse.reference
-                  },
-                  model: {
-                    reference: resData.product.model.reference
-                  },
-                  size: {
-                    name: resData.product.size.name
-                  }
-                };
-                this.hideLeftButtonFooter = false;
-                this.hideRightButtonFooter = false;
-                if (this.lastProductScannedChecking.destinyWarehouse.id !== this.infoSorterOperation.destinyWarehouse.id) {
-                  this.audioProvider.playDefaultError();
-                  await this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`);
-                  if (resData.wayWithIncidences) {
-                    this.focusToInput();
-                  } else {
-                    this.outputWithIncidencesClear = true;
-                    this.hideLeftButtonFooter = true;
-                  }
-                } else {
-                  this.audioProvider.playDefaultOk();
-                  await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`, 2000);
-                  if (resData.wayWithIncidences) {
-                    this.focusToInput();
-                  } else {
-                    this.outputWithIncidencesClear = true;
-                    this.hideLeftButtonFooter = true;
-                  }
-                }
+                this.outputWithIncidencesClear = true;
+                this.hideLeftButtonFooter = true;
               }
             } else {
               this.audioProvider.playDefaultOk();
-              await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`, 2000);
-              if (this.packingIsFull) {
-
-                this.lastProductScanned = true;
-                this.setPackingAsFull();
-              } else {
-
-                this.hideLeftButtonFooter = false;
-                this.hideRightButtonFooter = false;
-
-                this.isFirstProductScanned = true;
-                this.messageGuide = 'ESCANEAR ARTÍCULO';
+              this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`, 2000);
+              if (resData.wayWithIncidences) {
                 this.focusToInput();
+              } else {
+                this.outputWithIncidencesClear = true;
+                this.hideLeftButtonFooter = true;
               }
             }
           }
         } else {
-          this.audioProvider.playDefaultError();
-          let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
-          if (res.errors) {
-            errorMessage = res.errors;
+          this.audioProvider.playDefaultOk();
+          this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`, 2000);
+          if (this.packingIsFull) {
+
+            this.lastProductScanned = true;
+            this.setPackingAsFull();
+          } else if (this.stopButtonPressed) {
+            this.router.navigate(['sorter/output']);
+          } else {
+
+            this.hideLeftButtonFooter = false;
+            this.hideRightButtonFooter = false;
+
+            this.isFirstProductScanned = true;
+            this.messageGuide = 'ESCANEAR ARTÍCULO';
+            this.focusToInput();
           }
-          await this.intermediaryService.presentToastError(errorMessage);
-          await this.intermediaryService.dismissLoading();
-          this.focusToInput();
         }
-      }, async (error) => {
-        this.audioProvider.playDefaultError();
-        let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        await this.intermediaryService.presentToastError(errorMessage);
-        await this.intermediaryService.dismissLoading();
-        this.focusToInput();
-      })
-      .catch(async (error) => {
-        this.audioProvider.playDefaultError();
-        let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        await this.intermediaryService.presentToastError(errorMessage);
-        await this.intermediaryService.dismissLoading();
-        this.focusToInput();
-      });
+      }
+
+    }, async (error) => {
+      this.audioProvider.playDefaultError();
+      let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
+      if (error.error && error.error.errors) {
+        errorMessage = error.error.errors;
+      }
+      await this.intermediaryService.presentToastError(errorMessage);
+      await this.intermediaryService.dismissLoading();
+      this.focusToInput();
+
+    });
+
   }
 
+  infoPackageOrProduct(resData){
+    if(resData.product.reference != undefined){
+      this.lastProductScannedChecking = {
+        reference: resData.product.reference,
+        destinyWarehouse: {
+          id: resData.warehouse.id,
+          name: resData.warehouse.name,
+          reference: resData.warehouse.reference
+        },
+        model: {
+          reference: resData.product.model ? resData.product.model.reference : ''
+        },
+        size: {
+          name: resData.product.size.name
+        }
+      };
+    }else{
+      this.lastProductScannedChecking = {
+        reference: resData.product.uniqueCode,
+        destinyWarehouse: {
+          id: resData.warehouse.id,
+          name: resData.warehouse.name,
+          reference: resData.warehouse.reference
+        },
+        model: {
+          reference: ''
+        },
+
+      };
+    }
+  }
+
+
+   
   private async setPackingAsFull() {
 
     await this.intermediaryService.presentLoading('Registrado embalaje como lleno...');
@@ -644,7 +708,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       });
   }
 
-  private async jaulaLlena(){
+  private async jaulaLlena(finish?: boolean){
     this.alerta = false;
     let alert = await this.alertController.create({
       header:`¿El embalaje ${this.infoSorterOperation.packingReference} está lleno? `,
@@ -663,7 +727,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
               if(res.code === 200){
                 this.audioProvider.playDefaultOk();
                 this.ULTIMA_JAULA = null;
-                this.setWayAsEmpty().then(()=>{
+                this.setWayAsEmpty(finish).then(()=>{
                   this.packingIsFull = false;
                 })
               }
@@ -674,7 +738,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           handler:()=>{
             this.alerta = true;
             this.outputWithIncidencesClear = false;
-            this.setWayAsEmpty();
+            this.setWayAsEmpty(finish);
           }
         }
       ]
@@ -682,7 +746,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  private async setWayAsEmpty() {
+  private async setWayAsEmpty(finish?: boolean) {
     await this.intermediaryService.presentLoading('Comprobando que la calle esté vacía...');
     setTimeout(() => {
       this.sorterOutputService
@@ -691,13 +755,13 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         })
         .then(async (res: SorterOutputModel.ResponseEmptyWay) => {
           console.log(res);
-          
+
           if (res.code === 200) {
             this.audioProvider.playDefaultOk();
             this.sorterProvider.colorActiveForUser = null;
             await this.intermediaryService.dismissLoading();
             await this.intermediaryService.presentToastSuccess(`Registrada la calle como vacía.`);
-            this.stopExecutionOutput();
+            this.stopExecutionOutput(finish);
           } else {
             this.audioProvider.playDefaultError();
             let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
@@ -821,70 +885,76 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     }
   }
 
-  private stopExecutionOutput() {
+  private stopExecutionOutput(finish?: boolean, forceWithIncidence?:boolean) {
     this.sorterExecutionService
-      .postStopExecuteColor()
+      .postStopExecuteColor(forceWithIncidence)
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
 
-        let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
-          color: this.sorterProvider.colorSelected.id,
-          type: 2
-        };
-        if (paramsRequest) {
-          this.sorterExecutionService.postExecuteColor(paramsRequest).subscribe(data => {
+        if(!finish){
+          let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
+            color: this.sorterProvider.colorSelected.id,
+            type: 2
+          };
+          if (paramsRequest) {
+            this.sorterExecutionService.postExecuteColor(paramsRequest).subscribe(data => {
 
-            let idWayToWork = null;
-            if (this.waySelectedToEmptying) {
-              idWayToWork = this.waySelectedToEmptying.id;
-            }
+              let idWayToWork = null;
+              if (this.waySelectedToEmptying) {
+                idWayToWork = this.waySelectedToEmptying.id;
+              }
 
-            let lastWarehouse: number;
-            if (this.sorterProvider.infoSorterOutputOperation) {
-              lastWarehouse = this.sorterProvider.infoSorterOutputOperation.destinyWarehouse.id;
-            }
+              let lastWarehouse: number;
+              if (this.sorterProvider.infoSorterOutputOperation) {
+                lastWarehouse = this.sorterProvider.infoSorterOutputOperation.destinyWarehouse.id;
+              }
 
-            this.sorterOutputService.getNewProcessWay(idWayToWork, lastWarehouse)
-              .then(async (res2: SorterOutputModel.ResponseNewProcessWay) => {
+              this.sorterOutputService.getNewProcessWay(idWayToWork, lastWarehouse)
+                .then(async (res2: SorterOutputModel.ResponseNewProcessWay) => {
 
-                if (res2.code === 201) {
-                  this.inputValue = null;
-                  this.processStarted = null;
-                  this.isFirstProductScanned = false;
-                  this.wrongCodeScanned = false;
-                  this.packingIsFull = false;
+                  if (res2.code === 201) {
+                    this.inputValue = null;
+                    this.processStarted = null;
+                    this.isFirstProductScanned = false;
+                    this.wrongCodeScanned = false;
+                    this.packingIsFull = false;
 
-                  let id = this.sorterProvider.id_wareHouse;
+                    let id = this.sorterProvider.id_wareHouse;
 
-                  let newProcessWay = res2.data;
-                  this.infoSorterOperation = {
-                    destinyWarehouse: {
-                      id: newProcessWay.warehouse.id,
-                      name: newProcessWay.warehouse.name,
-                      reference: newProcessWay.warehouse.reference
-                    },
-                    wayId: newProcessWay.way.zoneWay.ways.id
-                  };
+                    let newProcessWay = res2.data;
+                    this.infoSorterOperation = {
+                      destinyWarehouse: {
+                        id: newProcessWay.warehouse.id,
+                        name: newProcessWay.warehouse.name,
+                        reference: newProcessWay.warehouse.reference
+                      },
+                      wayId: newProcessWay.way.zoneWay.ways.id
+                    };
 
-                  if(this.ULTIMA_JAULA || this.ULTIMA_JAULA !== null){
-                    this.assignPackingToProcess(this.ULTIMA_JAULA);
+                    if(this.ULTIMA_JAULA || this.ULTIMA_JAULA !== null){
+                      this.assignPackingToProcess(this.ULTIMA_JAULA);
+                    }
+                    this.focusToInput();
+                  } else {
+                    let errorMessage = 'Ha ocurrido un error al intentar obtener la nueva calle donde trabajar.';
+                    if (res2.errors) {
+                      errorMessage = res2.errors;
+                    }
+                    await this.intermediaryService.presentToastError(errorMessage);
+                    this.location.back();
                   }
-                  this.focusToInput();
-                } else {
-                  let errorMessage = 'Ha ocurrido un error al intentar obtener la nueva calle donde trabajar.';
-                  if (res2.errors) {
-                    errorMessage = res2.errors;
-                  }
-                  await this.intermediaryService.presentToastError(errorMessage);
-                  this.location.back();
-                }
 
-              }).catch(error => { this.location.back() })
-          })
+                }).catch(error => { this.location.back() })
+            })
+          }
         }
 
         await this.intermediaryService.dismissLoading();
         this.sorterProvider.colorActiveForUser = null;
         this.checkByWrongCode = true;
+        if(finish){
+            this.sorterProvider.processActiveForUser = null;
+            this.router.navigate(['sorter/output']);
+        }
       }, async (error: HttpRequestModel.Error) => {
         await this.intermediaryService.dismissLoading();
         let errorMessage = 'Ha ocurrido un error al intentar finalizar el proceso.';
@@ -900,5 +970,70 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     if(event && event.target && event.target.id){
       this.keyboardService.setInputFocused(event.target.id);
     }
+  }
+
+  private async presentModalCancelOutput() {
+    const previousMessage = this.messageGuide;
+    let buttonsAlert: any = [{
+      text: "Sí",
+      handler: ()=>{
+        this.stopButtonPressed = true;
+        this.hideLeftButtonFooter = true;
+        this.hideRightButtonFooter = true;
+        this.messageGuide = 'ESCANEAR 1º ARTÍCULO';
+        this.focusToInput();
+      }
+    }, {
+      text: "No",
+      handler: async ()=>{
+        await this.emptyWay(true);
+      }
+    }];
+
+    const alert = await this.alertController.create({
+      header: "Detener Salida Sorter",
+      message: "¿Quedan artículos en la calle? <br> Si quedan artículos en la calle tendrá que <b>escanear el primer artículo</b> de la calle para saber que artículos se añadieron a la jaula.",
+      buttons: buttonsAlert
+    });
+    alert.onDidDismiss().then((data) => {
+      if(!data){
+        this.stopButtonPressed = false;
+        this.hideLeftButtonFooter = false;
+        this.hideRightButtonFooter = false;
+        this.messageGuide = previousMessage;
+        this.focusToInput();
+      }
+    });
+    return await alert.present();
+  }
+
+  private async presentModalCancelOutputWithIncidence() {
+    const previousMessage = this.messageGuide;
+    let buttonsAlert: any = [{
+      text: "Sí",
+      handler: ()=>{
+        this.stopExecutionOutput(true, true);
+      }
+    }, {
+      text: "No",
+      handler: async ()=>{
+        await this.emptyWay(true);
+      }
+    }];
+
+    const alert = await this.alertController.create({
+      header: "Detener Salida Sorter con incidencias",
+      message: "¿Quedan artículos en la calle? <br>Si quedan artículos en la calle, se detendrá el proceso de salida y la <b>calle seguirá indicada con incidencias</b> para una revisión posterior.",
+      buttons: buttonsAlert
+    });
+    alert.onDidDismiss().then((data) => {
+      if(!data){
+        this.hideLeftButtonFooter = false;
+        this.hideRightButtonFooter = false;
+        this.messageGuide = previousMessage;
+        this.focusToInput();
+      }
+    });
+    return await alert.present();
   }
 }

@@ -78,12 +78,20 @@ const routes: Routes = [
       name: 'Registro horario'
     }
   },
-  {
+/*  {
     path: 'user-time',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
     data: {
       name: 'Registro horario'
+    }
+  },*/
+  {
+    path: 'welcome',
+    canActivate: [AuthGuard],
+    loadChildren: './welcome/welcome.module#WelcomePageModule',
+    data: {
+      name: 'Bienvenido'
     }
   },
   {
@@ -213,6 +221,22 @@ const routes: Routes = [
     }
   },
   {
+    path: 'supplier-conditions',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/supplier-conditions/supplier-conditions.module#SupplierConditionsModule',
+    data: {
+      name: 'Condiciones de Proveedores'
+    }
+  },
+  {
+    path: 'return-types',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/return-types/return-types.module#ReturnTypesModule',
+    data: {
+      name: 'Tipos de Devoluciones'
+    }
+  },
+  {
     path: 'returns-list',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/returns-list/returns-list.module#ReturnsListModule',
@@ -221,11 +245,35 @@ const routes: Routes = [
     }
   },
   {
+    path: 'returns-historic',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/returns-historic/returns-historic.module#ReturnsHistoricModule',
+    data: {
+      name: 'Listado de Histórico de Devoluciones'
+    }
+  },
+  {
     path: 'returns-list-products',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/returns-list-products/returns-list-products.module#ReturnsListProductsModule',
     data: {
       name: 'Lista de Productos Devueltos'
+    }
+  },
+  {
+    path: 'return-tracking-list',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/return-tracking-list/return-tracking-list.module#ReturnTrackingListModule',
+    data: {
+      name: 'Listado de Seguimiento de Devoluciones'
+    }
+  },
+  {
+    path: 'new-return',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/new-return/new-return.module#NewReturnModule',
+    data: {
+      name: 'Crear Nueva Devolución'
     }
   },
   {
@@ -257,7 +305,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/audits/audits.module#AuditsModule',
     data: {
-      name: 'Auditorias'
+      name: 'Control de embalajes'
     }
   },
   {
@@ -300,6 +348,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/global-variables/global-variables.module#GlobalVariablesModule',
     data: {
       name: 'Variables globales'
+    }
+  },
+  {
+    path: 'workwave-config-menu',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/workwave-config-menu/workwave-config-menu.module#WorkwaveConfigMenuModule',
+    data: {
+      name: 'Configuración de olas de trabajo'
     }
   },
   {
@@ -507,6 +563,30 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/unlock-expeditions/unlock-expeditions.module#UnlockExpeditionsModule',
     data: {
       name: 'Desbloquear'
+    }
+  },
+  {
+    path: 'transport-orders',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/transports-orders/transports-orders.module#TransportsOrdersModule',
+    data: {
+      name: 'Ordenes de Transporte Opl'
+    }
+  },
+  {
+    path: 'transports',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/transports-expeditions/transports-expeditions.module#TransportsExpeditionsModule',
+    data:{
+      name:'Transportes de expediciones'
+    }
+  },
+  {
+    path: 'expedition-inside',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/expeditions-inside/expedition-inside.module#ExpeditionInsideModule',
+    data:{
+      name:'Transportes de expediciones'
     }
   },
   {

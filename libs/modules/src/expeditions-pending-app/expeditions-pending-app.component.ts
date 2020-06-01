@@ -8,6 +8,8 @@ import {ModalController} from "@ionic/angular";
 import {FormExpeditionProviderComponent} from "./components/form-expedition-provider/form-expedition-provider.component";
 import {InfoExpeditionsComponent} from "./modals/info-expeditions/info-expeditions.component";
 import {ReceptionAvelonProvider} from "../../../services/src/providers/reception-avelon/reception-avelon.provider";
+import {PrinterService} from "../../../services/src/lib/printer/printer.service";
+import {environment} from '../../../services/src/environments/environment';
 
 @Component({
   selector: 'suite-expeditions-pending-app',
@@ -19,8 +21,8 @@ export class ExpeditionsPendingAppComponent implements OnInit {
   @ViewChild(FormExpeditionInfoComponent) formExpeditionInfo: FormExpeditionInfoComponent;
   @ViewChild(FormExpeditionProviderComponent) formExpeditionProvider: FormExpeditionProviderComponent;
 
-  private lastExepeditionQueried = {reference: null, providerId: null};
   isReceptionWithoutOrder: boolean = false;
+  public checkingResumeExpeditionInProcess: boolean = false;
 
   constructor(
     private router: Router,
@@ -28,6 +30,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
     private modalController: ModalController,
     private receptionsAvelonService: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
+    private printerService: PrinterService,
     private receptionAvelonProvider: ReceptionAvelonProvider
   ) {}
 
@@ -35,12 +38,28 @@ export class ExpeditionsPendingAppComponent implements OnInit {
     this.isReceptionWithoutOrder = !!(this.activatedRoute.snapshot && this.activatedRoute.snapshot.routeConfig && this.activatedRoute.snapshot.routeConfig.path && this.activatedRoute.snapshot.routeConfig.path == 'free');
   }
 
-  public searchExpeditions(data) {
-    if (data.number_expedition) {
-      this.checkExpedition(data.number_expedition);
-    } else if (data.provider_expedition) {
-      this.listByProvider(data.provider_expedition.id);
+  private checkPrinterConnection(successCallback) {
+    if (environment.printerRequired) {
+      this.printerService.checkConnection().then(success => {
+        successCallback();
+      }, async fail => {
+        await this.intermediaryService.presentWarning('No se detecta conexión con la impresora, no puede continuar.', null);
+      }).catch(async error => {
+        await this.intermediaryService.presentWarning('No se detecta conexión con la impresora, no puede continuar.', null);
+      });
+    }else{
+      successCallback();
     }
+  }
+
+  public searchExpeditions(data) {
+    this.checkPrinterConnection(()=>{
+      if (data.number_expedition) {
+        this.checkExpedition(data.number_expedition);
+      } else if (data.provider_expedition) {
+        this.listByProvider(data.provider_expedition.id);
+      }
+    });
   }
 
   // check if the expedition selected by reference is available and get her data
@@ -61,18 +80,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
             modal.onDidDismiss().then(response => {
               if (response.data && response.data.reception && response.data.expedition) {
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
-                this.lastExepeditionQueried = {
-                  reference: expedition.reference,
-                  providerId: expedition.providerId
-                };
-
-                this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
-                this.receptionAvelonProvider.expedition = expedition;
-                const routeSections = ['receptions-avelon', 'app'];
-                if (this.isReceptionWithoutOrder) {
-                  routeSections.push('free');
-                }
-                this.router.navigate(routeSections);
+                this.startReception(expedition);
               }
             });
             modal.present();
@@ -119,18 +127,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
             modal.onDidDismiss().then(response => {
               if (response.data && response.data.reception && response.data.expedition) {
                 const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
-                this.lastExepeditionQueried = {
-                  reference: expedition.reference,
-                  providerId: expedition.providerId
-                };
-
-                this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
-                this.receptionAvelonProvider.expedition = expedition;
-                const routeSections = ['receptions-avelon', 'app'];
-                if (this.isReceptionWithoutOrder) {
-                  routeSections.push('free');
-                }
-                this.router.navigate(routeSections);
+                this.startReception(expedition);
               }
             });
             modal.present();
@@ -156,5 +153,60 @@ export class ExpeditionsPendingAppComponent implements OnInit {
         this.intermediaryService.presentToastError(errorMessage);
         this.formExpeditionProvider.checkingExpeditionInProcess = false;
       });
+  }
+
+  public resumeLastExpedition(lastExpeditionReference: string) {
+    this.checkPrinterConnection(()=>{
+      this.formExpeditionInfo.checkingResumeExpeditionInProcess = true;
+      this.receptionsAvelonService
+        .checkExpeditionByReference(lastExpeditionReference)
+        .subscribe(res => {
+          if (res.code == 200) {
+            if (res.data.expedition_available && res.data.expedition) {
+              this.startReception(res.data.expedition);
+              this.formExpeditionInfo.checkingResumeExpeditionInProcess = false;
+            } else {
+              this.intermediaryService.presentWarning(`No hay ninguna expedición con referencia ${res.data.expedition_reference_queried} pendiente de recepción.`, null);
+              this.formExpeditionInfo.checkingResumeExpeditionInProcess = false;
+            }
+          } else {
+            let errorMessage = 'Ha ocurrido un error al intentar continuar con la expedición indicada.';
+            if (res.error && res.error.errors) {
+              errorMessage = res.error.errors;
+            }
+            this.intermediaryService.presentToastError(errorMessage);
+            this.formExpeditionInfo.checkingResumeExpeditionInProcess = false;
+          }
+        }, (e) => {
+          let errorMessage = 'Ha ocurrido un error al intentar continuar con la expedición indicada.';
+          if (e.error && e.error.errors) {
+            errorMessage = e.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+          this.formExpeditionInfo.checkingResumeExpeditionInProcess = false;
+        });
+    });
+  }
+
+  private startReception(expedition) {
+    const lastExepeditionQueried = {
+      reference: expedition.reference,
+      providerId: expedition.providerId
+    };
+
+    this.formExpeditionInfo.lastExpeditionQueried = lastExepeditionQueried;
+    this.receptionAvelonProvider.expeditionData = lastExepeditionQueried;
+    this.receptionAvelonProvider.expedition = expedition;
+    const routeSections = ['receptions-avelon', 'app'];
+    if (this.isReceptionWithoutOrder) {
+      routeSections.push('free');
+    }
+
+    setTimeout(() => {
+      this.formExpeditionInfo.initForm();
+      this.formExpeditionProvider.initForm();
+    }, 0);
+
+    this.router.navigate(routeSections);
   }
 }

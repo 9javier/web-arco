@@ -4,6 +4,9 @@ import { RequestsProvider } from "../../../providers/requests/requests.provider"
 import { HttpRequestModel } from "../../../models/endpoints/HttpRequest";
 import { SorterOutputModel } from "../../../models/endpoints/SorterOutput";
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +31,8 @@ export class SorterOutputService {
   private postChangeWayManualUrl: string = environment.apiSorter + "/sorters/change-ways-manual-status";
 
   constructor(
-    private requestsProvider: RequestsProvider
+    private requestsProvider: RequestsProvider,
+    private http: HttpClient
   ) { }
 
   getNewProcessWay(idWaySelected: number, idWalOldSelected?: number): Promise<HttpRequestModel.Response> {
@@ -60,6 +64,12 @@ export class SorterOutputService {
 
   postScanProductPutInPacking(params: SorterOutputModel.ParamsScanProductPutInPacking): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postScanProductPutInPackingUrl, params);
+  }
+
+  postScanProductPutInPackings(body : SorterOutputModel.ParamsScanProductPutInPacking):Observable<any>{
+    return this.http.post(this.postScanProductPutInPackingUrl,body).pipe(map((response:any)=>{
+      return response.data
+    }));
   }
 
   postPackingFull(params: SorterOutputModel.ParamsPackingFull): Promise<HttpRequestModel.Response> {

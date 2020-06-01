@@ -1,10 +1,13 @@
 export const environment = {
   production: true,
-  apiBasePhoto: 'http://localhost:8081',
+  printerRequired: true,
+  apiBasePhoto: 'http://conexion1.globalretail.es:57354',
   apiBase: 'http://conexion1.globalretail.es:57354/api',
   apiSorter: 'http://conexion1.globalretail.es:57354/api',
   urlBase: 'http://conexion1.globalretail.es:57354',
   uploadFiles: 'http://conexion1.globalretail.es:57354/api/upload-files',
+  downloadFiles: 'http://conexion1.globalretail.es:57354',
+  downloadPdf: 'http://conexion1.globalretail.es:57354',
   urlDownloadApp: 'https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o',
   sga: {
     client_id: "krack-client-sga",

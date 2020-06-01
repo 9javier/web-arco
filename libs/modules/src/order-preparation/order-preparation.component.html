@@ -63,6 +63,7 @@
                     <div *ngFor="let expediton of dataSource">
                         <ion-icon class="close-icon" name="checkmark" color="success"></ion-icon>
                         <div class="item-expedition">
+                            
                             <ion-label class="text-title">Pedido MARKET </ion-label>
                             <ion-label class="text-title"> Nº {{ expediton.expedition.barcode }}</ion-label>
                         </div>
@@ -77,7 +78,7 @@
             
                         <div class="item">
                             <ion-button *ngIf="expeditButton == false" color="danger" (click)="scanner()">Escanear etiqueta de envio {{ statusScanner() }}</ion-button>
-                            <ion-button *ngIf="expeditButton == true" (click)="return()">Consultar nueva expedición</ion-button>
+                            <ion-button *ngIf="expeditButton == true" (click)="returnToExpedition()">Consultar nueva expedición</ion-button>
                         </div>
                      </div>
                 </div>
@@ -109,7 +110,6 @@
 </ion-content>
 <ion-footer class="footer-label-print" *ngIf="blockedOrder == true">
     <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-       <!-- <ion-fab-button  matTooltip="Ver alertas" matTooltipClass="tooltip" (click)="showAlerts()"><i class="material-icons">notification_important</i></ion-fab-button>-->
         <ion-fab-button  matTooltip="Refrescar" matTooltipClass="tooltip" (click)="printLabels()"><i class="material-icons">refresh</i></ion-fab-button>
     </ion-fab>
 </ion-footer>
@@ -137,3 +137,28 @@
         <ion-fab-button  matTooltip="Refrescar" matTooltipClass="tooltip" (click)="printLabels()"><i class="material-icons">refresh</i></ion-fab-button>
     </ion-fab>
 </ion-footer>
+
+<!--Avelon Failed -->
+<ion-content *ngIf="avelonFailed == true">
+    <ion-grid class="max-height">
+        <ion-row justify-content-center align-items-center class="max-height">
+            <ion-col>
+                <div class="wrapp-center">
+                    <div class="blocked">
+                        <ion-label class="text-blocked">El SERVICIO DE AVELON NO ESTÁ DISPONIBLE</ion-label><br>
+                    </div>
+                    <ion-label class="text-title" >Por favor llama a central.</ion-label>
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    
+</ion-content>
+<ion-footer class="footer-label-print" *ngIf="avelonFailed == true">
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+        <ion-fab-button  matTooltip="Refrescar" matTooltipClass="tooltip" (click)="printLabels()"><i class="material-icons">refresh</i></ion-fab-button>
+    </ion-fab>
+</ion-footer>
+<ion-content *ngIf="viewInput == true">
+    <suite-input-codes [id]="id" (state)="showExpe($event)"></suite-input-codes>
+</ion-content>

@@ -3,10 +3,18 @@ import { Component, OnInit, ViewChild,
 import { Router } from '@angular/router';
 import { LabelsService } from '@suite/services';
 import { IntermediaryService } from '@suite/services';
+import { ExpeditionService } from '@suite/services';
 import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
 import {Subscription} from "rxjs";
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
+import { saveAs } from "file-saver";
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { environment } from '../../../services/src/environments/environment';
+import { Downloader,DownloadRequest,NotificationVisibility } from '@ionic-native/downloader/ngx';
+
+
 
 @Component({
   selector: 'order-preparation',
@@ -22,29 +30,63 @@ export class OrderPreparationComponent implements OnInit {
   blockedOrder: boolean = false;
   numScanner:number = 0;
   numAllScanner: number =0;
-  goScanner:boolean = false;
   expeditButton:boolean = false;
   numPackages:number = 0; 
   expeditionNull: boolean = false;
-  nScanned:number;
+  nScanned:number =0;
   expeditionId:number = 0;
+  avelonFailed:boolean = false;
+  expeId:number =0;
+  viewInput:boolean = false;
+  id=0;
+  errorLabel:boolean = false;
+  scann:boolean = false;
+  
+  private isInternal:boolean = false;
+  private orderId:number;
+
   constructor(
     private labelsService: LabelsService,
     private router: Router,
     private intermediaryService: IntermediaryService,
+    private expeditionService: ExpeditionService,
     private toolbarProvider: ToolbarProvider,
-    private routeParams: ActivatedRoute
-  ) { }
+    private routeParams: ActivatedRoute,
+    private transfer: FileTransfer,
+    private file:File,
+    private downloader:Downloader,
 
+  ) { }
+   
   ngOnInit() {
-    this.toolbarProvider.currentPage.next("Generar etiquetas de envio"); 
+    this.toolbarProvider.currentPage.next("Generar etiquetas de envio");
+    this.initViews();
+    this.initNumsScanner();
+  }
+
+  initViews(){
+    
+
     if(this.routeParams.snapshot.params.id != undefined){
+      
+      if(this.routeParams.snapshot.params.isInternal != undefined){
+        this.isInternal = this.routeParams.snapshot.params.isInternal;
+      }
+      
+      if(this.routeParams.snapshot.params.orderId != undefined){
+        this.orderId = this.routeParams.snapshot.params.orderId;
+      }
+      
+      this.expeId =this.routeParams.snapshot.params.id;      
       this.nScanned = this.routeParams.snapshot.params.id;
-      console.log(this.nScanned);
-      let data ={expeditionId:this.nScanned, update:true };
+      
+      let data ={expeditionId:this.nScanned, update:true, isInternal:this.isInternal, orderId:this.orderId };
+      
+      this.showExpedition();
       this.getExpeditionStatus(data);
     }
-    this.initNumsScanner();  
+
+    
   }
 
   initNumsScanner(){
@@ -66,20 +108,28 @@ export class OrderPreparationComponent implements OnInit {
      this.labelsService.getIndexLabels().subscribe(result =>{
      let expedition = result[0];
         if(result.length >0){
-           // this.intermediaryService.dismissLoading();
+            this.expeId = expedition.id;
             let data = { expeditionId: expedition.id, update: true}; 
             this.getTransportStatus(data);
         }else{
+            this.intermediaryService.dismissLoading();
             this.showExpeditionNull();
         }
-      
-      //  this.intermediaryService.dismissLoading();
     },
     async (err) => {
       this.intermediaryService.dismissLoading();
-      this.showBlockedOrder();
-      console.log(err);
+      if(err.error.errors == "Expeditions Locked"){
+        this.showBlockedOrder();
+      }else{
+        this.showAvelonFail();
+      }
     });
+  }
+
+  showAvelonFail(){
+    this.close();
+    this.avelonFailed =true;
+    
   }
 
   showErrorExpedition(){
@@ -90,8 +140,15 @@ export class OrderPreparationComponent implements OnInit {
 
   scanner(){
     if(this.numScanner != 0){
-      this.labelsService.numScanner(this.numScanner);
-      this.router.navigateByUrl('/order-preparation/code/'+this.expeditionId);
+      if(this.nScanned != 0){
+        this.id = this.expeId;
+        this.labelsService.numScanner(this.numScanner);
+        this.showInputScanner();
+      }else{
+        this.id = this.expeId;
+        this.labelsService.numScanner(this.numScanner);
+        this.showInputScanner();
+      } 
     }
   }
 
@@ -103,11 +160,9 @@ export class OrderPreparationComponent implements OnInit {
 
   async getNumScann() {
     this.labelsService.getData().subscribe((resp: any) => {
-      console.log(resp);
       this.numScanner = resp;
       if(resp == 0){
-        console.log("finish scanner");
-        this.expeditButton =true;
+        this.expeditButton = true;
       }
     })
     
@@ -115,15 +170,12 @@ export class OrderPreparationComponent implements OnInit {
   
   async getAllNumScann() {
     this.labelsService.getNumAllScanner().subscribe((resp: any) => {
-      console.log(resp);
-      this.numAllScanner = resp;
-    })
-    
+      this.numAllScanner = resp;     
+    })    
   }
 
   async getTransportStatus(body){
     let This = this;
-    //This.intermediaryService.presentLoading("cargando expedición...");
     await this.labelsService.getTransportStatus(body).subscribe(result =>{
       let expedition = result;
       this.dataSource=[result];
@@ -142,38 +194,95 @@ export class OrderPreparationComponent implements OnInit {
       this.sendServicePrintPack(expedition.expedition.id);
     },
     async (err) => {
-      console.log(err);
       This.intermediaryService.dismissLoading();
+      this.intermediaryService.dismissLoading();
+      this.sendServicePrintPack(this.expeId);
     });
   }
   
   async getExpeditionStatus(body){
-   await this.labelsService.getTransportStatus(body).subscribe(result =>{
-      let expedition = result;
-      this.dataSource=[result]
-      this.numPackages = expedition.expedition.packages.length;
-      this.numAllScanner = this.numPackages;
-      this.numScanner = this.numPackages;
-      this.expeditionId = expedition.expedition.id;
-      this.labelsService.setNumAllScanner(this.numAllScanner);
-      this.intermediaryService.dismissLoading();
-      this.showExpedition();
-    this.sendServicePrintPack(expedition.expedition.id); 
-    },
-    async (err) => {
-      console.log(err);
-    });
-    
+    this.intermediaryService.presentLoading("cargando expedición...");
+    await this.labelsService.getTransportStatus(body).subscribe(result =>{
+        this.intermediaryService.dismissLoading();
+        let expedition = result;
+        this.dataSource=[result]
+        this.numPackages = expedition.expedition.packages.length;
+        this.numAllScanner = this.numPackages;
+        this.numScanner = this.numPackages;
+        this.expeditionId = expedition.expedition.id;
+        this.labelsService.setNumAllScanner(this.numAllScanner);
+        this.showExpedition();
+        this.sendServicePrintPack(this.expeId); 
+      },
+      async (err) => {
+        this.intermediaryService.dismissLoading();
+        this.sendServicePrintPack(this.expeId);
+      });    
   }
-  
- async sendServicePrintPack(id){
+
+  async sendServicePrintPack(id){
    let body = {expeditionId:id }
-  this.labelsService.postServicePrintPack(body).subscribe(result =>{
+   await this.labelsService.postServicePrintPack(body).subscribe(result =>{
+    let isMobileApp = typeof (<any>window).cordova !== "undefined";
+    if(isMobileApp == true){
+      this.intermediaryService.presentLoading("Descargando archivo...");
+      for(let i=0;i < result.length;i++){
+        let urlDownload = environment.downloadPdf+'/'+result[i];
+        let urlname = urlDownload.split('/');
+        let date =  Date.now();
+        let name = date+urlname[urlname.length - 1];
+        if(i == (result.length-1)){
+          this.downloadUrl(urlDownload,name,true);
+        }else{
+          this.downloadUrl(urlDownload,name,false);
+        }
+  
+      }
+    }
+      
   },
   async (err) => {
     console.log(err);
+    this.intermediaryService.presentToastError("No se pudo descargar el archivo");
   });
   }
+
+ async downloadUrl(urlDownload,name,isFinish){
+   
+    let request = this.notificationDownload(urlDownload,name);
+      await this.downloader.download(request).then((location: string) =>{
+          if(isFinish == true){
+            this.intermediaryService.dismissLoading();
+            this.intermediaryService.presentToastSuccess("Descarga exitosa...");
+          }
+          }).catch((error: any) => {
+            if(isFinish == true){
+              this.intermediaryService.dismissLoading();
+              this.intermediaryService.presentToastError("Error al descargar etiqueta");
+            }
+          });
+  }
+
+
+
+  notificationDownload(url,name):DownloadRequest{
+    let request: DownloadRequest = {
+      uri: url,
+      title: 'Etiqueta de expedición',
+      description: '',
+      mimeType: '',
+      visibleInDownloadsUi: true,
+      notificationVisibility: NotificationVisibility.VisibleNotifyCompleted,
+      destinationInExternalFilesDir: {
+          dirType: 'Downloads',
+          subPath: name
+      }
+  };
+  return request;
+  }
+
+  
+
 
   statusScanner(){
     let numScanned = (this.numAllScanner - this.numScanner)
@@ -188,6 +297,9 @@ export class OrderPreparationComponent implements OnInit {
   }
 
   showAlerts(){
+    this.close();
+    this.initPage = true;
+    this.cleanAll();
     this.router.navigateByUrl('/list-alerts');
   }
 
@@ -198,12 +310,44 @@ export class OrderPreparationComponent implements OnInit {
     this.blockedOrder = false;
     this.expeditButton = false;
     this.expeditionNull = false;
+    this.avelonFailed = false;
+    this.viewInput = false;
+  }
+
+  cleanAll(){
+    this.dataSource = null;
+    this.expeId=0;
+    this.numScanner= 0;
+    this.numAllScanner=0;
+    this.expeditionId = 0;
+    this.numPackages=0;
   }
 
   return(){
     this.close();
     this.initPage = true;
+    this.cleanAll();
   }
 
+  returnToExpedition(){
+    this.close();
+    this.initPage = true;
+    this.cleanAll();
+    this.router.navigateByUrl('/order-preparation');
+  }
+
+  ngOnDestroy(){
+    this.close();
+    this.cleanAll();
+  }
+
+  showInputScanner(){
+    this.close();
+    this.viewInput = true;
+  }
+
+  showExpe(event){
+    this.showExpedition();
+  }
 
 }

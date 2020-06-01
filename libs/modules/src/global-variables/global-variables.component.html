@@ -2,9 +2,21 @@
   <div class="main-element-global-variables">
     <div class="scroll-list">
       <ion-item *ngFor="let variable of listVariables" class="variable-item" [ngClass]="variable.error ? 'wrong-variable' : ''">
-        <ion-label>{{ getTypeById(variable.type) }}</ion-label>
-        <i class="material-icons" *ngIf="variable.error">warning</i>
-        <ion-input [(ngModel)]="variable.value" placeholder="Valor"></ion-input>
+        <ion-item class="tooltip" matTooltip="{{ getTooltipById(variable.type) }}" matTooltipClass="tooltip" >
+          <ion-label>[{{ getGeneralTypeById(variable.type) }}] {{ getTypeById(variable.type) }}</ion-label>
+          <i class="material-icons" *ngIf="variable.error">warning</i>
+          <ion-button class="users" *ngIf="getTypeById(variable.type)=='Usuarios que generan reposiciones'" matTooltip="Usuarios Reposiciones" matTooltipClass="tooltip" matTooltipPosition="left" (click)="usersReplenishment()">
+            <ion-icon name="people"></ion-icon>
+          </ion-button>
+          <ion-select class="reasons" interface="popover" *ngIf="getTypeById(variable.type)=='Motivo de cancelación de líneas de envío sin stock'"
+                      [(ngModel)]="variable.value" placeholder="Valor">
+            <ion-select-option *ngFor="let reason of listReasons" [value]="''+reason.reference">{{reason.name}}</ion-select-option>
+          </ion-select>
+          <ion-input *ngIf="getTypeById(variable.type)=='Usuarios que generan reposiciones'" class="employees" placeholder="{{employeesToShow}}" readonly (click)="usersReplenishment()"></ion-input>
+          <ion-input *ngIf="getTypeById(variable.type)!='Usuarios que generan reposiciones' &&
+                            getTypeById(variable.type)!='Motivo de cancelación de líneas de envío sin stock'"
+                     [(ngModel)]="variable.value" placeholder="Valor"></ion-input>
+        </ion-item>
       </ion-item>
     </div>
   </div>
@@ -13,5 +25,10 @@
 <ion-fab vertical="bottom" horizontal="end">
   <ion-fab-button matTooltip="Guardar Variables globales" matTooltipClass="tooltip" (click)="updateVariables()">
     <ion-icon name="save"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<ion-fab vertical="bottom" horizontal="start">
+  <ion-fab-button matTooltip="Enviar comandos configuración a impresora Zebra" matTooltipClass="tooltip" (click)="sendZebraCommands()">
+    <ion-icon name="print"></ion-icon>
   </ion-fab-button>
 </ion-fab>

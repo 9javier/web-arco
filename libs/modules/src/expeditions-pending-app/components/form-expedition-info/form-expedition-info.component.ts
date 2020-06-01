@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, V
 import {FormControl, FormGroup} from "@angular/forms";
 import {Subscription} from "rxjs";
 import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
+import {LocalStorageProvider} from "../../../../../services/src/providers/local-storage/local-storage.provider";
 
 @Component({
   selector: 'form-expedition-info',
@@ -14,19 +15,32 @@ export class FormExpeditionInfoComponent implements OnInit, OnDestroy {
 
   @Input() isReceptionWithoutOrder: boolean = false;
   @Output() checkExpedition: EventEmitter<any> = new EventEmitter();
+  @Output() resumeLastExpedition: EventEmitter<any> = new EventEmitter();
 
   public expeditionForm: FormGroup = null;
   private subscriptionToFormChanges: Subscription = null;
   public checkingExpeditionInProcess: boolean = false;
+  public checkingResumeExpeditionInProcess: boolean = false;
+  public lastExpeditionQueried = {reference: null, providerId: null};
 
   constructor(
     private keyboardService: KeyboardService,
+    private localStorageProvider: LocalStorageProvider
   ) {
     this.initForm();
   }
 
   ngOnInit() {
     this.focusInExpeditionNumberInput();
+    this.localStorageProvider.get('last_expedition').then(data => {
+      this.lastExpeditionQueried = {reference: null, providerId: null};
+      if (data) {
+        const dataParsed = JSON.parse(String(data));
+        if (dataParsed) {
+          this.lastExpeditionQueried = dataParsed;
+        }
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -43,6 +57,10 @@ export class FormExpeditionInfoComponent implements OnInit, OnDestroy {
 
   public focusInExpeditionNumberInput() {
     setTimeout(() => this.inputExpeditionNumber.nativeElement.focus(), 0.5 * 1000);
+  }
+
+  public resumeLast() {
+    this.resumeLastExpedition.next(this.lastExpeditionQueried.reference);
   }
 
   public check() {

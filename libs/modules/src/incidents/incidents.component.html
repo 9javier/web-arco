@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content scrollY="true">
   <form [formGroup]="incidenceForm">
     <ng-container *ngIf="!readed;else read">
       <scanner-manual (newValue)=newValue($event) placeholder="PRODUCTO"></scanner-manual>
@@ -12,9 +12,9 @@
       <ion-item>
         <ion-label class="label-text">Producto:</ion-label>
         <ion-input class="input-barcode" id="input-product-reference" formControlName="productReference" type="text" readonly
-          style="text-align: right;"></ion-input><br>
+                   style="text-align: right;"></ion-input><br>
         <ion-input *ngIf="barcodeRoute!=null" class="input-barcode" formControlName="productReference" type="text"
-          readonly style="text-align: right;">{{barcode}}</ion-input><br>
+                   readonly style="text-align: right;">{{barcode}}</ion-input><br>
       </ion-item>
       <ion-item>
         <ion-label class="label-text">Fecha</ion-label>
@@ -22,38 +22,38 @@
         </ion-datetime>
         <!--<ion-input *ngIf="barcodeRoute!=null" class="input-barcode" type="text" readonly style="text-align: right;" [value]="this.dateNow"></ion-input><br>-->
       </ion-item>
-      <ion-item>
+      <ion-item (click)="clickSelectPopover($event, 'status')" [disabled]="barcodeRoute!=null">
         <ion-label class="label-text">Estado de gestion</ion-label>
-        <ion-select *ngIf="barcodeRoute==null" (ionChange)="gestionChange($event)" placeholder="Selecciona"
-          [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let item of allDefectType" [value]="item.id">{{item.name}}</ion-select-option>
-        </ion-select>
-        <ion-select *ngIf="barcodeRoute!=null" placeholder="Selecciona" formControlName="gestionState" #typeID
-          (ionChange)="onChange(typeID.value); gestionChange($event)">
-          <ion-select-option *ngFor="let item of types" [value]="item.id || 01">{{item.name}}</ion-select-option>
-        </ion-select>
+        <ion-label class="content-select" style="text-align: center" *ngIf="!defectStatus"><font color="#808080">Selecciona</font> <i></i></ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="defectStatus">{{ defectStatus.name }} <i></i></ion-label>
       </ion-item>
 
-      <ion-item>
-        <ion-label class="ion-text-capitalize label-text">defecto</ion-label>
-        <ion-select (ionChange)="defectChange($event)" placeholder="Selecciona" formControlName="defectTypeChildId"
-          [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let defect of defects" [value]="defect.id">
-            {{defect.name +" - "+ defect.defectTypeParent.name}}</ion-select-option>
-        </ion-select>
+      <ion-item (click)="clickSelectPopover($event, 'typeP')" [disabled]="barcodeRoute!=null">
+        <ion-label class="ion-text-capitalize label-text">Defecto</ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="!defectTypeP"><font color="#808080">Selecciona</font> <i></i></ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="defectTypeP">{{ defectTypeP.name }} <i></i></ion-label>
       </ion-item>
-      <ion-item>
+
+      <ion-item (click)="clickSelectPopover($event, 'typeC')" [disabled]="defectTypeP==null">
+        <ion-label class="ion-text-capitalize label-text">Subdefecto</ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="!defectTypeC"><font color="#808080">Selecciona</font> <i></i></ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="defectTypeC">{{ defectTypeC.name }} <i></i></ion-label>
+      </ion-item>
+
+      <ion-item (click)="clickSelectPopover($event, 'zoneP')" [disabled]="barcodeRoute!=null">
         <ion-label class="ion-text-capitalize label-text">Zona</ion-label>
-        <ion-select (ionChange)="defectZoneChange($event)" placeholder="Selecciona" formControlName="defectZoneChildId"
-                    [disabled]="barcodeRoute!=null">
-          <ion-select-option *ngFor="let zone of zones" [value]="zone.id">
-            {{zone.name +" - "+ zone.defectZoneParent.name}}</ion-select-option>
-        </ion-select>
+        <ion-label class="content-select" style="text-align: center" *ngIf="!defectZoneP"><font color="#808080">Selecciona</font> <i></i></ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="defectZoneP">{{ defectZoneP.name }} <i></i></ion-label>
+      </ion-item>
+
+      <ion-item (click)="clickSelectPopover($event, 'zoneC')" [disabled]="defectZoneP==null">
+        <ion-label class="ion-text-capitalize label-text">Subzona</ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="!defectZoneC"><font color="#808080">Selecciona</font> <i></i></ion-label>
+        <ion-label class="content-select" style="text-align: center" *ngIf="defectZoneC">{{ defectZoneC.name }} <i></i></ion-label>
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating" class="label-text">Observaciones</ion-label>
-        <ion-textarea formControlName="observations" type="text" [readonly]="barcodeRoute!=null"></ion-textarea>
+        <ion-textarea formControlName="observations" placeholder="Observaciones..." [readonly]="barcodeRoute!=null"></ion-textarea>
       </ion-item>
 
       <div *ngIf="requireContact == true" class="contact">
@@ -63,15 +63,11 @@
           </ion-item>
           <ion-item lines="none">
             <ion-input type="text" formControlName="name" (keyup)="onKeyName($event)" placeholder="Nombre"
-              maxlength="50"></ion-input><br>
+                       maxlength="50"></ion-input><br>
           </ion-item>
           <ion-item lines="none">
-            <ion-input type="email" formControlName="email" (keyup)="onKeyEmail($event)" placeholder="Correo"
-              maxlength="50"></ion-input><br>
-          </ion-item>
-          <ion-item lines="none">
-            <ion-input type="number" formControlName="phone" (keyup)="onKeyTel($event)" placeholder="Teléfono"
-              maxlength="25"></ion-input>
+            <ion-input type="text" formControlName="info" (keyup)="onKeyInfo($event)" placeholder="Tlf/Email"
+                       maxlength="50"></ion-input><br>
           </ion-item>
         </div>
       </div>
@@ -119,16 +115,22 @@
           </ion-button>
         </ion-item>
       </ion-list>
-      <!-- <ion-label>{{imgUrl}}</ion-label> -->
-    
-    <ion-button *ngIf="barcodeRoute==null"  [attr.disabled]="!select1 || !select2" (click)="send()" expand="block" shape="round">
-      enviar
-    </ion-button>
-    
-    <ion-button *ngIf="barcodeRoute!=null" [disabled]="differentState" (click)="enviaryarn()" expand="block" shape="round" >
-      actualizar
-    </ion-button>
- 
-  </ng-template>
-</form>
+    </ng-template>
+  </form>
 </ion-content>
+
+<div class="toolbar-buttons">
+  <ion-fab vertical="bottom" horizontal="end" *ngIf="readed && barcodeRoute==null">
+    <ion-fab-button matTooltip="Confirmar Defectuoso" matTooltipClass="tooltip" (click)="send()"
+                    [attr.disabled]="!isFormComplete()">
+      <ion-icon name="save"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-fab vertical="bottom" horizontal="end" *ngIf="readed && barcodeRoute!=null">
+    <ion-fab-button matTooltip="Confirmar Defectuoso" matTooltipClass="tooltip"
+                    (click)="enviaryarn()" [disabled]="!isFormComplete()">
+      <ion-icon name="save"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</div>

@@ -9,7 +9,8 @@ import { OrderPreparationComponent } from './order-preparation.component';
 import { OrderPreparationRoutingModule } from "./order-preparation-routing.module";
 import { MatListModule, MatTableModule, MatPaginatorModule, MatSortModule } from '@angular/material';
 import { MatTooltipModule } from "@angular/material";
-
+import { File } from '@ionic-native/file/ngx';
+import { Downloader } from '@ionic-native/downloader/ngx';
 
 
 
@@ -33,7 +34,11 @@ const routes: Routes = [
     FormsModule,
     HideKeyboardModule,
     OrderPreparationRoutingModule,
-    MatTooltipModule
+    MatTooltipModule,
+  ],
+  providers:[
+    File,
+    Downloader,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   entryComponents: [InputCodesComponent]

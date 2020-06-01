@@ -16,73 +16,100 @@
           </ion-row>
           <form *ngIf="showFiltersMobileVersion" [formGroup]="form">
             <ion-grid>
-              <ion-row>
-                <ion-col size="2" size-xs="12" size-md="4">
-                  <ion-label>Referencias:</ion-label>
-                  <suite-tags-input placeholder="Referencia" [options]="models"
-                                    formControlName="productReferencePattern" multiple="true" [literal]="true"></suite-tags-input>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="2" size-xs="6" size-md="4">
-                  <ion-label>Colores:</ion-label>
-                  <suite-tags-input placeholder="Colores" [options]="colors" formControlName="colors" multiple="true">
-                  </suite-tags-input>
-                </ion-col>
-                <ion-col size="2" size-xs="6" size-md="4">
-                  <ion-label>
-                    Tallas
-                  </ion-label>
-                  <suite-tags-input [literal]="true" placeholder="Tallas" [options]="sizes" formControlName="sizes"
-                                    multiple="true"></suite-tags-input>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="2" size-xs="12" size-md="4">
-                  <ion-label>
-                    Almacenes
-                  </ion-label>
-                  <suite-tags-input placeholder="Almacenes" [options]="warehouses" formControlName="warehouses"
-                                    multiple="true"></suite-tags-input>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="2" size-xs="12" size-md="4">
-                  <ion-label>
-                    Ubicaciones
-                  </ion-label>
-                  <suite-tags-input placeholder="Ubicaciones" [options]="containers" [literalmixed]="true"
-                                    formControlName="containers" multiple="true"></suite-tags-input>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="2" size-xs="12" size-md="4">
-                  <ion-label>
-                    Ordenar
-                  </ion-label>
-                  <ion-item formGroupName="orderby">
+                <ion-row>
+                  <ion-col size="2" size-xs="12" size-md="4">
+                    <ion-label>Referencias:</ion-label>
+                    <suite-tags-input placeholder="Referencia" [options]="models"
+                                      formControlName="productReferencePattern" multiple="true" [literal]="true"></suite-tags-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="2" size-xs="6" size-md="4">
+                    <ion-label>Colores:</ion-label>
+                    <suite-tags-input placeholder="Colores" [options]="colors" formControlName="colors" multiple="true">
+                    </suite-tags-input>
+                  </ion-col>
+                  <ion-col size="2" size-xs="6" size-md="4">
+                    <ion-label>
+                      Tallas
+                    </ion-label>
+                    <suite-tags-input [literal]="true" placeholder="Tallas" [options]="sizes" formControlName="sizes"
+                                      multiple="true"></suite-tags-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="2" size-xs="12" size-md="4">
+                    <ion-label>
+                      Almacenes
+                    </ion-label>
+                    <suite-tags-input placeholder="Almacenes" [options]="warehouses" formControlName="warehouses"
+                                      multiple="true"></suite-tags-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="2" size-xs="12" size-md="4">
+                    <ion-label>
+                      Ubicaciones
+                    </ion-label>
+                    <suite-tags-input placeholder="Ubicaciones" [options]="containers" [literalmixed]="true"
+                                      formControlName="containers" multiple="true"></suite-tags-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="2" size-xs="12" size-md="4">
+                    <ion-label>
+                      Marcas
+                    </ion-label>
+                    <suite-tags-input placeholder="Marcas" [options]="brands" [literal]="true"
+                                      formControlName="brands" multiple="true"></suite-tags-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="2" size-xs="12" size-md="4">
+                    <ion-label>
+                      Proveedores
+                    </ion-label>
+                    <suite-tags-input placeholder="Proveedores" [options]="suppliers" [literal]="true"
+                                      formControlName="suppliers" multiple="true"></suite-tags-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="2" size-xs="12" size-md="4">
+                    <ion-label>
+                      No online
+                    </ion-label>
+                    <suite-tags-input placeholder="No online" [options]="online" [literal]="true"
+                                      formControlName="online" ></suite-tags-input>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="2" size-xs="12" size-md="4">
                     <ion-label>
                       Ordenar
                     </ion-label>
-                    <ion-select formControlName="type" interface="popover">
-                      <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}
-                      </ion-select-option>
-                    </ion-select>
-                  </ion-item>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col class="btn-remove" size="6">
-                  <ion-button (click)="clearFilters()">
-                    Borra Filtros
-                  </ion-button>
-                </ion-col>
-                <ion-col class="btn-apply" size="6">
-                  <ion-button (click)="applyFilters()">
-                    Aplicar Filtros
-                  </ion-button>
-                </ion-col>
-              </ion-row>
+                    <ion-item formGroupName="orderby">
+                      <ion-label>
+                        Ordenar
+                      </ion-label>
+                      <ion-select formControlName="type" interface="popover">
+                        <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}
+                        </ion-select-option>
+                      </ion-select>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col class="btn-remove" size="6">
+                    <ion-button (click)="clearFilters()">
+                      Borra Filtros
+                    </ion-button>
+                  </ion-col>
+                  <ion-col class="btn-apply" size="6">
+                    <ion-button (click)="applyFilters()">
+                      Aplicar Filtros
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
             </ion-grid>
           </form>
         </ion-grid>
@@ -133,6 +160,27 @@
             <th mat-header-cell *matHeaderCellDef>Ubicación</th>
             <td mat-cell *matCellDef="let product">
               {{ getProductLocation(product) }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="brand">
+            <th mat-header-cell *matHeaderCellDef>Marca</th>
+            <td mat-cell *matCellDef="let product">
+              {{ product?.productShoeUnit?.model?.brand?.name }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="supplier">
+            <th mat-header-cell *matHeaderCellDef>Proveedor</th>
+            <td mat-cell *matCellDef="let product">
+              {{ product?.productShoeUnit?.model?.brand?.supplierName }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="online">
+            <th mat-header-cell *matHeaderCellDef>No online</th>
+            <td mat-cell *matCellDef="let product">
+              {{ product.productShoeUnit.noOnline ? 'Sí' : 'No' }}
             </td>
           </ng-container>
           <ng-container matColumnDef="select" [formGroup]="selectedForm">

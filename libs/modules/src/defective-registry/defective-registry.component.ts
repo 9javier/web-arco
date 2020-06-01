@@ -13,6 +13,9 @@ import { SelectionModel } from '@angular/cdk/collections';
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 import { DamagedModel } from '../../../services/src/models/endpoints/Damaged';
 import { RegistryDetailsComponent } from '../components/modal-defective/registry-details/registry-details.component';
+import * as Filesave from 'file-saver';
+import { map, catchError } from 'rxjs/operators';
+import { BehaviorSubject, of, Observable } from 'rxjs';
 
 @Component({
   selector: 'suite-defective-registry',
@@ -115,6 +118,7 @@ export class DefectiveRegistryComponent implements OnInit {
     this.initEntity();
     this.initForm();
     this.getFilters();
+    this.getColumns(this.form);
     this.getList(this.form);
     this.listenChanges();
 
@@ -272,6 +276,22 @@ export class DefectiveRegistryComponent implements OnInit {
 
       return arrayEntity;
     }
+  }
+
+  async getColumns(form?: FormGroup) {
+    this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe(
+      (resp: any) => {
+        resp.filters.forEach(element => {
+          this.columns[element.name] = element.id;
+        });
+      },
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      }
+    )
   }
 
   async sortData(event: Sort) {
@@ -623,6 +643,56 @@ export class DefectiveRegistryComponent implements OnInit {
 
     return await modal.present();
   }
+
+  /**
+   * @description Eviar parametros y recibe un archivo excell
+   */
+  async fileExcell() {
+    this.intermediaryService.presentLoading('Descargando Archivo Excel').then(()=>{
+      const formToExcel = this.getFormValueCopy();
+      this.defectiveRegistryService.getFileExcell(this.sanitize(formToExcel)).pipe(
+        catchError(error => of(error)),
+        // map(file => file.error.text)
+      ).subscribe((data) => {
+        const blob = new Blob([data], { type: 'application/octet-stream' });
+        Filesave.saveAs(blob, `${Date.now()}.xlsx`);
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastSuccess('Archivo descargado')
+      }, error => console.log(error));
+    });
+  }
+
+  private getFormValueCopy() {
+    return JSON.parse(JSON.stringify(this.form.value || {}));
+  }
+  sanitize(object) {
+    /**mejorable */
+    object = JSON.parse(JSON.stringify(object));
+    if (!object.orderby.type) {
+      delete object.orderby.type;
+    } else {
+      object.orderby.type = object.orderby.type;
+    }
+    if (!object.orderby.order) delete object.orderby.order;
+    Object.keys(object).forEach(key => {
+      if (object[key] instanceof Array) {
+        if (object[key][0] instanceof Array) {
+          object[key] = object[key][0];
+        } else {
+          for (let i = 0; i < object[key].length; i++) {
+            if (object[key][i] === null || object[key][i] === "") {
+              object[key].splice(i, 1);
+            }
+          }
+        }
+      }
+      if (object[key] === null || object[key] === "") {
+        delete object[key];
+      }
+    });
+    return object;
+  }
+
 
   // async showImageModal(reference: string, photos: any[]) {
   //   console.log(photos)

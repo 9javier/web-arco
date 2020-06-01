@@ -4,10 +4,10 @@ import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange, Sort } fr
 import * as Filesave from 'file-saver';
 import * as _ from 'lodash';
 import { parse } from 'querystring';
-import { NgxFileDropModule } from  'ngx-file-drop' ;
+import { NgxFileDropModule } from 'ngx-file-drop';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
-import { Platform, ModalController, NavParams  } from '@ionic/angular';
-import {MatTabsModule} from '@angular/material/tabs';
+import { Platform, ModalController, NavParams } from '@ionic/angular';
+import { MatTabsModule } from '@angular/material/tabs';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ExpeditionManualService } from '../../../../services/src/lib/endpoint/expedition-manual/expedition-manual.service';
 import { FormsModule } from '@angular/forms';
@@ -25,8 +25,8 @@ export class LogisticOperatorComponent implements OnInit {
   id;
   data = {
     operator: {
-      id:"",
-      name:""
+      id: "",
+      name: ""
     },
     name: "",
     lastname: "",
@@ -48,30 +48,31 @@ export class LogisticOperatorComponent implements OnInit {
     private modalController: ModalController,
     private expeManSrv: ExpeditionManualService,
     private intermediaryServiceL: IntermediaryService,
-    private navParams :NavParams
-    ) {
+    private navParams: NavParams
+  ) {
   }
-   ngOnInit(){
+  ngOnInit() {
     this.id = this.navParams.get('id');
     this.getIncidence(this.id);
     this.getTransports();
     this.form = this.formBuilder.group({
-      expeditionId:this.id,
-      operator: new FormControl(''),
-      name: new FormControl(''),
-      lastname: new FormControl(''),
-      dni: new FormControl(''),
-      phone: new FormControl(''),
-      direction: new FormControl(''),
-      province: new FormControl(''),
-      country: new FormControl(''),
-      postalcode: new FormControl(''),
-      packages: new FormControl(''),
+      expeditionId: this.id,
+      operator: ['', Validators.required],
+      name: ['', Validators.required],
+      lastname: ['', Validators.required],
+      dni: ['', Validators.required],
+      phone: ['', Validators.required],
+      direction: ['', Validators.required],
+      province: ['', Validators.required],
+      country: ['', Validators.required],
+      postalcode: ['', Validators.required],
+      packages: ['', Validators.required],
       incidence: true
-    })
+    });
+    this.clean();
   }
 
-  getIncidence(id){
+  getIncidence(id) {
     this.expeManSrv.getExpedition(id).subscribe(data => {
       this.form.get('operator').setValue(data.transport.transport.id);
       this.form.get('name').setValue(data.transport.shippingCompanyName);
@@ -86,38 +87,54 @@ export class LogisticOperatorComponent implements OnInit {
     });
   }
 
-  getTransports(){
-    
+  getTransports() {
+
     this.expeManSrv.getTrasnport().subscribe(data => {
-      console.log(data);
       this.operators = data;
     });
   }
 
-  async save(){
+  async save() {
+
+    if (!this.form.valid) {
+      this.intermediaryServiceL.presentToastError('Rellene todos los datos del formulario');
+    } else {
       await this.intermediaryServiceL.presentLoading();
       this.expeManSrv.store(this.form.value).subscribe(data => {
-        console.log(data);
         this.intermediaryServiceL.presentToastSuccess('Expedicion guardad con exito');
         this.close();
         this.intermediaryServiceL.dismissLoading();
-      },error=>{
-        console.log(error);
+      }, error => {
         this.intermediaryServiceL.presentToastError('Algunos de sus datos son incorrectos por favor de revisar');
         this.intermediaryServiceL.dismissLoading();
       });
-      console.log(this.data);
+    }
+
+
   }
 
-  close(){
+  close() {
     this.modalController.dismiss();
+    this.clean();
   }
 
-  compareFn(e1, e2): boolean {
-    return e1 && e2 ? e1.id == e2.id : e1 == e2;
+
+
+
+  clean() {
+    this.form.get('operator').setValue("");
+    this.form.get('name').setValue("");
+    this.form.get('lastname').setValue("")
+    this.form.get('dni').setValue("")
+    this.form.get('phone').setValue("data.transport.shippingPhone")
+    this.form.get('direction').setValue("")
+    this.form.get('province').setValue("")
+    this.form.get('country').setValue("")
+    this.form.get('postalcode').setValue("")
+    this.form.get('packages').setValue("")
   }
 
-  selectChange(e){
+  selectChange(e) {
     console.log(e);
   }
 }

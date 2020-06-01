@@ -89,6 +89,31 @@ export class IntermediaryService {
   }
 
   /**
+   * launch loading
+   * @param message - the message to be showed in loading
+   */
+  async presentLoadingNew(message:string = "") {
+    if (!this.loading) {
+      this.loading = true;
+      const loading = await this.loadingCtrl.create({
+        message
+      });
+
+      return await loading.present();
+    }
+
+    return null;
+  }
+
+  /**
+   * close the latest modal
+   */
+  async dismissLoadingNew() {
+    this.loading = false;
+    return await this.loadingCtrl.dismiss();
+  }
+
+  /**
    * close the latest modal
    */
   async dismissLoading(){

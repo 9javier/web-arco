@@ -1,4 +1,4 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit,Input, Output,EventEmitter } from '@angular/core';
 import { AlertController } from "@ionic/angular";
 import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
 import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
@@ -27,11 +27,12 @@ import {OpExpeditionType} from "../enums/OplExpeditionStatusEnums";
 })
 export class InputCodesComponent implements OnInit {
   numAllSann:number =0;
-  dataToWrite: string = 'PRODUCTO';
+  dataToWrite: string = 'CÓDIGO BULTO';
   inputProduct: string = null;
   lastCodeScanned: string = 'start';
   PrintError:boolean = false;
   expeditionId=0;
+  alertId=0;
   private lastProductReferenceScanned: string = 'start';
   numScanner:number = 0;
   private isStoreUser: boolean = false;
@@ -41,8 +42,11 @@ export class InputCodesComponent implements OnInit {
 
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
+  @Input()id:number;
+  @Output()state = new EventEmitter<boolean>();
 
-
+  private isInternal:boolean = false;
+  private orderId:number;
 
   constructor(
     private intermediaryService: IntermediaryService,
@@ -64,7 +68,19 @@ export class InputCodesComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.expeditionId = this.routeParams.snapshot.params.id;
+
+    if(this.routeParams.snapshot.params.isInternal != undefined){
+      this.isInternal = this.routeParams.snapshot.params.isInternal;
+    }
+   
+    if(this.routeParams.snapshot.params.id != undefined){
+      this.expeditionId = this.routeParams.snapshot.params.id;
+    }
+
+    if(this.routeParams.snapshot.params.orderId != undefined){
+      this.orderId = this.routeParams.snapshot.params.orderId;
+    }
+
     this.isStoreUser = await this.authService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authService.getStoreCurrentUser();
@@ -98,22 +114,14 @@ export class InputCodesComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputProduct = null;
-      switch (this.itemReferencesProvider.checkCodeValue(dataWrote)) {
-        case this.itemReferencesProvider.codeValue.PRODUCT:
-          this.printLabels(dataWrote);
-
-          break;
-        case this.itemReferencesProvider.codeValue.PRODUCT_MODEL:
-          //this.getSizeListByReference(dataWrote);
-          this.printLabels(dataWrote);
-          break;
-        default:
-          this.audioProvider.playDefaultError();
-          this.intermediaryService.presentToastError('El código escaneado no es válido para la operación que se espera realizar.', PositionsToast.BOTTOM).then(() => {
-            this.focusInputTa();
-          });
-          this.focusToInput();
-          break;
+      if(dataWrote.trim() != ""){
+        this.printLabels(dataWrote);
+      } else {
+        this.audioProvider.playDefaultError();
+        this.intermediaryService.presentToastError('El código de paquete escaneado no es válido para la operación que se espera realizar.', PositionsToast.BOTTOM).then(() => {
+          this.focusInputTa();
+        });
+        this.focusToInput();
       }
     }
   }
@@ -326,18 +334,32 @@ export class InputCodesComponent implements OnInit {
   }
 
   async printLabelStore(reference_){
-    let body ={
-      uniqueCode : reference_,
-      expeditionId: this.expeditionId
+    let body;
+    if(this.id !=0){
+      body={
+        uniqueCode : reference_,
+        expeditionId: this.id,
+        isInternal:this.isInternal,
+        orderId:this.orderId
+      };
     }
+    if(this.expeditionId != 0){
+       body ={
+        uniqueCode : reference_,
+        expeditionId: this.expeditionId,
+        isInternal:this.isInternal,
+        orderId:this.orderId
+      }
+    }
+    
+   
+    console.log()
+    
     this.intermediaryService.presentLoading();
     this.labelService.postPrintLabels(body).subscribe( result =>{
       this.intermediaryService.dismissLoading();
-      console.log(result);
-      
+        this.state.emit(true);
         this.labelService.numScanner(this.numScanner= (this.numScanner-1));
-        this.router.navigateByUrl('/order-preparation'); 
-      
       
     }, error => {
       this.audioProvider.playDefaultError();

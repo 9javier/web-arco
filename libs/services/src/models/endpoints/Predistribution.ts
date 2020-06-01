@@ -14,17 +14,104 @@ export namespace PredistributionModel {
     date_service?: string;
     distribution?: boolean;
     reserved?: boolean;
+    positioned?: boolean
   }
   export interface DataSource {
     filters: Array<Filters>
     pagination: Pagination,
-    results: Array<any>
+    results: Array<Results>
   }
   interface Filters {
     id: number,
     name: string
   }
-
+  interface Results {
+    expeditionLineId: number,
+    warehouse: {
+      id: number,
+      name: string,
+      description: string,
+      reference: string,
+      is_store: boolean,
+      is_main: boolean,
+      has_racks: boolean,
+      is_outlet: boolean,
+      prefix_container: string,
+      packingType: number
+    },
+    provider: {
+      createdAt: string,
+      updatedAt: string,
+      id: number,
+      name: string,
+      hash: string,
+      avelonId: number
+    },
+    model: {
+      createdAt: string,
+      updatedAt: string,
+      id: number,
+      reference: string,
+      name: string,
+      hash: string,
+      avelonInternalBrandId: number,
+      detailColor: string,
+      brand: {
+        createdAt: string,
+        updatedAt: string,
+        id: number,
+        avelonId: number,
+        datasetHash: string,
+        name: string,
+        supplierName: string,
+        providerId: number
+      },
+      color: {
+        createdAt: string,
+        updatedAt: string,
+        id: number,
+        avelonId: string,
+        datasetHash: string,
+        name: string,
+        colorHex: string,
+        description: string
+      },
+      family: {
+        createdAt: string,
+        updatedAt: string,
+        id: number,
+        avelonId: string,
+        reference: string,
+        name: string,
+        groupNumber: number,
+        datasetHash: string
+      },
+      lifestyle: {
+        createdAt: string,
+        updatedAt: string,
+        id: number,
+        avelonId: string,
+        reference: string,
+        name: string,
+        groupNumber: number,
+        datasetHash: string
+      },
+      category: {
+        createdAt: string,
+        updatedAt: string,
+        id: number,
+        avelonId: string,
+        reference: string,
+        name: string,
+        groupNumber: number,
+        datasetHash: string
+      }
+    },
+    article: string,
+    date_service: string,
+    distribution: boolean,
+    reserved: boolean
+  }
 
   interface Pagination {
     firstPage: number,
@@ -73,7 +160,7 @@ export namespace PredistributionModel {
    }
 
   export interface PickingRequest {
-    receptionIds: number[],
+    ids: number[],
     destinies: Destiny[]
   }
   export interface Destiny {

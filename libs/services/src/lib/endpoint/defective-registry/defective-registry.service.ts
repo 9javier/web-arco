@@ -1,11 +1,15 @@
 import { HttpRequestModel } from 'libs/services/src/models/endpoints/HttpRequest';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
 import { map, filter } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DefectiveRegistryModel } from '../../../models/endpoints/DefectiveRegistry';
 import { BehaviorSubject } from "rxjs";
+import {ExcellModell} from "../../../models/endpoints/Excell";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {AuthenticationService} from "@suite/services";
+import {from, Observable} from "rxjs";
+import {switchMap} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -27,9 +31,14 @@ export class DefectiveRegistryService {
   private emitData = new BehaviorSubject({});
   private getData$ = this.emitData.asObservable();
   private refreshListRegistry = new BehaviorSubject<boolean>(false);
+  private sendexcell: string;
+  private historicsendexcell: string;
   refreshListRegistry$ = this.refreshListRegistry.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private auth: AuthenticationService
+  ) {
     this.baseUrl = environment.apiSorter;
     this.indexRegistryHistoricFalseUrl = `${this.baseUrl}/defects/registry/all/false`;
     this.indexHistoricTrueUrl = `${this.baseUrl}/defects/registry/all`;
@@ -43,6 +52,8 @@ export class DefectiveRegistryService {
     this.getDataUrl = `${this.baseUrl}/defects/registry/get-data`;
     this.getProvidersUrl = `${this.baseUrl}/defects/registry/providers`;
     this.getBrandsByProvidersUrl = `${this.baseUrl}/defects/registry/providers/brands`;
+    this.sendexcell = `${this.baseUrl}/defects/registry/export-to-excel`;
+    this.historicsendexcell = `${this.baseUrl}/defects/registry/historial-export-to-excel`;
   }
 
   indexHistoricTrue(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
@@ -187,6 +198,24 @@ export class DefectiveRegistryService {
     this.refreshListRegistry.next(refresh);
   }
 
+  getFileExcell(parameters: ExcellModell.fileExcell) {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post(this.sendexcell, parameters, { headers, responseType: 'blob' });
+    }));
+  }
+
+  getHistoricFileExcell(parameters: ExcellModell.fileExcell) {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post(this.historicsendexcell, parameters, { headers, responseType: 'blob' });
+    }));
+  }
+
   expeditions(form): Observable<any>{
     const body = {
       id:1
@@ -226,7 +255,7 @@ export class DefectiveRegistryService {
             id:8,
             name:"country"
           },
-        ], 
+        ],
         results:[
           {
             operator:'DHL',
@@ -276,14 +305,14 @@ export class DefectiveRegistryService {
             postalcode:"23452",
             packages:"2"
           },
-        ], 
+        ],
         pagination:{
           selectPage: 1,
           firstPage: 1,
           lastPage: 1,
           limit: 10,
           totalResults: 4
-        }, 
+        },
         listAvailableStatus:[
           {id: 1, name: "Pendiente Decisión"},
           {id: 2, name: "Pendiente Reparación"},
@@ -294,10 +323,10 @@ export class DefectiveRegistryService {
       };
       return data;
     }));
-    
+
 
   }
-   
+
   getFilters(){
     const body = {
       id: [],
@@ -386,4 +415,5 @@ export class DefectiveRegistryService {
       })
     )
   }
+
 }

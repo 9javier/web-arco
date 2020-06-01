@@ -11,6 +11,7 @@ import {Observable} from "rxjs";
 export class AppFiltersService {
 
   private postProductsReceivedUrl: string = environment.apiBase + '/app-filters/products/received';
+  private postProductsRequestedUrl: string = environment.apiBase + '/app-filters/products/requested';
 
   constructor(
     private http: HttpClient
@@ -22,4 +23,9 @@ export class AppFiltersService {
     }));
   }
 
+  postProductsRequested(params: AppFiltersModel.ParamsProductsRequested) : Observable<AppFiltersModel.ProductsRequested> {
+    return this.http.post<AppFiltersModel.ResponseProductsRequested>(this.postProductsRequestedUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
 }

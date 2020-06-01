@@ -1,6 +1,6 @@
-import { ModalController} from '@ionic/angular';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import {  MatSort, Sort ,MatTableDataSource, MatCheckboxChange } from '@angular/material';
+import {AlertController, ModalController} from '@ionic/angular';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {  MatSort, Sort ,MatTableDataSource } from '@angular/material';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
 import Predistribution = PredistributionModel.Predistribution;
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
@@ -11,29 +11,27 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import {
-  UserTimeService,
-  UserTimeModel
-} from '@suite/services';
+import {UserTimeModel} from '@suite/services';
 import { ModalUserComponent } from "../components/modal-user/modal-user.component";
 import { Router } from '@angular/router';
-import * as _ from "lodash";
 import {TimesToastType} from "../../../services/src/models/timesToastType";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'suite-receptionss-avelon',
   templateUrl: './receptionss-avelon.component.html',
   styleUrls: ['./receptionss-avelon.component.scss']
 })
-export class ReceptionssAvelonComponent implements OnInit {
+export class ReceptionssAvelonComponent implements OnInit, OnDestroy {
+
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select','references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
+  displayedColumns: string[] = ['select','references','sizes','products','locations','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
   dataSource;
   selection = new SelectionModel<Predistribution>(true, []);
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
-  columns = {};
+  private columns = null;
 
   users:UserTimeModel.ListUsersRegisterTimeActiveInactive;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
@@ -47,6 +45,8 @@ export class ReceptionssAvelonComponent implements OnInit {
   @ViewChild('filterButtonCategory') filterButtonCategory: FilterButtonComponent;
   @ViewChild('filterButtonFamily') filterButtonFamily: FilterButtonComponent;
   @ViewChild('filterButtonLifestyle') filterButtonLifestyle: FilterButtonComponent;
+  @ViewChild('filterButtonProducts') filterButtonProducts: FilterButtonComponent;
+  @ViewChild('filterButtonLocations') filterButtonLocations: FilterButtonComponent;
 
   isFilteringReferences: number = 0;
   isFilteringSizes: number = 0;
@@ -59,6 +59,8 @@ export class ReceptionssAvelonComponent implements OnInit {
   isFilteringCategory: number = 0;
   isFilteringFamily: number = 0;
   isFilteringLifestyle: number = 0;
+  isFilteringProducts: number = 0;
+  isFilteringLocations: number = 0;
 
   /**Filters */
   references: Array<TagsInputOption> = [];
@@ -72,12 +74,14 @@ export class ReceptionssAvelonComponent implements OnInit {
   category: Array<TagsInputOption> = [];
   family: Array<TagsInputOption> = [];
   lifestyle: Array<TagsInputOption> = [];
+  products: Array<TagsInputOption> = [];
+  locations: Array<TagsInputOption> = [];
 
   entities;
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
 
-  pagerValues = [10, 20, 80];
+  pagerValues = [25, 50, 100];
   form: FormGroup = this.formBuilder.group({
     references: [],
     sizes: [],
@@ -90,6 +94,8 @@ export class ReceptionssAvelonComponent implements OnInit {
     category: [],
     family: [],
     lifestyle: [],
+    products: [],
+    locations: [],
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
@@ -101,40 +107,43 @@ export class ReceptionssAvelonComponent implements OnInit {
   });
   length: any;
 
+  private paginatorObservable: Subscription = null;
+
   constructor(
     private predistributionsService: PredistributionsService,
     private formBuilder: FormBuilder,
     private intermediaryService:IntermediaryService,
     private modalController: ModalController,
-    private router: Router
+    private router: Router,
+    private alertController: AlertController
   ) {}
 
   ngOnInit(): void {
     this.initEntity();
     this.initForm();
     this.getFilters();
-    this.getColumns(this.form);
     this.getList(this.form);
     this.listenChanges();
   }
+  ngOnDestroy(): void {
+    this.paginatorObservable.unsubscribe();
+  }
 
   listenChanges() {
-    let previousPageSize = this.form.value.pagination.limit;
-    /**detect changes in the paginator */
-    this.paginator.page.subscribe(page => {
-      /**true if only change the number of results */
-      let flag = previousPageSize === page.pageSize;
-      previousPageSize = page.pageSize;
-      this.form.value.pagination = {
-        limit: page.pageSize,
-        page: flag ? page.pageIndex : 1
-      };
-      this.getList(this.form)
-    });
-
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
-      this.getList(this.form);
-    });
+    if (!this.paginatorObservable) {
+      let previousPageSize = this.form.value.pagination.limit;
+      /**detect changes in the paginator */
+      this.paginatorObservable = this.paginator.page.subscribe(page => {
+        /**true if only change the number of results */
+        let flag = previousPageSize === page.pageSize;
+        previousPageSize = page.pageSize;
+        this.form.value.pagination = {
+          limit: page.pageSize,
+          page: flag ? page.pageIndex : 1
+        };
+        this.getList(this.form)
+      });
+    }
   }
 
   initEntity() {
@@ -150,6 +159,8 @@ export class ReceptionssAvelonComponent implements OnInit {
       category: [],
       family: [],
       lifestyle: [],
+      products: [],
+      locations: [],
     }
   }
   initForm() {
@@ -165,46 +176,64 @@ export class ReceptionssAvelonComponent implements OnInit {
       category: [],
       family: [],
       lifestyle: [],
+      products: [],
+      locations: [],
     })
   }
 
   async newPicking() {
-    await this.intermediaryService.presentLoading();
+    const notPositioned: string[] = this.selection.selected.filter(x => !x.positioned).map(x => x.article);
+    if(notPositioned.length == 0){
+      await this.intermediaryService.presentLoading();
 
-    const modal = await this.modalController.create({
-      component: ModalUserComponent
-    });
+      const modal = await this.modalController.create({
+        component: ModalUserComponent
+      });
 
-    const selectedReceptions = this.getListReceptions();
-    const selectedReceptionsIds: number[] = [];
-    for(let reception of selectedReceptions){
-      selectedReceptionsIds.push(parseInt(reception.expeditionLineId));
-    }
-
-    modal.onDidDismiss().then(async response => {
-      if(response.data) {
-        await this.intermediaryService.presentLoading();
-        const parameters: PredistributionModel.PickingRequest = {
-          receptionIds: selectedReceptionsIds,
-          destinies: [{warehouseId: Number(parseInt(selectedReceptions[0].warehouseId)), userId: response.data}]
-        };
-        await this.predistributionsService.newDirectPicking(parameters).then(async response => {
-          if (response.code == 201) {
-            await this.intermediaryService.presentToastSuccess('Tarea de picking generada con éxito.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
-            await this.intermediaryService.dismissLoading();
-            await this.router.navigate(['workwaves-scheduled/pickings'], {replaceUrl: true});
-          } else {
-            console.log('ERROR:', response);
-            await this.intermediaryService.dismissLoading()
-          }
-        }, async error => {
-          console.error(error);
-          await this.intermediaryService.dismissLoading();
-        });
+      const selectedReceptions = this.getListReceptions();
+      const selectedReservedIds: number[] = [];
+      for(let reception of selectedReceptions){
+        selectedReservedIds.push(parseInt(reception.id));
       }
-    });
 
-    await modal.present().then(async () => await this.intermediaryService.dismissLoading());
+      modal.onDidDismiss().then(async response => {
+        if(response.data) {
+          await this.intermediaryService.presentLoading();
+          const parameters: PredistributionModel.PickingRequest = {
+            ids: selectedReservedIds,
+            destinies: [{warehouseId: Number(parseInt(selectedReceptions[0].warehouseId)), userId: response.data}]
+          };
+          await this.predistributionsService.newDirectPicking(parameters).then(async response => {
+            if (response.code == 201) {
+              await this.intermediaryService.presentToastSuccess('Tarea de picking generada con éxito.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+              await this.intermediaryService.dismissLoading();
+              await this.router.navigate(['workwaves-scheduled/pickings'], {replaceUrl: true});
+            } else {
+              console.log('ERROR:', response);
+              await this.intermediaryService.dismissLoading()
+            }
+          }, async error => {
+            console.error(error);
+            await this.intermediaryService.dismissLoading();
+          });
+        }
+      });
+
+      await modal.present().then(async () => await this.intermediaryService.dismissLoading());
+    }else{
+      const alert = await this.alertController.create({
+        backdropDismiss: false,
+        message: notPositioned.length > 1 ? 'No se puede lanzar el picking, ya que los artículos '+notPositioned.join(', ')+' no se encuentran ubicados en el almacén.' :
+                                             'No se puede lanzar el picking, ya que el artículo '+notPositioned[0]+' no se encuentra ubicado en el almacén.',
+        buttons: [
+          {
+            text: 'Aceptar'
+          }
+        ]
+      });
+
+      await alert.present();
+    }
   }
 
   sameDestiny(): boolean{
@@ -224,52 +253,17 @@ export class ReceptionssAvelonComponent implements OnInit {
   close():void{
   }
 
-  release(){
-
-   let ListReceptions = this.getListReceptions();
-   let _data: Array<PredistributionModel.BlockReservedRequest> = ListReceptions;
-   _data = _data.map(item => {
-     return {
-       reserved: false,
-       distribution: false,
-       modelId: item.modelId,
-       warehouseId: item.warehouseId,
-       sizeId: item.sizeId,
-       avelonOrderId: item.avelonOrderId,
-       userId: 0,
-     };
-
-   });
-
-   let This = this;
-    this.predistributionsService.updateBlockReserved2(ListReceptions).subscribe(function (data) {
-     This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
-     This.intermediaryService.dismissLoading();
-     // reload page
-     This.close();
-     This.initEntity();
-     This.initForm();
-     This.getFilters();
-     This.getList(This.form);
-     This.listenChanges();
-     This.selection.clear();
-   }, (error) => {
-     This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
-     This.intermediaryService.dismissLoading();
-   }, () => {
-     This.intermediaryService.dismissLoading();
-   });
-  }
-
   getListReceptions(){
     let receptionList =[];
         receptionList.length=0;
        for(let i=0; i<this.selection.selected.length; i++){
          let expeditionLineId =JSON.stringify(this.selection.selected[i].expeditionLineId);
+         let id =JSON.stringify(this.selection.selected[i].id);
          let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
          let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
          let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
            receptionList.push({
+             id: id,
              expeditionLineId: expeditionLineId,
              modelId: modelId,
              sizeId: sizeId,
@@ -320,6 +314,8 @@ export class ReceptionssAvelonComponent implements OnInit {
       this.category = this.updateFilterSource(entities.category, 'category');
       this.family = this.updateFilterSource(entities.family, 'family');
       this.lifestyle = this.updateFilterSource(entities.lifestyle, 'lifestyle');
+      this.products = this.updateFilterSource(entities.products, 'products');
+      this.locations = this.updateFilterSource(entities.locations, 'locations');
 
       this.reduceFilters(entities);
       setTimeout(() => {
@@ -327,22 +323,6 @@ export class ReceptionssAvelonComponent implements OnInit {
         this.pauseListenFormChange = true;
       }, 0);
     })
-  }
-
-  async getColumns(form?: FormGroup){
-    this.predistributionsService.index2(form.value).subscribe(
-      (resp:any) => {
-        resp.filters.forEach(element => {
-          this.columns[element.name] = element.id;
-        });
-      },
-      async err => {
-        await this.intermediaryService.dismissLoading()
-      },
-      async () => {
-        await this.intermediaryService.dismissLoading()
-      }
-    )
   }
 
   private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
@@ -369,8 +349,15 @@ export class ReceptionssAvelonComponent implements OnInit {
     return resultEntity;
   }
 
-  async getList(form?: FormGroup){
-    this.predistributionsService.index2(form.value).subscribe((resp:any) => {
+  async getList(form?: FormGroup) {
+    this.predistributionsService.index2(form.value).subscribe((resp: PredistributionModel.DataSource) => {
+      if (!this.columns) {
+        this.columns = {};
+        resp.filters.forEach(element => {
+          this.columns[element.name] = element.id;
+        });
+      }
+
       if (resp.results) {
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
         const paginator = resp.pagination;
@@ -606,6 +593,44 @@ export class ReceptionssAvelonComponent implements OnInit {
             this.isFilteringBrands = this.brands.length;
           }
         }
+      case 'products':
+        let productsFiltered: number[] = [];
+        for (let product of filters) {
+          if (product.checked) productsFiltered.push(product.id);
+        }
+
+        if (productsFiltered.length >= this.products.length) {
+          this.form.value.products = [];
+          this.isFilteringProducts = this.products.length;
+        } else {
+          if (productsFiltered.length > 0) {
+            this.form.value.products = productsFiltered;
+            this.isFilteringProducts = productsFiltered.length;
+          } else {
+            this.form.value.products = [99999];
+            this.isFilteringProducts = this.products.length;
+          }
+        }
+        break;
+      case 'locations':
+        let locationsFiltered: number[] = [];
+        for (let location of filters) {
+          if (location.checked) locationsFiltered.push(location.id);
+        }
+
+        if (locationsFiltered.length >= this.locations.length) {
+          this.form.value.locations = [];
+          this.isFilteringLocations = this.locations.length;
+        } else {
+          if (locationsFiltered.length > 0) {
+            this.form.value.locations = locationsFiltered;
+            this.isFilteringLocations = locationsFiltered.length;
+          } else {
+            this.form.value.products = [99999];
+            this.isFilteringLocations = this.products.length;
+          }
+        }
+        break;
     }
     this.lastUsedFilter = filterType;
     this.getList(this.form);
@@ -623,6 +648,8 @@ export class ReceptionssAvelonComponent implements OnInit {
     this.filterButtonCategory.listItems = this.reduceFilterEntities(this.category, entities,'category');
     this.filterButtonFamily.listItems = this.reduceFilterEntities(this.family, entities,'family');
     this.filterButtonLifestyle.listItems = this.reduceFilterEntities(this.lifestyle, entities,'lifestyle');
+    this.filterButtonProducts.listItems = this.reduceFilterEntities(this.products, entities,'products');
+    this.filterButtonLocations.listItems = this.reduceFilterEntities(this.locations, entities,'locations');
   }
 
   private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
@@ -641,8 +668,18 @@ export class ReceptionssAvelonComponent implements OnInit {
     this.form.value.orderby.type = this.columns[event.active];
     this.form.value.orderby.order = event.direction;
 
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+    await this.intermediaryService.presentLoading('Cargando filtros...', () => {
       this.getList(this.form);
     });
+  }
+
+  refreshReceptions() {
+    this.paginatorObservable.unsubscribe();
+    this.paginatorObservable = null;
+    this.initEntity();
+    this.initForm();
+    this.getFilters();
+    this.getList(this.form);
+    this.listenChanges();
   }
 }

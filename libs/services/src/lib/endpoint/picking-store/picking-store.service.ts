@@ -17,6 +17,7 @@ export class PickingStoreService {
   private getInitiatedUrl = environment.apiBase + '/processes/picking-store/initiated';
   private getLineRequestsUrl = environment.apiBase + '/processes/picking-store/lines-request';
   private getLineRequestsStoreOnlineUrl = environment.apiBase + '/processes/picking-store/lines-request-store-online';
+  private getLineRequestsStoreOnlineAmountUrl = environment.apiBase + '/processes/picking-store/lines-request-store-online-amount';
   private postLineRequestsPendingUrl = environment.apiBase + '/processes/picking-store/lines-request/pending';
   private postCheckPackingUrl = environment.apiBase + '/processes/picking-store/packing';
   private postLineRequestsFilteredUrl = environment.apiBase + '/processes/picking-store/lines-request/filtered';
@@ -46,6 +47,10 @@ export class PickingStoreService {
 
   getLineRequestsStoreOnline() : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.get(this.getLineRequestsStoreOnlineUrl);
+  }
+
+  getLineRequestsStoreOnlineAmount() : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getLineRequestsStoreOnlineAmountUrl);
   }
 
   getLineRequestsPending() : Observable<PickingStoreModel.ResponseLineRequestsPending> {

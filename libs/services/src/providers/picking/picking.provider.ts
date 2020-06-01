@@ -45,62 +45,64 @@ export class PickingProvider {
 
   private _literalsJailPallet: any = {
     1: {
-      not_registered: 'La Jaula escaneada no está registrada en el sistema.',
-      process_resumed: 'Para continuar con el proceso de picking escanea la Jaula ',
-      process_started: 'Proceso iniciado con la Jaula ',
-      process_end_packing: 'Proceso finalizado con la Jaula ',
-      process_packing_empty: 'Desasociada del picking la Jaula ',
-      scan_before_products: 'Escanea la Jaula a utilizar antes de comenzar el proceso.',
-      scan_packing_to_end: 'Escanea de nuevo la Jaula utilizada para finalizar el proceso',
-      scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo la Jaula utilizada para finalizar el proceso.',
-      toThe: "a la Jaula",
+      not_registered: 'El embalaje escaneado no está registrado en el sistema.',
+      process_resumed: 'Para continuar con el proceso de picking escanea el embalaje ',
+      process_started: 'Proceso iniciado con el embalaje ',
+      process_end_packing: 'Proceso finalizado con el embalaje ',
+      process_packing_empty: 'Desasociado del picking el embalaje ',
+      scan_before_products: 'Escanea el embalaje a utilizar antes de comenzar el proceso.',
+      scan_packing_to_end: 'Escanea de nuevo el embalaje utilizado para finalizar el proceso',
+      scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el embalaje utilizado para finalizar el proceso.',
+      toThe: "al embalaje",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
-      wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.',
-      scan_packings_to_end: 'Escanee las Jaulas utilizadas para finalizar el picking',
+      wrong_process_finished: 'El embalaje escaneado es diferente al embalaje con el que inició el proceso.',
+      scan_packings_to_end: 'Escanee los embalajes utilizados para finalizar el picking',
       press_scan_packings_to_continue: 'Pulse escanear embalajes para continuar con el traspaso'
     },
     'jail': {
-      not_registered: 'La Jaula escaneada no está registrada en el sistema.',
-      process_resumed: 'Para continuar con el proceso de picking escanea la Jaula ',
-      process_started: 'Proceso iniciado con la Jaula ',
-      process_end_packing: 'Proceso finalizado con la Jaula ',
-      process_packing_empty: 'Desasociada del picking la Jaula ',
-      scan_before_products: 'Escanea la Jaula a utilizar antes de comenzar el proceso.',
-      scan_packing_to_end: 'Escanea de nuevo la Jaula utilizada para finalizar el proceso',
-      scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo la Jaula utilizada para finalizar el proceso.',
-      toThe: "a la Jaula",
+      not_registered: 'El embalaje escaneado no está registrado en el sistema.',
+      process_resumed: 'Para continuar con el proceso de picking escanea el embalaje ',
+      process_started: 'Proceso iniciado con el embalaje ',
+      process_end_packing: 'Proceso finalizado con el embalaje ',
+      process_packing_empty: 'Desasociado del picking el embalaje ',
+      scan_before_products: 'Escanea el embalaje a utilizar antes de comenzar el proceso.',
+      scan_packing_to_end: 'Escanea de nuevo el embalaje utilizado para finalizar el proceso',
+      scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el embalaje utilizado para finalizar el proceso.',
+      toThe: "al embalaje",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
-      wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.',
-      scan_packings_to_end: 'Escanee las Jaulas utilizadas para finalizar el picking',
+      wrong_process_finished: 'El embalaje escaneado es diferente al embalaje con el que inició el proceso.',
+      scan_packings_to_end: 'Escanee los embalajes utilizados para finalizar el picking',
       press_scan_packings_to_continue: 'Pulse escanear embalajes para continuar con el traspaso'
     },
     2: {
-      not_registered: 'El Pallet escaneado no está registrado en el sistema.',
-      process_resumed: 'Para continuar con el proceso de picking escanea el Pallet ',
-      process_started: 'Proceso iniciado con el Pallet ',
-      process_end_packing: 'Proceso finalizado con el Pallet ',
-      process_packing_empty: 'Desasociado del picking el Pallet ',
-      scan_before_products: 'Escanea el Pallet a utilizar antes de comenzar el proceso.',
-      scan_packing_to_end: 'Escanea de nuevo el Pallet utilizado para finalizar el proceso',
-      scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el Pallet utilizado para finalizar el proceso.',
-      toThe: "al Pallet",
+      not_registered: 'El embalaje escaneado no está registrado en el sistema.',
+      process_resumed: 'Para continuar con el proceso de picking escanea el embalaje ',
+      process_started: 'Proceso iniciado con el embalaje ',
+      process_end_packing: 'Proceso finalizado con el embalaje ',
+      process_packing_empty: 'Desasociado del picking el embalaje ',
+      scan_before_products: 'Escanea el embalaje a utilizar antes de comenzar el proceso.',
+      scan_packing_to_end: 'Escanea de nuevo el embalaje utilizado para finalizar el proceso',
+      scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el embalaje utilizado para finalizar el proceso.',
+      toThe: "al embalaje",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea un Pallet para comenzar el proceso de picking.',
-      wrong_process_finished: 'El Pallet escaneado es diferente al Pallet con el que inició el proceso.',
-      scan_packings_to_end: 'Escanee los pallets utilizados para finalizar el picking',
+      wrong_process_finished: 'El embalaje escaneado es diferente al embalaje con el que inició el proceso.',
+      scan_packings_to_end: 'Escanee los embalajes utilizados para finalizar el picking',
+      press_scan_packings_to_continue: 'Pulse escanear embalajes para continuar con el traspaso'
     },
     'pallet': {
-      not_registered: 'El Pallet escaneado no está registrado en el sistema.',
-      process_resumed: 'Para continuar con el proceso de picking escanea el Pallet ',
-      process_started: 'Proceso iniciado con el Pallet ',
-      process_end_packing: 'Proceso finalizado con el Pallet ',
-      process_packing_empty: 'Desasociado del picking el Pallet ',
-      scan_before_products: 'Escanea el Pallet a utilizar antes de comenzar el proceso.',
-      scan_packing_to_end: 'Escanea de nuevo el Pallet utilizado para finalizar el proceso',
-      scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el Pallet utilizado para finalizar el proceso.',
-      toThe: "al Pallet",
+      not_registered: 'El embalaje escaneado no está registrado en el sistema.',
+      process_resumed: 'Para continuar con el proceso de picking escanea el embalaje ',
+      process_started: 'Proceso iniciado con el embalaje ',
+      process_end_packing: 'Proceso finalizado con el embalaje ',
+      process_packing_empty: 'Desasociado del picking el embalaje ',
+      scan_before_products: 'Escanea el embalaje a utilizar antes de comenzar el proceso.',
+      scan_packing_to_end: 'Escanea de nuevo el embalaje utilizado para finalizar el proceso',
+      scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el embalaje utilizado para finalizar el proceso.',
+      toThe: "al embalaje",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea un Pallet para comenzar el proceso de picking.',
-      wrong_process_finished: 'El Pallet escaneado es diferente al Pallet con el que inició el proceso.',
-      scan_packings_to_end: 'Escanee los pallets utilizados para finalizar el picking',
+      wrong_process_finished: 'El embalaje escaneado es diferente al embalaje con el que inició el proceso.',
+      scan_packings_to_end: 'Escanee los embalajes utilizados para finalizar el picking',
+      press_scan_packings_to_continue: 'Pulse escanear embalajes para continuar con el traspaso'
     }
   };
   get literalsJailPallet(): any {
@@ -113,6 +115,14 @@ export class PickingProvider {
   }
   set pickingId(value: number) {
     this._pickingId = value;
+  }
+
+  private _currentReturnPickingId: number;
+  get currentReturnPickingId(): number {
+    return this._currentReturnPickingId;
+  }
+  set currentReturnPickingId(value: number) {
+    this._currentReturnPickingId = value;
   }
 
   private _listProducts: ShoesPickingModel.ShoesPicking[];

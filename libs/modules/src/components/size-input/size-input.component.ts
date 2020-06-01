@@ -44,13 +44,7 @@ export class SizeInputComponent implements OnInit {
         }
       );
 
-      this.virtualKeyboardService
-        .openVirtualKeyboard({type: Type.SIZE_INPUT, layout_type: 'number', placeholder: 'Seleccione la cantidad', initialValue: item.quantity.toString()})
-        .then((popover: any) => {
-          popover.onDidDismiss().then(() => {
-            keyboardEventEmitterSubscribe.unsubscribe();
-          });
-        });
+      this.virtualKeyboardService.openVirtualKeyboard({type: Type.SIZE_INPUT, layout_type: 'number', placeholder: 'Seleccione la cantidad', initialValue: item.quantity.toString()}, () => keyboardEventEmitterSubscribe.unsubscribe());
     }
   }
 }

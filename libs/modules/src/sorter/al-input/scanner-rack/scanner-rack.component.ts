@@ -20,11 +20,14 @@ export class ScannerRackComponent implements OnInit{
   @Input() showAlMenu: boolean = false;
 
   productReference: '';
+  packageReference:'';
   referenceModel: '';
   sizeName: '';
   destinyWarehouse: any;
   inputValue: '';
-
+  product:boolean= false;
+  package:boolean = false;
+  productId: number =0;
   public currentPage: string = 'Entrada';
   public optionsActions: ActionToolbarModel.ActionToolbar[] = [];
   color: string;
@@ -60,7 +63,7 @@ export class ScannerRackComponent implements OnInit{
     this.toolbarProvider.currentPage.subscribe((page) => {
       this.currentPage = page;
       // muesta el boton del teclado en los titulos que tengan la ocurrencia "manual" en su cadena
-      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual') || this.currentPage.includes('Verificación de artículos') || this.currentPage.includes('Entrada') || this.currentPage.includes('Lista de auditorias') || this.currentPage.includes('Salida') || this.currentPage.includes('Auditorías')) {
+      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual') || this.currentPage.includes('Verificación de artículos') || this.currentPage.includes('Entrada') || this.currentPage.includes('Lista Control Embalajes') || this.currentPage.includes('Salida') || this.currentPage.includes('Control de embalajes')) {
         if(this.currentPage.includes('Código exposición manual') || this.currentPage.includes('Reetiquetado productos manual')){
           this.showKeyboard = false;
         } else {
@@ -78,14 +81,34 @@ export class ScannerRackComponent implements OnInit{
       this.optionsActions = options;
       this.toolbarProvider.currentOptionsActions = options;
     });
-    this.productReference = this.navParams.data.productScanned.reference;
-    this.referenceModel = this.navParams.data.productScanned.model.reference;
-    this.sizeName = this.navParams.data.productScanned.size.name;
-    this.destinyWarehouse = this.navParams.data.productScanned.destinyWarehouse;
+    if(this.navParams.data.productScanned.uniqueCode){
+      this.package = true;
+      this.product = false;
+      this.isPackage();
+    }else{
+      this.product = true;
+      this.package = false;
+      this.isProduct();
+    }
+
     this.keyboardService.disabled();
     this.state = false;
     this.color = 'danger';
     this.focusToInput();
+  }
+
+  isProduct(){
+    this.productReference = this.navParams.data.productScanned.reference;
+    this.referenceModel = this.navParams.data.productScanned.model.reference;
+    this.sizeName = this.navParams.data.productScanned.size.name;
+    this.destinyWarehouse = this.navParams.data.productScanned.destinyWarehouse;
+  }
+
+  isPackage(){
+    this.packageReference = this.navParams.data.productScanned.uniqueCode;
+    this.productId = this.navParams.data.productScanned.product.id;
+    this.referenceModel = this.navParams.data.productScanned.model.reference;
+    this.destinyWarehouse = this.navParams.data.productScanned.destinyWarehouse;
   }
 
   focusToInput() {
@@ -109,7 +132,7 @@ export class ScannerRackComponent implements OnInit{
 
   private scanToRack() {
     this.sorterInputService
-      .postRackScan({ productReference: this.productReference, rackReference: this.inputValue })
+      .postRackScan({ productReference: this.product == true ? this.productReference: this.packageReference, rackReference: this.inputValue })
       .subscribe(async (res: InputSorterModel.RackScan) => {
         await this.close()
       }, async (error: HttpRequestModel.Error) => {

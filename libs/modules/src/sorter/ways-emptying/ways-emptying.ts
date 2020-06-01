@@ -65,7 +65,6 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   }
 
   public columnSelected(data: { column: MatrixSorterModel.Column, iHeight: number, iCol: number }) {
-
     this.disableAuto = true;
     this.disableManual = true;
     this.disableMixed = true;
@@ -102,7 +101,9 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       this.disableAuto = true;
       this.disableManual = true;
       this.disableMixed = true;
+      this.disableEmptying = true;
     } else {
+      this.disableEmptying = false;
       for (way of this.lastWaysSelected) {
         if (way.column.way.manual === 1) {
           haveManual = true;
@@ -161,20 +162,16 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
    * @author Gaetano Sabino
    */
   private async allEmptying() {
-
     if (this.listOfIdsWays.length > 0) {
-      console.log(this.listOfIdsWays);
-      //  TODO call of method for delete all ways
       await this.intermediaryService.presentLoading('Vacciando Calles...');
       let result = await this.sorterOutputService.postEmptyAllWays(
         { waysId: this.listOfIdsWays }
       );
       if (result.code === 200) {
-        this.listOfIdsWays = [];
-        this.disableManual = true;
-        this.disableMixed = true;
         await this.intermediaryService.dismissLoading();
-        this.matrix.borrarWays();
+        let n = [];
+        this.matrix.send(n);
+        this.loadActiveSorter();
         // await this.manualEmptying();
 
         return;
@@ -321,6 +318,20 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   }
 
   public loadActiveSorter() {
+    this.waysMatrix = [];
+    this.isTemplateWithEqualZones = false;
+    this.loadingSorterTemplateMatrix = true;
+    this.disableAuto = true;
+    this.disableManual = true;
+    this.disableMixed = true;
+    this.disableFullSelect = true;
+    this.disableEmptying = true;
+    this.listOfIdsWays = [];
+    this.lastWaySelected = null;
+    this.lastWaysSelected = [];
+    this.waysToUpdate = [];
+    this.matrix.borrarWays();
+
     this.sorterService
       .getFirstSorter()
       .subscribe(data => {

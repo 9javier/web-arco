@@ -1,3 +1,6 @@
+import {WarehouseModel} from "@suite/services";
+import Warehouse = WarehouseModel.Warehouse;
+
 export namespace UserModel {
 
   export interface List {
@@ -83,8 +86,18 @@ export namespace UserModel {
     password?: string;
     address?: string;
     employeId?:number;
-    hasWarehouse?: boolean
+    hasWarehouse?: boolean;
+    permits?: Permit[];
   }
+
+  export interface Permit {
+    createdAt: string,
+    id: number,
+    roles: any[],
+    updatedAt: string,
+    warehouse: Warehouse
+  }
+
   export interface ResponseIndex {
     data: User[];
   }

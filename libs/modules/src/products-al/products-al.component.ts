@@ -53,6 +53,9 @@ export class ProductsAlComponent implements OnInit {
 
 
   form:FormGroup = this.formBuilder.group({
+    suppliers: [],
+    online: [],
+    brands: [],
     containers: [],
     models: [],
     colors: [],
@@ -77,7 +80,7 @@ export class ProductsAlComponent implements OnInit {
 
 
   products: ProductModel.Product[] = [];
-  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container'];
+  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container', 'brand', 'supplier', 'online'];
   dataSource: any;
   flagPageChange: boolean = false;
   flagSizeChange: boolean = false;
@@ -89,6 +92,9 @@ export class ProductsAlComponent implements OnInit {
   sizes:Array<TagsInputOption> = [];
   warehouses:Array<TagsInputOption> = [];
   groups:Array<TagsInputOption> = [];
+  brands: Array<TagsInputOption> = [];
+  suppliers: Array<TagsInputOption> = [];
+  online: Array<TagsInputOption> = [];
 
   /**List of SearchInContainer */
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
@@ -359,6 +365,9 @@ export class ProductsAlComponent implements OnInit {
           this.updateFilterSourceModels(searchsInContainer.data.filters.models);
           this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
+          this.updateFilterSourceBrands(searchsInContainer.data.filters.brands);
+          this.updateFilterSourceSuppliers(searchsInContainer.data.filters.suppliers);
+          this.updateFilterSourceOnline(searchsInContainer.data.filters.online);
           setTimeout(() => {
             this.pauseListenFormChange = false;
             this.pauseListenFormChange = true;
@@ -470,6 +479,53 @@ export class ProductsAlComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
+  private updateFilterSourceBrands(brands: FiltersModel.Brand[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("brands").value;
+    this.brands = brands.map(brand => {
+      brand.value = brand.name;
+      brand.checked = true;
+      brand.hide = false;
+      return brand;
+    });
+    if (value && value.length) {
+      this.form.get("brands").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  private updateFilterSourceSuppliers(suppliers: FiltersModel.Supplier[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("suppliers").value;
+    this.suppliers = suppliers.map(supplier => {
+      supplier.value = supplier.name;
+      supplier.checked = true;
+      supplier.hide = false;
+      return supplier;
+    });
+    if (value && value.length) {
+      this.form.get("suppliers").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  private updateFilterSourceOnline(online: FiltersModel.Online[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("online").value;
+    this.online = online.map(online => {
+      online.id = online.name  == '0' ? 0 : 1;
+      online.value = online.name == '0' ? 'No' : 'Sí';
+      online.name = online.value;
+      online.checked = true;
+      online.hide = false;
+      return online;
+    });
+    if (value && value.length) {
+      this.form.get("online").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
   applyFilters() {
     if (this.pauseListenFormChange) return;
     ///**format the reference */
@@ -494,6 +550,9 @@ export class ProductsAlComponent implements OnInit {
 
   clearFilters() {
     this.form = this.formBuilder.group({
+      suppliers: [],
+      online: [],
+      brands: [],
       containers: [],
       models: [],
       colors: [],
