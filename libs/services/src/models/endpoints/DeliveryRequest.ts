@@ -25,7 +25,8 @@ export namespace DeliveryRequestModel {
     model: Model,
     size: Size,
     selected: boolean,
-    hidden: boolean
+    hidden: boolean,
+    confirmed: boolean
   }
 
 }
