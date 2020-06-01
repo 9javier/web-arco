@@ -752,7 +752,6 @@ export class PrinterService {
    */
   private async toPrintFromString(textToPrint: string, callbackSuccess?: () => any, callbackFail?: () => any,  macAddress?) {
 
-
     console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", { textToPrint, macAddress });
     /**añadimos esto a la lógica del toPrint */
     if (macAddress) {
@@ -816,6 +815,12 @@ export class PrinterService {
     }
   }
 
+  public async printTagReturn(dataToPrint: string) {
+    console.debug("PRINT::printTagReturn 1 [" + new Date().toJSON() + "]", dataToPrint);
+    if (dataToPrint) {
+      this.toPrintFromString(dataToPrint);
+    }
+  }
 
   private async toPrint(printOptions: PrintModel.Print) {
 
