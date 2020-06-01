@@ -25,7 +25,8 @@ interface MenuSectionGroupItem {
   type: 'wrapper',
   children: (MenuSectionGroupItem | MenuSectionItem)[],
   thirdLevel?: boolean
-  tooltip?: string
+  tooltip?: string,
+  amount?: number
 }
 
 interface MenuSectionItem {
