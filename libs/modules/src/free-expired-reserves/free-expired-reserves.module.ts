@@ -3,7 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FreeExpiredReservesComponent } from './free-expired-reserves.component';
 import { ReactiveFormsModule,FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MatListModule, MatTableModule, MatPaginatorModule, MatExpansionModule, MatSlideToggleModule } from '@angular/material';
+import {
+  MatListModule,
+  MatTableModule,
+  MatPaginatorModule,
+  MatExpansionModule,
+  MatSlideToggleModule,
+  MatTooltipModule
+} from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { RouterModule,Routes } from '@angular/router';
 import { ResponsiveLayoutModule } from '../components/responsive-layout/responsive-layout.module';
@@ -33,7 +40,8 @@ const routes: Routes = [
     MatExpansionModule,
     MatSlideToggleModule,
     TagsInputModule,
-    PaginatorComponentModule
+    PaginatorComponentModule,
+    MatTooltipModule
   ]
 })
 export class FreeExpiredReservesModule { }
