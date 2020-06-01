@@ -23,7 +23,8 @@ interface MenuSectionGroupItem {
   title: string,
   open: boolean,
   type: 'wrapper',
-  children: MenuSectionItem[],
+  children: (MenuSectionGroupItem | MenuSectionItem)[],
+  thirdLevel?: boolean
   tooltip?: string
 }
 
@@ -32,9 +33,9 @@ interface MenuSectionItem {
   id?: string,
   url: string,
   icon: string,
-  notification?: boolean,
-  children?: MenuSectionItem[],
-  header?: boolean,
+  notification?: boolean
+  children?: (MenuSectionGroupItem | MenuSectionItem)[];
+  header?: boolean
   tooltip?: string,
   amount?: number
 }
@@ -351,6 +352,12 @@ export class MenuComponent implements OnInit {
           id: 'jails',
           url: '/jails/menu',
           icon: 'grid'
+        },
+        {
+          title: 'Estado de expedición',
+          id: 'state-expedition-avelon',
+          url: '/state-expedition-avelon/menu',
+          icon: 'apps'
         }
       ]
     },
@@ -471,7 +478,8 @@ export class MenuComponent implements OnInit {
           id: 'incidences-reception',
           url: '/incidences-reception',
           icon: 'notifications'
-        }
+        },
+
       ]
     },
     {
@@ -487,13 +495,111 @@ export class MenuComponent implements OnInit {
       icon: 'folder'
     },
     {
+      title: 'Regiones',
+      id: 'regions',
+      url: '/regions',
+      icon: 'map'
+    },
+    {
+      title: 'Recepciones',
+      id: 'receptions-avelon',
+      url: '/receptions-avelon',
+      icon: 'archive'
+    },
+    {
+      title: 'Predistribuciones',
+      id: 'predistributions',
+      url: '/predistributions',
+      icon: 'archive'
+    },
+    {
+      title: 'Marketplaces',
+      open: true,
+      type: 'wrapper',
+      icon: 'cart',
+      children: [
+        {
+          title: 'Catálogos Marketplaces',
+          id: 'catalogs-marketplaces',
+          url: '/marketplaces/catalogs-marketplaces',
+          icon: 'apps'
+        },
+        {
+          title: 'Miniprecios',
+          open: false,
+          type: 'wrapper',
+          id: 'miniprecios',
+          icon: 'add-circle-outline',
+          thirdLevel: true,
+          children: [
+            {
+              title: 'Mapeos',
+              id: 'mp-mapping',
+              url: '/marketplaces/miniprecios/mapping',
+              icon: 'code'
+            },{
+              title: 'Reglas',
+              id: 'mp-rules',
+              url: '/marketplaces/miniprecios/rules',
+              icon: 'code-working'
+            },
+            {
+              title: 'Catálogo',
+              id: 'mp-catalog',
+              url: '/marketplaces/miniprecios/catalog',
+              icon: 'apps'
+            }
+          ]
+        },
+        {
+          title: 'Amazon',
+          open: false,
+          type: 'wrapper',
+          id: 'amazon',
+          icon: 'add-circle-outline',
+          thirdLevel: true,
+          children: [
+            {
+              title: 'Mapeos',
+              id: 'a-mapping',
+              url: '/marketplaces/amazon/mapping',
+              icon: 'code'
+            },{
+              title: 'Reglas',
+              id: 'a-rules',
+              url: '/marketplaces/amazon/rules',
+              icon: 'code-working'
+            },
+            {
+              title: 'Catálogo',
+              id: 'a-catalog',
+              url: '/marketplaces/amazon/catalog',
+              icon: 'apps'
+            }
+          ]
+        },
+        {
+          title: 'Prioridad de Tienda',
+          id: 'store-priority',
+          url: '/marketplaces/store-priority',
+          icon: 'ios-albums'
+        },
+        {
+          title: 'Parametrización Logística',
+          id: 'logistics-operators',
+          url: '/marketplaces/logistics-operators',
+          icon: 'cube'
+        },
+      ]
+    },
+    {
       title: 'Pedidos Online',
       open: false,
       type: 'wrapper',
       icon: 'build',
       children: [
         {
-          title: 'Incidencias',
+          title: 'Incidencias/Manual',
           id: 'expedition-manual',
           url: '/expedition-manual',
           icon: 'cog',
@@ -941,7 +1047,8 @@ export class MenuComponent implements OnInit {
           tooltip: 'Mac de la impresora'
         }
       ]
-    }
+    },
+
 
 
   ];
@@ -1152,6 +1259,12 @@ export class MenuComponent implements OnInit {
     if (p.id === 'workwaves-scheduled-1') {
       this.router.navigate([p.url], { queryParams: { type: 1 } })
     }
+  }
+
+  tapOptionSubSubitem(menuItem) {
+    this.menuController.close();
+    this.menuTitle.emit(menuItem.title);
+
   }
 
   openSubMenuItem(menuItem) {
