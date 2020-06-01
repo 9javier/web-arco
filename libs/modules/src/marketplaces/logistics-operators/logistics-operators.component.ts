@@ -16,7 +16,7 @@ import {UpdateOperatorRuleComponent} from "./update-operator-rule/update-operato
 export class LogisticsOperators implements OnInit {
 
   displayedColumns: string[] = ['select', 'marketplace', 'warehouseOrigin', 'warehouseDestiny', 'provincia', 'pais', 'operadorLogistico'];
-  private dataSource;
+  dataSource;
   private operatorsRules;
   private operator = [];
   private provinces  = [];

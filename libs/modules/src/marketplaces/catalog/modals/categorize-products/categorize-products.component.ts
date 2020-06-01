@@ -8,11 +8,11 @@ import {MatTableDataSource} from "@angular/material";
 })
 export class CategorizeProductsComponent implements OnInit {
 
-  private selectedProducts;
-  private selectedCategories;
-  private productCategoriesData;
-  private productCategoriesTableData;
-  private productCategoriesTableHeader;
+  selectedProducts;
+  selectedCategories;
+  productCategoriesData;
+  productCategoriesTableData;
+  productCategoriesTableHeader;
 
   constructor(
     private modalController: ModalController,

@@ -24,40 +24,40 @@ export class MappingsComponent implements OnInit {
   @ViewChild('paginatorColors') paginatorColors: MatPaginator;
   @ViewChild('paginatorSizes') paginatorSizes: MatPaginator;
 
-  private username;
+  username;
 
-  private dataSourceBrands;
-  private dataSourceMappingBrands;
-  private brandsList;
+  dataSourceBrands;
+  dataSourceMappingBrands;
+  brandsList;
 
-  private dataSourceColors;
-  private dataSourceMappingColors;
-  private colorsList;
+  dataSourceColors;
+  dataSourceMappingColors;
+  colorsList;
 
-  private dataSourceSizes;
-  private dataSourceMappingSizes;
-  private sizesList;
+  dataSourceSizes;
+  dataSourceMappingSizes;
+  sizesList;
 
-  private dataSourceFeatures;
-  private dataSourceMappingFeatures;
-  private featuresList;
+  dataSourceFeatures;
+  dataSourceMappingFeatures;
+  featuresList;
 
-  private dataDBsave = [];
+  dataDBsave = [];
 
-  private displayedColumns;
+  displayedColumns;
 
-  private showingBrands;
-  private showingColors;
-  private showingFeatures;
-  private showingSizes;
+  showingBrands;
+  showingColors;
+  showingFeatures;
+  showingSizes;
 
-  private brandSearched;
-  private colorSearched;
-  private featureSearched;
-  private sizeSearched;
+  brandSearched;
+  colorSearched;
+  featureSearched;
+  sizeSearched;
 
-  private market;
-  private marketExternalId;
+  market;
+  marketExternalId;
 
   private static readonly MINIPRECIOS_MARKET_ID = '406A51C8-EA12-4D6D-B05D-C2EA70A1A609';
 

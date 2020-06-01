@@ -14,24 +14,24 @@ export class CatalogComponent implements OnInit {
 
   private static readonly MINI_MARKET_ID = '406A51C8-EA12-4D6D-B05D-C2EA70A1A609';
 
-  private catalogData;
-  private catalogTableData;
-  private catalogTableHeader;
-  private selectedProducts;
-  private market;
-  private unfilteredCatalogData;
+  catalogData;
+  catalogTableData;
+  catalogTableHeader;
+  selectedProducts;
+  market;
+  unfilteredCatalogData;
 
-  private searchReference;
-  private searchModel;
-  private searchBrand;
-  private searchColor;
-  private searchFamily;
-  private searchDescription;
-  private searchPrice;
-  private searchDiscount;
-  private searchStock;
+  searchReference;
+  searchModel;
+  searchBrand;
+  searchColor;
+  searchFamily;
+  searchDescription;
+  searchPrice;
+  searchDiscount;
+  searchStock;
 
-  private refresher;
+  refresher;
 
   constructor(
     private route: ActivatedRoute,

@@ -12,11 +12,11 @@ import {MatTableDataSource} from '@angular/material';
 })
 export class RulesComponent implements OnInit {
 
-  private dataSourceCategories;
+  dataSourceCategories;
   private dataSourceRulesCategories;
   private displayedCategoriesColumns;
 
-  private dataSourceEnabling;
+  dataSourceEnabling;
   private dataSourceRulesEnabling;
   private displayedEnablingColumns;
 

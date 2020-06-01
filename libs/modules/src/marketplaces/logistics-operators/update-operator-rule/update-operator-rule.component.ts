@@ -11,29 +11,29 @@ import {IntermediaryService} from "@suite/services";
 })
 export class UpdateOperatorRuleComponent implements OnInit {
 
-  private provinces;
-  private countries;
-  private markets;
-  private logisticsOperators;
-  private warehousesOrigins;
-  private warehousesDestinies;
-  private rules;
-  private dataBody;
-  private isChecked = {'isChecked': false};
-  private marketsCheck;
-  private provincesCheck;
-  private countriesCheck;
-  private warehousesOriginsCheck;
-  private warehousesDestiniesCheck;
-  private operatorSelected;
-  private selectMarkets = false;
-  private selectProvinces = false;
-  private selectCountries = false;
-  private selectWarehousesOrigins = false;
-  private selectWarehousesDestinies = false;
-  private activateButton = {'markets': true, 'warehousesOrigins': true, 'warehousesDestinies': true, 'provinces': true, 'countries': true, 'logisticOperator': true};
-  private elementRule;
-  private selectedOperator;
+  provinces;
+  countries;
+  markets;
+  logisticsOperators;
+  warehousesOrigins;
+  warehousesDestinies;
+  rules;
+  dataBody;
+  isChecked = {'isChecked': false};
+  marketsCheck;
+  provincesCheck;
+  countriesCheck;
+  warehousesOriginsCheck;
+  warehousesDestiniesCheck;
+  operatorSelected;
+  selectMarkets = false;
+  selectProvinces = false;
+  selectCountries = false;
+  selectWarehousesOrigins = false;
+  selectWarehousesDestinies = false;
+  activateButton = {'markets': true, 'warehousesOrigins': true, 'warehousesDestinies': true, 'provinces': true, 'countries': true, 'logisticOperator': true};
+  elementRule;
+  selectedOperator;
 
   constructor(private modalController: ModalController,
               private renderer: Renderer2,

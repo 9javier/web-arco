@@ -19,28 +19,28 @@ export class NewRuleComponent implements OnInit {
 
   private mode;
   private rule;
-  private ruleFilterType;
-  private numberOfProducts;
-  private categoryList;
-  private selectedCategoryGroupFilter;
-  private selectedCategoryGroupFilterObject;
-  private selectedCategories;
-  private destinationCategories;
-  private selectedDestinationCategories;
-  private minPriceFilter;
-  private maxPriceFilter;
-  private priceRange;
-  private filterDescription;
-  private ruleName;
-  private originalRuleName;
-  private includeReferenceText;
-  private includeReferenceArray;
-  private excludeReferenceText;
-  private excludeReferenceArray;
-  private referencesExceptions;
-  private categorySearched;
-  private market;
-  private marketExternalId;
+  ruleFilterType;
+  numberOfProducts;
+  categoryList;
+  selectedCategoryGroupFilter;
+  selectedCategoryGroupFilterObject;
+  selectedCategories;
+  destinationCategories;
+  selectedDestinationCategories;
+  minPriceFilter;
+  maxPriceFilter;
+  priceRange;
+  filterDescription;
+  ruleName;
+  originalRuleName;
+  includeReferenceText;
+  includeReferenceArray;
+  excludeReferenceText;
+  excludeReferenceArray;
+  referencesExceptions;
+  categorySearched;
+  market;
+  marketExternalId;
 
   constructor(
     private modalController: ModalController,
