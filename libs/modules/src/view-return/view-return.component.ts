@@ -27,6 +27,7 @@ import {ReviewImagesComponent} from "../incidents/components/review-images/revie
 import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 import {Events} from "@ionic/angular";
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {PrintTicketService} from "../../../services/src/lib/print-ticket/print-ticket.service";
 
 @Component({
   selector: 'suite-view-return',
@@ -64,7 +65,8 @@ export class ViewReturnComponent implements OnInit {
     private transfer: FileTransfer,
     private fb: FormBuilder,
     private dropFilesService: DropFilesService,
-    private dateTimeParserService: DateTimeParserService
+    private dateTimeParserService: DateTimeParserService,
+    private printTicketService: PrintTicketService,
   ) {}
 
   async ngOnInit() {
@@ -464,5 +466,9 @@ export class ViewReturnComponent implements OnInit {
     } else {
       this.router.navigateByUrl('picking/return');
     }
+  }
+
+  printPackages(returnObj) {
+    this.printTicketService.printPackages(returnObj);
   }
 }
