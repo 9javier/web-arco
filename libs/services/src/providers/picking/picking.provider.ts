@@ -189,6 +189,22 @@ export class PickingProvider {
     this._selectedPendingRequests = value;
   }
 
+  private _selectedReserves: DeliveryRequest[] = null;
+  get selectedReserves(): DeliveryRequest[] {
+    return this._selectedReserves;
+  }
+  set selectedReserves(value: DeliveryRequest[]) {
+    this._selectedReserves = value;
+  }
+
+  private _freedReserves: DeliveryRequest[] = null;
+  get freedReserves(): DeliveryRequest[] {
+    return this._freedReserves;
+  }
+  set freedReserves(value: DeliveryRequest[]) {
+    this._freedReserves = value;
+  }
+
   private _selectedProcessedRequests: Array<LineRequest | DeliveryRequest> = null;
   get selectedProcessedRequests(): Array<LineRequest | DeliveryRequest> {
     return this._selectedProcessedRequests;

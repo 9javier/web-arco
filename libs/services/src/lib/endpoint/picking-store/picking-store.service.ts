@@ -11,6 +11,7 @@ import {DeliveryRequestModel} from "../../../models/endpoints/DeliveryRequest";
 import ExpiredReservesResponse = DeliveryRequestModel.ExpiredReservesResponse;
 import {ReturnModel} from "../../../models/endpoints/Return";
 import Pagination = ReturnModel.Pagination;
+import FreeReserveResponse = DeliveryRequestModel.FreeReserveResponse;
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,7 @@ export class PickingStoreService {
   private postRejectRequestUrl = environment.apiBase + '/processes/picking-store/line-request-reject';
   private postCancelRequestUrl = environment.apiBase + '/delivery-request/cancel';
   private postExpiredReservesUrl = environment.apiBase + '/delivery-request/expired-reserves';
+  private postFreeReserveUrl = environment.apiBase + '/delivery-request/free-reserve';
   private postLineRequestDisassociateUrl = environment.apiBase + '/processes/picking-store/line-request-disassociate';
   private postVentilateUrl = environment.apiBase + '/processes/picking-store/ventilate';
 
@@ -37,6 +39,10 @@ export class PickingStoreService {
     private auth: AuthenticationService,
     private requestsProvider: RequestsProvider
   ) {}
+
+  postFreeReserve(parameters: {productReference: string}): Promise<FreeReserveResponse>{
+    return this.requestsProvider.post(this.postFreeReserveUrl, parameters);
+  }
 
   getExpiredReserves(parameters: {pagination: Pagination}): Promise<ExpiredReservesResponse>{
     return this.requestsProvider.post(this.postExpiredReservesUrl, parameters);

@@ -39,4 +39,12 @@ export namespace DeliveryRequestModel {
     errors?: any
   }
 
+  export interface FreeReserveResponse {
+    message?: string,
+    code?: number,
+    data?: DeliveryRequest,
+    error?: any,
+    errors?: any
+  }
+
 }
