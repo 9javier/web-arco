@@ -431,7 +431,7 @@ export class NewReturnComponent implements OnInit {
   async searchArchive() {
     const modal = await this.modalController.create({
       component: DropFilesComponent,
-      componentProps: {type: 'archive'}
+      componentProps: {type: 'archive', images: this.archives }
     });
     await modal.present();
   }
@@ -439,7 +439,7 @@ export class NewReturnComponent implements OnInit {
   async searchDelivery_note() {
     const modal = await this.modalController.create({
       component: DropFilesComponent,
-      componentProps: {type: 'delivery_note'}
+      componentProps: {type: 'delivery_note', images: this.delivery_notes }
     });
     await modal.present();
   }
