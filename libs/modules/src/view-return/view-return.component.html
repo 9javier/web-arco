@@ -11,7 +11,10 @@
       <ion-col size="6">
         <ion-item>
           <ion-label position="stacked">Nº Bultos{{requiredFields.quantityPacking ? ' *' : ''}}</ion-label>
-          <ion-input [(ngModel)]="return.amountPackages" type="number"></ion-input>
+          <ion-input style="max-width: 40px; margin-left: 8px" [(ngModel)]="return.amountPackages" type="number"></ion-input>
+          <ion-button slot="end" *ngIf="return.amountPackages > 0" (click)="printPackages(return)">
+            <ion-icon slot="icon-only" name="print"></ion-icon>
+          </ion-button>
         </ion-item>
       </ion-col>
 

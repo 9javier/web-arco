@@ -18,6 +18,7 @@ import { TimesToastType } from '../../models/timesToastType';
 import {DefectiveRegistryModel} from "../../models/endpoints/DefectiveRegistry";
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 import * as moment from 'moment';
+import {PrinterService} from "../printer/printer.service";
 
 declare let cordova: any;
 
@@ -25,7 +26,10 @@ declare let cordova: any;
   providedIn: 'root'
 })
 export class PrintTicketService {
+
   constructor(
+    private intermediaryService: IntermediaryService,
+    private printerService: PrinterService
   ) { }
 
   public async printTicket(defective) {
@@ -124,4 +128,19 @@ export class PrintTicketService {
     }
   }
 
+  public async printPackages(returnObj) {
+    await this.intermediaryService.presentLoading("Imprimiendo...", () => {
+      for (let i = 1; i <= returnObj.amountPackages; i++) {
+        const id = returnObj && returnObj.id ? returnObj.id : '';
+        const reference = '' + i + '/' + returnObj.amountPackages + '';
+        const provider = returnObj && returnObj.provider && returnObj.provider.name ? returnObj.provider.name : '';
+
+        const dataToSend = "^XA ^CI28 ^LH60,10 ^AVC^FD ID: "+ id +"^FS ^LH60,100 ^AVC^FD Bulto: "+ reference +"^FS ^ABN^FO25,70^FD"+ provider +"^FS ^XZ";
+
+        this.printerService.printTagReturn(dataToSend).then(() => {
+          this.intermediaryService.dismissLoading();
+        });
+      }
+    });
+  }
 }

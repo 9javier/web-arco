@@ -26,7 +26,8 @@ export namespace LineRequestModel {
     hash: string,
     lineToClean: boolean,
     selected: boolean,
-    hidden: boolean
+    hidden: boolean,
+    confirmed?: boolean
   }
 
 }
