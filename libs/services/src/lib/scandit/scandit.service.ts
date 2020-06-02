@@ -218,6 +218,7 @@ export class ScanditService {
           this.hideTextMessage(2000);
           packingReference = code;
           containerReference = null;
+          ScanditMatrixSimple.setFixedText('PRODUCTO/CONTENEDOR/EMBALAJE');
         }
       }
     }, 'Ubicar/Escanear', HEADER_BACKGROUND, HEADER_COLOR);

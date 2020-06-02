@@ -128,7 +128,8 @@ public class MatrixSimpleActivity extends Activity {
     ScanditSDK.setActivityStarted(matrixSimple);
 
     if(packingReference != null) ScanditSDK.setPacking(packingReference);
-    if(title.equals("Ubicar defectuosos")) ScanditSDK.setFixedText();
+    if(title.equals("Ubicar defectuosos")) ScanditSDK.setFixedText("Escanee un embalaje para comenzar.");
+    if(title.equals("Ubicar/Escanear")) ScanditSDK.setFixedText("CONTENEDOR/EMBALAJE");
   }
 
   @Override
