@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import {FilterPopoverModule} from "../filter-popover/filter-popover.module";
 import {MatTooltipModule} from "@angular/material";
 import {NgxMaterialTimepickerModule} from "ngx-material-timepicker";
+import {MatRippleModule} from "@angular/material/core";
 @NgModule({
   entryComponents:[ FilterButtonComponent ],
   declarations: [ FilterButtonComponent ],
@@ -15,7 +16,8 @@ import {NgxMaterialTimepickerModule} from "ngx-material-timepicker";
     RouterModule,
     FilterPopoverModule,
     MatTooltipModule,
-    NgxMaterialTimepickerModule
+    NgxMaterialTimepickerModule,
+    MatRippleModule
   ],
   exports:[ FilterButtonComponent ]
 })

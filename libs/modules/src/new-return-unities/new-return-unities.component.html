@@ -1,8 +1,8 @@
 <ion-content>
   <mat-progress-bar mode="indeterminate" *ngIf="isLoadingData"></mat-progress-bar>
 
-  <return-unities-products *ngIf="!isDefective" (changeItemsSelected)="changeInItemsSelected($event)"></return-unities-products>
-  <return-unities-defective-products *ngIf="isDefective" (changeItemsSelected)="changeInItemsSelected($event)"></return-unities-defective-products>
+  <return-unities-products *ngIf="!isDefective" (changeItemsSelected)="changeInItemsSelected($event)" (appliedFilters)="applyFilters($event)"></return-unities-products>
+  <return-unities-defective-products *ngIf="isDefective" (changeItemsSelected)="changeInItemsSelected($event)" (appliedFilters)="applyFilters($event)"></return-unities-defective-products>
 
   <mat-paginator></mat-paginator>
 </ion-content>
