@@ -26,10 +26,10 @@ export class ShoesPickingService {
     }));
   }
 
-  getPendingListByPicking(pickingId: number) : Observable<ShoesPickingModel.ResponseListByPicking> {
+  getPendingListByPicking(pickingId: number) : Observable<ShoesPickingModel.ResponseListProductsByPicking> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.get<ShoesPickingModel.ResponseListByPicking>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
+      return this.http.get<ShoesPickingModel.ResponseListProductsByPicking>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
     }));
   }
 

@@ -65,6 +65,20 @@ export namespace ShoesPickingModel {
     errors: any;
   }
 
+  export interface ResponseListProductsByPicking extends HttpRequestModel.Response {
+    data: {
+      list: ShoesPicking[],
+      counts?: {
+        total?: number,
+        pending?: number,
+        scanned?: number
+      }
+    };
+    message: string;
+    code: number;
+    errors: any;
+  }
+
   export interface ResponseListByPickingReturn extends HttpRequestModel.Response {
     data: ReturnProduct[];
     message: string;

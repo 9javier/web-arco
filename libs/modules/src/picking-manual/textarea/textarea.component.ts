@@ -76,7 +76,7 @@ export class TextareaComponent implements OnInit {
     private alertController: AlertController,
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
-    private pickingProvider: PickingProvider,
+    public pickingProvider: PickingProvider,
     private itemReferencesProvider: ItemReferencesProvider,
     private intermediaryService: IntermediaryService,
     private audioProvider: AudioProvider,
@@ -483,6 +483,11 @@ export class TextareaComponent implements OnInit {
             let subscribeResponse = await (async (res: InventoryModel.ResponsePicking) => {
               if (res.code === 200 || res.code === 201) {
                 this.listProducts = res.data.shoePickingPending;
+                if(res.data.counts){
+                  this.pickingProvider.quantityTotal = res.data.counts.total;
+                  this.pickingProvider.quantityPending = res.data.counts.pending;
+                  this.pickingProvider.quantityScanned = res.data.counts.scanned;
+                }
                 this.productsScanned.push(dataWrited);
                 this.inputPicking = null;
 
@@ -525,9 +530,13 @@ export class TextareaComponent implements OnInit {
                 });
 
                 this.getPendingListByPicking(this.pickingId)
-                  .subscribe((res2: ShoesPickingModel.ResponseListByPicking) => {
+                  .subscribe((res2: ShoesPickingModel.ResponseListProductsByPicking) => {
                     if (res2.code === 200 || res2.code === 201) {
-                      this.listProducts = res2.data;
+                      this.pickingProvider.listProducts = res2.data.list;
+                      this.pickingProvider.quantityTotal = res2.data.counts.total;
+                      this.pickingProvider.quantityPending = res2.data.counts.pending;
+                      this.pickingProvider.quantityScanned = res2.data.counts.scanned;
+                      this.listProducts = res2.data.list;
                       if (this.listProducts.length > 0) {
                         this.setNexProductToScan(this.listProducts[0]);
                       } else {
@@ -558,9 +567,12 @@ export class TextareaComponent implements OnInit {
               });
 
               this.getPendingListByPicking(this.pickingId)
-                .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                .subscribe((res: ShoesPickingModel.ResponseListProductsByPicking) => {
                   if (res.code === 200 || res.code === 201) {
-                    this.listProducts = res.data;
+                    this.listProducts = res.data.list;
+                    this.pickingProvider.quantityTotal = res.data.counts.total;
+                    this.pickingProvider.quantityPending = res.data.counts.pending;
+                    this.pickingProvider.quantityScanned = res.data.counts.scanned;
                     if (this.listProducts.length > 0) {
                       this.setNexProductToScan(this.listProducts[0]);
                     } else {
@@ -630,9 +642,12 @@ export class TextareaComponent implements OnInit {
                       });
 
                       this.getPendingListByPicking(this.pickingId)
-                        .subscribe((res2: ShoesPickingModel.ResponseListByPicking) => {
+                        .subscribe((res2: ShoesPickingModel.ResponseListProductsByPicking) => {
                           if (res2.code === 200 || res2.code === 201) {
-                            this.listProducts = res2.data;
+                            this.listProducts = res2.data.list;
+                            this.pickingProvider.quantityTotal = res2.data.counts.total;
+                            this.pickingProvider.quantityPending = res2.data.counts.pending;
+                            this.pickingProvider.quantityScanned = res2.data.counts.scanned;
                             if (this.listProducts.length > 0) {
                               this.setNexProductToScan(this.listProducts[0]);
                             } else {
@@ -755,10 +770,10 @@ export class TextareaComponent implements OnInit {
     }));
   }
 
-  private getPendingListByPicking(pickingId: number): Observable<ShoesPickingModel.ResponseListByPicking> {
+  private getPendingListByPicking(pickingId: number): Observable<ShoesPickingModel.ResponseListProductsByPicking> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.get<ShoesPickingModel.ResponseListByPicking>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
+      return this.http.get<ShoesPickingModel.ResponseListProductsByPicking>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
     }));
   }
 
