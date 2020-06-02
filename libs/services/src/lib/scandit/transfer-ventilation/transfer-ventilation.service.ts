@@ -65,7 +65,7 @@ export class TransferVentilationScanditService {
                   let mainText = this.disableTransferProductByProduct ? 'Escanea el embalaje de destino' : 'Escanea los productos a traspasar';
                   ScanditMatrixSimple.setMainTextSwitchToIonic(true, mainText);
                   ScanditMatrixSimple.setOriginTextSwitchToIonic(true, codeScanned);
-                }, 0.5 * 1000);
+                }, 1000);
               }
             } else if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT
               || this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT_MODEL) {

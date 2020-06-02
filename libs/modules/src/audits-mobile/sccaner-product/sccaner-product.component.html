@@ -18,22 +18,40 @@
   <div class="product-list">
     <mat-list [ngClass]="destinyPacking ? 'product-list-smaller' : ''">
       <mat-list-item *ngFor="let packingProduct of packingProducts">
-        <mat-icon matListIcon [ngClass]="packingProduct.audit.isAudit ? packingProduct.audit.rightAudit ? 'ok' : 'ko' : 'not-audit'">{{ packingProduct.audit.isAudit ? (packingProduct.audit.rightAudit ? 'check_circle' : 'cancel') : 'info'}}</mat-icon>
+        <mat-icon matListIcon
+          [ngClass]="packingProduct.audit.isAudit ? packingProduct.audit.rightAudit ? 'ok' : 'ko' : 'not-audit'">
+          {{ packingProduct.audit.isAudit ? (packingProduct.audit.rightAudit ? 'check_circle' : 'cancel') : 'info'}}
+        </mat-icon>
+        <div *ngIf="packingProduct.product.reference">
+          <h3 matLine><b>{{packingProduct.product.reference}}</b></h3>
+          <p matLine>
+            <span> {{packingProduct.product.model.reference}} - {{packingProduct.product.model.brand.name}} </span>
+          </p>
+          <p matLine>
+            <span> T - {{packingProduct.product.size.name}} </span>
+          </p>
+          <p matLine *ngIf="packingProduct.audit.isAudit && !packingProduct.audit.rightAudit">
+            <span> destino: <b>{{packingProduct.destinyProduct.reference}} {{packingProduct.destinyProduct.name}}</b>
+            </span>
+          </p>
+        </div>
 
-        <h3 matLine><b>{{packingProduct.product.reference}}</b></h3>
-        <p matLine>
-          <span> {{packingProduct.product.model.reference}} - {{packingProduct.product.model.brand.name}} </span>
-        </p>
-        <p matLine>
-          <span> T - {{packingProduct.product.size.name}} </span>
-        </p>
-        <p matLine *ngIf="packingProduct.audit.isAudit && !packingProduct.audit.rightAudit">
-          <span> destino: <b>{{packingProduct.destinyProduct.reference}} {{packingProduct.destinyProduct.name}}</b> </span>
-        </p>
+        <div *ngIf="packingProduct.product.uniqueCode">
+          <h3 matLine><b>{{packingProduct.product.uniqueCode}}</b></h3>
+          <p matLine>
+            <span> Pedido: {{ packingProduct.product?.order.deliveryRequestExternalId }}</span>
+          </p>
+          <p matLine *ngIf="packingProduct.audit.isAudit && !packingProduct.audit.rightAudit">
+            <span> destino: <b>{{packingProduct.destinyProduct.reference}} {{packingProduct.destinyProduct.name}}</b>
+            </span>
+          </p>
+        </div>
+
       </mat-list-item>
     </mat-list>
 
-    <button *ngIf="packingProducts && packingProducts.length > 0" mat-mini-fab class="fab-filter" (click)="filterProducts($event)" color="dark">
+    <button *ngIf="packingProducts && packingProducts.length > 0" mat-mini-fab class="fab-filter"
+      (click)="filterProducts($event)" color="dark">
       <mat-icon>filter_list</mat-icon>
     </button>
   </div>

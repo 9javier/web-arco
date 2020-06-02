@@ -56,7 +56,7 @@ export class FormExpeditionInfoComponent implements OnInit, OnDestroy {
   }
 
   public focusInExpeditionNumberInput() {
-    setTimeout(() => this.inputExpeditionNumber.nativeElement.focus(), 0.5 * 1000);
+    setTimeout(() => this.inputExpeditionNumber.nativeElement.focus(), 1000);
   }
 
   public resumeLast() {

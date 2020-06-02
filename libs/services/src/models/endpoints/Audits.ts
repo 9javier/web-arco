@@ -1,6 +1,7 @@
-import {HttpRequestModel} from "./HttpRequest";
-import {ProductModel, UserModel, WarehouseModel} from "@suite/services";
-import {CarrierModel} from "./Carrier";
+import { HttpRequestModel } from "./HttpRequest";
+import { ProductModel, UserModel, WarehouseModel } from "@suite/services";
+import { CarrierModel } from "./Carrier";
+import { OpPackageModel } from './OpPackage';
 
 export namespace AuditsModel {
 
@@ -61,7 +62,8 @@ export namespace AuditsModel {
 
   // Get products in packing for audit
   export interface GetAuditProducts {
-    product: ProductModel.Product,
+
+    product:  ProductModel.Product & OpPackageModel.OpPackage,
     audit: {
       isAudit: true,
       hasSorter: false,
