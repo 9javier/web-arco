@@ -290,4 +290,23 @@ export namespace ReturnModel{
   export interface AssignProductsResponse extends HttpRequestModel.Response {
 
   }
+
+  export const Status = {
+    RETURN_ORDER: 1,
+    IN_PROCESS: 3,
+    PREPARED: 4,
+    PENDING_PICKUP: 5,
+    PICKED_UP: 6,
+    BILLED: 7,
+    UNKNOWN: 8,
+  };
+  export const StatusNames = [
+    {id: Status.RETURN_ORDER, name: 'Orden devolución'},
+    {id: Status.IN_PROCESS, name: 'En proceso'},
+    {id: Status.PREPARED, name: 'Preparado'},
+    {id: Status.PENDING_PICKUP, name: 'Pendiente recogida'},
+    {id: Status.PICKED_UP, name: 'Recogido'},
+    {id: Status.BILLED, name: 'Facturado'},
+    {id: Status.UNKNOWN, name: 'Desconocido'}
+  ]
 }

@@ -30,7 +30,7 @@
     <ion-row>
       <ion-col size="4">
         <ion-item [disabled]="isHistoric" (click)="openShowSelectableList(1)" class="item-selectable">
-          <ion-label>Tipo *</ion-label>
+          <ion-label>Tipo{{ requiredFields.type ? ' *' : '' }}</ion-label>
           <ion-label>{{return.type ? return.type.name : ''}}</ion-label>
           <ion-icon name="ios-arrow-forward" slot="end"></ion-icon>
         </ion-item>
@@ -38,7 +38,7 @@
 
       <ion-col size="4">
         <ion-item [disabled]="isHistoric" (click)="openShowSelectableList(2)" class="item-selectable">
-          <ion-label>Almacén *</ion-label>
+          <ion-label>Almacén{{ requiredFields.warehouse ? ' *' : '' }}</ion-label>
           <ion-label>{{return.warehouse ? return.warehouse.name : ''}}</ion-label>
           <ion-icon name="ios-arrow-forward" slot="end"></ion-icon>
         </ion-item>
@@ -48,7 +48,7 @@
         <ion-item [disabled]="isHistoric">
           <ion-label position="stacked">Cambiar estado</ion-label>
           <ion-select [selectedText]="''" placeholder="Seleccione un nuevo estado" (ionChange)="changeStatus($event.detail.value)">
-            <ion-select-option *ngFor="let status of [1,2,3,4,5,6,7]" [value]="status">{{getStatusName(status)}}</ion-select-option>
+            <ion-select-option *ngFor="let status of listStatusAvailable" [value]="status.id">{{status.name}}</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-col>
@@ -60,7 +60,7 @@
           <ion-col class="no-padding">
             <ion-item>
               <ion-item [disabled]="isHistoric" (click)="openShowSelectableList(3)" class="item-provider">
-                <ion-label class="title">Proveedor *</ion-label>
+                <ion-label class="title">Proveedor{{ requiredFields.provider ? ' *' : '' }}</ion-label>
                 <ion-label class="value">{{return.provider ? return.provider.name : ''}}</ion-label>
                 <ion-icon name="ios-arrow-forward" slot="end"></ion-icon>
               </ion-item>
@@ -74,7 +74,7 @@
 
       <ion-col size="4">
         <ion-item [disabled]="isHistoric">
-          <ion-label position="stacked">Marcas *</ion-label>
+          <ion-label position="stacked">Marcas{{ requiredFields.brand ? ' *' : '' }}</ion-label>
           <ion-input *ngIf="!return.provider" disabled placeholder="Debe seleccionar un proveedor"></ion-input>
           <ion-select *ngIf="return.provider" [interfaceOptions]="{cssClass: 'wide-alert'}" [selectedText]="return.brands ? getBrandNameList(return.brands) : ''" placeholder="Seleccione las marcas" multiple (ionChange)="return.brands = $event.detail.value">
             <ion-select-option *ngFor="let brand of return.provider.brands" [value]="brand">{{brand.name}}</ion-select-option>
@@ -100,7 +100,7 @@
 
       <ion-col size="4">
         <ion-item class="item-date" [disabled]="isHistoric">
-          <ion-label position="stacked">Devolver antes de *</ion-label>
+          <ion-label position="stacked">Devolver antes de{{ requiredFields.returnBeforeDate ? ' *' : '' }}</ion-label>
           <input matInput [matDatepicker]="pickerDateReturnBefore" [(ngModel)]="return.dateReturnBefore" placeholder="Seleccione una fecha">
           <mat-datepicker-toggle matSuffix [for]="pickerDateReturnBefore"></mat-datepicker-toggle>
           <mat-datepicker #pickerDateReturnBefore></mat-datepicker>
@@ -148,14 +148,14 @@
 
         <ion-col size="4">
           <ion-item>
-            <ion-label position="stacked">Nº Bultos</ion-label>
-            <ion-input [disabled]="isHistoric" [(ngModel)]="return.amountPackages"></ion-input>
+            <ion-label position="stacked">Nº Bultos{{ requiredFields.quantityPacking ? ' *' : '' }}</ion-label>
+            <ion-input [disabled]="isHistoric" [(ngModel)]="return.amountPackages" type="number"></ion-input>
           </ion-item>
         </ion-col>
 
         <ion-col size="4">
           <ion-item class="item-date" [disabled]="isHistoric">
-            <ion-label position="stacked">Fecha prevista de recogida</ion-label>
+            <ion-label position="stacked">Fecha prevista de recogida{{ requiredFields.pickupDate ? ' *' : '' }}</ion-label>
             <input matInput [matDatepicker]="pickerDatePredictedPickup" [(ngModel)]="return.datePredictedPickup">
             <mat-datepicker-toggle matSuffix [for]="pickerDatePredictedPickup"></mat-datepicker-toggle>
             <mat-datepicker #pickerDatePredictedPickup></mat-datepicker>
@@ -166,7 +166,7 @@
       <ion-row>
         <ion-col size="4">
           <ion-item>
-            <ion-label position="stacked">Agencia transportista</ion-label>
+            <ion-label position="stacked">Agencia transportista{{ requiredFields.shipper ? ' *' : '' }}</ion-label>
             <ion-input [disabled]="isHistoric" [(ngModel)]="return.shipper"></ion-input>
           </ion-item>
         </ion-col>
@@ -174,7 +174,7 @@
         <ion-col size="4">
           <ion-item>
             <div class="div-btn-item">
-              <ion-button matTooltip="Adjuntar albarán de agencia" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="!return || !return.id || isHistoric" (click)="searchDelivery_note()">
+              <ion-button matTooltip="Adjuntar albarán de agencia" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="!return || (!return.id && !requiredFields.deliveryNote) || isHistoric" (click)="searchDelivery_note()">
                 <ion-icon name="image" slot="start"></ion-icon> albarán agencia
               </ion-button>
             </div>

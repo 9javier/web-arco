@@ -38,6 +38,7 @@ import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/
   styleUrls: ['./new-return.component.scss']
 })
 export class NewReturnComponent implements OnInit {
+
   private baseUrlPhoto = environment.apiBasePhoto;
   return: Return;
   types: ReturnType[];
@@ -55,6 +56,22 @@ export class NewReturnComponent implements OnInit {
 
   private listItemsSelected: any[] = [];
   private itemForList: string = null;
+
+  private ReturnStatus = ReturnModel.Status;
+  private ReturnStatusNames = ReturnModel.StatusNames;
+  public listStatusAvailable = [];
+
+  public requiredFields: any = {
+    type: true,
+    provider: true,
+    warehouse: true,
+    brand: true,
+    returnBeforeDate: true,
+    quantityPacking: false,
+    shipper: false,
+    pickupDate: false,
+    deliveryNote: false
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -115,6 +132,8 @@ export class NewReturnComponent implements OnInit {
         delivery_notes: [],
         products: []
       };
+
+      this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
 
       this.archives = this.return.archives;
       this.delivery_notes = this.return.delivery_notes;
@@ -289,6 +308,19 @@ export class NewReturnComponent implements OnInit {
         if(this.delivery_notes.length > 0){
           this.displayDeliveryNoteList = true;
         }
+
+        switch (this.return.status) {
+          case this.ReturnStatus.IN_PROCESS:
+          case this.ReturnStatus.PREPARED:
+          case this.ReturnStatus.PENDING_PICKUP:
+          case this.ReturnStatus.PICKED_UP:
+          case this.ReturnStatus.BILLED:
+            this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id > this.return.status && r.id != this.ReturnStatus.UNKNOWN);
+            break;
+          default:
+            this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
+        }
+
         this.initForm();
       } else {
         console.error(response);
@@ -310,27 +342,13 @@ export class NewReturnComponent implements OnInit {
     }).catch(console.error);
   }
 
-  getStatusName(status: number): string{
-    switch(status){
-      case 0:
-        return '';
-      case 1:
-        return 'Orden devolución';
-      case 2:
-        return 'Pendiente';
-      case 3:
-        return 'En proceso';
-      case 4:
-        return 'Preparado';
-      case 5:
-        return 'Pendiente recogida';
-      case 6:
-        return 'Recogido';
-      case 7:
-        return 'Facturado';
-      default:
-        return 'Desconocido'
+  getStatusName(status: number): string {
+    const returnItem = this.ReturnStatusNames.find(r => r.id == status);
+    if (returnItem) {
+      return returnItem.name;
     }
+
+    return 'Desconocido';
   }
 
   getBrandNameList(brands: Brand[]): string{
@@ -342,10 +360,45 @@ export class NewReturnComponent implements OnInit {
     this.return.lastStatus = status;
     this.return.userLastStatus = await this.authenticationService.getCurrentUser();
     this.return.dateLastStatus = String(new Date());
+
+    switch (this.return.status) {
+      case this.ReturnStatus.PREPARED:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = false;
+        this.requiredFields.shipper = false;
+        this.requiredFields.deliveryNote = false;
+        break;
+      case this.ReturnStatus.PENDING_PICKUP:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = true;
+        this.requiredFields.shipper = true;
+        this.requiredFields.deliveryNote = false;
+        break;
+      case this.ReturnStatus.PICKED_UP:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = true;
+        this.requiredFields.shipper = true;
+        this.requiredFields.deliveryNote = true;
+        break;
+    }
   }
 
   allFieldsFilled(): boolean{
-    return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
+    if (this.return) {
+      switch (this.return.status) {
+        case this.ReturnStatus.PREPARED:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages);
+        case this.ReturnStatus.PICKED_UP:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper);
+        case this.ReturnStatus.PENDING_PICKUP:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper && this.delivery_notes.length > 0);
+        default:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
+      }
+    } else {
+      return false;
+    }
+
   }
 
   thereAreConditions(): boolean{
