@@ -69,7 +69,8 @@ export namespace ReturnModel{
   export interface SearchParameters {
     filters: Filters,
     order: Order,
-    pagination: Pagination
+    pagination: Pagination,
+    isAl?: boolean
   }
 
   export interface SearchResponse {
@@ -291,15 +292,15 @@ export namespace ReturnModel{
 
   }
 
-  export const Status = {
-    RETURN_ORDER: 1,
-    IN_PROCESS: 3,
-    PREPARED: 4,
-    PENDING_PICKUP: 5,
-    PICKED_UP: 6,
-    BILLED: 7,
-    UNKNOWN: 8,
-  };
+  export enum Status {
+    RETURN_ORDER = 1,
+    IN_PROCESS = 3,
+    PREPARED = 4,
+    PENDING_PICKUP = 5,
+    PICKED_UP = 6,
+    BILLED = 7,
+    UNKNOWN = 8,
+  }
   export const StatusNames = [
     {id: Status.RETURN_ORDER, name: 'Orden devolución'},
     {id: Status.IN_PROCESS, name: 'En proceso'},

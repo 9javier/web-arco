@@ -175,7 +175,7 @@
           <ion-item>
             <div class="div-btn-item">
               <ion-button matTooltip="Adjuntar albarán de agencia" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="!return || (!return.id && !requiredFields.deliveryNote) || isHistoric" (click)="searchDelivery_note()">
-                <ion-icon name="image" slot="start"></ion-icon> albarán agencia
+                <ion-icon name="image" slot="start"></ion-icon> albarán agencia{{requiredFields.deliveryNote ? ' *' : ''}}
               </ion-button>
             </div>
           </ion-item>

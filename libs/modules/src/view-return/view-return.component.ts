@@ -49,6 +49,22 @@ export class ViewReturnComponent implements OnInit {
   displayArchiveList: boolean = false;
   displayDeliveryNoteList: boolean = false;
 
+  private ReturnStatus = ReturnModel.Status;
+  private ReturnStatusNames = ReturnModel.StatusNames;
+  public listStatusAvailable = [];
+
+  public requiredFields: any = {
+    type: true,
+    provider: true,
+    warehouse: true,
+    brand: true,
+    returnBeforeDate: true,
+    quantityPacking: false,
+    shipper: false,
+    pickupDate: false,
+    deliveryNote: false
+  };
+
   constructor(
     private events: Events,
     private route: ActivatedRoute,
@@ -104,6 +120,7 @@ export class ViewReturnComponent implements OnInit {
         archives: [],
         delivery_notes: []
       };
+      this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
     }
 
     this.dropFilesService.getImage().subscribe(resp => {
@@ -206,6 +223,9 @@ export class ViewReturnComponent implements OnInit {
         if(this.delivery_notes.length > 0){
           this.displayDeliveryNoteList = true;
         }
+
+        this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
+
         this.initForm();
         this.archiveList = true;
         this.delivery_noteList = true;
@@ -221,27 +241,13 @@ export class ViewReturnComponent implements OnInit {
     return user;
   }
 
-  getStatusName(status: number): string{
-    switch(status){
-      case 0:
-        return '';
-      case 1:
-        return 'Orden devolución';
-      case 2:
-        return 'Pendiente';
-      case 3:
-        return 'En proceso';
-      case 4:
-        return 'Preparado';
-      case 5:
-        return 'Pendiente recogida';
-      case 6:
-        return 'Recogido';
-      case 7:
-        return 'Facturado';
-      default:
-        return 'Desconocido'
+  getStatusName(status: number): string {
+    const returnItem = this.ReturnStatusNames.find(r => r.id == status);
+    if (returnItem) {
+      return returnItem.name;
     }
+
+    return 'Desconocido';
   }
 
   getBrandNameList(brands: Brand[]): string{
@@ -257,15 +263,43 @@ export class ViewReturnComponent implements OnInit {
     this.return.lastStatus = status;
     this.return.userLastStatus = await this.authenticationService.getCurrentUser();
     this.return.dateLastStatus = String(new Date());
+
+    switch (this.return.status) {
+      case this.ReturnStatus.PREPARED:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = false;
+        this.requiredFields.shipper = false;
+        this.requiredFields.deliveryNote = false;
+        break;
+      case this.ReturnStatus.PENDING_PICKUP:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = true;
+        this.requiredFields.shipper = true;
+        this.requiredFields.deliveryNote = false;
+        break;
+      case this.ReturnStatus.PICKED_UP:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = true;
+        this.requiredFields.shipper = true;
+        this.requiredFields.deliveryNote = true;
+        break;
+    }
   }
 
   allFieldsFilled(): boolean {
-    if (this.return && this.return.status == 4) {
-      return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.amountPackages > 0 && this.return.shipper && this.return.shipper != '');
-    } else if (this.return && this.return.status == 5) {
-      return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.datePredictedPickup);
+    if (this.return) {
+      switch (this.return.status) {
+        case this.ReturnStatus.PREPARED:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages);
+        case this.ReturnStatus.PICKED_UP:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper);
+        case this.ReturnStatus.PENDING_PICKUP:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper && this.delivery_notes.length > 0);
+        default:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
+      }
     } else {
-      return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
+      return false;
     }
   }
 
