@@ -828,6 +828,13 @@ export class MenuComponent implements OnInit {
           tooltip: 'Asociar pares procesados para traspasos a embalajes y precintarlos'
         },
         {
+          title: 'Liberar Reservas Expiradas',
+          id: 'free-expired-reserves',
+          icon: 'ios-link',
+          url: '/free-expired-reserves',
+          tooltip: 'Liberar reservas expiradas mediante escaneo con cámara'
+        },
+        {
           title: 'Ubicar defectuosos',
           id: 'defective-positioning',
           icon: 'warning',
