@@ -133,6 +133,30 @@ export class PickingProvider {
     this._listProducts = value;
   }
 
+  private _quantityTotal: number;
+  get quantityTotal(): number {
+    return this._quantityTotal;
+  }
+  set quantityTotal(value: number) {
+    this._quantityTotal = value;
+  }
+
+  private _quantityPending: number;
+  get quantityPending(): number {
+    return this._quantityPending;
+  }
+  set quantityPending(value: number) {
+    this._quantityPending = value;
+  }
+
+  private _quantityScanned: number;
+  get quantityScanned(): number {
+    return this._quantityScanned;
+  }
+  set quantityScanned(value: number) {
+    this._quantityScanned = value;
+  }
+
   private _typePacking: number;
   get typePacking(): number {
     return this._typePacking;
