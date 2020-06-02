@@ -31,6 +31,7 @@ export class PickingStoreService {
   private postCancelRequestUrl = environment.apiBase + '/delivery-request/cancel';
   private postExpiredReservesUrl = environment.apiBase + '/delivery-request/expired-reserves';
   private postFreeReserveUrl = environment.apiBase + '/delivery-request/free-reserve';
+  private getReservesExpiredAmountUrl = environment.apiBase + '/delivery-request/expired-reserves-amount';
   private postLineRequestDisassociateUrl = environment.apiBase + '/processes/picking-store/line-request-disassociate';
   private postVentilateUrl = environment.apiBase + '/processes/picking-store/ventilate';
 
@@ -66,6 +67,10 @@ export class PickingStoreService {
 
   getLineRequestsStoreOnlineAmount() : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.get(this.getLineRequestsStoreOnlineAmountUrl);
+  }
+
+  getReservesExpiredAmount() : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getReservesExpiredAmountUrl);
   }
 
   getLineRequestsPending() : Observable<PickingStoreModel.ResponseLineRequestsPending> {

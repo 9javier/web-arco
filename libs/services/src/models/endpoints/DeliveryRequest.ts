@@ -28,7 +28,8 @@ export namespace DeliveryRequestModel {
     size: Size,
     selected: boolean,
     hidden: boolean,
-    confirmed: boolean
+    confirmed: boolean,
+    reserved?: boolean
   }
 
   export interface ExpiredReservesResponse {

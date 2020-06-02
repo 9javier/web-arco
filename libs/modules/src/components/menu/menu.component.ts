@@ -26,7 +26,8 @@ interface MenuSectionGroupItem {
   children: (MenuSectionGroupItem | MenuSectionItem)[],
   thirdLevel?: boolean
   tooltip?: string,
-  amount?: number
+  amount?: number,
+  id?: string
 }
 
 interface MenuSectionItem {
@@ -62,6 +63,7 @@ export class MenuComponent implements OnInit {
   currentRoute: string = "";
 
   pickingTasksStoresAmount: number = 0;
+  reservedExpiredAmount: number = 0;
 
   sgaPages: MenuItemList = [
 /*    {
@@ -832,7 +834,8 @@ export class MenuComponent implements OnInit {
           id: 'free-expired-reserves',
           icon: 'ios-link',
           url: '/free-expired-reserves',
-          tooltip: 'Liberar reservas expiradas mediante escaneo con cámara'
+          tooltip: 'Liberar reservas expiradas mediante escaneo con cámara',
+          amount: this.reservedExpiredAmount
         },
         {
           title: 'Ubicar defectuosos',
@@ -1115,10 +1118,12 @@ export class MenuComponent implements OnInit {
     if(app.name == 'al') {
       this.newTariffs();
       this.getPickingTasksStoresAmount();
+      this.getReservesExpiredAmount();
       this.zona.run(() => {
         setInterval(() => {
           this.newTariffs();
           this.getPickingTasksStoresAmount();
+          this.getReservesExpiredAmount();
         }, 5 * 60 * 1000);
       });
     }
@@ -1338,7 +1343,29 @@ export class MenuComponent implements OnInit {
           for(let page of this.alPages){
             if(page.children){
               for(let child of page.children){
-                if(child.amount || child.amount == 0){
+                if(child && child.id == 'picking-tasks-stores' && (child.amount || child.amount == 0)){
+                  child.amount = response.data;
+                  return;
+                }
+              }
+            }
+          }
+        }else{
+          console.error(response);
+        }
+      },console.error).catch(console.error);
+    }
+  }
+
+  async getReservesExpiredAmount(){
+    const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
+    if(currentWarehouse){
+      this.pickingStoreService.getReservesExpiredAmount().then(response => {
+        if(response.code == 200){
+          for(let page of this.alPages){
+            if(page.children){
+              for(let child of page.children){
+                if(child && child.id == 'free-expired-reserves' && (child.amount || child.amount == 0)){
                   child.amount = response.data;
                   return;
                 }

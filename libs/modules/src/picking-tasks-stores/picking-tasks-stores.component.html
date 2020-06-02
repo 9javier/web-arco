@@ -104,7 +104,7 @@
 
   <ion-list *ngIf="!isLoadingData && requests.length > 0">
     <ng-container *ngFor="let request of requests">
-      <ion-item *ngIf="!request.hidden" [class]="request.confirmed ? '' : 'unconfirmed'">
+      <ion-item *ngIf="!request.hidden" [class]="request.confirmed && !request.reserved ? '' : 'unconfirmed'">
         <ion-checkbox class="lowMargin" slot="start" [(ngModel)]="request.selected" (click)="selectRequest(request.selected)"></ion-checkbox>
         <ion-label>
           <ion-row>
