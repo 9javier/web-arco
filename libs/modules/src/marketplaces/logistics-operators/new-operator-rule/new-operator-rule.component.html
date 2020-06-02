@@ -1,0 +1,148 @@
+<ion-header>
+  <div class="cp-modal-header-wrapper">
+    <div>
+      Crear regla
+    </div>
+    <div (click)="close(null);">
+      <ion-icon name="close"></ion-icon>
+    </div>
+  </div>
+</ion-header>
+<ion-content>
+  <div class="nr-modal-body-wrapper">
+    <div class="nr-modal-content">
+      <div class="nr-filter-selection-wrapper">
+        <div class="rule-filter-category">
+          <div>
+            <div>
+              <ion-label class="label-title">Marketplace del pedido</ion-label>
+              <mat-accordion (click)="openSelects('markets')">
+                <mat-expansion-panel id="operator-logistic-mat-expansion" [expanded]="selectMarkets">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      Marketplace
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <div id="mat-expantion-markets">
+                    <ion-list id="ion-list-markets">
+                      <ion-item lines="inset" *ngFor="let market of markets" (click)="marketsSelected(market)">
+                        <ion-label>{{market.name}}</ion-label>
+                        <ion-checkbox color="dark" [(ngModel)]="market.isChecked"></ion-checkbox>
+                      </ion-item>
+                    </ion-list>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+
+            <div>
+              <ion-label class="label-title">Origen de mercancía</ion-label>
+              <mat-accordion (click)="openSelects('warehousesOrigins')">
+                <mat-expansion-panel [expanded]="selectWarehousesOrigins">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      Origen de mercancía
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <div id="mat-expantion-warehouses-origins">
+                    <ion-list id="ion-list-warehouses-origins">
+                      <ion-item lines="inset" *ngFor="let warehouse of warehousesOrigins" (click)="warehousesOriginsSelected(warehouse)">
+                        <ion-label>{{warehouse.name}}</ion-label>
+                        <ion-checkbox color="dark" [(ngModel)]="warehouse.isChecked"></ion-checkbox>
+                      </ion-item>
+                    </ion-list>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+
+            <div>
+              <ion-label class="label-title">Destino de mercancía</ion-label>
+              <mat-accordion (click)="openSelects('warehousesDestinies')">
+                <mat-expansion-panel [expanded]="selectWarehousesDestinies">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      Origen de mercancía
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <div id="mat-expantion-warehouses-destinies">
+                    <ion-list id="ion-list-warehouses-destinies">
+                      <ion-item lines="inset" *ngFor="let warehouse of warehousesDestinies" (click)="warehousesDestiniesSelected(warehouse)">
+                        <ion-label>{{warehouse.name}}</ion-label>
+                        <ion-checkbox color="dark" [(ngModel)]="warehouse.isChecked"></ion-checkbox>
+                      </ion-item>
+                    </ion-list>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+
+            <div>
+              <mat-accordion (click)="openSelects('provinces')">
+                <mat-expansion-panel [expanded]="selectProvinces">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      Provincia
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <div id="mat-expantion-provinces">
+                    <ion-list id="ion-list-provinces">
+                      <ion-item lines="inset" *ngFor="let province of provinces" (click)="provincesSelected(province)">
+                        <ion-label>{{province.name}}</ion-label>
+                        <ion-checkbox color="dark" [(ngModel)]="province.isChecked"></ion-checkbox>
+                      </ion-item>
+                    </ion-list>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+
+            <div>
+              <mat-accordion (click)="openSelects('countries')">
+                <mat-expansion-panel [expanded]="selectCountries">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      País
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <div id="mat-expantion-countries">
+                    <ion-list id="ion-list-countries">
+                      <ion-item lines="inset" *ngFor="let country of countries" (click)="countriesSelected(country)">
+                        <ion-label>{{country.name}}</ion-label>
+                        <ion-checkbox color="dark" [(ngModel)]="country.isChecked"></ion-checkbox>
+                      </ion-item>
+                    </ion-list>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+
+            <div>
+              <ion-label class="label-title">Operador asignado</ion-label>
+              <ion-item id="selected-operator" (click)="openSelects('logistic-operator')">
+                <ion-label>Operador Logístico</ion-label>
+                <ion-select placeholder="Seleccione" #mySelect (ionChange)="operatorsSelected(mySelect.value)">
+                  <ion-select-option *ngFor="let logisticOperator of logisticsOperators">{{logisticOperator.name}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+<ion-footer>
+  <div class="nr-modal-buttons-wrapper">
+    <div class="nr-rule-button"
+         *ngIf="activateButton.logisticOperator === true"
+         (click)="createRules()">
+      <span>CREAR REGLA</span>
+    </div>
+    <div class="nr-rule-button-disabled"
+         *ngIf="activateButton.logisticOperator === false">
+      <span>CREAR REGLA</span>
+    </div>
+  </div>
+</ion-footer>

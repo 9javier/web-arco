@@ -136,7 +136,8 @@ export class IncidentsComponent implements OnInit, AfterViewInit, OnChanges, OnD
   ngOnInit() {
 
     this.signatures = null;
-    this.toolbarProvider.currentPage.next("Registro defectuoso")
+    this.toolbarProvider.currentPage.next("Registro defectuoso");
+    this.toolbarProvider.optionsActions.next([]);
     this.photos = [];
 
     this.signaturesSubscription = this.uploadService.signatureEventAsign().subscribe(resp => {

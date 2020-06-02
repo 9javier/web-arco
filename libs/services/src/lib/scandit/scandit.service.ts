@@ -302,11 +302,13 @@ export class ScanditService {
               this.storeDefectiveProductInPacking(params, response.barcode);
             }
           }
-        } else if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PACKING) {
+        }
+        else if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PACKING && !packingReference) {
           positionsScanning = [];
           ScanditMatrixSimple.setText(`Inicio de ubicación en el embalaje ${code}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
           packingReference = code;
+          ScanditMatrixSimple.setFixedText(`Escanee los productos que quiera añadir al embalaje ${packingReference}.`);
         }
       }
     }, 'Ubicar defectuosos', HEADER_BACKGROUND, HEADER_COLOR);

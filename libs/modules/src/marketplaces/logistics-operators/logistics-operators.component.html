@@ -1,0 +1,65 @@
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="select">
+    <th mat-header-cell *matHeaderCellDef>
+      <mat-checkbox color="primary" (change)="$event ? masterToggle() : null"
+                    [checked]="selection.hasValue() && isAllSelected()"
+                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                    [aria-label]="checkboxLabel()">
+      </mat-checkbox>
+    </th>
+    <td mat-cell *matCellDef="let row">
+      <mat-checkbox color="primary" (click)="$event.stopPropagation();"
+                    (change)="$event ? selection.toggle(row) : null"
+                    [checked]="selection.isSelected(row)"
+                    [aria-label]="checkboxLabel(row)">
+      </mat-checkbox>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="marketplace">
+    <th mat-header-cell *matHeaderCellDef> Marketplace </th>
+    <td mat-cell *matCellDef="let element" (click)="updateOperatorRule($event, element)"> {{getNames(element.marketplace)}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="warehouseOrigin">
+    <th mat-header-cell *matHeaderCellDef> Origen mercancía </th>
+    <td mat-cell *matCellDef="let element" (click)="updateOperatorRule($event, element)"> {{getNames(element.warehouseOrigin)}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="warehouseDestiny">
+    <th mat-header-cell *matHeaderCellDef> Destino mercancía </th>
+    <td mat-cell *matCellDef="let element" (click)="updateOperatorRule($event, element)"> {{getNames(element.warehouseDestiny)}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="provincia">
+    <th mat-header-cell *matHeaderCellDef> Provincia </th>
+    <td mat-cell *matCellDef="let element" (click)="updateOperatorRule($event, element)"> {{getNames(element.provincia)}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="pais">
+    <th mat-header-cell *matHeaderCellDef> País </th>
+    <td mat-cell *matCellDef="let element" (click)="updateOperatorRule($event, element)"> {{getNames(element.pais)}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="operadorLogistico">
+    <th mat-header-cell *matHeaderCellDef> Operador Logístico </th>
+    <td mat-cell *matCellDef="let element" (click)="updateOperatorRule($event, element)"> {{getNames(element.operadorLogistico)}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+  </tr>
+</table>
+
+<ion-footer>
+  <ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button color="primary" (click)="confirmDeletion()">
+      <ion-icon name="trash"></ion-icon>
+    </ion-fab-button>
+    <br>
+    <ion-fab-button (click)="addOperatorRule('enabled')">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>

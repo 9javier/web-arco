@@ -113,6 +113,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_SIMPLE_SHOW_TEXT_START_SCAN_PACKING = "matrixSimpleShowTextStartScanPacking";
   private static final String MATRIX_SIMPLE_SHOW_TEXT_END_SCAN_PACKING = "matrixSimpleShowTextEndScanPacking";
   private static final String MATRIX_SIMPLE_SHOW_FIXED_TEXT_BOTTOM = "matrixSimpleShowFixedTextBottom";
+  private static final String MATRIX_SIMPLE_SET_FIXED_TEXT = "matrixSimpleSetFixedText";
   private static final String MATRIX_PICKING_STORES_LOAD_PRODUCTS = "matrixPickingStoresLoadProducts";
   private static final String MATRIX_PICKING_STORES_SET_TEXT= "matrixPickingStoresSetText";
   private static final String MATRIX_PICKING_STORES_FINISH = "matrixPickingStoresFinish";
@@ -1273,6 +1274,31 @@ public class ScanditSDK extends CordovaPlugin {
           }
         }
       });
+    } else if (action.equals(MATRIX_SIMPLE_SET_FIXED_TEXT)) {
+
+      String text = "";
+      try {
+        text = args.getString(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final String fText = text;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", packageName));
+
+          if (!fText.equals("")) {
+            tvPackingStart.setText(fText);
+            tvPackingStart.setVisibility(View.VISIBLE);
+          } else {
+            tvPackingStart.setText("");
+            tvPackingStart.setVisibility(View.GONE);
+          }
+        }
+      });
     } else if (action.equals(MATRIX_PICKING_STORES_LOAD_PRODUCTS)) {
 
       JSONArray products = null;
@@ -2209,6 +2235,15 @@ public class ScanditSDK extends CordovaPlugin {
     PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
     pResult.setKeepCallback(true);
     ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+  }
+
+  static void setFixedText() {
+    final View viewDataMatrixSimpleFinal = viewDataMatrixSimple;
+    final String fText = "Escanee un embalaje para comenzar.";
+
+    TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", packageName));
+    tvPackingStart.setText(fText);
+    tvPackingStart.setVisibility(View.VISIBLE);
   }
 
   public static void setActivityStarted(Activity activity) {

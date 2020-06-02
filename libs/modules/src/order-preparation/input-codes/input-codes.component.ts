@@ -27,7 +27,7 @@ import {OpExpeditionType} from "../enums/OplExpeditionStatusEnums";
 })
 export class InputCodesComponent implements OnInit {
   numAllSann:number =0;
-  dataToWrite: string = 'PRODUCTO';
+  dataToWrite: string = 'CÓDIGO BULTO';
   inputProduct: string = null;
   lastCodeScanned: string = 'start';
   PrintError:boolean = false;
@@ -114,22 +114,14 @@ export class InputCodesComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputProduct = null;
-      switch (this.itemReferencesProvider.checkCodeValue(dataWrote)) {
-        case this.itemReferencesProvider.codeValue.PRODUCT:
-          this.printLabels(dataWrote);
-
-          break;
-        case this.itemReferencesProvider.codeValue.PRODUCT_MODEL:
-          //this.getSizeListByReference(dataWrote);
-          this.printLabels(dataWrote);
-          break;
-        default:
-          this.audioProvider.playDefaultError();
-          this.intermediaryService.presentToastError('El código escaneado no es válido para la operación que se espera realizar.', PositionsToast.BOTTOM).then(() => {
-            this.focusInputTa();
-          });
-          this.focusToInput();
-          break;
+      if(dataWrote.trim() != ""){
+        this.printLabels(dataWrote);
+      } else {
+        this.audioProvider.playDefaultError();
+        this.intermediaryService.presentToastError('El código de paquete escaneado no es válido para la operación que se espera realizar.', PositionsToast.BOTTOM).then(() => {
+          this.focusInputTa();
+        });
+        this.focusToInput();
       }
     }
   }

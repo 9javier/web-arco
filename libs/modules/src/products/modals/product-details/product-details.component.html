@@ -52,9 +52,12 @@
                 </ion-label>
             </ion-item>
             <ion-item>
-                <ion-label>
+                <ion-label *ngIf="product?.status != 19">
                     Ubicación:
                     {{ product?.container?.reference ? product?.container?.reference : product?.carrier?.reference ? product?.carrier?.reference : product.locationType == 3 ? 'Sorter': ''}}
+                </ion-label>
+                <ion-label *ngIf="product?.status == 19">
+                  Asociado a pedido: {{product?.deliveryRequestExternalId}}
                 </ion-label>
             </ion-item>
             <div padding *ngIf="isProductRelocationEnabled">
@@ -158,9 +161,12 @@
                         Almacén {{ historical.destinationWarehouse?.reference }} -
                         {{ historical.destinationWarehouse?.name }}
                     </p>
-                    <p>
+                    <p *ngIf="historical.typeAction != 27">
                         Ubicación:
                         {{ historical.locationType == 3 ? 'Sorter' : historical.destinationPacking ? historical.destinationPacking.reference : historical.destinationContainer ? historical.destinationContainer.reference: (historical.destinationCarrier ? historical.destinationCarrier.reference: historical.destinationPallet?.reference) }}
+                    </p>
+                    <p *ngIf="historical.typeAction == 27">
+                        Pedido: {{historical?.deliveryRequestExternalId}}
                     </p>
                     <p>
                         Fecha: {{dates[i]}} {{hours[i]}}

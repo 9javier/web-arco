@@ -207,6 +207,11 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/picking-manual/picking-manual.module#PickingManualModule'
   },
   {
+    path: 'picking/return',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/picking-return/picking-return.module#PickingReturnModule'
+  },
+  {
     path: 'tariff',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/tariff/tariff.module#TariffModule',
@@ -332,6 +337,22 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/sorter/sorter.module#SorterModule',
     data: {
       name: 'sorter'
+    }
+  },
+  {
+    path: 'return-pending-list',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/return-pending-list/return-pending-list.module#ReturnPendingListModule',
+    data: {
+      name: 'Listado Devoluciones Pendientes'
+    }
+  },
+  {
+    path: 'view-return',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/view-return/view-return.module#ViewReturnModule',
+    data: {
+      name: 'Consultar Devolución'
     }
   },
   {

@@ -36,7 +36,7 @@ export class ExpeditionCollectedService {
     this.baseUrl = environment.apiSorter;
     this.getExpeditionsUrl = `${this.baseUrl}/opl-expedition/transports`;
     this.epxeditionManualStore = `${this.baseUrl}/expeditions-manual/store`;
-    this.getIncidences = `${this.baseUrl}/expeditions-manual/get-incidence`;
+    this.getIncidences = `${this.baseUrl}/expeditions-manual/get-expedition-inside`;
     this.getFilter = `${this.baseUrl}/opl-expedition/transports/get-filters-expedition`;
     this.getIncidenceById = `${this.baseUrl}/expeditions-manual/get-incidence-id`;
     this.getProductsPackageByIdExpedition = `${this.baseUrl}/opl-expedition/transports/get-expedition-package`;

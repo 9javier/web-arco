@@ -23,8 +23,10 @@ interface MenuSectionGroupItem {
   title: string,
   open: boolean,
   type: 'wrapper',
-  children: MenuSectionItem[],
-  tooltip?: string
+  children: (MenuSectionGroupItem | MenuSectionItem)[],
+  thirdLevel?: boolean
+  tooltip?: string,
+  amount?: number
 }
 
 interface MenuSectionItem {
@@ -32,9 +34,9 @@ interface MenuSectionItem {
   id?: string,
   url: string,
   icon: string,
-  notification?: boolean,
-  children?: MenuSectionItem[],
-  header?: boolean,
+  notification?: boolean
+  children?: (MenuSectionGroupItem | MenuSectionItem)[];
+  header?: boolean
   tooltip?: string,
   amount?: number
 }
@@ -70,7 +72,7 @@ export class MenuComponent implements OnInit {
     },*/
     {
       title: 'Logística',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'filing',
       children: [
@@ -102,7 +104,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Olas de trabajo',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'hammer',
       children: [
@@ -140,7 +142,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Gestión de usuarios',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'contacts',
       children: [
@@ -172,7 +174,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Control de exposición',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'cart',
       children: [
@@ -194,7 +196,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Defectuosos',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'paper',
       children: [
@@ -237,7 +239,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Devoluciones fábrica',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'return-left',
       children: [
@@ -247,6 +249,13 @@ export class MenuComponent implements OnInit {
           url: '/returns-list',
           icon: 'list-box',
           tooltip: 'Listado de registro de devoluciones'
+        },
+        {
+          title: 'Listado Históricos',
+          id: 'returns-historic',
+          url: '/returns-historic',
+          icon: 'list-box',
+          tooltip: 'Listado de históricos de devoluciones'
         },
         {
           title: 'Listado Seguimiento Devoluciones',
@@ -273,7 +282,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Picking tiendas',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'cart',
       children: [
@@ -287,7 +296,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Configuración',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'options',
       children: [
@@ -344,6 +353,12 @@ export class MenuComponent implements OnInit {
           id: 'jails',
           url: '/jails/menu',
           icon: 'grid'
+        },
+        {
+          title: 'Estado de expedición',
+          id: 'state-expedition-avelon',
+          url: '/state-expedition-avelon/menu',
+          icon: 'apps'
         }
       ]
     },
@@ -355,7 +370,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Sorter',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'apps',
       children: [
@@ -401,7 +416,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Recepción de fábrica',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'archive',
       children: [
@@ -464,7 +479,8 @@ export class MenuComponent implements OnInit {
           id: 'incidences-reception',
           url: '/incidences-reception',
           icon: 'notifications'
-        }
+        },
+
       ]
     },
     {
@@ -480,13 +496,111 @@ export class MenuComponent implements OnInit {
       icon: 'folder'
     },
     {
+      title: 'Regiones',
+      id: 'regions',
+      url: '/regions',
+      icon: 'map'
+    },
+    {
+      title: 'Recepciones',
+      id: 'receptions-avelon',
+      url: '/receptions-avelon',
+      icon: 'archive'
+    },
+    {
+      title: 'Predistribuciones',
+      id: 'predistributions',
+      url: '/predistributions',
+      icon: 'archive'
+    },
+    {
+      title: 'Marketplaces',
+      open: true,
+      type: 'wrapper',
+      icon: 'cart',
+      children: [
+        {
+          title: 'Catálogos Marketplaces',
+          id: 'catalogs-marketplaces',
+          url: '/marketplaces/catalogs-marketplaces',
+          icon: 'apps'
+        },
+        {
+          title: 'Miniprecios',
+          open: false,
+          type: 'wrapper',
+          id: 'miniprecios',
+          icon: 'add-circle-outline',
+          thirdLevel: true,
+          children: [
+            {
+              title: 'Mapeos',
+              id: 'mp-mapping',
+              url: '/marketplaces/miniprecios/mapping',
+              icon: 'code'
+            },{
+              title: 'Reglas',
+              id: 'mp-rules',
+              url: '/marketplaces/miniprecios/rules',
+              icon: 'code-working'
+            },
+            {
+              title: 'Catálogo',
+              id: 'mp-catalog',
+              url: '/marketplaces/miniprecios/catalog',
+              icon: 'apps'
+            }
+          ]
+        },
+        {
+          title: 'Amazon',
+          open: false,
+          type: 'wrapper',
+          id: 'amazon',
+          icon: 'add-circle-outline',
+          thirdLevel: true,
+          children: [
+            {
+              title: 'Mapeos',
+              id: 'a-mapping',
+              url: '/marketplaces/amazon/mapping',
+              icon: 'code'
+            },{
+              title: 'Reglas',
+              id: 'a-rules',
+              url: '/marketplaces/amazon/rules',
+              icon: 'code-working'
+            },
+            {
+              title: 'Catálogo',
+              id: 'a-catalog',
+              url: '/marketplaces/amazon/catalog',
+              icon: 'apps'
+            }
+          ]
+        },
+        {
+          title: 'Prioridad de Tienda',
+          id: 'store-priority',
+          url: '/marketplaces/store-priority',
+          icon: 'ios-albums'
+        },
+        {
+          title: 'Parametrización Logística',
+          id: 'logistics-operators',
+          url: '/marketplaces/logistics-operators',
+          icon: 'cube'
+        },
+      ]
+    },
+    {
       title: 'Pedidos Online',
       open: false,
       type: 'wrapper',
       icon: 'build',
       children: [
         {
-          title: 'Incidencias',
+          title: 'Incidencias/Manual',
           id: 'expedition-manual',
           url: '/expedition-manual',
           icon: 'cog',
@@ -548,7 +662,7 @@ export class MenuComponent implements OnInit {
     },*/
     {
       title: 'Productos',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'basket',
       children: [
@@ -614,7 +728,7 @@ export class MenuComponent implements OnInit {
       title: 'Pedidos online',
       icon: 'basket',
       type: 'wrapper',
-      open: true,
+      open: false,
       children: [
         {
           title: 'Generar etiquetas de envio',
@@ -822,6 +936,12 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      id: 'return-pending-list',
+      title: 'Devoluciones Pendientes',
+      icon: 'return-left',
+      url: '/return-pending-list'
+    },
+    {
       title: 'Picking y Ventilación',
       open: false,
       type: 'wrapper',
@@ -943,7 +1063,8 @@ export class MenuComponent implements OnInit {
           tooltip: 'Mac de la impresora'
         }
       ]
-    }
+    },
+
 
 
   ];
@@ -1156,6 +1277,12 @@ export class MenuComponent implements OnInit {
     }
   }
 
+  tapOptionSubSubitem(menuItem) {
+    this.menuController.close();
+    this.menuTitle.emit(menuItem.title);
+
+  }
+
   openSubMenuItem(menuItem) {
     if (this.iconsDirection === 'end') {
       this.toggleSidebar();
@@ -1209,6 +1336,10 @@ export class MenuComponent implements OnInit {
           console.error('Error to try check if exists new tariffs', error);
         })
     }
+  }
+
+  checkIfChildrenHasNewTariffs(element): boolean {
+    return !!element.children.find(c => c.notification)
   }
 
   async getPickingTasksStoresAmount(){

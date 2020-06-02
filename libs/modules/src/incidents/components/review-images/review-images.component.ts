@@ -9,9 +9,11 @@ import { ModalController } from '@ionic/angular';
 export class ReviewImagesComponent implements OnInit {
 
   @Input("imgSrc") imgSrc;
+  src;
   constructor(private modalController: ModalController) { }
 
   ngOnInit() {
+    setTimeout(() => this.src = this.imgSrc, 500);
   }
   dismiss() {
     this.modalController.dismiss()

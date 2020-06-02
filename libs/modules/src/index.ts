@@ -139,8 +139,18 @@ export * from './return-types/return-types.module';
 export * from './return-tracking-list/return-tracking-list.component';
 export * from './return-tracking-list/return-tracking-list.module';
 
+/**returns-historic */
+export * from './returns-historic/returns-historic.component';
+export * from './returns-historic/returns-historic.module';
+
+export * from './return-pending-list/return-pending-list.component';
+export * from './return-pending-list/return-pending-list.module';
+
 export * from './new-return/new-return.component';
 export * from './new-return/new-return.module';
+
+export * from './view-return/view-return.component';
+export * from './view-return/view-return.module';
 
 /**returns-list */
 export * from './returns-list/returns-list.component';
@@ -210,6 +220,10 @@ export * from './positioning-manual-online/positioning-manual-online.module';
 /**Manual Picking */
 export * from './picking-manual/picking-manual.component';
 export * from './picking-manual/picking-manual.module';
+
+/**Return Picking */
+export * from './picking-return/picking-return.component';
+export * from './picking-return/picking-return.module';
 
 /**List Pickings with Products */
 export * from './list-picking/list-picking.component';
@@ -457,6 +471,7 @@ export * from './order-no-processed/order-no-processed.module'
 export * from './expeditions-inside/expedition-inside.component'
 export * from './expeditions-inside/expedition-inside.module'
 
+<<<<<<< HEAD
 /**Transportes */
 export * from './package-received/package-received.component'
 export * from './package-received/package-received.module'
@@ -464,3 +479,12 @@ export * from './package-received/package-received.module'
 /**Transportes */
 export * from './package-history/package-history.component'
 export * from './package-history/package-history.module'
+=======
+//// *marketplaces
+
+export  * from './marketplaces/marketplaces.component';
+export  * from './marketplaces/marketplaces.module';
+
+export  * from './marketplaces/create-mapping/create-mapping.component';
+export  * from './marketplaces/create-mapping/create-mapping.module';
+>>>>>>> dev
