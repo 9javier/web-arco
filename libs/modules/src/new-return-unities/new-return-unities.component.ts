@@ -29,7 +29,7 @@ export class NewReturnUnitiesComponent implements OnInit {
   private providerId: number = null;
   private brandIds: number[] = [];
 
-  private pagerValues: number[] = [10, 20, 50];
+  private pagerValues: number[] = [10, 20, 50, 10000];
 
   private filters: any = {
     pagination: {
@@ -293,6 +293,7 @@ export class NewReturnUnitiesComponent implements OnInit {
         direction: 'DESC'
       }
     };
+    this.tPaginator.pageSize = this.filters.pagination.limit;
     this.loadItems();
     this.resetFilters();
     this.resetSort();
@@ -303,6 +304,8 @@ export class NewReturnUnitiesComponent implements OnInit {
   }
 
   public applyFilters(filters: boolean) {
+    this.tPaginator.pageSize = 10000;
+    this.filters.pagination.limit = 10000;
     this.loadItems(filters);
   }
 }
