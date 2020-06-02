@@ -62,9 +62,8 @@ export class ReservesService {
               this.lastCodeScanned = 'start';
               break;
             case 'setNotProductPending':
-              let typePacking = params[0];
               this.setText('No hay más productos pendientes.', this.scanditProvider.colorsMessage.info.color, 16);
-              ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].press_scan_packings_to_continue);
+              ScanditMatrixSimple.setTextPickingStores(true, 'Pulse finalizar para terminar.');
               break;
             case 'loadProducts':
               let listProductsToStorePickings = params[0];
@@ -118,7 +117,7 @@ export class ReservesService {
                     this.setText(error.error.errors, this.scanditProvider.colorsMessage.error.color, 18);
                   });
                 } else {
-                  this.setText(this.pickingProvider.literalsJailPallet[typePacking].scan_to_end, this.scanditProvider.colorsMessage.success.color, 16);
+                  this.setText('Todos los productos han sido escaneados, pulse finalizar para terminar.', this.scanditProvider.colorsMessage.success.color, 16);
                 }
               } else {
                 this.setText('Escanee un producto válido', this.scanditProvider.colorsMessage.error.color, 18);
@@ -136,7 +135,7 @@ export class ReservesService {
                       16);
                     ScanditMatrixSimple.setTimeout("hideText", 2000, "");
                     ScanditMatrixSimple.hideLoadingDialog();
-                    ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].press_scan_packings_to_continue);
+                    ScanditMatrixSimple.setTextPickingStores(true, 'Pulse finalizar para terminar.');
                   }
                   break;
                 case 'matrix_simple_finish':

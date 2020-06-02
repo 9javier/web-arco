@@ -174,6 +174,13 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
 
     matrixPickingStores = this;
     ScanditSDK.setActivityStarted(matrixPickingStores);
+
+    if(title.equals("Liberar Reservas")){
+      TabLayout tlProductsLists = this.findViewById(android.R.id.content).getRootView().findViewById(resources.getIdentifier("tlProductsLists", "id", package_name));
+      TabLayout tlProductsListsFull = this.findViewById(android.R.id.content).getRootView().findViewById(resources.getIdentifier("tlProductsListsFull", "id", package_name));
+      tlProductsLists.getTabAt(1).setText("Liberados");
+      tlProductsListsFull.getTabAt(1).setText("Liberados");
+    }
   }
 
   /*
@@ -349,7 +356,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     TextView tvFilterSize = findViewById(resources.getIdentifier("tvFilterSize", "id", package_name));
     TextView tvFilterColor = findViewById(resources.getIdentifier("tvFilterColor", "id", package_name));
 
-    if(true){
+    if(!toolbarTitle.equals("Liberar Reservas")){
       LinearLayout filterTypeLayout = findViewById(resources.getIdentifier("filterTypeLayout", "id", package_name));
       filterTypeLayout.setVisibility(View.VISIBLE);
       TextView tvFilterType = findViewById(resources.getIdentifier("tvFilterType", "id", package_name));
