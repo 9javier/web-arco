@@ -460,3 +460,7 @@ export * from './expeditions-inside/expedition-inside.module'
 /**Transportes */
 export * from './package-received/package-received.component'
 export * from './package-received/package-received.module'
+
+/**Transportes */
+export * from './package-history/package-history.component'
+export * from './package-history/package-history.module'

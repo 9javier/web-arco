@@ -172,4 +172,7 @@ export * from './lib/endpoint/expedition/expedition.service'
 //package-received
 export * from './lib/endpoint/package-received/package-received.service'
 
+//package-history
+export * from './lib/endpoint/package-history/package-history.service'
+
 

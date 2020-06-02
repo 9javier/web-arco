@@ -581,6 +581,14 @@ const routes: Routes = [
       name:'Transportes de expediciones'
     }
   },
+  {
+    path: 'package-history',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/package-history/package-history.module#PackageHistoryModule',
+    data:{
+      name:'Lista de historial de paquetes'
+    }
+  },
 ];
 
 @NgModule({

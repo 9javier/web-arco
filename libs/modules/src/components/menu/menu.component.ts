@@ -526,8 +526,16 @@ export class MenuComponent implements OnInit {
           url: '/expedition-inside',
           icon: 'folder'
         },
+        {
+          title: 'Bultos',
+          id: 'package-history',
+          url: '/package-history',
+          icon: 'archive'
+        },
+
       ]
     },
+   
   ];
 
   alPages: MenuItemList = [
@@ -629,7 +637,7 @@ export class MenuComponent implements OnInit {
           icon: 'barcode',
           tooltip: 'Órdenes no procesadas'
         },
-
+        
       ]
     },
     {
