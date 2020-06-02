@@ -119,16 +119,19 @@ loadPickings(){
 
       this.shoesPickingService
         .getPendingListByPicking(this.pickingProvider.pickingSelectedToStart.id)
-        .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+        .subscribe((res: ShoesPickingModel.ResponseListProductsByPicking) => {
           if (this.loading) {
             this.loading.dismiss();
             this.loading = null;
           }
-          let listProducts: ShoesPickingModel.ShoesPicking[] = res.data;
+          let listProducts: ShoesPickingModel.ShoesPicking[] = res.data.list;
           this.removePickingFinished = true;
 
           this.pickingProvider.pickingId = this.pickingProvider.pickingSelectedToStart.id;
           this.pickingProvider.listProducts = listProducts;
+          this.pickingProvider.quantityTotal = res.data.counts.total;
+          this.pickingProvider.quantityPending = res.data.counts.pending;
+          this.pickingProvider.quantityScanned = res.data.counts.scanned;
           this.pickingProvider.typePacking = this.pickingProvider.pickingSelectedToStart.packingType;
           this.pickingProvider.typePicking = this.pickingProvider.pickingSelectedToStart.typePicking.id;
           this.pickingProvider.packingReference = this.pickingProvider.pickingSelectedToStart.packingRef;

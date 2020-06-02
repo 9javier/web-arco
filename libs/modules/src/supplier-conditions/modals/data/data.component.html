@@ -12,8 +12,9 @@
   </ion-item>
   <br>
   <ion-item>
-    <ion-label>No Claim</ion-label>
+    <ion-label class="toggleName">No Claim</ion-label>
     <ion-toggle checked="false" [(ngModel)]="noClaimForm"></ion-toggle>
+    <ion-label class="toggle" *ngIf="noClaimForm">Sí</ion-label>
   </ion-item>
   <br>
   <ion-item>

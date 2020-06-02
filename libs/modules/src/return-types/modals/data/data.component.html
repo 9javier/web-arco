@@ -5,8 +5,9 @@
   </ion-item>
   <br>
   <ion-item>
-    <ion-label>Defectuoso</ion-label>
+    <ion-label class="defective">Defectuoso</ion-label>
     <ion-toggle checked="false" [(ngModel)]="defectiveForm"></ion-toggle>
+    <ion-label class="toggle" *ngIf="defectiveForm">Sí</ion-label>
   </ion-item>
   <br>
 </div>

@@ -5,6 +5,8 @@ import { ModalController } from '@ionic/angular';
 import { IntermediaryService } from '../../../services/src/';
 import {TimesToastType} from "../../../services/src/models/timesToastType";
 import {PositionsToast} from "../../../services/src/models/positionsToast.type";
+import {environment, UploadFilesService} from "@suite/services";
+import {ModalReviewComponent} from "../components/modal-defective/ModalReview/modal-review.component";
 
 @Component({
   selector: 'suite-drop-files',
@@ -13,12 +15,15 @@ import {PositionsToast} from "../../../services/src/models/positionsToast.type";
 })
 
 export class DropFilesComponent {
+  private baseUrlPhoto = environment.apiBasePhoto;
   type: string;
+  images: any[];
   public files: NgxFileDropEntry[] = [];
   constructor(
     private dropFileSrv: DropFilesService,
     private modalController: ModalController,
     private intermediary: IntermediaryService,
+    private uploadService: UploadFilesService,
     ) {
   }
 
@@ -41,7 +46,6 @@ export class DropFilesComponent {
               resp => {
                 this.dropFileSrv.setImage(resp.data);
                 this.intermediary.presentToastSuccess('Archivo subido y guardado correctamente en el repositorio.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
-                this.modalController.dismiss();
               },
               err => {
                 this.intermediary.presentToastError('Ha ocurrido un error al intentar subir el archivo al repositorio.', PositionsToast.TOP, TimesToastType.DURATION_ERROR_TOAST);
@@ -52,7 +56,6 @@ export class DropFilesComponent {
                 resp => {
                   this.dropFileSrv.setImage(resp.data);
                   this.intermediary.presentToastSuccess('Archivo subido y guardado correctamente en el repositorio.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
-                  this.modalController.dismiss();
                 },
                 err => {
                   this.intermediary.presentToastError('Ha ocurrido un error al intentar subir el archivo al repositorio.', PositionsToast.TOP, TimesToastType.DURATION_ERROR_TOAST);
@@ -62,7 +65,6 @@ export class DropFilesComponent {
                 resp => {
                   this.dropFileSrv.setImage(resp.data);
                   this.intermediary.presentToastSuccess('Archivo subido y guardado correctamente en el repositorio.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
-                  this.modalController.dismiss();
                 },
                 err => {
                   this.intermediary.presentToastError('Ha ocurrido un error al intentar subir el archivo al repositorio.', PositionsToast.TOP, TimesToastType.DURATION_ERROR_TOAST);
@@ -76,6 +78,34 @@ export class DropFilesComponent {
         console.log(droppedFile.relativePath, fileEntry);
       }
     }
+  }
+
+  deleteImage(item, index, arr) {
+    this.intermediary.presentLoading()
+    this.uploadService.deleteFile(item.id).subscribe(
+      resp => {
+        this.intermediary.presentToastSuccess('Archivo borrado exitosamente')
+        arr.splice(index, 1);
+        //this.signature = false;
+      },
+      err => {
+        this.intermediary.presentToastError('Ocurrio un error al borrar el archivo')
+        this.intermediary.dismissLoading()
+      },
+      () => {
+        this.intermediary.dismissLoading()
+      }
+    )
+  }
+
+  async openReviewImage(item) {
+    const modal = await this.modalController.create({
+      component: ModalReviewComponent,
+      componentProps: {
+        data: item
+      }
+    });
+    await modal.present();
   }
 
   public fileOver(event){

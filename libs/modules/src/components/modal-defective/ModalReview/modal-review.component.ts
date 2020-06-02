@@ -13,7 +13,7 @@ export class ModalReviewComponent implements OnInit {
   constructor(private modalController: ModalController,
     public navParams: NavParams) {
       const data = this.navParams.get('data');
-      this.imgSrc = data.pathMedium;
+      this.imgSrc = data.pathOriginal;
      }
 
   ngOnInit() {

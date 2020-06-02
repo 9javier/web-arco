@@ -589,6 +589,14 @@ const routes: Routes = [
       name:'Transportes de expediciones'
     }
   },
+  {
+    path:'marketplaces',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/marketplaces/marketplaces.module#MarketplacesModule',
+    data: {
+      name: 'Marketplaces'
+    }
+  },
 ];
 
 @NgModule({

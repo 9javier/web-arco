@@ -34,6 +34,10 @@ export class NewReturnUnitiesComponent implements OnInit {
     pagination: {
       limit: this.pagerValues[0],
       page: 0
+    },
+    sort: {
+      field: 'id',
+      direction: 'DESC'
     }
   };
 
@@ -79,7 +83,7 @@ export class NewReturnUnitiesComponent implements OnInit {
     });
   }
 
-  private loadItems() {
+  private loadItems(filters?) {
     this.isLoadingData = true;
 
     const params = {
@@ -89,7 +93,47 @@ export class NewReturnUnitiesComponent implements OnInit {
       brands: this.brandIds,
       filters: this.filters
     };
+    const paramsFilters = {
+      returnId: this.returnId,
+      warehouse: this.warehouseId,
+      provider: this.providerId,
+      brands: this.brandIds
+    };
     if (this.isDefective) {
+      if (filters) {
+        if (filters.products && filters.products.length > 0) {
+          params.filters.products = filters.products;
+        } else {
+          delete params.filters.products;
+        }
+        if (filters.brands && filters.brands.length > 0) {
+          params.filters.brands = filters.brands;
+        } else {
+          delete params.filters.brands;
+        }
+        if (filters.modelProducts && filters.modelProducts.length > 0) {
+          params.filters.modelProducts = filters.modelProducts;
+        } else {
+          delete params.filters.modelProducts;
+        }
+        if (filters.models && filters.models.length > 0) {
+          params.filters.models = filters.models;
+        } else {
+          delete params.filters.models;
+        }
+        if (filters.commercials && filters.commercials.length > 0) {
+          params.filters.commercials = filters.commercials;
+        } else {
+          delete params.filters.commercials;
+        }
+        if (filters.sizes && filters.sizes.length > 0) {
+          params.filters.sizes = filters.sizes;
+        } else {
+          delete params.filters.sizes;
+        }
+        params.filters.sort = filters.sort;
+      }
+
       this.returnService
         .postGetDefectiveProducts(params)
         .subscribe((res) => {
@@ -100,7 +144,44 @@ export class NewReturnUnitiesComponent implements OnInit {
             this.itemsSelected = false;
           }
         }, (error) => {}, () => this.isLoadingData = false);
+
+      if (!filters) {
+        this.returnService
+          .postGetDefectiveProductsFilters(paramsFilters)
+          .subscribe((res) => {
+            this.defectiveProductsList.loadFilters(res.data);
+          });
+      }
     } else {
+      if (filters) {
+        if (filters.brands && filters.brands.length > 0) {
+          params.filters.brands = filters.brands;
+        } else {
+          delete params.filters.brands;
+        }
+        if (filters.products && filters.products.length > 0) {
+          params.filters.products = filters.products;
+        } else {
+          delete params.filters.products;
+        }
+        if (filters.models && filters.models.length > 0) {
+          params.filters.models = filters.models;
+        } else {
+          delete params.filters.models;
+        }
+        if (filters.commercials && filters.commercials.length > 0) {
+          params.filters.commercials = filters.commercials;
+        } else {
+          delete params.filters.commercials;
+        }
+        if (filters.sizes && filters.sizes.length > 0) {
+          params.filters.sizes = filters.sizes;
+        } else {
+          delete params.filters.sizes;
+        }
+        params.filters.sort = filters.sort;
+      }
+
       this.returnService
         .postGetProducts(params)
         .subscribe((res) => {
@@ -112,6 +193,14 @@ export class NewReturnUnitiesComponent implements OnInit {
             this.isLoadingData = false;
           }
         }, (error) => {}, () => this.isLoadingData = false);
+
+      if (!filters) {
+        this.returnService
+          .postGetProductsFilters(paramsFilters)
+          .subscribe((res) => {
+            this.productsList.loadFilters(res.data);
+          });
+      }
     }
   }
 
@@ -171,11 +260,43 @@ export class NewReturnUnitiesComponent implements OnInit {
     }
   }
 
+  public resetFilters() {
+    if (this.isDefective) {
+      this.defectiveProductsList.resetFilters();
+    } else {
+      this.productsList.resetFilters();
+    }
+  }
+
+  public resetSort() {
+    if (this.isDefective) {
+      this.defectiveProductsList.resetSort();
+    } else {
+      this.productsList.resetSort();
+    }
+  }
+
   public reload() {
+    this.filters = {
+      pagination: {
+        limit: this.pagerValues[0],
+        page: 0
+      },
+      sort: {
+        field: 'id',
+        direction: 'DESC'
+      }
+    };
     this.loadItems();
+    this.resetFilters();
+    this.resetSort();
   }
 
   public changeInItemsSelected(itemsSelected: boolean) {
     this.itemsSelected = itemsSelected;
+  }
+
+  public applyFilters(filters: boolean) {
+    this.loadItems(filters);
   }
 }

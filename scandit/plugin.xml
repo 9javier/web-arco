@@ -269,6 +269,7 @@
     <source-file src="src/android/layout/row_table_details.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/title_bar_serauto.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/references_matrixsimple.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/references_matrix_top_simple.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/title_bar_matrixsimple.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/next_product_info.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/item_picking_store.xml" target-dir="res/layout"/>

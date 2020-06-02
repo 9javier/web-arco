@@ -161,7 +161,12 @@ export namespace InventoryModel {
   export interface ResponsePicking extends HttpRequestModel.Response {
     data?: {
       inventory?: ShoesPickingModel.ShoesPicking,
-      shoePickingPending?: ShoesPickingModel.ShoesPicking[]
+      shoePickingPending?: ShoesPickingModel.ShoesPicking[],
+      counts?: {
+        total?: number,
+        pending?: number,
+        scanned?: number
+      }
     };
     message: string;
     code: number;

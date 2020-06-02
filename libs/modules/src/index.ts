@@ -470,3 +470,11 @@ export * from './order-no-processed/order-no-processed.module'
 /**Transportes */
 export * from './expeditions-inside/expedition-inside.component'
 export * from './expeditions-inside/expedition-inside.module'
+
+//// *marketplaces
+
+export  * from './marketplaces/marketplaces.component';
+export  * from './marketplaces/marketplaces.module';
+
+export  * from './marketplaces/create-mapping/create-mapping.component';
+export  * from './marketplaces/create-mapping/create-mapping.module';
