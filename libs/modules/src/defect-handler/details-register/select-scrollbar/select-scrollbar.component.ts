@@ -4,12 +4,12 @@ import {NavParams, PopoverController} from "@ionic/angular";
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 @Component({
-  selector: 'suite-select-scrollbar-state',
-  templateUrl: './select-scrollbar-state.component.html',
-  styleUrls: ['./select-scrollbar-state.component.scss'],
+  selector: 'suite-select-scrollbar',
+  templateUrl: './select-scrollbar.component.html',
+  styleUrls: ['./select-scrollbar.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class SelectScrollbarStateComponent implements OnInit{
+export class SelectScrollbarComponent implements OnInit{
   @Input() allOptions;
   @Output() selectChange = new EventEmitter();
   view: any;
