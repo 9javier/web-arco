@@ -407,7 +407,7 @@ export class TextareaComponent implements OnInit {
               pikingId: this.pickingId,
               productReference: dataWrited
             };
-            this.inventoryService.postPickingReturn(picking).then(await (async (res: InventoryModel.ResponsePickingReturn) => {
+            this.inventoryService.postPickingReturn(picking).then(async (res: InventoryModel.ResponsePickingReturn) => {
               if (res.code === 200 || res.code === 201) {
                 this.listProducts = res.data;
                 this.pickingSelected.unitsPrepared += 1;
@@ -469,7 +469,7 @@ export class TextareaComponent implements OnInit {
                     }
                   });
               }
-            }), (error) => {
+            }, (error) => {
               this.inputPicking = null;
 
               this.isScannerBlocked = false;

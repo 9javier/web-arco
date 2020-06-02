@@ -74,7 +74,8 @@ export class ReturnPendingListComponent implements OnInit {
     private dateTimeParserService: DateTimeParserService
   ) {}
 
-  async ngOnInit() {
+  ionViewWillEnter() {
+    this.toolbarProvider.currentPage.next('Devoluciones Pendientes');
     this.toolbarProvider.optionsActions.next([
       {
         icon: 'refresh',
@@ -87,6 +88,9 @@ export class ReturnPendingListComponent implements OnInit {
         action: () => this.showFilters = !this.showFilters
       }
     ]);
+  }
+
+  async ngOnInit() {
     const user = await this.authenticationService.getCurrentUser();
     if (user.hasWarehouse) {
       this.allowedWarehouses = [(await this.authenticationService.getStoreCurrentUser()).id]
