@@ -309,17 +309,7 @@ export class NewReturnComponent implements OnInit {
           this.displayDeliveryNoteList = true;
         }
 
-        switch (this.return.status) {
-          case this.ReturnStatus.IN_PROCESS:
-          case this.ReturnStatus.PREPARED:
-          case this.ReturnStatus.PENDING_PICKUP:
-          case this.ReturnStatus.PICKED_UP:
-          case this.ReturnStatus.BILLED:
-            this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id > this.return.status && r.id != this.ReturnStatus.UNKNOWN);
-            break;
-          default:
-            this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
-        }
+        this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
 
         this.initForm();
       } else {
