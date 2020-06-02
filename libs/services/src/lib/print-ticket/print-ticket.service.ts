@@ -135,7 +135,7 @@ export class PrintTicketService {
         const reference = '' + i + '/' + returnObj.amountPackages + '';
         const provider = returnObj && returnObj.provider && returnObj.provider.name ? returnObj.provider.name : '';
 
-        const dataToSend = "^XA ^CI28 ^LH60,10 ^AVC^FD ID-"+ id +"^FS ^LH60,100 ^AVC^FD Bulto "+ reference +"^FS ^ABN^FO25,70^FD Proveedor: "+ provider +"^FS ^XZ";
+        const dataToSend = "^XA ^CI28 ^LH60,10 ^AVC^FD ID: "+ id +"^FS ^LH60,100 ^AVC^FD Bulto: "+ reference +"^FS ^ABN^FO25,70^FD"+ provider +"^FS ^XZ";
 
         this.printerService.printTagReturn(dataToSend).then(() => {
           this.intermediaryService.dismissLoading();
