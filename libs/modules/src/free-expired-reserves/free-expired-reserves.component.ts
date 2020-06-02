@@ -11,6 +11,7 @@ import {PickingProvider} from "../../../services/src/providers/picking/picking.p
 import {PickingStoreModel} from "../../../services/src/models/endpoints/PickingStore";
 import Filters = PickingStoreModel.Filters;
 import {ReservesService} from "../../../services/src/lib/scandit/Reserves/reserves.service";
+import {Events} from "@ionic/angular";
 
 @Component({
   selector: 'suite-free-expired-reserves',
@@ -32,6 +33,7 @@ export class FreeExpiredReservesComponent implements OnInit {
     private pickingStoreService: PickingStoreService,
     private dateTimeParserService: DateTimeParserService,
     private pickingProvider: PickingProvider,
+    private events: Events,
     private reservesScanditService: ReservesService
   ) {}
 
@@ -44,6 +46,9 @@ export class FreeExpiredReservesComponent implements OnInit {
       this.pagination.page = paginator.pageIndex + 1;
       this.load();
     });
+    this.events.subscribe('picking-stores:refresh', () => {
+      this.refresh();
+    })
   }
 
   load(){
