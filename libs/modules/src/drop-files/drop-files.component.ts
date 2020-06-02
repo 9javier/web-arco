@@ -15,10 +15,13 @@ import {ModalReviewComponent} from "../components/modal-defective/ModalReview/mo
 })
 
 export class DropFilesComponent {
+
   private baseUrlPhoto = environment.apiBasePhoto;
   type: string;
   images: any[];
   public files: NgxFileDropEntry[] = [];
+  public showSaveButton: boolean = false;
+
   constructor(
     private dropFileSrv: DropFilesService,
     private modalController: ModalController,
@@ -118,5 +121,9 @@ export class DropFilesComponent {
 
   public close(){
     this.modalController.dismiss();
+  }
+
+  public saveItems() {
+    this.modalController.dismiss({save: true});
   }
 }

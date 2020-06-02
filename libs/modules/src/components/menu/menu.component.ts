@@ -251,11 +251,11 @@ export class MenuComponent implements OnInit {
           tooltip: 'Listado de registro de devoluciones'
         },
         {
-          title: 'Listado Seguimiento Devoluciones',
+          title: 'Seguimiento de Devoluciones',
           id: 'return-tracking-list',
           url: '/return-tracking-list',
           icon: 'list',
-          tooltip: 'Listado de seguimiento de devoluciones'
+          tooltip: 'Seguimiento de devoluciones'
         },
         {
           title: 'Condiciones proveedores',

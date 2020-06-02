@@ -8,6 +8,9 @@
 </ion-content>
 
 <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+  <ion-fab-button matTooltip="Volver a detalles de la devolución" matTooltipClass="tooltip" (click)="backToPreviousPage()">
+    <ion-icon name="arrow-back"></ion-icon>
+  </ion-fab-button>
   <ion-fab-button matTooltip="Guardar selección de productos" matTooltipClass="tooltip" *ngIf="itemsSelected" (click)="assignSelectedItems()">
     <ion-icon name="save"></ion-icon>
   </ion-fab-button>

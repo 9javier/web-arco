@@ -31,6 +31,7 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import {DropFilesService} from "../../../services/src/lib/endpoint/drop-files/drop-files.service";
 import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {TimesToastType} from "../../../services/src/models/timesToastType";
 
 @Component({
   selector: 'suite-new-return',
@@ -57,7 +58,7 @@ export class NewReturnComponent implements OnInit {
   private listItemsSelected: any[] = [];
   private itemForList: string = null;
 
-  private ReturnStatus = ReturnModel.Status;
+  public ReturnStatus = ReturnModel.Status;
   private ReturnStatusNames = ReturnModel.StatusNames;
   public listStatusAvailable = [];
 
@@ -251,8 +252,8 @@ export class NewReturnComponent implements OnInit {
     )
   }
 
-  async save() {
-    await this.intermediary.presentLoadingNew('Guardando devolución...');
+  async save(customLoadingMsg: string, showToast: boolean = true) {
+    await this.intermediary.presentLoadingNew(customLoadingMsg || 'Guardando devolución...');
 
     if (this.archives.length > 0) {
       let archives = [];
@@ -281,11 +282,8 @@ export class NewReturnComponent implements OnInit {
     this.returnService.postSave(this.return).then((response: SaveResponse) => {
       this.intermediary.dismissLoadingNew();
       if (response.code == 200) {
-        if (this.isHistoric) {
-          this.router.navigateByUrl('/returns-historic')
-        } else {
-          this.router.navigateByUrl('/return-tracking-list')
-        }
+        this.return.id = response.data.id;
+        if (showToast) this.intermediary.presentToastSuccess('Devolución guardada', TimesToastType.DURATION_SUCCESS_TOAST_3750);
       } else {
         console.error(response);
       }
@@ -486,12 +484,27 @@ export class NewReturnComponent implements OnInit {
   async searchDelivery_note() {
     const modal = await this.modalController.create({
       component: DropFilesComponent,
-      componentProps: {type: 'delivery_note', images: this.delivery_notes }
+      componentProps: {type: 'delivery_note', images: this.delivery_notes, showSaveButton: true }
     });
+
+    modal.onDidDismiss().then(data => {
+      if (data && data.data.save) {
+        this.save('Asociando recursos...', false);
+      }
+    });
+
     await modal.present();
   }
 
   public formatDate(date: string) {
     return this.dateTimeParserService.dateMonthYear(date);
+  }
+
+  public getCountProductsScanned(productsList: any[]) {
+    return productsList.filter(p => p.status == 2).length;
+  }
+
+  public getPackingNames(packingList: ReturnModel.ReturnPacking[]) {
+    return packingList.map(p => p.packing.reference).join(', ');
   }
 }

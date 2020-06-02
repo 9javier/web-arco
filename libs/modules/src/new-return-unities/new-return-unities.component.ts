@@ -7,6 +7,7 @@ import {DefectiveProductsComponent} from "./defective-products/defective-product
 import {MatPaginator} from "@angular/material/paginator";
 import {IntermediaryService} from "../../../services/src/lib/endpoint/intermediary/intermediary.service";
 import {TimesToastType} from "../../../services/src/models/timesToastType";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'new-return-unities',
@@ -49,6 +50,7 @@ export class NewReturnUnitiesComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private returnService: ReturnService,
     private intermediaryService: IntermediaryService
   ) {}
@@ -204,6 +206,10 @@ export class NewReturnUnitiesComponent implements OnInit {
     }
   }
 
+  public backToPreviousPage() {
+    this.location.back();
+  }
+
   public async assignSelectedItems() {
     await this.intermediaryService.presentLoadingNew('Asignando productos a la devolución...');
 
@@ -224,7 +230,7 @@ export class NewReturnUnitiesComponent implements OnInit {
         .subscribe((res) => {
           if (res.code == 201) {
             this.intermediaryService.presentToastSuccess('Reservados los productos para devolver.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
-            this.router.navigateByUrl('/return-tracking-list');
+            this.location.back();
           } else {
             this.intermediaryService.presentToastError('Ha ocurrido un error al reservar los productos para devolver.', TimesToastType.DURATION_ERROR_TOAST);
           }

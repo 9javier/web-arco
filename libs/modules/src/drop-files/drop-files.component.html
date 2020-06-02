@@ -36,3 +36,8 @@
   </ion-list>
 </ion-content>
 
+<ion-footer *ngIf="showSaveButton">
+  <ion-toolbar>
+    <ion-button slot="end" color="primary" [disabled]="!images || images.length <= 0" (click)="saveItems()">Guardar</ion-button>
+  </ion-toolbar>
+</ion-footer>
