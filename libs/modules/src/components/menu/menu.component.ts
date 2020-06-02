@@ -1323,6 +1323,10 @@ export class MenuComponent implements OnInit {
     }
   }
 
+  checkIfChildrenHasNewTariffs(element): boolean {
+    return !!element.children.find(c => c.notification)
+  }
+
   async getPickingTasksStoresAmount(){
     const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
     if(currentWarehouse){
