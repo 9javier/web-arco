@@ -39,12 +39,31 @@ ion-content {
   }
 }
 
-
-
-
 ion-item.item-selectable {
   height: 67px;
   ion-label {
+    margin-top: 23px;
+    margin-bottom: 22px;
+  }
+}
+
+ion-item.button {
+  --padding-start: 0;
+}
+
+ion-item.item-provider {
+  height: 67px;
+  width: 70%;
+  max-width: 70%;
+  --padding-start: 0;
+  ion-label.title {
+    min-width: 100px;
+    max-width: 40%;
+    margin-top: 23px;
+    margin-bottom: 22px;
+  }
+  ion-label.value {
+    max-width: 60%;
     margin-top: 23px;
     margin-bottom: 22px;
   }

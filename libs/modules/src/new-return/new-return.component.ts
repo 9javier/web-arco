@@ -112,7 +112,8 @@ export class NewReturnComponent implements OnInit {
         userLastStatus: await this.getCurrentUser(),
         warehouse: null,
         archives: [],
-        delivery_notes: []
+        delivery_notes: [],
+        products: []
       };
 
       this.archives = this.return.archives;
@@ -170,7 +171,8 @@ export class NewReturnComponent implements OnInit {
         unitsSelected: [this.return.unitsSelected],
         user: [this.return.user],
         userLastStatus: [this.return.userLastStatus],
-        warehouse: [this.return.warehouse]
+        warehouse: [this.return.warehouse],
+        products: [this.return.products]
     });
   }
 
