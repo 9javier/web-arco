@@ -504,18 +504,6 @@ export class MenuComponent implements OnInit {
       icon: 'map'
     },
     {
-      title: 'Recepciones',
-      id: 'receptions-avelon',
-      url: '/receptions-avelon',
-      icon: 'archive'
-    },
-    {
-      title: 'Predistribuciones',
-      id: 'predistributions',
-      url: '/predistributions',
-      icon: 'archive'
-    },
-    {
       title: 'Marketplaces',
       open: true,
       type: 'wrapper',
