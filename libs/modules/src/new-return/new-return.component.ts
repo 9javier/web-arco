@@ -31,6 +31,7 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import {DropFilesService} from "../../../services/src/lib/endpoint/drop-files/drop-files.service";
 import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {TimesToastType} from "../../../services/src/models/timesToastType";
 
 @Component({
   selector: 'suite-new-return',
@@ -38,6 +39,7 @@ import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/
   styleUrls: ['./new-return.component.scss']
 })
 export class NewReturnComponent implements OnInit {
+
   private baseUrlPhoto = environment.apiBasePhoto;
   return: Return;
   types: ReturnType[];
@@ -55,6 +57,22 @@ export class NewReturnComponent implements OnInit {
 
   private listItemsSelected: any[] = [];
   private itemForList: string = null;
+
+  public ReturnStatus = ReturnModel.Status;
+  private ReturnStatusNames = ReturnModel.StatusNames;
+  public listStatusAvailable = [];
+
+  public requiredFields: any = {
+    type: true,
+    provider: true,
+    warehouse: true,
+    brand: true,
+    returnBeforeDate: true,
+    quantityPacking: false,
+    shipper: false,
+    pickupDate: false,
+    deliveryNote: false
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -100,6 +118,7 @@ export class NewReturnComponent implements OnInit {
         id: 0,
         lastStatus: 1,
         observations: "",
+        operatorObservations: "",
         printTagPackages: false,
         provider: null,
         shipper: "",
@@ -111,8 +130,11 @@ export class NewReturnComponent implements OnInit {
         userLastStatus: await this.getCurrentUser(),
         warehouse: null,
         archives: [],
-        delivery_notes: []
+        delivery_notes: [],
+        products: []
       };
+
+      this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
 
       this.archives = this.return.archives;
       this.delivery_notes = this.return.delivery_notes;
@@ -158,6 +180,7 @@ export class NewReturnComponent implements OnInit {
         id: [this.return.id],
         lastStatus: [this.return.lastStatus],
         observations: [this.return.observations],
+        operatorObservations: [this.return.operatorObservations],
         packings: [this.return.packings],
         printTagPackages: [this.return.printTagPackages],
         provider: [this.return.provider],
@@ -168,7 +191,8 @@ export class NewReturnComponent implements OnInit {
         unitsSelected: [this.return.unitsSelected],
         user: [this.return.user],
         userLastStatus: [this.return.userLastStatus],
-        warehouse: [this.return.warehouse]
+        warehouse: [this.return.warehouse],
+        products: [this.return.products]
     });
   }
 
@@ -228,8 +252,8 @@ export class NewReturnComponent implements OnInit {
     )
   }
 
-  async save() {
-    await this.intermediary.presentLoadingNew('Guardando devolución...');
+  async save(customLoadingMsg: string, showToast: boolean = true) {
+    await this.intermediary.presentLoadingNew(customLoadingMsg || 'Guardando devolución...');
 
     if (this.archives.length > 0) {
       let archives = [];
@@ -258,11 +282,8 @@ export class NewReturnComponent implements OnInit {
     this.returnService.postSave(this.return).then((response: SaveResponse) => {
       this.intermediary.dismissLoadingNew();
       if (response.code == 200) {
-        if (this.isHistoric) {
-          this.router.navigateByUrl('/returns-historic')
-        } else {
-          this.router.navigateByUrl('/return-tracking-list')
-        }
+        this.return.id = response.data.id;
+        if (showToast) this.intermediary.presentToastSuccess('Devolución guardada', TimesToastType.DURATION_SUCCESS_TOAST_3750);
       } else {
         console.error(response);
       }
@@ -285,6 +306,9 @@ export class NewReturnComponent implements OnInit {
         if(this.delivery_notes.length > 0){
           this.displayDeliveryNoteList = true;
         }
+
+        this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
+
         this.initForm();
       } else {
         console.error(response);
@@ -306,27 +330,13 @@ export class NewReturnComponent implements OnInit {
     }).catch(console.error);
   }
 
-  getStatusName(status: number): string{
-    switch(status){
-      case 0:
-        return '';
-      case 1:
-        return 'Orden devolución';
-      case 2:
-        return 'Pendiente';
-      case 3:
-        return 'En proceso';
-      case 4:
-        return 'Preparado';
-      case 5:
-        return 'Pendiente recogida';
-      case 6:
-        return 'Recogido';
-      case 7:
-        return 'Facturado';
-      default:
-        return 'Desconocido'
+  getStatusName(status: number): string {
+    const returnItem = this.ReturnStatusNames.find(r => r.id == status);
+    if (returnItem) {
+      return returnItem.name;
     }
+
+    return 'Desconocido';
   }
 
   getBrandNameList(brands: Brand[]): string{
@@ -338,10 +348,45 @@ export class NewReturnComponent implements OnInit {
     this.return.lastStatus = status;
     this.return.userLastStatus = await this.authenticationService.getCurrentUser();
     this.return.dateLastStatus = String(new Date());
+
+    switch (this.return.status) {
+      case this.ReturnStatus.PREPARED:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = false;
+        this.requiredFields.shipper = false;
+        this.requiredFields.deliveryNote = false;
+        break;
+      case this.ReturnStatus.PENDING_PICKUP:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = true;
+        this.requiredFields.shipper = true;
+        this.requiredFields.deliveryNote = false;
+        break;
+      case this.ReturnStatus.PICKED_UP:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = true;
+        this.requiredFields.shipper = true;
+        this.requiredFields.deliveryNote = true;
+        break;
+    }
   }
 
   allFieldsFilled(): boolean{
-    return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
+    if (this.return) {
+      switch (this.return.status) {
+        case this.ReturnStatus.PREPARED:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages);
+        case this.ReturnStatus.PICKED_UP:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper);
+        case this.ReturnStatus.PENDING_PICKUP:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper && this.delivery_notes.length > 0);
+        default:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
+      }
+    } else {
+      return false;
+    }
+
   }
 
   thereAreConditions(): boolean{
@@ -431,7 +476,7 @@ export class NewReturnComponent implements OnInit {
   async searchArchive() {
     const modal = await this.modalController.create({
       component: DropFilesComponent,
-      componentProps: {type: 'archive'}
+      componentProps: {type: 'archive', images: this.archives }
     });
     await modal.present();
   }
@@ -439,12 +484,27 @@ export class NewReturnComponent implements OnInit {
   async searchDelivery_note() {
     const modal = await this.modalController.create({
       component: DropFilesComponent,
-      componentProps: {type: 'delivery_note'}
+      componentProps: {type: 'delivery_note', images: this.delivery_notes, showSaveButton: true }
     });
+
+    modal.onDidDismiss().then(data => {
+      if (data && data.data.save) {
+        this.save('Asociando recursos...', false);
+      }
+    });
+
     await modal.present();
   }
 
   public formatDate(date: string) {
     return this.dateTimeParserService.dateMonthYear(date);
+  }
+
+  public getCountProductsScanned(productsList: any[]) {
+    return productsList.filter(p => p.status == 2).length;
+  }
+
+  public getPackingNames(packingList: ReturnModel.ReturnPacking[]) {
+    return packingList.map(p => p.packing.reference).join(', ');
   }
 }

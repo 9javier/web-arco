@@ -1,15 +1,15 @@
 export const environment = {
   production: false,
   printerRequired: false,
-  apiBasePhoto: 'http://localhost:8081',
+  apiBasePhoto: 'http://localhost:8080',
   apiBase: 'http://localhost:8080/api',
   apiSorter: 'http://localhost:8080/api',
   apiLogisticOperator: 'http://localhost:3051/api',
   apiRule: "http://localhost:5000",
   apiMiddleware: "http://localhost:3002",
   urlBase: 'http://localhost:8080',
-  uploadFiles: 'http://localhost:8081/api/upload-files',
-  downloadFiles: 'http://localhost:8088',
+  uploadFiles: 'http://localhost:8080/api/upload-files',
+  downloadFiles: 'http://localhost:8080',
   downloadPdf: 'http://localhost:8080',
   urlDownloadApp: 'https://drive.google.com/open?id=16DZzQ1hIArX5GF5oZtTpx3ltiPfCvw2K',
   sga: {

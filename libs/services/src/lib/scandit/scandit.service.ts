@@ -218,6 +218,7 @@ export class ScanditService {
           this.hideTextMessage(2000);
           packingReference = code;
           containerReference = null;
+          ScanditMatrixSimple.setFixedText('PRODUCTO/CONTENEDOR/EMBALAJE');
         }
       }
     }, 'Ubicar/Escanear', HEADER_BACKGROUND, HEADER_COLOR);
@@ -532,8 +533,8 @@ export class ScanditService {
                   jailReference = code;
                   packingReference = code;
                   productsToScan[0]['quantity'] = {
-                    actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
-                    total: String(this.pickingProvider.pickingSelectedToStart.quantity)
+                    actual: String(this.pickingProvider.quantityScanned+1),
+                    total: String(this.pickingProvider.quantityTotal)
                   };
                   productsToScan[0]['packing'] = { reference: packingReference };
                   ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
@@ -563,8 +564,8 @@ export class ScanditService {
                             jailReference = code;
                             packingReference = code;
                             productsToScan[0]['quantity'] = {
-                              actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
-                              total: String(this.pickingProvider.pickingSelectedToStart.quantity)
+                              actual: String(this.pickingProvider.quantityScanned+1),
+                              total: String(this.pickingProvider.quantityTotal)
                             };
                             productsToScan[0]['packing'] = { reference: packingReference };
                             ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
@@ -743,14 +744,19 @@ export class ScanditService {
                 if (res.code == 200 || res.code == 201) {
                   this.pickingLog(2, "32", "if (res.code == 200 || res.code == 201) {");
                   productsToScan = res.data.shoePickingPending;
+                  if(res.data.counts){
+                    this.pickingProvider.quantityTotal = res.data.counts.total;
+                    this.pickingProvider.quantityPending = res.data.counts.pending;
+                    this.pickingProvider.quantityScanned = res.data.counts.scanned;
+                  }
                   productsScanned.push(code);
                   ScanditMatrixSimple.setText(`Producto ${code} escaneado y añadido el embalaje.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
                   this.hideTextMessage(2000);
                   if (productsToScan.length > 0) {
                     this.pickingLog(2, "33", "if (productsToScan.length > 0) {");
                     productsToScan[0]['quantity'] = {
-                      actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
-                      total: String(this.pickingProvider.pickingSelectedToStart.quantity)
+                      actual: String(this.pickingProvider.quantityScanned+1),
+                      total: String(this.pickingProvider.quantityTotal)
                     };
                     productsToScan[0]['packing'] = { reference: packingReference };
                     ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
@@ -770,17 +776,20 @@ export class ScanditService {
                   this.hideTextMessage(2000);
                   ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
                   this.getPendingListByPicking(pickingId)
-                    .then((res: ShoesPickingModel.ResponseListByPicking) => {
+                    .then((res: ShoesPickingModel.ResponseListProductsByPicking) => {
                       ScanditMatrixSimple.hideLoadingDialog();
                       this.pickingLog(2, "37", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                       if (res.code == 200 || res.code == 201) {
                         this.pickingLog(2, "38", "if (res.code == 200 || res.code == 201) {");
-                        productsToScan = res.data;
+                        productsToScan = res.data.list;
+                        this.pickingProvider.quantityTotal = res.data.counts.total;
+                        this.pickingProvider.quantityPending = res.data.counts.pending;
+                        this.pickingProvider.quantityScanned = res.data.counts.scanned;
                         if (productsToScan.length > 0) {
                           this.pickingLog(2, "39", "if (productsToScan.length > 0) {");
                           productsToScan[0]['quantity'] = {
-                            actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
-                            total: String(this.pickingProvider.pickingSelectedToStart.quantity)
+                            actual: String(this.pickingProvider.quantityScanned+1),
+                            total: String(this.pickingProvider.quantityTotal)
                           };
                           productsToScan[0]['packing'] = { reference: packingReference };
                           ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
@@ -805,17 +814,20 @@ export class ScanditService {
                 this.hideTextMessage(2000);
                 ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
                 this.getPendingListByPicking(pickingId)
-                  .then((res: ShoesPickingModel.ResponseListByPicking) => {
+                  .then((res: ShoesPickingModel.ResponseListProductsByPicking) => {
                     ScanditMatrixSimple.hideLoadingDialog();
                     this.pickingLog(2, "43", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                     if (res.code == 200 || res.code == 201) {
                       this.pickingLog(2, "44", "if (res.code == 200 || res.code == 201) {");
-                      productsToScan = res.data;
+                      productsToScan = res.data.list;
+                      this.pickingProvider.quantityTotal = res.data.counts.total;
+                      this.pickingProvider.quantityPending = res.data.counts.pending;
+                      this.pickingProvider.quantityScanned = res.data.counts.scanned;
                       if (productsToScan.length > 0) {
                         this.pickingLog(2, "45", "if (productsToScan.length > 0) {");
                         productsToScan[0]['quantity'] = {
-                          actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
-                          total: String(this.pickingProvider.pickingSelectedToStart.quantity)
+                          actual: String(this.pickingProvider.quantityScanned+1),
+                          total: String(this.pickingProvider.quantityTotal)
                         };
                         productsToScan[0]['packing'] = { reference: packingReference };
                         ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
@@ -872,17 +884,20 @@ export class ScanditService {
                         this.hideTextMessage(1500);
                         ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
                         this.getPendingListByPicking(pickingId)
-                          .then((res: ShoesPickingModel.ResponseListByPicking) => {
+                          .then((res: ShoesPickingModel.ResponseListProductsByPicking) => {
                             ScanditMatrixSimple.hideLoadingDialog();
                             this.pickingLog(2, "54", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                             if (res.code == 200 || res.code == 201) {
                               this.pickingLog(2, "55", "if (res.code == 200 || res.code == 201) {");
-                              productsToScan = res.data;
+                              productsToScan = res.data.list;
+                              this.pickingProvider.quantityTotal = res.data.counts.total;
+                              this.pickingProvider.quantityPending = res.data.counts.pending;
+                              this.pickingProvider.quantityScanned = res.data.counts.scanned;
                               if (productsToScan.length > 0) {
                                 this.pickingLog(2, "56", "if (productsToScan.length > 0) {");
                                 productsToScan[0]['quantity'] = {
-                                  actual: String(this.pickingProvider.pickingSelectedToStart.quantity-productsToScan.length+1),
-                                  total: String(this.pickingProvider.pickingSelectedToStart.quantity)
+                                  actual: String(this.pickingProvider.quantityScanned+1),
+                                  total: String(this.pickingProvider.quantityTotal)
                                 };
                                 productsToScan[0]['packing'] = { reference: packingReference };
                                 ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);

@@ -118,6 +118,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'free-expired-reserves',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/free-expired-reserves/free-expired-reserves.module#FreeExpiredReservesModule',
+    data: {
+      name: 'Liberar Reservas Expiradas'
+    }
+  },
+  {
     path: 'requested-products',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/requested-products/requested-products.module#RequestedProductsModule',

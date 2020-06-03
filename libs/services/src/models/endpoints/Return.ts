@@ -36,6 +36,7 @@ export namespace ReturnModel{
     dateReturnBefore: string,
     email: string,
     observations: string,
+    operatorObservations: string,
     lastStatus: number,
     user: User,
     packings: ReturnPacking[],
@@ -68,7 +69,8 @@ export namespace ReturnModel{
   export interface SearchParameters {
     filters: Filters,
     order: Order,
-    pagination: Pagination
+    pagination: Pagination,
+    isAl?: boolean
   }
 
   export interface SearchResponse {
@@ -268,6 +270,33 @@ export namespace ReturnModel{
     }
   }
 
+  export interface GetProductsFiltersParams {
+    warehouse: number,
+    provider: number,
+    brands: number[]
+  }
+  export interface GetDefectiveProductsFilters {
+    products: {id: number, value: string, name: string}[],
+    brands: {id: number, value: string, name: string}[],
+    modelReferences: {id: number, value: string, name: string}[],
+    modelNames: {id: number, value: string, name: string}[],
+    commercials: {id: number, value: string, name: string}[],
+    sizes: {id: number, value: string, name: string}[]
+  }
+  export interface GetProductsFilters {
+    brands: {id: number, value: string, name: string}[],
+    modelReferences: {id: number, value: string, name: string}[],
+    modelNames: {id: number, value: string, name: string}[],
+    commercials: {id: number, value: string, name: string}[],
+    sizes: {id: number, value: string, name: string}[]
+  }
+  export interface GetDefectiveProductsFiltersResponse extends HttpRequestModel.Response {
+    data: GetDefectiveProductsFilters
+  }
+  export interface GetProductsFiltersResponse extends HttpRequestModel.Response {
+    data: GetProductsFilters
+  }
+
   export interface AssignDefectiveProductsParams {
     returnId: number,
     itemsToReturn: {
@@ -289,4 +318,23 @@ export namespace ReturnModel{
   export interface AssignProductsResponse extends HttpRequestModel.Response {
 
   }
+
+  export enum Status {
+    RETURN_ORDER = 1,
+    IN_PROCESS = 3,
+    PREPARED = 4,
+    PENDING_PICKUP = 5,
+    PICKED_UP = 6,
+    BILLED = 7,
+    UNKNOWN = 8,
+  }
+  export const StatusNames = [
+    {id: Status.RETURN_ORDER, name: 'Orden devolución'},
+    {id: Status.IN_PROCESS, name: 'En proceso'},
+    {id: Status.PREPARED, name: 'Preparado'},
+    {id: Status.PENDING_PICKUP, name: 'Pendiente recogida'},
+    {id: Status.PICKED_UP, name: 'Recogido'},
+    {id: Status.BILLED, name: 'Facturado'},
+    {id: Status.UNKNOWN, name: 'Desconocido'}
+  ]
 }

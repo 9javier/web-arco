@@ -2237,9 +2237,9 @@ public class ScanditSDK extends CordovaPlugin {
     ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
   }
 
-  static void setFixedText() {
+  static void setFixedText(String message) {
     final View viewDataMatrixSimpleFinal = viewDataMatrixSimple;
-    final String fText = "Escanee un embalaje para comenzar.";
+    final String fText = message;
 
     TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", packageName));
     tvPackingStart.setText(fText);

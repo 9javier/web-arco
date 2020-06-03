@@ -62,6 +62,9 @@ export class ReturnPendingListComponent implements OnInit {
   showFilters: boolean = false;
   allowedWarehouses: number[] = [];
 
+  private ReturnStatus = ReturnModel.Status;
+  private ReturnStatusNames = ReturnModel.StatusNames;
+
   constructor(
     private router: Router,
     private returnService: ReturnService,
@@ -71,7 +74,8 @@ export class ReturnPendingListComponent implements OnInit {
     private dateTimeParserService: DateTimeParserService
   ) {}
 
-  async ngOnInit() {
+  ionViewWillEnter() {
+    this.toolbarProvider.currentPage.next('Devoluciones Pendientes');
     this.toolbarProvider.optionsActions.next([
       {
         icon: 'refresh',
@@ -84,6 +88,9 @@ export class ReturnPendingListComponent implements OnInit {
         action: () => this.showFilters = !this.showFilters
       }
     ]);
+  }
+
+  async ngOnInit() {
     const user = await this.authenticationService.getCurrentUser();
     if (user.hasWarehouse) {
       this.allowedWarehouses = [(await this.authenticationService.getStoreCurrentUser()).id]
@@ -184,12 +191,15 @@ export class ReturnPendingListComponent implements OnInit {
   }
 
   async loadReturns() {
-    this.filters.value.statuses = this.filters.value.statuses && this.filters.value.statuses.length > 0 ? this.filters.value.statuses : [2, 3, 4, 5];
+    if (!this.filters.value.statuses || this.filters.value.statuses.length <= 0) {
+      this.filters.value.statuses = [this.ReturnStatus.RETURN_ORDER, this.ReturnStatus.IN_PROCESS, this.ReturnStatus.PREPARED, this.ReturnStatus.PENDING_PICKUP]
+    }
     this.filters.value.warehouseIds = this.allowedWarehouses.length > 0 ? this.allowedWarehouses : [0];
     const parameters: SearchParameters = {
       filters: this.filters.value,
       order: this.order,
-      pagination: this.pagination
+      pagination: this.pagination,
+      isAl: true
     };
     this.returnService.postSearchHistoricFalse(parameters).then((response: SearchResponse) => {
       if (response.code == 200) {
@@ -201,27 +211,13 @@ export class ReturnPendingListComponent implements OnInit {
     }).catch(console.error);
   }
 
-  getStatusName(status: number): string{
-    switch(status){
-      case 0:
-        return '';
-      case 1:
-        return 'Orden devolución';
-      case 2:
-        return 'Pendiente';
-      case 3:
-        return 'En proceso';
-      case 4:
-        return 'Preparado';
-      case 5:
-        return 'Pendiente recogida';
-      case 6:
-        return 'Recogido';
-      case 7:
-        return 'Facturado';
-      default:
-        return 'Desconocido'
+  getStatusName(status: number): string {
+    const returnItem = this.ReturnStatusNames.find(r => r.id == status);
+    if (returnItem) {
+      return returnItem.name;
     }
+
+    return 'Desconocido';
   }
 
   getFormattedDate(value: string): string {

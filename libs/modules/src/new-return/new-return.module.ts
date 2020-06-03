@@ -19,6 +19,8 @@ import {ProductsComponent} from "../new-return-unities/products/products.compone
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MatDividerModule} from "@angular/material/divider";
+import {FilterButtonModule} from "../components/filter-button/filter-button.module";
+import {MatSortModule} from "@angular/material/sort";
 
 const routes: Routes = [{
     path: '',
@@ -48,7 +50,9 @@ const routes: Routes = [{
     MatPaginatorModule,
     ReactiveFormsModule,
     MatProgressBarModule,
-    MatDividerModule
+    MatDividerModule,
+    FilterButtonModule,
+    MatSortModule
   ]
 })
 

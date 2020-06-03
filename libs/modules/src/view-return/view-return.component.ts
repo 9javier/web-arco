@@ -27,6 +27,7 @@ import {ReviewImagesComponent} from "../incidents/components/review-images/revie
 import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 import {Events} from "@ionic/angular";
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {PrintTicketService} from "../../../services/src/lib/print-ticket/print-ticket.service";
 
 @Component({
   selector: 'suite-view-return',
@@ -49,6 +50,22 @@ export class ViewReturnComponent implements OnInit {
   displayArchiveList: boolean = false;
   displayDeliveryNoteList: boolean = false;
 
+  private ReturnStatus = ReturnModel.Status;
+  private ReturnStatusNames = ReturnModel.StatusNames;
+  public listStatusAvailable = [];
+
+  public requiredFields: any = {
+    type: true,
+    provider: true,
+    warehouse: true,
+    brand: true,
+    returnBeforeDate: true,
+    quantityPacking: false,
+    shipper: false,
+    pickupDate: false,
+    deliveryNote: false
+  };
+
   constructor(
     private events: Events,
     private route: ActivatedRoute,
@@ -64,7 +81,8 @@ export class ViewReturnComponent implements OnInit {
     private transfer: FileTransfer,
     private fb: FormBuilder,
     private dropFilesService: DropFilesService,
-    private dateTimeParserService: DateTimeParserService
+    private dateTimeParserService: DateTimeParserService,
+    private printTicketService: PrintTicketService,
   ) {}
 
   async ngOnInit() {
@@ -89,6 +107,7 @@ export class ViewReturnComponent implements OnInit {
         id: 0,
         lastStatus: 1,
         observations: "",
+        operatorObservations: "",
         packings: [],
         printTagPackages: false,
         provider: null,
@@ -103,6 +122,7 @@ export class ViewReturnComponent implements OnInit {
         archives: [],
         delivery_notes: []
       };
+      this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
     }
 
     this.dropFilesService.getImage().subscribe(resp => {
@@ -150,6 +170,7 @@ export class ViewReturnComponent implements OnInit {
       id: [this.return.id],
       lastStatus: [this.return.lastStatus],
       observations: [this.return.observations],
+      operatorObservations: [this.return.operatorObservations],
       packings: [this.return.packings],
       printTagPackages: [this.return.printTagPackages],
       provider: [this.return.provider],
@@ -204,6 +225,9 @@ export class ViewReturnComponent implements OnInit {
         if(this.delivery_notes.length > 0){
           this.displayDeliveryNoteList = true;
         }
+
+        this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
+
         this.initForm();
         this.archiveList = true;
         this.delivery_noteList = true;
@@ -219,27 +243,13 @@ export class ViewReturnComponent implements OnInit {
     return user;
   }
 
-  getStatusName(status: number): string{
-    switch(status){
-      case 0:
-        return '';
-      case 1:
-        return 'Orden devolución';
-      case 2:
-        return 'Pendiente';
-      case 3:
-        return 'En proceso';
-      case 4:
-        return 'Preparado';
-      case 5:
-        return 'Pendiente recogida';
-      case 6:
-        return 'Recogido';
-      case 7:
-        return 'Facturado';
-      default:
-        return 'Desconocido'
+  getStatusName(status: number): string {
+    const returnItem = this.ReturnStatusNames.find(r => r.id == status);
+    if (returnItem) {
+      return returnItem.name;
     }
+
+    return 'Desconocido';
   }
 
   getBrandNameList(brands: Brand[]): string{
@@ -255,15 +265,43 @@ export class ViewReturnComponent implements OnInit {
     this.return.lastStatus = status;
     this.return.userLastStatus = await this.authenticationService.getCurrentUser();
     this.return.dateLastStatus = String(new Date());
+
+    switch (this.return.status) {
+      case this.ReturnStatus.PREPARED:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = false;
+        this.requiredFields.shipper = false;
+        this.requiredFields.deliveryNote = false;
+        break;
+      case this.ReturnStatus.PENDING_PICKUP:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = true;
+        this.requiredFields.shipper = true;
+        this.requiredFields.deliveryNote = false;
+        break;
+      case this.ReturnStatus.PICKED_UP:
+        this.requiredFields.quantityPacking = true;
+        this.requiredFields.pickupDate = true;
+        this.requiredFields.shipper = true;
+        this.requiredFields.deliveryNote = true;
+        break;
+    }
   }
 
   allFieldsFilled(): boolean {
-    if (this.return && this.return.status == 4) {
-      return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.amountPackages > 0 && this.return.shipper && this.return.shipper != '');
-    } else if (this.return && this.return.status == 5) {
-      return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.datePredictedPickup);
+    if (this.return) {
+      switch (this.return.status) {
+        case this.ReturnStatus.PREPARED:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages);
+        case this.ReturnStatus.PICKED_UP:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper);
+        case this.ReturnStatus.PENDING_PICKUP:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper && this.delivery_notes.length > 0);
+        default:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
+      }
     } else {
-      return !!(this.return && this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
+      return false;
     }
   }
 
@@ -464,5 +502,9 @@ export class ViewReturnComponent implements OnInit {
     } else {
       this.router.navigateByUrl('picking/return');
     }
+  }
+
+  printPackages(returnObj) {
+    this.printTicketService.printPackages(returnObj);
   }
 }

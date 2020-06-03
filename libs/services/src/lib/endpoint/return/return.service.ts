@@ -30,6 +30,8 @@ export class ReturnService {
   private sendexcell = environment.apiBase+'/returns/export-to-excel';
   private postGetDefectiveProductsUrl = environment.apiBase + '/returns/products/defective';
   private postGetProductsUrl = environment.apiBase + '/returns/products';
+  private postGetDefectiveProductsFiltersUrl = environment.apiBase + '/returns/products/defective/filters';
+  private postGetProductsFiltersUrl = environment.apiBase + '/returns/products/filters';
   private postAssignDefectiveProductsUrl = environment.apiBase + '/returns/products/defective/assign';
   private postAssignProductsUrl = environment.apiBase + '/returns/products/assign';
   private postSearchAndAssignProductsUrl = environment.apiBase + '/returns/products/search/assign/';
@@ -91,6 +93,14 @@ export class ReturnService {
 
   public postGetProducts(params: ReturnModel.GetProductsParams): Observable<ReturnModel.GetProductsResponse> {
     return this.http.post<ReturnModel.GetProductsResponse>(this.postGetProductsUrl, params);
+  }
+
+  public postGetDefectiveProductsFilters(params: ReturnModel.GetProductsFiltersParams): Observable<ReturnModel.GetDefectiveProductsFiltersResponse> {
+    return this.http.post<ReturnModel.GetDefectiveProductsFiltersResponse>(this.postGetDefectiveProductsFiltersUrl, params);
+  }
+
+  public postGetProductsFilters(params: ReturnModel.GetProductsFiltersParams): Observable<ReturnModel.GetProductsFiltersResponse> {
+    return this.http.post<ReturnModel.GetProductsFiltersResponse>(this.postGetProductsFiltersUrl, params);
   }
 
   public postAssignDefectiveProducts(params: ReturnModel.AssignDefectiveProductsParams): Observable<ReturnModel.AssignDefectiveProductsResponse> {

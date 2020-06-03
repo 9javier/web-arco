@@ -64,7 +64,8 @@ export class ToolbarAlComponent implements OnInit {
         this.currentPage.includes('Traspaso embalaje') ||
         this.currentPage.includes('Recepción de mercancía') ||
         this.currentPage.includes('Tareas de Picking') ||
-        this.currentPage.includes('Registro defectuoso')
+        this.currentPage.includes('Registro defectuoso') ||
+        this.currentPage.includes('Picking Devolución')
       ) {
         if (this.currentPage.includes('Código exposición manual') || this.currentPage.includes('Reetiquetado productos manual')) {
           this.showKeyboard = false;

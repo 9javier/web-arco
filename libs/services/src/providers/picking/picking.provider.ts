@@ -133,6 +133,30 @@ export class PickingProvider {
     this._listProducts = value;
   }
 
+  private _quantityTotal: number;
+  get quantityTotal(): number {
+    return this._quantityTotal;
+  }
+  set quantityTotal(value: number) {
+    this._quantityTotal = value;
+  }
+
+  private _quantityPending: number;
+  get quantityPending(): number {
+    return this._quantityPending;
+  }
+  set quantityPending(value: number) {
+    this._quantityPending = value;
+  }
+
+  private _quantityScanned: number;
+  get quantityScanned(): number {
+    return this._quantityScanned;
+  }
+  set quantityScanned(value: number) {
+    this._quantityScanned = value;
+  }
+
   private _typePacking: number;
   get typePacking(): number {
     return this._typePacking;
@@ -187,6 +211,22 @@ export class PickingProvider {
   }
   set selectedPendingRequests(value: Array<LineRequest | DeliveryRequest>) {
     this._selectedPendingRequests = value;
+  }
+
+  private _selectedReserves: DeliveryRequest[] = null;
+  get selectedReserves(): DeliveryRequest[] {
+    return this._selectedReserves;
+  }
+  set selectedReserves(value: DeliveryRequest[]) {
+    this._selectedReserves = value;
+  }
+
+  private _freedReserves: DeliveryRequest[] = null;
+  get freedReserves(): DeliveryRequest[] {
+    return this._freedReserves;
+  }
+  set freedReserves(value: DeliveryRequest[]) {
+    this._freedReserves = value;
   }
 
   private _selectedProcessedRequests: Array<LineRequest | DeliveryRequest> = null;

@@ -26,7 +26,8 @@ interface MenuSectionGroupItem {
   children: (MenuSectionGroupItem | MenuSectionItem)[],
   thirdLevel?: boolean
   tooltip?: string,
-  amount?: number
+  amount?: number,
+  id?: string
 }
 
 interface MenuSectionItem {
@@ -62,6 +63,7 @@ export class MenuComponent implements OnInit {
   currentRoute: string = "";
 
   pickingTasksStoresAmount: number = 0;
+  reservedExpiredAmount: number = 0;
 
   sgaPages: MenuItemList = [
 /*    {
@@ -251,18 +253,11 @@ export class MenuComponent implements OnInit {
           tooltip: 'Listado de registro de devoluciones'
         },
         {
-          title: 'Listado Históricos',
-          id: 'returns-historic',
-          url: '/returns-historic',
-          icon: 'list-box',
-          tooltip: 'Listado de históricos de devoluciones'
-        },
-        {
-          title: 'Listado Seguimiento Devoluciones',
+          title: 'Seguimiento de Devoluciones',
           id: 'return-tracking-list',
           url: '/return-tracking-list',
           icon: 'list',
-          tooltip: 'Listado de seguimiento de devoluciones'
+          tooltip: 'Seguimiento de devoluciones'
         },
         {
           title: 'Condiciones proveedores',
@@ -277,6 +272,13 @@ export class MenuComponent implements OnInit {
           url: '/return-types',
           icon: 'list-box',
           tooltip: 'Listado de tipos de devoluciones'
+        },
+        {
+          title: 'Listado Históricos',
+          id: 'returns-historic',
+          url: '/returns-historic',
+          icon: 'list-box',
+          tooltip: 'Listado de históricos de devoluciones'
         }
       ]
     },
@@ -500,18 +502,6 @@ export class MenuComponent implements OnInit {
       id: 'regions',
       url: '/regions',
       icon: 'map'
-    },
-    {
-      title: 'Recepciones',
-      id: 'receptions-avelon',
-      url: '/receptions-avelon',
-      icon: 'archive'
-    },
-    {
-      title: 'Predistribuciones',
-      id: 'predistributions',
-      url: '/predistributions',
-      icon: 'archive'
     },
     {
       title: 'Marketplaces',
@@ -828,6 +818,14 @@ export class MenuComponent implements OnInit {
           tooltip: 'Asociar pares procesados para traspasos a embalajes y precintarlos'
         },
         {
+          title: 'Liberar Reservas Expiradas',
+          id: 'free-expired-reserves',
+          icon: 'ios-link',
+          url: '/free-expired-reserves',
+          tooltip: 'Liberar reservas expiradas mediante escaneo con cámara',
+          amount: this.reservedExpiredAmount
+        },
+        {
           title: 'Ubicar defectuosos',
           id: 'defective-positioning',
           icon: 'warning',
@@ -1108,10 +1106,12 @@ export class MenuComponent implements OnInit {
     if(app.name == 'al') {
       this.newTariffs();
       this.getPickingTasksStoresAmount();
+      this.getReservesExpiredAmount();
       this.zona.run(() => {
         setInterval(() => {
           this.newTariffs();
           this.getPickingTasksStoresAmount();
+          this.getReservesExpiredAmount();
         }, 5 * 60 * 1000);
       });
     }
@@ -1335,7 +1335,29 @@ export class MenuComponent implements OnInit {
           for(let page of this.alPages){
             if(page.children){
               for(let child of page.children){
-                if(child.amount || child.amount == 0){
+                if(child && child.id == 'picking-tasks-stores' && (child.amount || child.amount == 0)){
+                  child.amount = response.data;
+                  return;
+                }
+              }
+            }
+          }
+        }else{
+          console.error(response);
+        }
+      },console.error).catch(console.error);
+    }
+  }
+
+  async getReservesExpiredAmount(){
+    const currentWarehouse: Warehouse = await this.authenticationService.getStoreCurrentUser();
+    if(currentWarehouse){
+      this.pickingStoreService.getReservesExpiredAmount().then(response => {
+        if(response.code == 200){
+          for(let page of this.alPages){
+            if(page.children){
+              for(let child of page.children){
+                if(child && child.id == 'free-expired-reserves' && (child.amount || child.amount == 0)){
                   child.amount = response.data;
                   return;
                 }

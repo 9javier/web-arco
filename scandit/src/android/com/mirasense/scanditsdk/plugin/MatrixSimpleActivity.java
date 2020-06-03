@@ -58,7 +58,17 @@ public class MatrixSimpleActivity extends Activity {
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
       WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-    setContentView(resources.getIdentifier("references_matrixsimple", "layout", package_name));
+    if(
+      title.equals("Ubicar defectuosos") ||
+      title.equals("Recepción") ||
+      title.equals("Ubicar/Escanear") ||
+      title.equals("Precintar") ||
+      title.equals("Registrar defectuoso")
+    ){
+      setContentView(resources.getIdentifier("references_matrix_top_simple", "layout", package_name));
+    }else{
+      setContentView(resources.getIdentifier("references_matrixsimple", "layout", package_name));
+    }
 
     ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setText(title);
     ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setTextColor(Color.parseColor(colorTitle));
@@ -119,7 +129,8 @@ public class MatrixSimpleActivity extends Activity {
     ScanditSDK.setActivityStarted(matrixSimple);
 
     if(packingReference != null) ScanditSDK.setPacking(packingReference);
-    if(title.equals("Ubicar defectuosos")) ScanditSDK.setFixedText();
+    if(title.equals("Ubicar defectuosos")) ScanditSDK.setFixedText("Escanee un embalaje para comenzar.");
+    if(title.equals("Ubicar/Escanear")) ScanditSDK.setFixedText("CONTENEDOR/EMBALAJE");
   }
 
   @Override

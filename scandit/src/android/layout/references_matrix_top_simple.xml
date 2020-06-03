@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+      android:id="@+id/forceCameraBottomHalf"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:orientation="horizontal"
+      android:visibility="gone"></LinearLayout>
+
+    <FrameLayout
+      android:id="@+id/picker"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_weight="1">
+
+    </FrameLayout>
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="4"
+      android:orientation="vertical">
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/transparentScanner"
+        android:orientation="horizontal"></LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/sideCameraOcclusion"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:visibility="visible">
+
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_weight="1"
+          android:background="@color/transparentScanner">
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_weight="8">
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_weight="1"
+          android:background="@color/transparentScanner">
+
+        </LinearLayout>
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="5"
+      android:background="@color/transparentScanner"
+      android:orientation="vertical">
+
+      <TextView
+        android:id="@+id/tvPackingStart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="@color/transparentWhite"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+      <TextView
+        android:id="@+id/tvPackingEnd"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="@color/transparentWhite"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+      <include
+        android:id="@+id/rlInfoProduct"
+        layout="@layout/next_product_info"
+        android:visibility="gone" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/bottomCameraOcclusion"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:background="@color/transparentScanner"
+      android:gravity="center_horizontal|bottom"
+      android:orientation="vertical">
+
+      <TextView
+        android:id="@+id/tvBottomText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        android:textColor="@color/transparentWhite"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+      <Button
+        android:id="@+id/btnFinishReception"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/black"
+        android:text="Finalizar recepción"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
+    </LinearLayout>
+  </LinearLayout>
+
+  <LinearLayout
+    android:id="@+id/llScanInfo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="80dp"
+    android:background="@color/transparentScanner"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentBottom="true"
+    android:orientation="vertical"
+    android:visibility="gone"
+  >
+
+    <TextView
+      android:id="@+id/tvScanInfo"
+      android:layout_width="match_parent"
+      android:layout_height="50dp"
+      android:layout_weight="3"
+      android:layout_marginLeft="3dp"
+      android:layout_marginRight="3dp"
+      android:layout_marginTop="1dp"
+      android:layout_marginBottom="1dp"
+      android:gravity="center|center_vertical"
+      android:textSize="20sp" />
+
+    <RelativeLayout
+      android:id="@+id/rlScanInfoLoader"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      android:visibility="gone">
+      <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp">
+      </ProgressBar>
+    </RelativeLayout>
+
+  </LinearLayout>
+
+  <LinearLayout
+    android:id="@+id/fabOptions"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <LinearLayout
+      android:id="@+id/fabSubOptions"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="right"
+      android:gravity="right"
+      android:orientation="vertical"
+      android:visibility="gone">
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:layout_marginEnd="5dp"
+          android:background="#000000"
+          android:padding="5dp"
+          android:text="Ubicar"
+          android:textColor="#FFFFFF"
+          android:textStyle="bold" />
+
+        <android.support.design.widget.FloatingActionButton
+          android:id="@+id/fabPositioning"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical|end"
+          android:layout_marginTop="5dp"
+          android:layout_marginEnd="18dp"
+          android:layout_marginBottom="5dp"
+          android:cropToPadding="false"
+          android:src="@drawable/ic_md_locate"
+          android:theme="@style/Theme.AppCompat"
+          android:tint="#FFFFFF"
+          app:backgroundTint="#000000"
+          app:fabSize="mini" />
+      </LinearLayout>
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:layout_marginEnd="5dp"
+          android:background="#000000"
+          android:padding="5dp"
+          android:text="Embalaje lleno"
+          android:textColor="#FFFFFF"
+          android:textStyle="bold" />
+
+        <android.support.design.widget.FloatingActionButton
+          android:id="@+id/fabFullPacking"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical|end"
+          android:layout_marginTop="5dp"
+          android:layout_marginEnd="18dp"
+          android:layout_marginBottom="5dp"
+          android:cropToPadding="false"
+          android:src="@drawable/ic_md_cube"
+          android:theme="@style/Theme.AppCompat"
+          android:tint="#FFFFFF"
+          app:backgroundTint="#000000"
+          app:fabSize="mini" />
+      </LinearLayout>
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical"
+          android:layout_marginEnd="5dp"
+          android:background="#000000"
+          android:padding="5dp"
+          android:text="No encontrado"
+          android:textColor="#FFFFFF"
+          android:textStyle="bold" />
+
+        <android.support.design.widget.FloatingActionButton
+          android:id="@+id/fabNotFound"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical|end"
+          android:layout_marginTop="5dp"
+          android:layout_marginEnd="18dp"
+          android:layout_marginBottom="5dp"
+          android:cropToPadding="false"
+          android:src="@drawable/ic_md_alert"
+          android:theme="@style/Theme.AppCompat"
+          android:tint="#FFFFFF"
+          app:backgroundTint="#000000"
+          app:fabSize="mini" />
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+      android:id="@+id/fabOpenOptions"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end"
+      android:layout_marginTop="10dp"
+      android:layout_marginEnd="10dp"
+      android:layout_marginBottom="10dp"
+      android:src="@drawable/ic_md_menu"
+      android:theme="@style/Theme.AppCompat"
+      android:tint="#FFFFFF"
+      android:visibility="visible"
+      app:backgroundTint="#000000"
+      app:fabSize="normal" />
+
+    <android.support.design.widget.FloatingActionButton
+      android:id="@+id/fabCloseOptions"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end"
+      android:layout_marginTop="10dp"
+      android:layout_marginEnd="10dp"
+      android:layout_marginBottom="10dp"
+      android:src="@drawable/ic_close"
+      android:theme="@style/Theme.AppCompat"
+      android:tint="#FFFFFF"
+      android:visibility="gone"
+      app:backgroundTint="#000000"
+      app:fabSize="normal" />
+  </LinearLayout>
+
+</RelativeLayout>

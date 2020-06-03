@@ -1,8 +1,11 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {ReturnModel} from "../../../../services/src/models/endpoints/Return";
 import {MatTableDataSource} from "@angular/material/table";
 import {FormArray, FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {validators} from "../../utils/validators";
+import {FilterButtonComponent} from "../../components/filter-button/filter-button.component";
+import {TagsInputOption} from "../../components/tags-input/models/tags-input-option.model";
+import {MatSort, Sort} from "@angular/material/sort";
 
 @Component({
   selector: 'return-unities-products',
@@ -12,6 +15,7 @@ import {validators} from "../../utils/validators";
 export class ProductsComponent implements OnInit {
 
   @Output() changeItemsSelected = new EventEmitter();
+  @Output() appliedFilters = new EventEmitter();
 
   public tColumns: string[] = ['brand_name', 'model_ref', 'model_name', 'commercial', 'size', 'unities', 'select'];
   public tData: MatTableDataSource<ReturnModel.GetProducts> = new MatTableDataSource<ReturnModel.GetProducts>([]);
@@ -24,11 +28,74 @@ export class ProductsComponent implements OnInit {
   private itemsToLoad: ReturnModel.GetProducts[] = null;
   private itemsSelected: ReturnModel.GetProducts[] = [];
 
+  @ViewChild(MatSort) mSort: MatSort;
+  @ViewChild('fbBrands') fbBrands: FilterButtonComponent;
+  @ViewChild('fbProducts') fbProducts: FilterButtonComponent;
+  @ViewChild('fbModels') fbModels: FilterButtonComponent;
+  @ViewChild('fbCommercials') fbCommercials: FilterButtonComponent;
+  @ViewChild('fbSizes') fbSizes: FilterButtonComponent;
+
+  public mSortRest = false;
+  public isFilteringBrands: number = 0;
+  public isFilteringProducts: number = 0;
+  public isFilteringModels: number = 0;
+  public isFilteringCommercials: number = 0;
+  public isFilteringSizes: number = 0;
+
+  public filterOptions: {
+    brands: TagsInputOption[],
+    products: TagsInputOption[],
+    models: TagsInputOption[],
+    commercials: TagsInputOption[],
+    sizes: TagsInputOption[]
+  } = {
+    brands: [],
+    products: [],
+    models: [],
+    commercials: [],
+    sizes: []
+  };
+  public filters: {
+    brands: TagsInputOption[],
+    products: TagsInputOption[],
+    models: TagsInputOption[],
+    commercials: TagsInputOption[],
+    sizes: TagsInputOption[],
+    sort: { field: string, direction: string }
+  } = {
+    brands: [],
+    products: [],
+    models: [],
+    commercials: [],
+    sizes: [],
+    sort: { field: 'unitiesAssigned', direction: 'DESC' }
+  };
+
   constructor(
     private formBuilder: FormBuilder
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.mSort.sortChange.subscribe((sort: Sort) => {
+      if (this.mSortRest) {
+        this.mSortRest = false;
+      } else {
+        let sortSelection = {
+          field: 'id',
+          direction: 'DESC'
+        };
+        if (sort.direction != '') {
+          sortSelection = {
+            field: sort.active,
+            direction: sort.direction.toUpperCase()
+          };
+        }
+
+        this.filters.sort = sortSelection;
+        this.appliedFilters.next(this.filters);
+      }
+    });
+  }
 
   public selectAll(event) {
     let value = event.detail.checked;
@@ -82,11 +149,63 @@ export class ProductsComponent implements OnInit {
     this.reloadTableData();
   }
 
+  public loadFilters(items: ReturnModel.GetProductsFilters) {
+    this.filterOptions = {
+      brands: [],
+      products: [],
+      models: [],
+      commercials: [],
+      sizes: []
+    };
+
+    this.filterOptions.brands = items.brands;
+    this.filterOptions.products = items.modelReferences;
+    this.filterOptions.models = items.modelNames;
+    this.filterOptions.commercials = items.commercials;
+    this.filterOptions.sizes = items.sizes;
+  }
+
   private reloadTableData() {
     this.tData = new MatTableDataSource<ReturnModel.GetProducts>(this.itemsToLoad);
   }
 
   public getSelectedItems() {
     return this.itemsSelected;
+  }
+
+  public applyFilters(event, column: string) {
+    const values = [];
+
+    for(let item of event.filters){
+      if(item.checked){
+        values.push(item.id);
+      }
+    }
+
+    this.filters[column] = values.length < this.filterOptions[column].length ? values : [];
+    this.appliedFilters.next(this.filters);
+  }
+
+  public resetFilters() {
+    this.filters = {
+      brands: [],
+      products: [],
+      models: [],
+      commercials: [],
+      sizes: [],
+      sort: this.filters.sort
+    };
+
+    this.isFilteringBrands = 0;
+    this.isFilteringProducts = 0;
+    this.isFilteringModels = 0;
+    this.isFilteringCommercials = 0;
+    this.isFilteringSizes = 0;
+  }
+
+  public resetSort() {
+    this.filters.sort = { field: 'unitiesAssigned', direction: 'DESC' };
+    this.mSortRest = true;
+    this.mSort.sort({id: '', start: 'asc', disableClear: false});
   }
 }
