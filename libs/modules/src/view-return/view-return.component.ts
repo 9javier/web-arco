@@ -11,8 +11,7 @@ import {
   AuthenticationService, environment,
   IntermediaryService,
   UploadFilesService,
-  UserModel,
-  WarehouseModel
+  UserModel
 } from "@suite/services";
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 import {PickingProvider} from "../../../services/src/providers/picking/picking.provider";
@@ -27,6 +26,7 @@ import {ReviewImagesComponent} from "../incidents/components/review-images/revie
 import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 import {Events} from "@ionic/angular";
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {ViewFilesComponent} from "./modals/view-files/view-files.component";
 
 @Component({
   selector: 'suite-view-return',
@@ -286,6 +286,14 @@ export class ViewReturnComponent implements OnInit {
       // Handle error
     });
   }
+
+  async viewArchive() {
+    const modal = await this.modalController.create({
+      component: ViewFilesComponent,
+      componentProps: {type: 'archive', images: this.archives}
+    });
+    await modal.present();
+  }
   async searchArchive() {
     const options: CameraOptions = {
       quality: 15,
@@ -305,6 +313,14 @@ export class ViewReturnComponent implements OnInit {
     }, (err) => {
       // Handle error
     });
+  }
+
+  async viewDeliveryNote() {
+    const modal = await this.modalController.create({
+      component: ViewFilesComponent,
+      componentProps: {type: 'delivery_note', images: this.delivery_notes}
+    });
+    await modal.present();
   }
 
   async searchDeliveryNote() {

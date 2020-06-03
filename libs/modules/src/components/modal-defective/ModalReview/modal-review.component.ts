@@ -9,7 +9,8 @@ import { environment } from '@suite/services';
 })
 export class ModalReviewComponent implements OnInit {
   baseUrlPhoto = environment.apiBasePhoto;
-  imgSrc
+  imgSrc;
+  img;
   constructor(private modalController: ModalController,
     public navParams: NavParams) {
       const data = this.navParams.get('data');
@@ -17,7 +18,7 @@ export class ModalReviewComponent implements OnInit {
      }
 
   ngOnInit() {
-
+    setTimeout(() => this.img = this.imgSrc, 500);
   }
   dismiss() {
     this.modalController.dismiss()

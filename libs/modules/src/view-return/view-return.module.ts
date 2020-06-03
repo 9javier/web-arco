@@ -11,6 +11,8 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
 import {MatDividerModule} from "@angular/material/divider";
+import {ViewFilesComponent} from "./modals/view-files/view-files.component";
+import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 
 const routes: Routes = [{
     path: '',
@@ -18,7 +20,8 @@ const routes: Routes = [{
 }];
 
 @NgModule({
-  declarations: [ViewReturnComponent],
+  declarations: [ViewReturnComponent, ViewFilesComponent, ModalReviewComponent],
+  entryComponents: [ViewFilesComponent, ModalReviewComponent],
   imports: [
     CommonModule,
     IonicModule,

@@ -54,9 +54,20 @@
 
     <ion-row>
       <ion-col size="12" class="col-delivery-note">
-        <ion-button matTooltip="Añadir de albarán de agencia" fill="clear" class="button-item" (click)="searchDeliveryNote()">
-          <ion-icon name="image" slot="end"></ion-icon>
-          albarán agencia
+        <ion-button matTooltip="Albaránes de agencia" fill="clear" class="button-item">
+          albaranes agencia
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6" class="col-delivery-note">
+        <ion-button [disabled]="delivery_notes.length==0" matTooltip="Ver albaránes de agencia" fill="clear" class="button-item" (click)="viewDeliveryNote()">
+          ver <ion-icon name="image" slot="end"></ion-icon><br>
+        </ion-button>
+      </ion-col>
+      <ion-col size="6" class="col-delivery-note">
+        <ion-button matTooltip="Añadir albarán de agencia" fill="clear" class="button-item" (click)="searchDeliveryNote()">
+          subir <ion-icon name="image" slot="end"></ion-icon><br>
         </ion-button>
       </ion-col>
     </ion-row>
@@ -148,46 +159,23 @@
     </ion-row>
 
     <ion-row>
-      <ion-col>
-        <ion-item *ngIf="archiveList" (click)="showArchiveList()" lines="none">
-          <ion-label class="label-text">Archivos</ion-label>
-          <ion-icon slot="end" *ngIf="displayArchiveList" name="arrow-down"></ion-icon>
-          <ion-icon slot="end" *ngIf="!displayArchiveList" name="arrow-up"></ion-icon>
-        </ion-item>
-        <ion-list *ngIf="archiveList && displayArchiveList">
-          <ion-item  lines="none" *ngFor="let item of archives; let i = index">
-            <ion-img (click)="onOpenReviewModal(item)"  slot="start" [src]="baseUrlPhoto + item.pathIcon"></ion-img>
-            <ion-button slot="end"(click)="deleteImage(item, i, archives)">
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
-            </ion-button>
-          </ion-item>
-        </ion-list>
-      </ion-col>
-    </ion-row>
-
-    <ion-row>
-      <ion-col>
-        <ion-item *ngIf="delivery_noteList" (click)="showDeliveryNoteList()" lines="none">
-          <ion-label class="label-text">Albaranes de agencia</ion-label>
-          <ion-icon slot="end" *ngIf="displayDeliveryNoteList" name="arrow-down"></ion-icon>
-          <ion-icon slot="end" *ngIf="!displayDeliveryNoteList" name="arrow-up"></ion-icon>
-        </ion-item>
-        <ion-list *ngIf="delivery_noteList && displayDeliveryNoteList">
-          <ion-item  lines="none" *ngFor="let item of delivery_notes; let i = index">
-            <ion-img (click)="onOpenReviewModal(item)"  slot="start" [src]="baseUrlPhoto + item.pathIcon"></ion-img>
-            <ion-button slot="end"(click)="deleteImage(item, i, delivery_notes)">
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
-            </ion-button>
-          </ion-item>
-        </ion-list>
-      </ion-col>
-    </ion-row>
-
-    <ion-row>
       <ion-col size="12" class="col-delivery-note">
+        <ion-button matTooltip="Archivos/Imágenes" fill="clear" class="button-item">
+          archivos/imágenes
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6" class="col-delivery-note">
+        <ion-button [disabled]="archives.length==0" fill="clear" class="button-item" (click)="viewArchive()">
+          <ion-icon name="attach" slot="end"></ion-icon>
+          ver
+        </ion-button>
+      </ion-col>
+      <ion-col size="6" class="col-delivery-note">
         <ion-button fill="clear" class="button-item" (click)="searchArchive()">
           <ion-icon name="attach" slot="end"></ion-icon>
-          archivos/imágenes
+          subir
         </ion-button>
       </ion-col>
     </ion-row>
