@@ -1,4 +1,8 @@
 import { ProductModel, WarehouseModel } from '@suite/services';
+import {DefectiveZonesModel} from "./defective-zones-model";
+import {DefectiveZonesChildModel} from "./DefectiveZonesChild";
+import DefectiveZonesParent = DefectiveZonesModel.DefectiveZonesParent;
+import DefectiveZonesChild = DefectiveZonesChildModel.DefectiveZonesChild;
 
 export namespace DefectiveRegistryModel {
   import Warehouse = WarehouseModel.Warehouse;
@@ -13,6 +17,8 @@ export namespace DefectiveRegistryModel {
     statusManagementDefect?: StatusManagementDefect;
     defectTypeParent?: DefectTypeParent;
     defectTypeChild?: DefectTypeChild;
+    defectZoneParent?: DefectiveZonesParent;
+    defectZoneChild?: DefectiveZonesChild;
     numberObservations?: number;
     photo?: string;
     photos?: (any)[];

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ReturnService} from "../../../services/src/lib/endpoint/return/return.service";
 import {ReturnModel} from "../../../services/src/models/endpoints/Return";
 import Return = ReturnModel.Return;
@@ -21,7 +21,7 @@ import ReturnType = ReturnTypeModel.ReturnType;
 import {ProviderModel} from "../../../services/src/models/endpoints/Provider";
 import Provider = ProviderModel.Provider;
 import User = UserModel.User;
-import {ModalController} from "@ionic/angular";
+import {AlertController, ModalController} from "@ionic/angular";
 import {SelectConditionComponent} from "./select-condition/select-condition.component";
 import {SupplierConditionModel} from "../../../services/src/models/endpoints/SupplierCondition";
 import SupplierCondition = SupplierConditionModel.SupplierCondition;
@@ -31,6 +31,8 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import {DropFilesService} from "../../../services/src/lib/endpoint/drop-files/drop-files.service";
 import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import JsPdf, {saveAs} from "jspdf";
+import html2canvas from "html2canvas";
 
 @Component({
   selector: 'suite-new-return',
@@ -52,6 +54,8 @@ export class NewReturnComponent implements OnInit {
   displayArchiveList: boolean = false;
   displayDeliveryNoteList: boolean = false;
   isHistoric;
+  includePhotos: boolean;
+  printing: boolean = false;
 
   private listItemsSelected: any[] = [];
   private itemForList: string = null;
@@ -66,6 +70,7 @@ export class NewReturnComponent implements OnInit {
     private dropFilesService: DropFilesService,
     private uploadService: UploadFilesService,
     private fb: FormBuilder,
+    private alertController: AlertController,
     private dateTimeParserService: DateTimeParserService
   ) {}
 
@@ -448,10 +453,125 @@ export class NewReturnComponent implements OnInit {
     return this.dateTimeParserService.dateMonthYear(date);
   }
 
-  deliveryNote(){
-    //generar/descargar/imprimir pdf albarán
-    //preguntar al usuario si quiere incluir las fotos
-    //formato distinto dependiendo si es de tipo defectuoso
+  async deliveryNote(){
+    const alert = await this.alertController.create({
+      header: 'Incluir Fotos',
+      message: '¿Desea incluir las fotos?',
+      buttons: [
+        {
+          text: 'Sí',
+          handler: () => {
+            this.includePhotos = true;
+            this.generateDeliveryNotePdf();
+          }
+        }, {
+          text: 'No',
+          handler: () => {
+            this.includePhotos = false;
+            this.generateDeliveryNotePdf();
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  generateDeliveryNotePdf() {
+    let html: string =
+      `<h1>Albarán de Devolución - ${this.return.provider.name}</h1>`+
+      `<h2>Fecha recogida: ${this.formatDate(this.return.datePickup)}</h2>`+
+      `<table>`+
+      `<tr>`+
+      `<th>Artículo</th>`+
+      `<th>Talla</th>`+
+      `<th>Unidades</th>`
+    ;
+
+    if(this.return.type.defective){
+      html +=
+        `<th>Motivo defecto</th>`+
+        `</tr>`;
+      for(let product of this.return.products){
+        const defects: string[] = [];
+        if(product.defect.defectTypeParent ){
+          defects.push(product.defect.defectTypeParent.name);
+        }
+        if(product.defect.defectTypeChild ){
+          defects.push(product.defect.defectTypeChild.name);
+        }
+        if(product.defect.defectZoneParent ){
+          defects.push(product.defect.defectZoneParent.name);
+        }
+        if(product.defect.defectZoneChild ){
+          defects.push(product.defect.defectZoneChild.name);
+        }
+        html +=
+          `<tr>`+
+          `<td>${product.model.reference}</td>`+
+          `<td>${product.size.name}</td>`+
+          `<td>1</td>`+
+          `<td>${defects.join('/')}</td>`+
+          `</tr>`
+        ;
+        if(this.includePhotos && product.defect.photo){
+          html += `<img src="${this.baseUrlPhoto+product.defect.photo}" alt="foto">`;
+        }
+      }
+    }else{
+      html += `</tr>`;
+      const modelIds = this.return.products.map(prod => prod.model.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
+      for(let modelId of modelIds){
+        const sizeIds = this.return.products.filter(prod => prod.model.id == modelId).map(prod => prod.size.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
+        for(let sizeId of sizeIds){
+          const products = this.return.products.filter(prod => prod.model.id == modelId && prod.size.id == sizeId);
+          html +=
+            `<tr>`+
+            `<td>${products[0].model.reference}</td>`+
+            `<td>${products[0].size.name}</td>`+
+            `<td>${products.length}</td>`+
+            `</tr>`
+          ;
+        }
+      }
+    }
+    html += `</table>`;
+
+    const doc = new JsPdf();
+    // fromHTML(HTML, x, y, settings, callback, margins)
+    doc.fromHTML(
+      html,
+      10,
+      0,
+      {},
+      ()=>{
+        if(this.includePhotos){
+          for(let photo of this.return.archives){
+            doc.addPage();
+            let img = new Image();
+            img.src = this.baseUrlPhoto+photo.pathMedium;
+            doc.addImage(img, "PNG", 10, 10);
+          }
+        }
+        doc.save('albaran.pdf');
+      }
+    );
+  }
+
+  alternativePdf(){
+    // this.oplTransportsService.downloadPdfTransortOrders(id).subscribe(
+    //   resp => {
+    //     console.log(resp);
+    //     const blob = new Blob([resp], { type: 'application/pdf' });
+    //     saveAs(blob, 'documento.pdf')
+    //   },
+    //   e => {
+    //     console.log(e.error.text);
+    //   },
+    //   () => {
+    //     this.intermediaryService.dismissLoading()
+    //
+    //   }
+    // )
   }
 
 }
