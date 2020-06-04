@@ -9,7 +9,10 @@
           <ion-col size="8">
             <ion-item>
               <ion-label position="stacked">Unidades</ion-label>
-              <ion-input disabled><span class="unities-total">{{return.products.length}} uds. asignadas</span> - <span class="unities-scanned">{{getCountProductsScanned(return.products)}} uds. escaneadas</span></ion-input>
+              <suite-view-button slot="start" position="bottom" class="ion-margin-vertical filter" [listItems]="this.productsByBrand"></suite-view-button>
+              <ion-input disabled>
+                <span class="unities-total">{{return.products.length}} uds. asignadas</span> -<span class="unities-scanned">{{getCountProductsScanned(return.products)}} uds. escaneadas</span>
+              </ion-input>
               <ion-button slot="end" class="btn-select-unities" [disabled]="!return.id || isHistoric || return.status != ReturnStatus.RETURN_ORDER" (click)="selectUnitiesItems()">Seleccionar unidades
               </ion-button>
             </ion-item>

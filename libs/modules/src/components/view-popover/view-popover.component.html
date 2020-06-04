@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{'Productos por Marca'}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="popover-filters main-element">
+    <div class="scroll-list">
+      <ion-list>
+        <ion-item *ngFor="let item of listItems; let i = index">
+          <span>{{item.name}}  -  {{item.numProducts}} uds.</span>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+</ion-content>

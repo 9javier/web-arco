@@ -20,6 +20,7 @@ import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MatDividerModule} from "@angular/material/divider";
 import {FilterButtonModule} from "../components/filter-button/filter-button.module";
+import {ViewButtonModule} from "../components/view-button/view-button.module";
 import {MatSortModule} from "@angular/material/sort";
 
 const routes: Routes = [{
@@ -52,6 +53,7 @@ const routes: Routes = [{
     MatProgressBarModule,
     MatDividerModule,
     FilterButtonModule,
+    ViewButtonModule,
     MatSortModule
   ]
 })

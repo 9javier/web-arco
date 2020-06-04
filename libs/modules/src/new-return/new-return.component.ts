@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ReturnService} from "../../../services/src/lib/endpoint/return/return.service";
 import {ReturnModel} from "../../../services/src/models/endpoints/Return";
 import Return = ReturnModel.Return;
@@ -32,6 +32,8 @@ import {DropFilesService} from "../../../services/src/lib/endpoint/drop-files/dr
 import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {TimesToastType} from "../../../services/src/models/timesToastType";
+import {ProductsComponent} from "../new-return-unities/products/products.component";
+import {DefectiveProductsComponent} from "../new-return-unities/defective-products/defective-products.component";
 
 @Component({
   selector: 'suite-new-return',
@@ -74,6 +76,8 @@ export class NewReturnComponent implements OnInit {
     deliveryNote: false
   };
 
+  productsByBrand;
+
   constructor(
     private route: ActivatedRoute,
     public router: Router,
@@ -99,6 +103,7 @@ export class NewReturnComponent implements OnInit {
     if(this.route.snapshot.paramMap.get('isHistoric')){
       this.isHistoric = this.route.snapshot.paramMap.get('isHistoric');
     }
+
     if (returnId) {
       this.load(returnId);
       this.archiveList = true;
@@ -133,7 +138,6 @@ export class NewReturnComponent implements OnInit {
         delivery_notes: [],
         products: []
       };
-
       this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
 
       this.archives = this.return.archives;
@@ -141,10 +145,10 @@ export class NewReturnComponent implements OnInit {
       this.displayArchiveList = false;
       this.displayDeliveryNoteList = false;
       this.initForm();
-
-      this.archiveList = true;
-      this.delivery_noteList = true;
     }
+
+    this.archiveList = true;
+    this.delivery_noteList = true;
 
     this.dropFilesService.getImage().subscribe(resp => {
       if (resp) {
@@ -308,8 +312,25 @@ export class NewReturnComponent implements OnInit {
         }
 
         this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
-
         this.initForm();
+
+        this.returnService.postLoadWithProducts({returnId:  this.return.id}).then(async (response: LoadResponse) => {
+          if (response.code == 200) {
+            let brandsProducts = [];
+            if(response.data.brands){
+              for (let brand of response.data.brands) {
+                let numProducts = 0;
+                for (let product of response.data.products) {
+                  if(brand.id == product.product.model.brand.id){
+                    numProducts++;
+                  }
+                }
+                brandsProducts.push({id: brand.id, name: brand.name, numProducts: numProducts});
+              }
+            }
+            this.productsByBrand = brandsProducts;
+          }
+        });
       } else {
         console.error(response);
       }
