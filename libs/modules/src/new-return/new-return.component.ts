@@ -275,7 +275,14 @@ export class NewReturnComponent implements OnInit {
 
     if(this.return.brands){
       for (let brand of this.return.brands) {
+        if(brand.name) delete brand.name;
         if(brand.condition) delete brand.condition;
+      }
+    }
+    if(this.return.provider && this.return.provider.brands){
+      for (let pbrand of this.return.provider.brands) {
+        if(pbrand.name) delete pbrand.name;
+        if(pbrand.condition) delete pbrand.condition;
       }
     }
 

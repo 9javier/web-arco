@@ -122,7 +122,7 @@ export class ViewReturnComponent implements OnInit {
         archives: [],
         delivery_notes: []
       };
-      this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
+      this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN && r.id != this.ReturnStatus.BILLED);
     }
 
     this.dropFilesService.getImage().subscribe(resp => {
@@ -226,7 +226,7 @@ export class ViewReturnComponent implements OnInit {
           this.displayDeliveryNoteList = true;
         }
 
-        this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
+        this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN && r.id != this.ReturnStatus.BILLED);
 
         this.initForm();
         this.archiveList = true;
@@ -294,9 +294,9 @@ export class ViewReturnComponent implements OnInit {
         case this.ReturnStatus.PREPARED:
           return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages);
         case this.ReturnStatus.PICKED_UP:
-          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper);
-        case this.ReturnStatus.PENDING_PICKUP:
           return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper && this.delivery_notes.length > 0);
+        case this.ReturnStatus.PENDING_PICKUP:
+          return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore && this.return.amountPackages && this.return.datePredictedPickup && this.return.shipper);
         default:
           return !!(this.return.type && this.return.warehouse && this.return.provider && this.return.brands && this.return.dateReturnBefore);
       }
@@ -506,5 +506,9 @@ export class ViewReturnComponent implements OnInit {
 
   printPackages(returnObj) {
     this.printTicketService.printPackages(returnObj);
+  }
+
+  pickingAvailable(){
+    return [this.ReturnStatus.RETURN_ORDER,this.ReturnStatus.IN_PROCESS].includes(this.return.status);
   }
 }
