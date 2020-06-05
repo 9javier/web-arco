@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ReturnService} from "../../../services/src/lib/endpoint/return/return.service";
 import {ReturnModel} from "../../../services/src/models/endpoints/Return";
 import Return = ReturnModel.Return;
@@ -31,8 +31,8 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import {DropFilesService} from "../../../services/src/lib/endpoint/drop-files/drop-files.service";
 import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
-import JsPdf, {saveAs} from "jspdf";
-import html2canvas from "html2canvas";
+import JsPdf from "jspdf";
+import 'jspdf-autotable';
 
 @Component({
   selector: 'suite-new-return',
@@ -55,7 +55,6 @@ export class NewReturnComponent implements OnInit {
   displayDeliveryNoteList: boolean = false;
   isHistoric;
   includePhotos: boolean;
-  printing: boolean = false;
 
   private listItemsSelected: any[] = [];
   private itemForList: string = null;
@@ -462,13 +461,13 @@ export class NewReturnComponent implements OnInit {
           text: 'Sí',
           handler: () => {
             this.includePhotos = true;
-            this.generateDeliveryNotePdf();
+            this.pureJsPdf();
           }
         }, {
           text: 'No',
           handler: () => {
             this.includePhotos = false;
-            this.generateDeliveryNotePdf();
+            this.pureJsPdf();
           }
         }
       ]
@@ -476,21 +475,40 @@ export class NewReturnComponent implements OnInit {
     await alert.present();
   }
 
-  generateDeliveryNotePdf() {
-    let html: string =
-      `<h1>Albarán de Devolución - ${this.return.provider.name}</h1>`+
-      `<h2>Fecha recogida: ${this.formatDate(this.return.datePickup)}</h2>`+
-      `<table>`+
-      `<tr>`+
-      `<th>Artículo</th>`+
-      `<th>Talla</th>`+
-      `<th>Unidades</th>`
-    ;
+  pureJsPdf(){
+    let doc = new JsPdf();
+    let currentHeight: number = 20;
 
-    if(this.return.type.defective){
-      html +=
-        `<th>Motivo defecto</th>`+
-        `</tr>`;
+    doc.setFontSize(20);
+    doc.text(`Albarán de Devolución - ${this.return.provider.name}`, 15, currentHeight);
+    currentHeight += 10;
+    doc.setFontSize(18);
+    doc.text(`Fecha recogida: ${this.formatDate(this.return.datePickup)}`, 15, currentHeight);
+    currentHeight += 10;
+    
+    let nonDefectiveHead: string[][] = [['Artículo', 'Talla', 'Unidades']];
+    let defectiveHeadNoPhotos: string[][] = [['Artículo', 'Talla', 'Unidades', 'Motivo Defecto']];
+    let defectiveHead: string[][] = [['Artículo', 'Talla', 'Unidades', 'Motivo Defecto', 'Fotos']];
+
+    let nonDefectiveBody: string[][] = (()=>{
+      let result: string[][] = [];
+      const modelIds = this.return.products.map(prod => prod.model.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
+      for(let modelId of modelIds){
+        const sizeIds = this.return.products.filter(prod => prod.model.id == modelId).map(prod => prod.size.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
+        for(let sizeId of sizeIds){
+          const products = this.return.products.filter(prod => prod.model.id == modelId && prod.size.id == sizeId);
+          let data = [
+            products[0].model.reference,
+            products[0].size.name,
+            products.length.toString()
+          ];
+          result.push(data);
+        }
+      }
+      return result;
+    })();
+    let defectiveBodyNoPhotos: string[][] = (()=>{
+      let result: string[][] = [];
       for(let product of this.return.products){
         const defects: string[] = [];
         if(product.defect.defectTypeParent ){
@@ -505,73 +523,67 @@ export class NewReturnComponent implements OnInit {
         if(product.defect.defectZoneChild ){
           defects.push(product.defect.defectZoneChild.name);
         }
-        html +=
-          `<tr>`+
-          `<td>${product.model.reference}</td>`+
-          `<td>${product.size.name}</td>`+
-          `<td>1</td>`+
-          `<td>${defects.join('/')}</td>`+
-          `</tr>`
-        ;
-        if(this.includePhotos && product.defect.photo){
-          html += `<img src="${this.baseUrlPhoto+product.defect.photo}" alt="foto">`;
+        let data = [
+          product.model.reference,
+          product.size.name,
+          '1',
+          defects.join('/')
+        ];
+        result.push(data);
+      }
+      return result;
+    })();
+    let defectiveBody: string[][] = (()=>{
+      let result: string[][] = [];
+      for(let product of this.return.products){
+        const defects: string[] = [];
+        if(product.defect.defectTypeParent ){
+          defects.push(product.defect.defectTypeParent.name);
         }
+        if(product.defect.defectTypeChild ){
+          defects.push(product.defect.defectTypeChild.name);
+        }
+        if(product.defect.defectZoneParent ){
+          defects.push(product.defect.defectZoneParent.name);
+        }
+        if(product.defect.defectZoneChild ){
+          defects.push(product.defect.defectZoneChild.name);
+        }
+        let data = [
+          product.model.reference,
+          product.size.name,
+          '1',
+          defects.join('/'),
+          product.defect.photo ? product.defect.photo : ''
+        ];
+        result.push(data);
+      }
+      return result;
+    })();
+
+    if(this.return.type.defective){
+      if(this.includePhotos){
+        doc.autoTable({startY: currentHeight, head: defectiveHead, body: defectiveBody, styles: { halign: 'center', fontSize: 15 } });
+        currentHeight += 13+(13*defectiveBody.length);
+      }else{
+        doc.autoTable({startY: currentHeight, head: defectiveHeadNoPhotos, body: defectiveBodyNoPhotos, styles: { halign: 'center', fontSize: 15 } });
+        currentHeight += 13+(13*defectiveBodyNoPhotos.length);
       }
     }else{
-      html += `</tr>`;
-      const modelIds = this.return.products.map(prod => prod.model.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
-      for(let modelId of modelIds){
-        const sizeIds = this.return.products.filter(prod => prod.model.id == modelId).map(prod => prod.size.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
-        for(let sizeId of sizeIds){
-          const products = this.return.products.filter(prod => prod.model.id == modelId && prod.size.id == sizeId);
-          html +=
-            `<tr>`+
-            `<td>${products[0].model.reference}</td>`+
-            `<td>${products[0].size.name}</td>`+
-            `<td>${products.length}</td>`+
-            `</tr>`
-          ;
-        }
+      doc.autoTable({startY: currentHeight, head: nonDefectiveHead, body: nonDefectiveBody, styles: { halign: 'center', fontSize: 15 } });
+      currentHeight += 13+(13*nonDefectiveBody.length);
+    }
+
+    if(this.includePhotos){
+      for(let photo of this.return.archives){
+        let img = new Image();
+        img.src = this.baseUrlPhoto+photo.pathMedium;
+        doc.addImage(img, "PNG", 20, currentHeight);
+        currentHeight += 70;
       }
     }
-    html += `</table>`;
 
-    const doc = new JsPdf();
-    // fromHTML(HTML, x, y, settings, callback, margins)
-    doc.fromHTML(
-      html,
-      10,
-      0,
-      {},
-      ()=>{
-        if(this.includePhotos){
-          for(let photo of this.return.archives){
-            doc.addPage();
-            let img = new Image();
-            img.src = this.baseUrlPhoto+photo.pathMedium;
-            doc.addImage(img, "PNG", 10, 10);
-          }
-        }
-        doc.save('albaran.pdf');
-      }
-    );
-  }
-
-  alternativePdf(){
-    // this.oplTransportsService.downloadPdfTransortOrders(id).subscribe(
-    //   resp => {
-    //     console.log(resp);
-    //     const blob = new Blob([resp], { type: 'application/pdf' });
-    //     saveAs(blob, 'documento.pdf')
-    //   },
-    //   e => {
-    //     console.log(e.error.text);
-    //   },
-    //   () => {
-    //     this.intermediaryService.dismissLoading()
-    //
-    //   }
-    // )
+    doc.save('albaran.pdf');
   }
 
 }
