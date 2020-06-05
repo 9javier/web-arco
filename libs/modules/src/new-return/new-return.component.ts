@@ -475,7 +475,7 @@ export class NewReturnComponent implements OnInit {
     await alert.present();
   }
 
-  pureJsPdf(){
+  async pureJsPdf() {
     let doc = new JsPdf();
     let currentHeight: number = 20;
     let currentWidth: number = 15;
@@ -492,23 +492,23 @@ export class NewReturnComponent implements OnInit {
     //Table
     let head: string[][];
     let body: string[][];
-    if(this.return.type.defective){
+    if (this.return.type.defective) {
       head = [['Artículo', 'Talla', 'Unidades', 'Motivo Defecto']];
-      if(this.includePhotos){
-        body = (()=>{
+      if (this.includePhotos) {
+        body = (() => {
           let result: string[][] = [];
-          for(let product of this.return.products){
+          for (let product of this.return.products) {
             const defects: string[] = [];
-            if(product.defect.defectTypeParent && product.defect.defectTypeParent.includeInDeliveryNote){
+            if (product.defect.defectTypeParent && product.defect.defectTypeParent.includeInDeliveryNote) {
               defects.push(product.defect.defectTypeParent.name);
             }
-            if(product.defect.defectTypeChild && product.defect.defectTypeChild.includeInDeliveryNote){
+            if (product.defect.defectTypeChild && product.defect.defectTypeChild.includeInDeliveryNote) {
               defects.push(product.defect.defectTypeChild.name);
             }
-            if(product.defect.defectZoneParent && product.defect.defectZoneParent.includeInDeliveryNote ){
+            if (product.defect.defectZoneParent && product.defect.defectZoneParent.includeInDeliveryNote) {
               defects.push(product.defect.defectZoneParent.name);
             }
-            if(product.defect.defectZoneChild && product.defect.defectZoneChild.includeInDeliveryNote){
+            if (product.defect.defectZoneChild && product.defect.defectZoneChild.includeInDeliveryNote) {
               defects.push(product.defect.defectZoneChild.name);
             }
             let data = [
@@ -518,32 +518,32 @@ export class NewReturnComponent implements OnInit {
               defects.join('/')
             ];
             result.push(data);
-            if(product.defect.photos.length > 0){
-              result.push(['','','','']);
-              result.push(['','','','']);
-              result.push(['','','','']);
+            if (product.defect.photos.length > 0) {
+              result.push(['', '', '', '']);
+              result.push(['', '', '', '']);
+              result.push(['', '', '', '']);
               imageRows.push(true);
-            }else{
+            } else {
               imageRows.push(false);
             }
           }
           return result;
         })();
-      }else{
-        body = (()=>{
+      } else {
+        body = (() => {
           let result: string[][] = [];
-          for(let product of this.return.products){
+          for (let product of this.return.products) {
             const defects: string[] = [];
-            if(product.defect.defectTypeParent && product.defect.defectTypeParent.includeInDeliveryNote){
+            if (product.defect.defectTypeParent && product.defect.defectTypeParent.includeInDeliveryNote) {
               defects.push(product.defect.defectTypeParent.name);
             }
-            if(product.defect.defectTypeChild && product.defect.defectTypeChild.includeInDeliveryNote){
+            if (product.defect.defectTypeChild && product.defect.defectTypeChild.includeInDeliveryNote) {
               defects.push(product.defect.defectTypeChild.name);
             }
-            if(product.defect.defectZoneParent && product.defect.defectZoneParent.includeInDeliveryNote ){
+            if (product.defect.defectZoneParent && product.defect.defectZoneParent.includeInDeliveryNote) {
               defects.push(product.defect.defectZoneParent.name);
             }
-            if(product.defect.defectZoneChild && product.defect.defectZoneChild.includeInDeliveryNote){
+            if (product.defect.defectZoneChild && product.defect.defectZoneChild.includeInDeliveryNote) {
               defects.push(product.defect.defectZoneChild.name);
             }
             let data = [
@@ -557,14 +557,18 @@ export class NewReturnComponent implements OnInit {
           return result;
         })();
       }
-    }else{
+    } else {
       head = [['Artículo', 'Talla', 'Unidades']];
-      body = (()=>{
+      body = (() => {
         let result: string[][] = [];
-        const modelIds = this.return.products.map(prod => prod.model.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
-        for(let modelId of modelIds){
-          const sizeIds = this.return.products.filter(prod => prod.model.id == modelId).map(prod => prod.size.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
-          for(let sizeId of sizeIds){
+        const modelIds = this.return.products.map(prod => prod.model.id).filter((elem, index, self) => {
+          return index === self.indexOf(elem);
+        });
+        for (let modelId of modelIds) {
+          const sizeIds = this.return.products.filter(prod => prod.model.id == modelId).map(prod => prod.size.id).filter((elem, index, self) => {
+            return index === self.indexOf(elem);
+          });
+          for (let sizeId of sizeIds) {
             const products = this.return.products.filter(prod => prod.model.id == modelId && prod.size.id == sizeId);
             let data = [
               products[0].model.reference,
@@ -577,31 +581,31 @@ export class NewReturnComponent implements OnInit {
         return result;
       })();
     }
-    doc.autoTable({startY: currentHeight, head: head, body: body, styles: { halign: 'center', fontSize: 15 } });
+    doc.autoTable({startY: currentHeight, head: head, body: body, styles: {halign: 'center', fontSize: 15}});
     currentHeight += 10;
 
     //Table images
-    if(this.includePhotos) {
+    if (this.includePhotos) {
       for (let row = 0; row < imageRows.length; row++) {
         currentHeight += 10;
         if (imageRows[row]) {
           currentHeight -= 2;
           let counter: number = 0;
-          for(let photo of this.return.products[row].defect.photos){
-            if(counter == 3){
+          for (let photo of this.return.products[row].defect.photos) {
+            if (counter == 3) {
               break;
             }
-            let img = new Image();
-            img.src = this.baseUrlPhoto+photo.pathMedium;
-            doc.addImage(img, "PNG", currentWidth+(61*counter), currentHeight, 58, 29);
+            let img: any = await this.getMeta(this.baseUrlPhoto + photo.pathMedium);
+            let dimensions: { width: number, height: number } = NewReturnComponent.checkImageAndResize(img.naturalWidth, img.naturalHeight);
+            doc.addImage(img, "PNG", currentWidth + (61 * counter), currentHeight, dimensions.width, dimensions.height);
             counter++;
           }
           currentHeight += 32;
         }
       }
       currentHeight += 5;
-    }else{
-      currentHeight += (10*body.length)+5;
+    } else {
+      currentHeight += (10 * body.length) + 5;
     }
 
     //Images
@@ -609,21 +613,44 @@ export class NewReturnComponent implements OnInit {
     doc.text(`Fotos`, currentWidth, currentHeight);
     currentHeight += 5;
 
-    if(this.includePhotos){
+    if (this.includePhotos) {
       let counter: number = 0;
-      for(let photo of this.return.archives){
-        if(counter == 3){
+      for (let photo of this.return.archives) {
+        if (counter == 3) {
           counter = 0;
           currentHeight += 32;
         }
-        let img = new Image();
-        img.src = this.baseUrlPhoto+photo.pathMedium;
-        doc.addImage(img, "PNG", currentWidth+(61*counter), currentHeight, 58, 29);
+        let img: any = await this.getMeta(this.baseUrlPhoto + photo.pathMedium);
+        let dimensions: { width: number, height: number } = NewReturnComponent.checkImageAndResize(img.naturalWidth, img.naturalHeight);
+        doc.addImage(img, "PNG", currentWidth + (61 * counter), currentHeight, dimensions.width, dimensions.height);
         counter++;
       }
     }
 
     doc.save('albaran.pdf');
+  }
+
+  getMeta(url) {
+    return new Promise((resolve, reject) => {
+      let img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  static checkImageAndResize(width: number, height: number): {width: number, height: number}{
+    let ratio: number;
+    if( (width/height) == 2 ){
+      ratio = 58/width;
+    }else{
+      if( (width/height) > 2 ){
+        ratio = 58/width;
+      }else{
+        ratio = 29/height;
+      }
+    }
+    return {width: width*ratio, height: height*ratio};
   }
 
 }
