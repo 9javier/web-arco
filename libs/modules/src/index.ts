@@ -471,7 +471,7 @@ export * from './order-no-processed/order-no-processed.module'
 export * from './expeditions-inside/expedition-inside.component'
 export * from './expeditions-inside/expedition-inside.module'
 
-<<<<<<< HEAD
+
 /**Transportes */
 export * from './package-received/package-received.component'
 export * from './package-received/package-received.module'
@@ -479,7 +479,7 @@ export * from './package-received/package-received.module'
 /**Transportes */
 export * from './package-history/package-history.component'
 export * from './package-history/package-history.module'
-=======
+
 //// *marketplaces
 
 export  * from './marketplaces/marketplaces.component';
@@ -487,4 +487,4 @@ export  * from './marketplaces/marketplaces.module';
 
 export  * from './marketplaces/create-mapping/create-mapping.component';
 export  * from './marketplaces/create-mapping/create-mapping.module';
->>>>>>> dev
+
