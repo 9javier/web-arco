@@ -74,7 +74,7 @@ export class ReturnPendingListComponent implements OnInit {
     private dateTimeParserService: DateTimeParserService
   ) {}
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.toolbarProvider.currentPage.next('Devoluciones Pendientes');
     this.toolbarProvider.optionsActions.next([
       {
@@ -88,6 +88,7 @@ export class ReturnPendingListComponent implements OnInit {
         action: () => this.showFilters = !this.showFilters
       }
     ]);
+    await this.reset();
   }
 
   async ngOnInit() {
