@@ -3,10 +3,12 @@ import {DefectiveZonesModel} from "./defective-zones-model";
 import {DefectiveZonesChildModel} from "./DefectiveZonesChild";
 import DefectiveZonesParent = DefectiveZonesModel.DefectiveZonesParent;
 import DefectiveZonesChild = DefectiveZonesChildModel.DefectiveZonesChild;
+import {ReturnModel} from "./Return";
 
 export namespace DefectiveRegistryModel {
   import Warehouse = WarehouseModel.Warehouse;
   import Product = ProductModel.Product;
+  import Files = ReturnModel.Files;
 
   export interface DefectiveRegistry {
     id?: number;
@@ -21,7 +23,7 @@ export namespace DefectiveRegistryModel {
     defectZoneChild?: DefectiveZonesChild;
     numberObservations?: number;
     photo?: string;
-    photos?: (any)[];
+    photos?: Files[];
     warehouse?: Warehouse;
     factoryReturn?: boolean;
     sold?: boolean;
@@ -41,11 +43,13 @@ export namespace DefectiveRegistryModel {
   export interface DefectTypeParent {
     id?: number;
     name?: string;
+    includeInDeliveryNote?: boolean;
   }
 
   export interface DefectTypeChild {
     id?: number;
     name?: string;
+    includeInDeliveryNote?: boolean;
   }
 
   export interface DataSource {

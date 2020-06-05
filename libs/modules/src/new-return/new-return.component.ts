@@ -478,108 +478,148 @@ export class NewReturnComponent implements OnInit {
   pureJsPdf(){
     let doc = new JsPdf();
     let currentHeight: number = 20;
+    let currentWidth: number = 15;
+    let imageRows: boolean[] = [];
 
+    //Title
     doc.setFontSize(20);
-    doc.text(`Albarán de Devolución - ${this.return.provider.name}`, 15, currentHeight);
+    doc.text(`Albarán de Devolución - ${this.return.provider.name}`, currentWidth, currentHeight);
     currentHeight += 10;
     doc.setFontSize(18);
-    doc.text(`Fecha recogida: ${this.formatDate(this.return.datePickup)}`, 15, currentHeight);
+    doc.text(`Fecha recogida: ${this.formatDate(this.return.datePickup)}`, currentWidth, currentHeight);
     currentHeight += 10;
-    
-    let nonDefectiveHead: string[][] = [['Artículo', 'Talla', 'Unidades']];
-    let defectiveHeadNoPhotos: string[][] = [['Artículo', 'Talla', 'Unidades', 'Motivo Defecto']];
-    let defectiveHead: string[][] = [['Artículo', 'Talla', 'Unidades', 'Motivo Defecto', 'Fotos']];
 
-    let nonDefectiveBody: string[][] = (()=>{
-      let result: string[][] = [];
-      const modelIds = this.return.products.map(prod => prod.model.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
-      for(let modelId of modelIds){
-        const sizeIds = this.return.products.filter(prod => prod.model.id == modelId).map(prod => prod.size.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
-        for(let sizeId of sizeIds){
-          const products = this.return.products.filter(prod => prod.model.id == modelId && prod.size.id == sizeId);
-          let data = [
-            products[0].model.reference,
-            products[0].size.name,
-            products.length.toString()
-          ];
-          result.push(data);
-        }
-      }
-      return result;
-    })();
-    let defectiveBodyNoPhotos: string[][] = (()=>{
-      let result: string[][] = [];
-      for(let product of this.return.products){
-        const defects: string[] = [];
-        if(product.defect.defectTypeParent ){
-          defects.push(product.defect.defectTypeParent.name);
-        }
-        if(product.defect.defectTypeChild ){
-          defects.push(product.defect.defectTypeChild.name);
-        }
-        if(product.defect.defectZoneParent ){
-          defects.push(product.defect.defectZoneParent.name);
-        }
-        if(product.defect.defectZoneChild ){
-          defects.push(product.defect.defectZoneChild.name);
-        }
-        let data = [
-          product.model.reference,
-          product.size.name,
-          '1',
-          defects.join('/')
-        ];
-        result.push(data);
-      }
-      return result;
-    })();
-    let defectiveBody: string[][] = (()=>{
-      let result: string[][] = [];
-      for(let product of this.return.products){
-        const defects: string[] = [];
-        if(product.defect.defectTypeParent ){
-          defects.push(product.defect.defectTypeParent.name);
-        }
-        if(product.defect.defectTypeChild ){
-          defects.push(product.defect.defectTypeChild.name);
-        }
-        if(product.defect.defectZoneParent ){
-          defects.push(product.defect.defectZoneParent.name);
-        }
-        if(product.defect.defectZoneChild ){
-          defects.push(product.defect.defectZoneChild.name);
-        }
-        let data = [
-          product.model.reference,
-          product.size.name,
-          '1',
-          defects.join('/'),
-          product.defect.photo ? product.defect.photo : ''
-        ];
-        result.push(data);
-      }
-      return result;
-    })();
-
+    //Table
+    let head: string[][];
+    let body: string[][];
     if(this.return.type.defective){
+      head = [['Artículo', 'Talla', 'Unidades', 'Motivo Defecto']];
       if(this.includePhotos){
-        doc.autoTable({startY: currentHeight, head: defectiveHead, body: defectiveBody, styles: { halign: 'center', fontSize: 15 } });
-        currentHeight += 13+(13*defectiveBody.length);
+        body = (()=>{
+          let result: string[][] = [];
+          for(let product of this.return.products){
+            const defects: string[] = [];
+            if(product.defect.defectTypeParent && product.defect.defectTypeParent.includeInDeliveryNote){
+              defects.push(product.defect.defectTypeParent.name);
+            }
+            if(product.defect.defectTypeChild && product.defect.defectTypeChild.includeInDeliveryNote){
+              defects.push(product.defect.defectTypeChild.name);
+            }
+            if(product.defect.defectZoneParent && product.defect.defectZoneParent.includeInDeliveryNote ){
+              defects.push(product.defect.defectZoneParent.name);
+            }
+            if(product.defect.defectZoneChild && product.defect.defectZoneChild.includeInDeliveryNote){
+              defects.push(product.defect.defectZoneChild.name);
+            }
+            let data = [
+              product.model.reference,
+              product.size.name,
+              '1',
+              defects.join('/')
+            ];
+            result.push(data);
+            if(product.defect.photos.length > 0){
+              result.push(['','','','']);
+              result.push(['','','','']);
+              result.push(['','','','']);
+              imageRows.push(true);
+            }else{
+              imageRows.push(false);
+            }
+          }
+          return result;
+        })();
       }else{
-        doc.autoTable({startY: currentHeight, head: defectiveHeadNoPhotos, body: defectiveBodyNoPhotos, styles: { halign: 'center', fontSize: 15 } });
-        currentHeight += 13+(13*defectiveBodyNoPhotos.length);
+        body = (()=>{
+          let result: string[][] = [];
+          for(let product of this.return.products){
+            const defects: string[] = [];
+            if(product.defect.defectTypeParent && product.defect.defectTypeParent.includeInDeliveryNote){
+              defects.push(product.defect.defectTypeParent.name);
+            }
+            if(product.defect.defectTypeChild && product.defect.defectTypeChild.includeInDeliveryNote){
+              defects.push(product.defect.defectTypeChild.name);
+            }
+            if(product.defect.defectZoneParent && product.defect.defectZoneParent.includeInDeliveryNote ){
+              defects.push(product.defect.defectZoneParent.name);
+            }
+            if(product.defect.defectZoneChild && product.defect.defectZoneChild.includeInDeliveryNote){
+              defects.push(product.defect.defectZoneChild.name);
+            }
+            let data = [
+              product.model.reference,
+              product.size.name,
+              '1',
+              defects.join('/')
+            ];
+            result.push(data);
+          }
+          return result;
+        })();
       }
     }else{
-      doc.autoTable({startY: currentHeight, head: nonDefectiveHead, body: nonDefectiveBody, styles: { halign: 'center', fontSize: 15 } });
-      currentHeight += 13+(13*nonDefectiveBody.length);
+      head = [['Artículo', 'Talla', 'Unidades']];
+      body = (()=>{
+        let result: string[][] = [];
+        const modelIds = this.return.products.map(prod => prod.model.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
+        for(let modelId of modelIds){
+          const sizeIds = this.return.products.filter(prod => prod.model.id == modelId).map(prod => prod.size.id).filter((elem, index, self) => { return index === self.indexOf(elem); });
+          for(let sizeId of sizeIds){
+            const products = this.return.products.filter(prod => prod.model.id == modelId && prod.size.id == sizeId);
+            let data = [
+              products[0].model.reference,
+              products[0].size.name,
+              products.length.toString()
+            ];
+            result.push(data);
+          }
+        }
+        return result;
+      })();
+    }
+    doc.autoTable({startY: currentHeight, head: head, body: body, styles: { halign: 'center', fontSize: 15 } });
+    currentHeight += 10;
+
+    //Table images
+    if(this.includePhotos) {
+      for (let row = 0; row < imageRows.length; row++) {
+        currentHeight += 10;
+        if (imageRows[row]) {
+          currentHeight -= 2;
+          let counter: number = 0;
+          for(let photo of this.return.products[row].defect.photos){
+            if(counter == 3){
+              break;
+            }
+            let img = new Image();
+            img.src = this.baseUrlPhoto+photo.pathMedium;
+            doc.addImage(img, "PNG", currentWidth+(61*counter), currentHeight, 58, 29);
+            counter++;
+          }
+          currentHeight += 32;
+        }
+      }
+      currentHeight += 5;
+    }else{
+      currentHeight += (10*body.length)+5;
     }
 
+    //Images
+    doc.setFontSize(16);
+    doc.text(`Fotos`, currentWidth, currentHeight);
+    currentHeight += 5;
+
     if(this.includePhotos){
+      let counter: number = 0;
       for(let photo of this.return.archives){
+        if(counter == 3){
+          counter = 0;
+          currentHeight += 32;
+        }
         let img = new Image();
         img.src = this.baseUrlPhoto+photo.pathMedium;
-        doc.addImage(img, "PNG", 20, currentHeight);
-        currentHeight += 70;
+        doc.addImage(img, "PNG", currentWidth+(61*counter), currentHeight, 58, 29);
+        counter++;
       }
     }
 
