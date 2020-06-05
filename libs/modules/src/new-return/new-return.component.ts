@@ -553,6 +553,7 @@ export class NewReturnComponent implements OnInit {
               defects.join('/')
             ];
             result.push(data);
+            imageRows.push(false);
           }
           return result;
         })();
@@ -576,6 +577,7 @@ export class NewReturnComponent implements OnInit {
               products.length.toString()
             ];
             result.push(data);
+            imageRows.push(false);
           }
         }
         return result;
@@ -609,11 +611,10 @@ export class NewReturnComponent implements OnInit {
     }
 
     //Images
-    doc.setFontSize(16);
-    doc.text(`Fotos`, currentWidth, currentHeight);
-    currentHeight += 5;
-
     if (this.includePhotos) {
+      doc.setFontSize(16);
+      doc.text(`Fotos`, currentWidth, currentHeight);
+      currentHeight += 5;
       let counter: number = 0;
       for (let photo of this.return.archives) {
         if (counter == 3) {
