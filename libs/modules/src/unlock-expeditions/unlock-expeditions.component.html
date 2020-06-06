@@ -1,75 +1,102 @@
 <ion-content>
   <div class="incidences-container">
-    <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
+    <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
 
       <ng-container matColumnDef="expedition">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Expedición
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonExpedition [title]="'Expediciones'"
-                               [listItems]="entities.expedition"
-                               [isFiltering]="isFilteringExpedition != entities.expedition.length"
-                               (applyFilters)="applyFilters($event, 'expedition')">
-          </suite-filter-button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.expedition}} </mat-cell>
+        <th mat-header-cell class="title" *matHeaderCellDef mat-sort-header>
+          <div class="title-container">
+            <div class="title">
+              <span>Nº Expedición</span>
+              <suite-filter-button class="filter" #filterButtonExpedition [title]="'Expediciones'"
+                                   [listItems]="entities.expedition"
+                                   [isFiltering]="isFilteringExpedition != entities.expedition.length"
+                                   (applyFilters)="applyFilters($event, 'expedition')">
+              </suite-filter-button>
+            </div>
+          </div>
+          <div class="title-invisible">
+            <span>Nº Expedición</span>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> #{{element.expedition}} </td>
       </ng-container>
 
       <ng-container matColumnDef="barcode">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Barcode
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonBarcode [title]="'Barcodes'"
-                               [listItems]="entities.barcode"
-                               [isFiltering]="isFilteringBarcode != entities.barcode.length"
-                               (applyFilters)="applyFilters($event, 'barcode')">
-          </suite-filter-button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.barcode}} </mat-cell>
+        <th mat-header-cell class="title" *matHeaderCellDef mat-sort-header>
+          <div class="title-container">
+            <div class="title">
+              <span>Código</span>
+              <suite-filter-button class="filter" #filterButtonBarcode [title]="'Códigos'"
+                                   [listItems]="entities.barcode"
+                                   [isFiltering]="isFilteringBarcode != entities.barcode.length"
+                                   (applyFilters)="applyFilters($event, 'barcode')">
+              </suite-filter-button>
+            </div>
+          </div>
+          <div class="title-invisible">
+            <span>Código</span>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.barcode}} </td>
       </ng-container>
 
       <ng-container matColumnDef="date">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Fecha
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDate [title]="'Fechas'"
-                               [listItems]="entities.date"
-                               [isFiltering]="isFilteringDate != entities.date.length"
-                               (applyFilters)="applyFilters($event, 'date')">
-          </suite-filter-button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.date  | date:"dd/MM/yyyy"}} </mat-cell>
+        <th mat-header-cell class="title" *matHeaderCellDef mat-sort-header>
+          <div class="title-container">
+            <div class="title">
+              <span>Fecha de solicitud</span>
+              <suite-filter-button class="filter" #filterButtonDate [title]="'Fechas'"
+                                   [listItems]="entities.date"
+                                   [isFiltering]="isFilteringDate != entities.date.length"
+                                   (applyFilters)="applyFilters($event, 'date')">
+              </suite-filter-button>
+            </div>
+          </div>
+          <div class="title-invisible">
+            <span>Fecha de solicitud</span>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.date  | date:"dd/MM/yyyy"}} </td>
       </ng-container>
 
       <ng-container matColumnDef="warehouse">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Almacen
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonWarehouse [title]="'Almacenes'"
-                               [listItems]="entities.warehouse"
-                               [isFiltering]="isFilteringWarehouse != entities.warehouse.length"
-                               (applyFilters)="applyFilters($event, 'warehouse')">
-          </suite-filter-button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.warehouse.reference}}-{{element.warehouse.name}} </mat-cell>
+        <th mat-header-cell class="title" *matHeaderCellDef mat-sort-header>
+          <div class="title-container">
+            <div class="title">
+              <span>Almacén que atiende</span>
+              <suite-filter-button class="filter" #filterButtonWarehouse [title]="'Almacenes'"
+                                   [listItems]="entities.warehouse"
+                                   [isFiltering]="isFilteringWarehouse != entities.warehouse.length"
+                                   (applyFilters)="applyFilters($event, 'warehouse')">
+              </suite-filter-button>
+            </div>
+          </div>
+          <div class="title-invisible">
+            <span>Almacén que atiende</span>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.warehouse.reference}}-{{element.warehouse.name}} </td>
       </ng-container>
 
       <ng-container matColumnDef="locked">
-        <mat-header-cell *matHeaderCellDef class="center">
-          <span class="title">Bloqueado</span>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="center">
-          <mat-checkbox [checked]="element.locked === 2" (change)="presentUnlockAlert($event, element)"></mat-checkbox>
-        </mat-cell>
+        <th mat-header-cell *matHeaderCellDef class="title btn-column toRight">
+          <div class="title-container"></div>
+        </th>
+        <td mat-cell *matCellDef="let element" class="my-sticky-col info number btn-column toRight">
+          <button mat-stroked-button [disabled]="element.locked != 2" (click)="presentUnlockAlert($event, element)">Desbloquear</button>
+        </td>
       </ng-container>
 
-      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row">
-      </mat-row>
-    </mat-table>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row"></tr>
+    </table>
   </div>
-  <ion-grid>
-    <ion-row>
-      <ion-col size='8'>
-        <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
-      </ion-col>
-      <ion-col>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+
+  <div class="paginator-container">
+    <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+  </div>
 </ion-content>
+
 <ion-footer>
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
     <ion-fab-button (click)="update()" matTooltip="Actualizar" matTooltipClass="tooltip">

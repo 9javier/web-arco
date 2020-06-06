@@ -71,6 +71,7 @@ export class UnlockExpeditionsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.paginator.cantSelect = this.pagerValues[0];
     this.initEntity();
     this.initForm();
     this.getFilters();
@@ -309,14 +310,7 @@ export class UnlockExpeditionsComponent implements OnInit {
       header: "¡Alerta!",
       message: "¿Está seguro que desea desloquear?",
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            this.getList(this.form);
-          }
-        },
+        'Cancelar',
         {
           text: 'Aceptar',
           handler: () => {
@@ -349,7 +343,7 @@ export class UnlockExpeditionsComponent implements OnInit {
       })
   }
 
-  update(){
+  update() {
     this.ngOnInit();
   }
 

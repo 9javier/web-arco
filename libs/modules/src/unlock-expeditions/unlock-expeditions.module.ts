@@ -12,6 +12,7 @@ import { PaginatorComponentModule } from '../components/paginator/paginator.comp
 import { FilterButtonModule } from "../components/filter-button/filter-button.module";
 import { MatTooltipModule } from "@angular/material";
 import { UnlockExpeditionsComponent } from './unlock-expeditions.component';
+import {MatButtonModule} from "@angular/material/button";
 
 const routes: Routes = [
   {
@@ -36,7 +37,8 @@ const routes: Routes = [
     FilterButtonModule,
     MatTooltipModule,
     MatSortModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatButtonModule
   ]
 })
 export class UnlockExpeditionsModule { }
