@@ -23,6 +23,11 @@ ion-router-outlet {
 
   ion-header {
     transition: all var(--timing) ease-in-out;
+
+    ion-toolbar {
+      --background: black;
+      color: white;
+    }
   }
 
   .active {
@@ -61,8 +66,8 @@ ion-router-outlet {
 @media (min-width: 992px) {
   .sm-custom {
     .mainheader {
-      margin-left: 56px;
-      padding-right: 56px;
+      margin-left: 96px;
+      padding-right: 96px;
       transition: all var(--timing) ease-in-out;
 
       .toogleArrow {
@@ -72,8 +77,8 @@ ion-router-outlet {
     }
 
     .sidebar {
-      min-width: 65px !important;
-      max-width: 73px !important;
+      min-width: 89px !important;
+      max-width: 113px !important;
       margin-left: -1rem;
       transition: all var(--timing) ease-in-out;
 
@@ -100,4 +105,8 @@ ion-router-outlet {
 .fadeout {
   opacity: 0;
   transition: all;
+}
+
+.tooltip {
+  white-space: pre-line;
 }

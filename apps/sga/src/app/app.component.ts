@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 
 import {Platform, MenuController} from '@ionic/angular';
@@ -14,6 +14,7 @@ import {TypesService} from "../../../../libs/services/src/lib/endpoint/types/typ
 import {TypeModel} from "../../../../libs/services/src/models/endpoints/Type";
 import {app} from '@suite/services'
 import {DateAdapter} from "@angular/material";
+import {MenuComponent} from "@suite/common-modules";
 
 interface MenuItem {
   title: string;
@@ -27,6 +28,9 @@ interface MenuItem {
   styles: []
 })
 export class AppComponent implements OnInit {
+
+  @ViewChild(MenuComponent) menuComponent: MenuComponent;
+
   public appPages = [
     {
       title: 'Logística',
@@ -306,9 +310,13 @@ export class AppComponent implements OnInit {
 
   toggleSidebar() {
     this.displaySmallSidebar = !this.displaySmallSidebar;
-    this.displaySmallSidebar === true
-      ? (this.iconsDirection = 'end')
-      : (this.iconsDirection = 'start');
+    if (this.displaySmallSidebar === true) {
+      this.iconsDirection = 'end';
+      this.menuComponent.iconsDirection = 'end';
+    } else {
+      this.iconsDirection = 'start'
+      this.menuComponent.iconsDirection = 'start';
+    }
 
     for (let page of this.appPages) {
       if (page.children && page.children.length > 0) {
@@ -322,10 +330,12 @@ export class AppComponent implements OnInit {
       this.deploySidebarSmallDevices = true;
       this.displaySmallSidebar = true;
       this.iconsDirection = 'start';
+      this.menuComponent.iconsDirection = 'start';
     } else {
       this.deploySidebarSmallDevices = false;
       this.displaySmallSidebar = true;
       this.iconsDirection = 'end';
+      this.menuComponent.iconsDirection = 'end';
     }
   }
 

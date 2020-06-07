@@ -2,6 +2,49 @@ ion-item.parent-subitems {
   --border-width: 0;
 }
 
+ion-icon.small-menu-icon {
+  margin-right: 20px;
+  padding-left: 16px;
+}
+ion-icon.small-menu-icon-parent {
+  padding-left: 16px;
+  margin-right: 0;
+}
+ion-icon.small-menu-arrow {
+  font-size: 12px;
+  margin-left: 8px;
+}
+ion-icon.small-menu {
+  margin-right: 16px;
+  margin-left: 0;
+}
+ion-icon.notification {
+  position: absolute;
+  top: -10px;
+  left: 4px;
+  font-size: 20px;
+}
+ion-badge.notification {
+  position: absolute;
+  top: 0;
+  right: 48px;
+  font-size: 1em;
+  margin: 0;
+  width: 16px;
+  height: 16px;
+}
+
+ion-list.sub-items {
+  background: var(--bg-menu-sub-items);
+  ion-item {
+    --background: var(--bg-menu-sub-items);
+  }
+  ion-icon.notification {
+    left: unset;
+    right: 48px;
+  }
+}
+
 .color-notification{
   color: red;
 }
