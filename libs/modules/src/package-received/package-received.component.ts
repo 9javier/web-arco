@@ -25,6 +25,7 @@ import { isNgTemplate } from '@angular/compiler';
 // import {DateTimeParserService} from "../../services/src/lib/date-time-parser/date-time-parser.service";
 import {DateTimeParserService} from  "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import * as moment from 'moment';
+import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 
 
 @Component({
@@ -108,10 +109,18 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
     private warehouseService: WarehouseService,
     private warehousesService: WarehousesService,
     private authenticationService: AuthenticationService,
-    private dateTimeParserService: DateTimeParserService
+    private dateTimeParserService: DateTimeParserService,
+    private toolbarProvider: ToolbarProvider,
   ) { }
 
   async ngOnInit() {
+    this.toolbarProvider.optionsActions.next([
+      {
+        icon: 'funnel',
+        label: 'Filtros',
+        action: () => this.showFiltersMobileVersion = !this.showFiltersMobileVersion
+      }
+    ]);
     this.isStoreUser = await this.authenticationService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authenticationService.getStoreCurrentUser();

@@ -1,3 +1,49 @@
+
+<form *ngIf="showFiltersMobileVersion" [formGroup]="form">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-label>Fecha:</ion-label>
+        <suite-tags-input placeholder="Referencia" [options]="date" formControlName="date"
+          multiple="true"></suite-tags-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>Tienda Origen:</ion-label>
+        <suite-tags-input placeholder="Marca" [options]="origin" formControlName="origin" multiple="true">
+        </suite-tags-input>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-label>Pedido:</ion-label>
+        <suite-tags-input placeholder="Referencia" [options]="deliveryRequest" formControlName="deliveryRequestId"
+          multiple="true"></suite-tags-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>Bulto:</ion-label>
+        <suite-tags-input placeholder="Marca" [options]="uniqueCode" formControlName="uniqueCode" multiple="true">
+        </suite-tags-input>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col class="btn-remove" size="6">
+        <ion-button (click)="clearFilters()">
+          Borra Filtros
+        </ion-button>
+      </ion-col>
+      <ion-col class="btn-apply" size="6">
+        <ion-button (click)="applyFilters()">
+          Aplicar Filtros
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
+
+
+
+
 <ion-content>
   <suite-responsive-layout>
     <div portrait class="portrait-section" [ngStyle]="{height: mobileVersionTypeList == 'table' ? '100vh' : 'auto'}">
@@ -82,61 +128,6 @@
       </div> -->
 
       <div *ngIf="mobileVersionTypeList == 'list'">
-        <div class="list-header-filters-mobile">
-          <ion-grid *ngIf="mobileVersionTypeList == 'list'">
-            <ion-row class="header-mobile">
-              <ion-col size="10">
-                <div></div>
-              </ion-col>
-              <ion-col size="2" class="filters-mobile" (click)="openFiltersMobile()">
-                <div class="filters-mobile" [ngClass]="showFiltersMobileVersion ? 'filters-opened' : ''">
-                  <i class="material-icons">filter_list</i>
-                </div>
-              </ion-col>
-            </ion-row>
-            <form *ngIf="showFiltersMobileVersion" [formGroup]="form">
-              <ion-grid>
-                <ion-row>
-                  <ion-col size="6">
-                    <ion-label>Fecha:</ion-label>
-                    <suite-tags-input placeholder="Referencia" [options]="date" formControlName="date"
-                      multiple="true"></suite-tags-input>
-                  </ion-col>
-                  <ion-col size="6">
-                    <ion-label>Tienda Origen:</ion-label>
-                    <suite-tags-input placeholder="Marca" [options]="origin" formControlName="origin" multiple="true">
-                    </suite-tags-input>
-                  </ion-col>
-                </ion-row>
-                <ion-row>
-                  <ion-col size="6">
-                    <ion-label>Pedido:</ion-label>
-                    <suite-tags-input placeholder="Referencia" [options]="deliveryRequest" formControlName="deliveryRequestId"
-                      multiple="true"></suite-tags-input>
-                  </ion-col>
-                  <ion-col size="6">
-                    <ion-label>Bulto:</ion-label>
-                    <suite-tags-input placeholder="Marca" [options]="uniqueCode" formControlName="uniqueCode" multiple="true">
-                    </suite-tags-input>
-                  </ion-col>
-                </ion-row>
-
-                <ion-row>
-                  <ion-col class="btn-remove" size="6">
-                    <ion-button (click)="clearFilters()">
-                      Borra Filtros
-                    </ion-button>
-                  </ion-col>
-                  <ion-col class="btn-apply" size="6">
-                    <ion-button (click)="applyFilters()">
-                      Aplicar Filtros
-                    </ion-button>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </form>
-          </ion-grid>
-        </div>
         <div class="list-items-mobile">
           <mat-accordion multi="false" *ngFor="let package of packages; let i = index">
             <mat-expansion-panel *ngIf=" package.orderPackage.productsQuantity != 0" >
@@ -319,10 +310,13 @@
       </table>
     </div> -->
   </suite-responsive-layout>
-  <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+  <!-- <suite-paginator [pagerValues]="pagerValues"></suite-paginator> -->
 
 </ion-content>
 <ion-footer class="footer-products">
+  <ion-toolbar>
+    <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+  </ion-toolbar>
   <ion-fab vertical="bottom" horizontal="end"  class="horizontal-fab">
     <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="refresh()"><i
       class="material-icons">refresh</i></ion-fab-button>
