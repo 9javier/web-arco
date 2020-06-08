@@ -3,6 +3,7 @@ import {PickingProvider} from "../../../services/src/providers/picking/picking.p
 import {PickingScanditService} from "../../../services/src/lib/scandit/picking/picking.service";
 import {PickingStoreModel} from "../../../services/src/models/endpoints/PickingStore";
 import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-store/picking-store.service";
+import {IntermediaryService} from "@suite/services";
 
 @Component({
   selector: 'app-picking-scan-packing',
@@ -11,16 +12,19 @@ import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-st
 })
 export class PickingScanPackingComponent implements OnInit {
 
-  message;
+  message = 'No hay ningún producto procesado para asociar a embalajes.';
 
   constructor(
     private pickingProvider: PickingProvider,
     private pickingStoreService: PickingStoreService,
-    private pickingScanditService: PickingScanditService
+    private pickingScanditService: PickingScanditService,
+    private intermediaryService: IntermediaryService,
   ) {}
 
   async ngOnInit() {
-    this.pickingStoreService.getLineRequests().then((res: PickingStoreModel.ResponseOrderRequests) => {
+    await this.intermediaryService.presentLoading();
+    this.pickingStoreService.getLineRequests().then(async (res: PickingStoreModel.ResponseOrderRequests) => {
+      await this.intermediaryService.dismissLoading();
       if ((res.code == 200 || res.code == 201) && res.data && res.data.length > 0) {
         let orderRequestsByStores = res.data;
 
@@ -76,9 +80,11 @@ export class PickingScanPackingComponent implements OnInit {
       } else {
         this.message = 'No hay ningún producto procesado para asociar a embalajes.';
       }
-    },(error) => {
+    },async (error) => {
+      await this.intermediaryService.dismissLoading();
       console.error('Error Subscribe::List line-requests by store::', error);
-    }).catch((error) => {
+    }).catch(async (error) => {
+      await this.intermediaryService.dismissLoading();
       console.error('Error Subscribe::List line-requests by store::', error);
     });
   }

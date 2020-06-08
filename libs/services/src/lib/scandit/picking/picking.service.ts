@@ -9,6 +9,9 @@ import {environment} from "../../../environments/environment";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 import ListItem = PickingStoreModel.ListItem;
+import {TimesToastType} from "../../../models/timesToastType";
+import {IntermediaryService} from "@suite/services";
+import {PositionsToast} from "../../../models/positionsToast.type";
 
 declare let Scandit;
 declare let GScandit;
@@ -33,7 +36,8 @@ export class PickingScanditService {
     private pickingStoreService: PickingStoreService,
     private scanditProvider: ScanditProvider,
     private pickingProvider: PickingProvider,
-    private itemReferencesProvider: ItemReferencesProvider
+    private itemReferencesProvider: ItemReferencesProvider,
+    private intermediaryService: IntermediaryService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
@@ -429,11 +433,12 @@ export class PickingScanditService {
       .postPackings({
         packingReferences: this.packingReferences
       })
-      .then((res: PickingStoreModel.ResponsePostPacking) => {
+      .then(async (res: PickingStoreModel.ResponsePostPacking) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200 || res.code == 201) {
           ScanditMatrixSimple.finishPickingStores();
           this.refreshListPickingsStores();
+          await this.intermediaryService.presentToastSuccess('Finalizada correctamente la asociación de pares a embalajes', TimesToastType.DURATION_SUCCESS_TOAST_4550, PositionsToast.BOTTOM);
         } else {
           ScanditMatrixSimple.setText(
             res.errors,
