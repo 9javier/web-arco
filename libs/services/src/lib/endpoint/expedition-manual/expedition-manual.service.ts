@@ -1,16 +1,29 @@
 import { HttpRequestModel } from 'libs/services/src/models/endpoints/HttpRequest';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { map, filter } from 'rxjs/operators';
+import {from, Observable} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {map, filter, switchMap} from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DefectiveRegistryModel } from '../../../models/endpoints/DefectiveRegistry';
 import { BehaviorSubject } from "rxjs";
+import {AuthenticationService} from "@suite/services";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExpeditionManualService {
+
+  private apiMga = environment.apiBase;
+  private apiGeneralLogisticOperator = environment.apiLogisticOperator;
+  private createExpeditionUrl = this.apiGeneralLogisticOperator + '/expedition/';
+  private getWarehouseUrl = this.apiGeneralLogisticOperator + '/warehouse-logistic/index';
+  private getWarehouseLogisticUrl = this.apiGeneralLogisticOperator + '/warehouse-logistic/';
+  private getLogisticsOperatorsUrl = this.apiGeneralLogisticOperator + '/logistics-operators/';
+  private getMarketsUrl = this.apiMga + '/markets/';
+  private getCountriesUrl = this.apiMga + '/countries/';
+  private getProvincesUrl = this.apiMga + '/provinces/';
+  private getRulesUrl = this.apiGeneralLogisticOperator + '/logistics-operators-rules/';
+
   private baseUrl: string;
   private getTrasnports: string;
   private epxeditionManualStore: string;
@@ -18,11 +31,11 @@ export class ExpeditionManualService {
   private getFilter: string;
   private getIncidenceById: string;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private auth: AuthenticationService,) {
     this.baseUrl = environment.apiSorter;
     this.getTrasnports = `${this.baseUrl}/expeditions-manual/get-transports`;
     this.epxeditionManualStore = `${this.baseUrl}/expeditions-manual/store`;
-    this.getIncidences = `${this.baseUrl}/expeditions-manual/get-incidence`;
+    this.getIncidences = `${this.baseUrl}/expeditions-manual/get-expedition-inside`;
     this.getFilter = `${this.baseUrl}/expeditions-manual/get-incidence-filters`;
     this.getIncidenceById = `${this.baseUrl}/expeditions-manual/get-incidence-id`;
   }
@@ -44,7 +57,7 @@ export class ExpeditionManualService {
     return this.http.post<HttpRequestModel.Response>(this.getIncidences, body).pipe(
       map(resp => {
         return resp.data
-      }) 
+      })
     )
   }
 
@@ -52,7 +65,7 @@ export class ExpeditionManualService {
     return this.http.post<HttpRequestModel.Response>(this.getFilter, body).pipe(
       map(resp => {
         return resp.data
-      }) 
+      })
     )
   }
 
@@ -61,5 +74,67 @@ export class ExpeditionManualService {
       map(resp => resp.data)
     )
   }
-  
+
+  createExpedition(data):Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.post<any>(this.createExpeditionUrl, data, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getWarehouse():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getWarehouseUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getLogisticsOperators():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getLogisticsOperatorsUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getMarkets():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getMarketsUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getCountries():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getCountriesUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getProvinces():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getProvincesUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getRules():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getRulesUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
 }

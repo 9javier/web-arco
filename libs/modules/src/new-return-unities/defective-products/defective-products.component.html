@@ -1,0 +1,78 @@
+<table mat-table [dataSource]="tData">
+
+  <tr mat-header-row *matHeaderRowDef="tColumns; sticky: true"></tr>
+  <tr mat-row *matRowDef="let row; columns: tColumns"></tr>
+
+  <ng-container matColumnDef="product">
+    <th mat-header-cell *matHeaderCellDef>
+      <span class="title">Producto</span>
+    </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.product.reference }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="brand_name">
+    <th mat-header-cell *matHeaderCellDef>
+      <span class="title">Marca</span>
+    </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.product.brand.name }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="model_ref">
+    <th mat-header-cell *matHeaderCellDef>
+      <span class="title">Artículo</span>
+    </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.product.model.reference }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="model_name">
+    <th mat-header-cell *matHeaderCellDef>
+      <span class="title">Modelo</span>
+    </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.product.model.name }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="commercial">
+    <th mat-header-cell *matHeaderCellDef>
+      <span class="title">Campo Comercial</span>
+    </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.product.commercial.name }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="size">
+    <th mat-header-cell *matHeaderCellDef>
+      <span class="title">Talla</span>
+    </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.product.size.number }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="defect_type">
+    <th mat-header-cell *matHeaderCellDef>
+      <span class="title">Defecto</span>
+    </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.defective.type }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="select" [formGroup]="selectedForm">
+    <th mat-header-cell *matHeaderCellDef class="toRight">
+      <ion-checkbox [checked]="tAllSelected" (ionChange)="selectAll($event)"></ion-checkbox>
+    </th>
+    <td mat-cell *matCellDef="let element; let i = index" class="toRight">
+      <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]" (click)="itemSelected(element)"></ion-checkbox>
+    </td>
+  </ng-container>
+</table>
+

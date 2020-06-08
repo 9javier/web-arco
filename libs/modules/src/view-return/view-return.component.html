@@ -1,0 +1,216 @@
+<ion-content>
+  <ion-grid *ngIf="return">
+    <ion-row>
+      <ion-col class="center-contents">
+        <ion-button class="btn-start" fill="clear" [disabled]="![2,3].includes(return.status)" (click)="startPicking()">Iniciar picking <ion-icon slot="end" name="play"></ion-icon></ion-button>
+      </ion-col>
+    </ion-row>
+    <mat-divider class="divider-top"></mat-divider>
+
+    <ion-row>
+      <ion-col size="6">
+        <ion-item>
+          <ion-label position="stacked">Nº Bultos{{return.status == 4 ? ' *' : ''}}</ion-label>
+          <ion-input [(ngModel)]="return.amountPackages" type="number"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-item class="item-date">
+          <ion-label position="stacked">Fecha prevista recogida{{return.status == 5 ? ' *' : ''}}</ion-label>
+          <input matInput [matDatepicker]="pickerDatePredictedPickup" [(ngModel)]="return.datePredictedPickup">
+          <mat-datepicker-toggle matSuffix [for]="pickerDatePredictedPickup"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDatePredictedPickup></mat-datepicker>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6">
+        <ion-item>
+          <ion-label position="stacked">Agencia transportista{{return.status == 4 ? ' *' : ''}}</ion-label>
+          <ion-input [(ngModel)]="return.shipper"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-item>
+          <ion-label position="stacked">Cambiar estado</ion-label>
+          <ion-select [selectedText]="''" placeholder="Nuevo estado" (ionChange)="changeStatus($event.detail.value)">
+            <ion-select-option *ngFor="let status of [1,2,3,4,5,6,7]" [value]="status">{{getStatusName(status)}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked" color="dark">Jaulas contenedoras</ion-label>
+          <ion-input disabled>{{getPackingNameList(return.packings)}}</ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" class="col-delivery-note">
+        <ion-button matTooltip="Añadir de albarán de agencia" fill="clear" class="button-item" (click)="searchDeliveryNote()">
+          <ion-icon name="image" slot="end"></ion-icon>
+          albarán agencia
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <mat-divider></mat-divider>
+
+    <ion-row>
+      <ion-col size="6" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked">ID</ion-label>
+          <ion-input disabled>{{return.id}}</ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked">Unidades</ion-label>
+          <ion-input disabled>{{return.unitsPrepared+' / '+return.unitsSelected}}</ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked">Tipo</ion-label>
+          <ion-input disabled>{{return.type.name}}</ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked">Almacén</ion-label>
+          <ion-input disabled>{{return.warehouse.name}}</ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked">Proveedor</ion-label>
+          <ion-input disabled>{{return.provider.name}}</ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked">Marcas</ion-label>
+          <ion-input disabled>{{getBrandNameList(return.brands)}}</ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked">Correo de contacto</ion-label>
+          <ion-input disabled>{{return.email}}</ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6" class="disabled-col">
+        <ion-item class="item-date">
+          <ion-label position="stacked" color="medium">Devolver antes del</ion-label>
+          <ion-input disabled>{{return.dateReturnBefore ? formatDate(return.dateReturnBefore) : 'Seleccione una fecha'}}</ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked">Estado</ion-label>
+          <ion-input disabled>{{getStatusName(return.status)}}</ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6" class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked">Usuario</ion-label>
+          <ion-input disabled>{{return.user.name}}</ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="return.observations && return.observations != ''">
+      <ion-col class="disabled-col">
+        <ion-item>
+          <ion-label position="stacked">Observaciones</ion-label>
+          <ion-textarea disabled>{{return.observations}}</ion-textarea>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-item *ngIf="archiveList" (click)="showArchiveList()" lines="none">
+          <ion-label class="label-text">Archivos</ion-label>
+          <ion-icon slot="end" *ngIf="displayArchiveList" name="arrow-down"></ion-icon>
+          <ion-icon slot="end" *ngIf="!displayArchiveList" name="arrow-up"></ion-icon>
+        </ion-item>
+        <ion-list *ngIf="archiveList && displayArchiveList">
+          <ion-item  lines="none" *ngFor="let item of archives; let i = index">
+            <ion-img (click)="onOpenReviewModal(item)"  slot="start" [src]="baseUrlPhoto + item.pathIcon"></ion-img>
+            <ion-button slot="end"(click)="deleteImage(item, i, archives)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-item *ngIf="delivery_noteList" (click)="showDeliveryNoteList()" lines="none">
+          <ion-label class="label-text">Albaranes de agencia</ion-label>
+          <ion-icon slot="end" *ngIf="displayDeliveryNoteList" name="arrow-down"></ion-icon>
+          <ion-icon slot="end" *ngIf="!displayDeliveryNoteList" name="arrow-up"></ion-icon>
+        </ion-item>
+        <ion-list *ngIf="delivery_noteList && displayDeliveryNoteList">
+          <ion-item  lines="none" *ngFor="let item of delivery_notes; let i = index">
+            <ion-img (click)="onOpenReviewModal(item)"  slot="start" [src]="baseUrlPhoto + item.pathIcon"></ion-img>
+            <ion-button slot="end"(click)="deleteImage(item, i, delivery_notes)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" class="col-delivery-note">
+        <ion-button fill="clear" class="button-item" (click)="searchArchive()">
+          <ion-icon name="attach" slot="end"></ion-icon>
+          archivos/imágenes
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" class="col-delivery-note">
+        <ion-button (click)="takePhoto()"  fill="clear" class="button-item">
+          <ion-icon name="camera" slot="end"></ion-icon>
+          foto
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-row>
+      <ion-col size="6" class="center-contents">
+        <ion-button class="btn-cancel" fill="clear" (click)="router.navigateByUrl('/return-pending-list')">Cancelar</ion-button>
+      </ion-col>
+      <ion-col size="6" class="center-contents">
+        <ion-button class="btn-save" color="primary" [disabled]="!allFieldsFilled()" (click)="save()">Guardar</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

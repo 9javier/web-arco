@@ -28,11 +28,11 @@ const routes: Routes = [
     data: {
       name: 'Calendario'
     }
-  },  {
+  }, {
     path: 'calendar-sga',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/calendar-sga//calendar-sga.module#CalendarSgaModule',
-    data:{
+    data: {
       name: 'Calendario SGA'
     }
   },
@@ -78,14 +78,14 @@ const routes: Routes = [
       name: 'Registro horario'
     }
   },
-/*  {
-    path: 'user-time',
-    canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
-    data: {
-      name: 'Registro horario'
-    }
-  },*/
+  /*  {
+      path: 'user-time',
+      canActivate: [AuthGuard],
+      loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
+      data: {
+        name: 'Registro horario'
+      }
+    },*/
   {
     path: 'welcome',
     canActivate: [AuthGuard],
@@ -196,7 +196,7 @@ const routes: Routes = [
     data: {
       name: 'Tipos de defectos'
     }
-  },{
+  }, {
     path: 'defective-zones',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/defective-zones/defective-zones.module#DefectiveZonesModule',
@@ -242,6 +242,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/returns-list/returns-list.module#ReturnsListModule',
     data: {
       name: 'Lista'
+    }
+  },
+  {
+    path: 'returns-historic',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/returns-historic/returns-historic.module#ReturnsHistoricModule',
+    data: {
+      name: 'Listado de Histórico de Devoluciones'
     }
   },
   {
@@ -470,88 +478,88 @@ const routes: Routes = [
     }
   },
   {
-    path:'regions',
-    canActivate:[AuthGuard],
+    path: 'regions',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/regions/regions.module#RegionsModule',
     data: {
       name: 'Regiones'
     }
   },
   {
-    path:'receptions-avelon',
-    canActivate:[AuthGuard],
+    path: 'receptions-avelon',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/receptions-avelon/receptions-avelon.module#ReceptionsAvelonModule',
     data: {
       name: 'Recepciones'
     }
   },
   {
-    path:'reception-final',
-    canActivate:[AuthGuard],
+    path: 'reception-final',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/reception-final/reception-final.module#ReceptionFinalModule',
     data: {
       name: 'ReceptionFinal'
     }
   },
   {
-    path:'predistributions',
-    canActivate:[AuthGuard],
+    path: 'predistributions',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/predistributions/predistributions.module#PredistributionsModule',
     data: {
       name: 'Predistribuciones'
     }
   },
   {
-    path:'receptions',
-    canActivate:[AuthGuard],
+    path: 'receptions',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/receptionss-avelon/receptionss-avelon.module#ReceptionssAvelonModule',
     data: {
       name: 'Recepciones'
     }
   },
   {
-    path:'pr-ta-se-av',
-    canActivate:[AuthGuard],
+    path: 'pr-ta-se-av',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/products-avelon/products-avelon.module#ProductsAvelonModule',
     data: {
       name: 'ProductsAvelon'
     }
   },
   {
-    path:'seasons-enabled',
-    canActivate:[AuthGuard],
+    path: 'seasons-enabled',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/seasons-enabled/seasons-enabled.module#SeasonsEnabledModule',
     data: {
       name: 'SeasonsEnabled'
     }
   },
   {
-    path:'drop-files',
-    canActivate:[AuthGuard],
+    path: 'drop-files',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/drop-files/drop-files.module#DropFilesModule',
     data: {
       name: 'Drop-Files'
     }
   },
   {
-    path:'expedition-manual',
-    canActivate:[AuthGuard],
+    path: 'expedition-manual',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/expedition-manual/expedition-manual.module#ExpeditionManualModule',
     data: {
       name: 'Expedition-Manual'
     }
   },
   {
-    path:'expedition-collected',
-    canActivate:[AuthGuard],
+    path: 'expedition-collected',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/expedition-collected/expedition-collected.module#ExpeditionCollectedModule',
     data: {
       name: 'Expedition-Collected'
     }
   },
   {
-    path:'unlock-expeditions',
-    canActivate:[AuthGuard],
+    path: 'unlock-expeditions',
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/unlock-expeditions/unlock-expeditions.module#UnlockExpeditionsModule',
     data: {
       name: 'Desbloquear'
@@ -569,24 +577,31 @@ const routes: Routes = [
     path: 'transports',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/transports-expeditions/transports-expeditions.module#TransportsExpeditionsModule',
-    data:{
-      name:'Transportes de expediciones'
+    data: {
+      name: 'Transportes de expediciones'
     }
   },
   {
     path: 'expedition-inside',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/expeditions-inside/expedition-inside.module#ExpeditionInsideModule',
-    data:{
-      name:'Transportes de expediciones'
+    data: {
+      name: 'Transportes de expediciones'
     }
   },
   {
     path: 'package-history',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/package-history/package-history.module#PackageHistoryModule',
-    data:{
-      name:'Lista de historial de paquetes'
+    data: {
+      name: 'Lista de historial de paquetes'
+    }
+  }, {
+    path: 'marketplaces',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/marketplaces/marketplaces.module#MarketplacesModule',
+    data: {
+      name: 'Marketplaces'
     }
   },
 ];

@@ -5,11 +5,11 @@
               <ion-icon name="close" class="toogleArrow"></ion-icon>
           </ion-button>
       </ion-buttons>
-      <ion-title>Subir Fotos</ion-title>
+      <ion-title>{{type=='archive' ? 'Subir Archivos' : 'Subir Fotos'}}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content style="height:100%;">
-  <ngx-file-drop  dropZoneLabel="Drop files here" [showBrowseBtn]="true"   (onFileDrop)="dropped($event)" 
+  <ngx-file-drop  dropZoneLabel="Drop files here" [showBrowseBtn]="true"   (onFileDrop)="dropped($event)"
   (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
       <ng-template  ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
           <ion-content style="width: 50%; height: 50%;"  (click)="openFileSelector()">
@@ -19,7 +19,7 @@
                 <ion-col size="4">Arrastre sus archivos aqui</ion-col>
                 <ion-col size="4"></ion-col>
               </ion-row>
-            </ion-grid> 
+            </ion-grid>
           </ion-content>
       </ng-template>
   </ngx-file-drop>

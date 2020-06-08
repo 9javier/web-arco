@@ -177,6 +177,7 @@ export class OrderPreparationComponent implements OnInit {
   async getTransportStatus(body){
     let This = this;
     await this.labelsService.getTransportStatus(body).subscribe(result =>{
+     
       let expedition = result;
       this.dataSource=[result];
       this.numPackages = expedition.expedition.packages.length;

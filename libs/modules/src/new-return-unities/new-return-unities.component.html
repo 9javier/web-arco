@@ -1,0 +1,17 @@
+<ion-content>
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoadingData"></mat-progress-bar>
+
+  <return-unities-products *ngIf="!isDefective" (changeItemsSelected)="changeInItemsSelected($event)"></return-unities-products>
+  <return-unities-defective-products *ngIf="isDefective" (changeItemsSelected)="changeInItemsSelected($event)"></return-unities-defective-products>
+
+  <mat-paginator></mat-paginator>
+</ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+  <ion-fab-button matTooltip="Guardar selección de productos" matTooltipClass="tooltip" *ngIf="itemsSelected" (click)="assignSelectedItems()">
+    <ion-icon name="save"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-button matTooltip="Recargar datos" matTooltipClass="tooltip" (click)="reload()" [disabled]="isLoadingData">
+    <ion-icon name="refresh"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
