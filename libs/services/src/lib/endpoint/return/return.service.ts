@@ -35,6 +35,7 @@ export class ReturnService {
   private postAssignDefectiveProductsUrl = environment.apiBase + '/returns/products/defective/assign';
   private postAssignProductsUrl = environment.apiBase + '/returns/products/assign';
   private postSearchAndAssignProductsUrl = environment.apiBase + '/returns/products/search/assign/';
+  private postCheckProductsToAssignReturnUrl = environment.apiBase + '/returns/products/availability/check';
 
   constructor(
     private requestsProvider: RequestsProvider,
@@ -113,5 +114,9 @@ export class ReturnService {
 
   public postSearchAndAssignProducts(requestId: number): Observable<any> {
     return this.http.post(this.postSearchAndAssignProductsUrl + requestId, {});
+  }
+
+  public postCheckProductsToAssignReturn(params: ReturnModel.CheckProductsToAssignReturn): Observable<ReturnModel.CheckProductsToAssignReturnResponse> {
+    return this.http.post<ReturnModel.CheckProductsToAssignReturnResponse>(this.postCheckProductsToAssignReturnUrl, params);
   }
 }

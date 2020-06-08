@@ -34,6 +34,7 @@ import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/
 import {TimesToastType} from "../../../services/src/models/timesToastType";
 import {ProductsComponent} from "../new-return-unities/products/products.component";
 import {DefectiveProductsComponent} from "../new-return-unities/defective-products/defective-products.component";
+import {PositionsToast} from "../../../services/src/models/positionsToast.type";
 
 @Component({
   selector: 'suite-new-return',
@@ -498,7 +499,24 @@ export class NewReturnComponent implements OnInit {
     const providerId = this.return.provider && this.return.provider.id;
     const brandIds = this.return.brands.map(b => b.id).join(',');
 
-    this.router.navigate(['new-return', 'unities', this.return.id], { queryParams: {defective: isDefective, warehouse: warehouseId, provider: providerId, brands: brandIds} });
+    this.returnService
+      .postCheckProductsToAssignReturn({
+        returnId: this.return.id,
+        provider: providerId,
+        warehouse: warehouseId,
+        brands: this.return.brands.map(b => b.id),
+        defective: isDefective
+      })
+      .subscribe((res) => {
+        if (res.code == 200 && res.data.available_products) {
+          this.router.navigate(['new-return', 'unities', this.return.id], { queryParams: {defective: isDefective, warehouse: warehouseId, provider: providerId, brands: brandIds} });
+        } else {
+          this.intermediary.presentWarning('No hay unidades disponibles para asignar a la devolución.', null);
+        }
+      }, (e) => {
+        this.intermediary.presentToastError('Ha ocurrido un error al intentar comprobar si hay unidades disponibles que asignar.', PositionsToast.TOP, TimesToastType.DURATION_ERROR_TOAST);
+      });
+
   }
 
   async searchArchive() {
