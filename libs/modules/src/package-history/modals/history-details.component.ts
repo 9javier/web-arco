@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { IntermediaryService, TypesService } from '@suite/services';
 import { ProductsService, InventoryModel, PackageHistoryService } from '@suite/services';
 import { AlertController, LoadingController, ModalController, NavParams } from "@ionic/angular";
@@ -6,6 +6,7 @@ import { Observable } from "rxjs";
 import * as moment from 'moment';
 import { HttpResponse } from "@angular/common/http";
 import { InternOrderPackageStatus } from '../enums/status.enum';
+import {MatAccordion} from '@angular/material/expansion';
 @Component({
   selector: 'suite-history-details',
   templateUrl: './history-details.component.html',
@@ -14,7 +15,13 @@ import { InternOrderPackageStatus } from '../enums/status.enum';
 export class HistoryDetailsComponent implements OnInit {
   
   order;
+  package;
   orderHistorical;
+  orderHistoricalLast;
+  list;
+  delivery;
+  section = 'information';
+ @ViewChild(MatAccordion) accordion: MatAccordion;
 
   constructor(
     private typeService: TypesService,
@@ -26,10 +33,14 @@ export class HistoryDetailsComponent implements OnInit {
     private intermediaryService: IntermediaryService,
   ) {
     this.order = this.navParams.get("order");
+    this.package = this.navParams.get("package");
+    this.delivery = this.navParams.get("delivery");
   }
 
   ngOnInit() {
     this.getProductHistorical();
+    this.getProductHistoricalLast();
+    this.getList();
   }
 
   /**
@@ -38,6 +49,18 @@ export class HistoryDetailsComponent implements OnInit {
   getProductHistorical(): void {
     this.packageService.getHistorical(this.order).subscribe(historical => {
       this.orderHistorical = historical;
+    });
+  }
+
+  getProductHistoricalLast(): void {
+    this.packageService.getHistoricalLast(this.package).subscribe(historical => {
+      this.orderHistoricalLast = historical;
+    });
+  }
+
+  getList(): void {
+    this.packageService.getList(this.order).subscribe(historical => {
+      this.list = historical;
     });
   }
   

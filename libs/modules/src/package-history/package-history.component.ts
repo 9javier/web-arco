@@ -15,7 +15,7 @@ import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 import {TableEmitter } from './../../../services/src/models/tableEmitterType';
 import {HistoryDetailsComponent}  from './modals/history-details.component';
-
+import { InternOrderPackageStatus } from './enums/status.enum';
 @Component({
   selector: 'package-history',
   templateUrl: './package-history.component.html',
@@ -35,21 +35,21 @@ export class PackageHistoryComponent implements OnInit {
       name: 'delivery',
       title:'Pedido',
       field: ['order', 'deliveryRequestExternalId'],
-      filters:false,
+      filters:true,
       type:'text'
     },
     {
       name: 'origin',
       title:'Origen',
-      field: ['order', 'originShop', 'name'],
-      filters:false,
+      field: ['order', 'originShop', 'nameReference'],
+      filters:true,
       type:'text'
     },
     {
       name: 'destiny',
       title:'Destino',
-      field: ['order', 'destinyShop', 'name'],
-      filters:false,
+      field: ['order', 'destinyShop', 'nameReference'],
+      filters:true,
       type:'text'
     },
     {
@@ -60,17 +60,25 @@ export class PackageHistoryComponent implements OnInit {
       type:'text'
     },
     {
+      name: 'status',
+      title:'Estado',
+      field: ['order', 'package', 'status'],
+      filters:true,
+      type:'text'
+    },
+    {
       name: 'date',
       title:'Fecha',
       field: ['order', 'date'],
       filters:true,
-      type:'date'
+      type:'date',
+      format:'dd/MM/yyyy'
     },
   ];
 
   
   
-  displayedColumns: string[] = ['package', 'delivery', 'origin', 'destiny', 'cant' ,'date'];
+  displayedColumns: string[] = ['package', 'delivery', 'origin', 'destiny', 'cant', 'status' ,'date'];
   dataSource: MatTableDataSource<any>;
   pagerValues = [10, 20, 100];
 
@@ -86,6 +94,10 @@ form: FormGroup = this.formBuilder.group({
   package:[],
   order:[],
   date:[],
+  delivery:[],
+  origin:[],
+  destiny:[],
+  status:[],
   pagination: this.formBuilder.group({
     page: 1,
     limit: this.pagerValues[0]
@@ -114,7 +126,16 @@ length: any;
   async getList(form?: FormGroup) {
     this.intermediaryService.presentLoading("Cargando Bultos...");
     await this.packageHistoryService.getOpPackageHistory(form.value).subscribe((resp: any) => {
-      console.log("Resultado",resp);
+      // console.log("Resultado",resp);
+      resp.results.map(data => {
+        data.order.destinyShop.nameReference = data.order.destinyShop.reference + '-' + data.order.destinyShop.name;
+        data.order.originShop.nameReference = data.order.originShop.reference + '-' + data.order.originShop.name;
+
+        data.order.package.status = this.getStatus(data.order.package.status);
+      });
+
+
+
       this.intermediaryService.dismissLoading()
       this.dataSource = new MatTableDataSource<any>(resp);
       console.log(resp.pagination)
@@ -154,6 +175,10 @@ length: any;
       package:[],
       order:[],
       date:[],
+      delivery:[],
+      origin:[],
+      destiny:[],
+      status:[],
       pagination: this.formBuilder.group({
         page: 1,
         limit: this.pagerValues[0]
@@ -172,6 +197,8 @@ length: any;
       component: HistoryDetailsComponent,
       componentProps: {
         order: data.order.id,
+        package:data.order.package.id,
+        delivery:data.order.deliveryRequestExternalId
       }
     }));
 
@@ -268,6 +295,39 @@ length: any;
       case TableEmitter.BtnDelete:
         let select = e.value;
         this.delete(select);
+        break;
+    }
+
+  }
+
+  getStatus(status){
+    switch (status) {
+      case InternOrderPackageStatus.PENDING_COLLECTED:
+        return 'Pendiente recogida';
+        break;
+      case InternOrderPackageStatus.COLLECTED:
+        return 'Recogido';
+        break;
+      case InternOrderPackageStatus.SORTER_IN:
+        return 'Dentro del sorter';
+        break;
+      case InternOrderPackageStatus.SORTER_OUT:
+        return 'Salio del sorter';
+        break;
+      case InternOrderPackageStatus.JAIL_IN:
+        return 'Dentro de la jaula';
+        break;
+      case InternOrderPackageStatus.PENDING_COLLECTED:
+        return 'Pendiente recogida';
+        break;
+      case InternOrderPackageStatus.SORTER_RACK_IN :
+        return 'Ingreso Estanteria anexa';
+        break;
+      case InternOrderPackageStatus.RECEIVED:
+        return 'Recepcionado';
+        break;
+    
+      default:
         break;
     }
 

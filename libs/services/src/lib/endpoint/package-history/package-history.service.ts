@@ -19,6 +19,8 @@ export class PackageHistoryService {
   private putUpdateTrasnportUrl: string = environment.apiBase + "/opl-expedition/expedition/transport/";
   private postGetFiltersOpTransportsUrl: string = environment.apiBase + "/opl-expedition/expedition/transport/filters";
   private getHistoryDeatilsPackages: string = environment.apiBase +  "/opl-expedition/order-package-history/all";
+  private getHistoryDeatilsPackagesLast: string = environment.apiBase +  "/opl-expedition/order-package/history/last";
+  private getHistoryDeatilsPackagesProduct: string = environment.apiBase +  "/opl-expedition/order-package/history/products";
 
   constructor(
     private http: HttpClient,
@@ -59,6 +61,24 @@ export class PackageHistoryService {
       orderId:id
     }
     return this.http.post<HttpRequestModel.Response>(this.getHistoryDeatilsPackages, body).pipe(
+      map(resp => resp.data)
+    )
+  }
+
+  getHistoricalLast(id){
+    const body = {
+      opPackageId:id
+    }
+    return this.http.post<HttpRequestModel.Response>(this.getHistoryDeatilsPackagesLast, body).pipe(
+      map(resp => resp.data)
+    )
+  }
+
+  getList(id){
+    const body = {
+      orderId:id
+    }
+    return this.http.post<HttpRequestModel.Response>(this.getHistoryDeatilsPackagesProduct, body).pipe(
       map(resp => resp.data)
     )
   }
