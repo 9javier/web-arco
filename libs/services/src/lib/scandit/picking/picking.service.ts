@@ -164,6 +164,7 @@ export class PickingScanditService {
                 this.hideTextMessage(2000);
               }
             } else if (scanMode == 'carriers') {
+              ScanditMatrixSimple.hideLoadingDialog();
               if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
                 ScanditMatrixSimple.showLoadingDialog('Cargando embalaje...');
                 ScanditMatrixSimple.setTimeout("scannedPacking", 0.5 * 1000, JSON.stringify([codeScanned]));
@@ -232,7 +233,7 @@ export class PickingScanditService {
             }
           } else {
             if (response.action == 'matrix_simple') {
-              ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
+              if(scanMode != 'carriers') ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
               ScanditMatrixSimple.setTimeout("loadProducts", 1 * 1000, JSON.stringify([listProductsToStorePickings, listProductsProcessed, filtersPicking, listRejectionReasons]));
               if (listProductsToStorePickings.length < 1) {
                 ScanditMatrixSimple.setText(
@@ -300,7 +301,7 @@ export class PickingScanditService {
               const typesFiltered = response.filters.type.map(filter => {
                 return filter.id;
               });
-              ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
+              if(scanMode != 'carriers') ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
               if(typesFiltered.length == 0 || (typesFiltered.length > 0 && typesFiltered.includes(1))){
                 this.pickingStoreService
                   .postLineRequestFiltered(filtersToGetProducts)
