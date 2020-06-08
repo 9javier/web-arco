@@ -271,7 +271,7 @@ export class ReturnTrackingListComponent implements OnInit {
   }
 
   getBrandNameList(brands: Brand[]): string{
-    return brands.map(brand => brand.name).join('/');
+    return brands.map(brand => brand.name.trim()).join(' // ');
   }
 
   reset(){
