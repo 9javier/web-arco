@@ -208,4 +208,8 @@ export class ProductsComponent implements OnInit {
     this.mSortRest = true;
     this.mSort.sort({id: '', start: 'asc', disableClear: false});
   }
+
+  public changeUnities() {
+    this.changeItemsSelected.next(true);
+  }
 }

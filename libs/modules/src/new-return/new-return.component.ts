@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ReturnService} from "../../../services/src/lib/endpoint/return/return.service";
 import {ReturnModel} from "../../../services/src/models/endpoints/Return";
 import Return = ReturnModel.Return;
@@ -34,6 +34,10 @@ import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/
 import JsPdf from "jspdf";
 import 'jspdf-autotable';
 import {TimesToastType} from "../../../services/src/models/timesToastType";
+import {ProductsComponent} from "../new-return-unities/products/products.component";
+import {DefectiveProductsComponent} from "../new-return-unities/defective-products/defective-products.component";
+import {PositionsToast} from "../../../services/src/models/positionsToast.type";
+import {AvailableItemsGroupedComponent} from "./modals/avaiable-items-grouped/available-items-grouped.component";
 
 @Component({
   selector: 'suite-new-return',
@@ -41,6 +45,7 @@ import {TimesToastType} from "../../../services/src/models/timesToastType";
   styleUrls: ['./new-return.component.scss']
 })
 export class NewReturnComponent implements OnInit {
+
   private baseUrlPhoto = environment.apiBasePhoto;
   return: Return;
   types: ReturnType[];
@@ -76,6 +81,11 @@ export class NewReturnComponent implements OnInit {
     deliveryNote: false
   };
 
+  productsByBrand;
+
+  public availableUnities: ReturnModel.AvailableProductsGrouped[]|ReturnModel.AssignedProductsGrouped[] = null;
+  public assignedItems: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     public router: Router,
@@ -102,6 +112,7 @@ export class NewReturnComponent implements OnInit {
     if(this.route.snapshot.paramMap.get('isHistoric')){
       this.isHistoric = this.route.snapshot.paramMap.get('isHistoric');
     }
+
     if (returnId) {
       this.load(returnId);
       this.archiveList = true;
@@ -317,9 +328,28 @@ export class NewReturnComponent implements OnInit {
           this.displayDeliveryNoteList = true;
         }
 
-        this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
+        switch (this.return.status) {
+          case this.ReturnStatus.IN_PROCESS:
+          case this.ReturnStatus.PREPARED:
+          case this.ReturnStatus.PENDING_PICKUP:
+          case this.ReturnStatus.PICKED_UP:
+          case this.ReturnStatus.BILLED:
+            this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id > this.return.status && r.id != this.ReturnStatus.UNKNOWN);
+            break;
+          default:
+            this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
+        }
 
         this.initForm();
+
+        this.returnService
+          .getGetAssignedProductsGrouped(this.return.id)
+          .subscribe(res => {
+            if (res.code == 200 && res.data.items && res.data.items.length > 0) {
+              this.availableUnities = res.data.items;
+              this.assignedItems = true;
+            }
+          });
       } else {
         console.error(response);
       }
@@ -457,9 +487,11 @@ export class NewReturnComponent implements OnInit {
         switch (type) {
           case 1:
             this.return.type = this.types.find(v => v.id == result.data);
+            this.preloadOfAvailabilities();
             break;
           case 2:
             this.return.warehouse = this.warehouses.find(v => v.id == result.data);
+            this.preloadOfAvailabilities();
             break;
           case 3:
             this.return.provider = this.providers.find(v => v.id == result.data);
@@ -480,7 +512,24 @@ export class NewReturnComponent implements OnInit {
     const providerId = this.return.provider && this.return.provider.id;
     const brandIds = this.return.brands.map(b => b.id).join(',');
 
-    this.router.navigate(['new-return', 'unities', this.return.id], { queryParams: {defective: isDefective, warehouse: warehouseId, provider: providerId, brands: brandIds} });
+    this.returnService
+      .postCheckProductsToAssignReturn({
+        returnId: this.return.id,
+        provider: providerId,
+        warehouse: warehouseId,
+        brands: this.return.brands.map(b => b.id),
+        defective: isDefective
+      })
+      .subscribe((res) => {
+        if (res.code == 200 && res.data.available_products) {
+          this.router.navigate(['new-return', 'unities', this.return.id], { queryParams: {defective: isDefective, warehouse: warehouseId, provider: providerId, brands: brandIds} });
+        } else {
+          this.intermediary.presentWarning('No hay unidades disponibles para asignar a la devolución.', null);
+        }
+      }, (e) => {
+        this.intermediary.presentToastError('Ha ocurrido un error al intentar comprobar si hay unidades disponibles que asignar.', PositionsToast.TOP, TimesToastType.DURATION_ERROR_TOAST);
+      });
+
   }
 
   async searchArchive() {
@@ -516,6 +565,36 @@ export class NewReturnComponent implements OnInit {
 
   public getPackingNames(packingList: ReturnModel.ReturnPacking[]) {
     return packingList.map(p => p.packing.reference).join(', ');
+  }
+
+  private preloadOfAvailabilities() {
+    if (this.return && !this.return.id) {
+      if (this.return.type && this.return.warehouse) {
+        this.returnService
+          .postGetAvailableProductsGrouped({
+            warehouse: this.return.warehouse.id,
+            defective: this.return.type.defective
+          })
+          .subscribe(res => {
+            if (res.code == 200 && res.data.available_products && res.data.available_products.length > 0) {
+              this.availableUnities = res.data.available_products;
+            } else {
+              this.availableUnities = null;
+            }
+          }, error => this.availableUnities = null);
+      } else {
+        this.availableUnities = null;
+      }
+    }
+  }
+
+  public async showAvailableUnities() {
+    const modal = await this.modalController.create({
+      component: AvailableItemsGroupedComponent,
+      componentProps: {listUnitiesGrouped: this.availableUnities, assigned: this.assignedItems}
+    });
+
+    await modal.present();
   }
 
   async deliveryNote(){
@@ -719,5 +798,4 @@ export class NewReturnComponent implements OnInit {
     }
     return {width: width*ratio, height: height*ratio};
   }
-
 }

@@ -256,7 +256,7 @@ export class NewReturnUnitiesComponent implements OnInit {
         .subscribe((res) => {
           if (res.code == 201) {
             this.intermediaryService.presentToastSuccess('Asignada la cantidad de artículos para devolver.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
-            this.router.navigateByUrl('/return-tracking-list');
+            this.backToPreviousPage();
           } else {
             this.intermediaryService.presentToastError('Ha ocurrido un error al asignar los artículos para devolver.', TimesToastType.DURATION_ERROR_TOAST);
           }
