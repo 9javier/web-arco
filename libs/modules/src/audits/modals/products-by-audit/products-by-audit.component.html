@@ -5,7 +5,7 @@
         <ion-icon name="close" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Productos escaneados de {{ data.packing.reference }}</ion-title>
+    <ion-title>Productos|Paquetes escaneados de {{ data.packing.reference }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -17,15 +17,15 @@
 
     <div>
       <table mat-table [dataSource]="dataSource">
-
+        
         <ng-container matColumnDef="name">
           <th class="title-column" mat-header-cell *matHeaderCellDef> Referencia </th>
-          <td mat-cell *matCellDef="let element"> {{element.product.model.reference}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.product ? element.product.model.reference : element.package.uniqueCode}} </td>
         </ng-container>
 
         <ng-container matColumnDef="reference">
           <th class="title-column" mat-header-cell *matHeaderCellDef> Código </th>
-          <td mat-cell *matCellDef="let element"> {{element.product.reference}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.product ? element.product.reference :element.package.order?.deliveryRequestExternalId}} </td>
         </ng-container>
 
         <ng-container matColumnDef="status">

@@ -630,8 +630,16 @@ export class MenuComponent implements OnInit {
           url: '/expedition-inside',
           icon: 'folder'
         },
+        {
+          title: 'Bultos',
+          id: 'package-history',
+          url: '/package-history',
+          icon: 'archive'
+        },
+
       ]
     },
+   
   ];
 
   alPages: MenuItemList = [
@@ -696,6 +704,13 @@ export class MenuComponent implements OnInit {
           url: '/print/product/relabel',
           icon: 'barcode',
           tooltip: 'Imprimir nuevas etiquetas de productos introduciendo el código manualmente'
+        },
+        {
+          title: 'Pedidos Recibidos',
+          id: 'package-received',
+          url: '/package-received',
+          icon: 'archive',
+          tooltip: 'Lista de bultos recibidos'
         }
       ]
     },
@@ -726,7 +741,7 @@ export class MenuComponent implements OnInit {
           icon: 'barcode',
           tooltip: 'Órdenes no procesadas'
         },
-
+        
       ]
     },
     {
@@ -1321,6 +1336,10 @@ export class MenuComponent implements OnInit {
           console.error('Error to try check if exists new tariffs', error);
         })
     }
+  }
+
+  checkIfChildrenHasNewTariffs(element): boolean {
+    return !!element.children.find(c => c.notification)
   }
 
   async getPickingTasksStoresAmount(){

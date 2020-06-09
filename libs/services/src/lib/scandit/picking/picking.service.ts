@@ -171,7 +171,7 @@ export class PickingScanditService {
               ScanditMatrixSimple.hideLoadingDialog();
               if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
                 ScanditMatrixSimple.showLoadingDialog('Cargando embalaje...');
-                ScanditMatrixSimple.setTimeout("scannedPacking", 0.5 * 1000, JSON.stringify([codeScanned]));
+                ScanditMatrixSimple.setTimeout("scannedPacking", 1000, JSON.stringify([codeScanned]));
               } else {
                 ScanditMatrixSimple.setText(
                   `Escanee un embalaje válido`,
