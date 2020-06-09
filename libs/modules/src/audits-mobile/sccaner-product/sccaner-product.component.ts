@@ -55,7 +55,7 @@ export class SccanerProductComponent implements OnInit {
   }
 
   userTyping(codeScanned: string) {
-    if (this.itemReferencesProvider.checkCodeValue(codeScanned) === this.itemReferencesProvider.codeValue.PRODUCT) {
+    if (this.itemReferencesProvider.checkCodeValue(codeScanned) === this.itemReferencesProvider.codeValue.PRODUCT || this.itemReferencesProvider.checkSpecificCodeValue(codeScanned,this.itemReferencesProvider.codeValue.PACKAGE)) {
       this.scannerManual.setValue(null);
       this.addProduct(codeScanned, false);
     } else {

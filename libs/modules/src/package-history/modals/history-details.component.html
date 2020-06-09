@@ -1,0 +1,160 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Pedido: {{ delivery }} <span class="ion-float-right">{{orderHistoricalLast.order.package.uniqueCode}}</span></ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-segment [(ngModel)]="section">
+        <ion-segment-button value="information">
+            <ion-label>Información</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="historical">
+            <ion-label>Histórico</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="list">
+            <ion-label>Bultos del pedido</ion-label>
+        </ion-segment-button>
+    </ion-segment>
+    <ion-list>
+			<div *ngIf="section === 'information'">
+				<ion-item>
+					<div>
+              <p>
+                Fecha pedido: {{ formattedDate(orderHistoricalLast.order.createdAt)}}
+              </p>
+							<p>
+									Origen: {{ orderHistoricalLast.order.originShop.reference }}-{{ orderHistoricalLast.order.originShop.name }}
+							</p>
+							<p>
+									Destino: {{ orderHistoricalLast.order.destinyShop.reference}}-{{ orderHistoricalLast.order.destinyShop.name}}
+							</p>
+							<p>
+									Estado Bulto: {{ getStatus(orderHistoricalLast.order.package.status)}}
+							</p>
+              <p>
+                Fecha estado: {{ formattedDateTime(orderHistoricalLast.order.package.udpatedAt)}}
+              </p>
+					</div>
+				</ion-item>
+				<!-- <mat-accordion class="example-headers-align" multi *ngFor="let product of orderHistoricalLast.order.package.products"> -->
+					<!-- <mat-expansion-panel>
+							<mat-expansion-panel-header >
+								<mat-panel-description >
+									<ion-label>
+										Modelo: {{ product.model.name }}
+									</ion-label>
+									<ion-label>
+										Talla: {{ product.size.name }}
+									</ion-label>
+								</mat-panel-description>
+							</mat-expansion-panel-header>
+							<div>
+								<ion-grid>
+									<ion-row>
+										<ion-col>
+											Marca: {{ product.model.brand.name }}
+										</ion-col>
+										<ion-col>
+											Color: {{ product.model.color.name }}
+										</ion-col>
+									</ion-row>
+								</ion-grid>
+							</div>
+					</mat-expansion-panel>
+				</mat-accordion>	 -->
+				<!-- <mat-form-field>
+					<ion-item>
+						<div class="items-center">
+							Productos
+						</div>
+					</ion-item>
+				</mat-form-field> -->
+				<mat-card class="modal-title-item">
+					Productos en el Bulto
+				</mat-card>
+				<ion-item *ngFor="let product of orderHistoricalLast.order.package.products">
+					<ion-grid>
+						<ion-row>
+							<ion-col>
+								Modelo: {{ product.model.name }}
+							</ion-col>
+							<ion-col>
+								Talla: {{ product.size.name }}
+							</ion-col>
+						</ion-row>
+						<ion-row>
+							<ion-col>
+								Marca: {{ product.model.brand.name }}
+							</ion-col>
+							<ion-col>
+								Color: {{ product.model.color.name }}
+							</ion-col>
+						</ion-row>
+					</ion-grid>
+				</ion-item>
+		  </div>
+			<div *ngIf="section === 'historical' ">
+				<ion-item *ngFor="let historical of orderHistorical; let i = index">
+						<div>
+								<p>
+										Estado: {{ getStatus(historical.status)}}
+								</p>
+								<p>
+										Fecha: {{formattedDateTime(historical.createdAt)}}
+								</p>
+                <p>
+                  Almacén: {{ historical.shop.reference}} - {{historical.shop.name }}
+                </p>
+						</div>
+					</ion-item>
+			</div>
+			<div *ngIf="section === 'list' ">
+				<mat-card class="modal-title-item">
+          Bultos en el pedido
+				</mat-card>
+				<ion-item *ngFor="let data of list.packages; let i = index">
+						<ion-grid>
+							<ion-row>
+								<ion-col size="6">
+									Bulto: {{ data.uniqueCode}}
+								</ion-col>
+								<ion-col size="6">
+									Estado: {{ getStatus(data.status)}}
+								</ion-col>
+							</ion-row>
+						</ion-grid>
+				</ion-item>
+				<hr width="200px">
+				<mat-card class="modal-title-item">
+					Productos en el Pedido
+				</mat-card>
+				<ion-item *ngFor="let data of list.products; let i = index">
+					<ion-grid>
+						<ion-row>
+							<ion-col>
+								Referencia: {{ data.product.reference}}
+							</ion-col>
+							<ion-col>
+								Modelo: {{ data.model.name }}
+							</ion-col>
+						</ion-row>
+						<ion-row>
+							<ion-col>
+								Color: {{ data.model.color.name }}
+							</ion-col>
+							<ion-col>
+								Talla: {{ data.size.name }}
+							</ion-col>
+						</ion-row>
+					</ion-grid>
+				</ion-item>
+			</div>
+    </ion-list>
+</ion-content>
+<ion-footer>
+</ion-footer>

@@ -1,16 +1,9 @@
 <ion-content padding="true">
       <div class="list-header-filters">
-        <ion-grid>
           <ion-row class="header">
             <ion-col [formGroup]="selectedForm" size="1" class="check-all">
               <div class="check-all">
                 <ion-checkbox formControlName="selector" (ionChange)="selectAll($event)"></ion-checkbox>
-              </div>
-            </ion-col>
-            <ion-col size="11" class="filters" (click)="openFiltersMobile()">
-              <div class="filters" [ngClass]="showFiltersMobileVersion ? 'filters-opened' : ''">
-                <p>Filtros</p>
-                <i class="material-icons">filter_list</i>
               </div>
             </ion-col>
           </ion-row>
@@ -86,7 +79,6 @@
               </ion-row>
             </ion-grid>
           </form>
-        </ion-grid>
       </div>
 
       <div class="list-items-mobile">

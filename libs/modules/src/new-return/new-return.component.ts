@@ -21,7 +21,7 @@ import ReturnType = ReturnTypeModel.ReturnType;
 import {ProviderModel} from "../../../services/src/models/endpoints/Provider";
 import Provider = ProviderModel.Provider;
 import User = UserModel.User;
-import {ModalController} from "@ionic/angular";
+import {AlertController, ModalController} from "@ionic/angular";
 import {SelectConditionComponent} from "./select-condition/select-condition.component";
 import {SupplierConditionModel} from "../../../services/src/models/endpoints/SupplierCondition";
 import SupplierCondition = SupplierConditionModel.SupplierCondition;
@@ -31,6 +31,8 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import {DropFilesService} from "../../../services/src/lib/endpoint/drop-files/drop-files.service";
 import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import JsPdf from "jspdf";
+import 'jspdf-autotable';
 import {TimesToastType} from "../../../services/src/models/timesToastType";
 import {ProductsComponent} from "../new-return-unities/products/products.component";
 import {DefectiveProductsComponent} from "../new-return-unities/defective-products/defective-products.component";
@@ -58,6 +60,7 @@ export class NewReturnComponent implements OnInit {
   displayArchiveList: boolean = false;
   displayDeliveryNoteList: boolean = false;
   isHistoric;
+  includePhotos: boolean;
 
   private listItemsSelected: any[] = [];
   private itemForList: string = null;
@@ -93,6 +96,7 @@ export class NewReturnComponent implements OnInit {
     private dropFilesService: DropFilesService,
     private uploadService: UploadFilesService,
     private fb: FormBuilder,
+    private alertController: AlertController,
     private dateTimeParserService: DateTimeParserService
   ) {}
 
@@ -143,6 +147,7 @@ export class NewReturnComponent implements OnInit {
         delivery_notes: [],
         products: []
       };
+
       this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
 
       this.archives = this.return.archives;
@@ -150,10 +155,10 @@ export class NewReturnComponent implements OnInit {
       this.displayArchiveList = false;
       this.displayDeliveryNoteList = false;
       this.initForm();
-    }
 
-    this.archiveList = true;
-    this.delivery_noteList = true;
+      this.archiveList = true;
+      this.delivery_noteList = true;
+    }
 
     this.dropFilesService.getImage().subscribe(resp => {
       if (resp) {
@@ -590,5 +595,207 @@ export class NewReturnComponent implements OnInit {
     });
 
     await modal.present();
+  }
+
+  async deliveryNote(){
+    const alert = await this.alertController.create({
+      header: 'Incluir Fotos',
+      message: '¿Desea incluir las fotos?',
+      buttons: [
+        {
+          text: 'Sí',
+          handler: () => {
+            this.includePhotos = true;
+            this.pureJsPdf();
+          }
+        }, {
+          text: 'No',
+          handler: () => {
+            this.includePhotos = false;
+            this.pureJsPdf();
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async pureJsPdf() {
+    let doc = new JsPdf();
+    let currentHeight: number = 20;
+    let currentWidth: number = 15;
+    let imageRows: boolean[] = [];
+
+    //Title
+    doc.setFontSize(20);
+    doc.text(`Albarán de Devolución - ${this.return.provider.name}`, currentWidth, currentHeight);
+    currentHeight += 10;
+    doc.setFontSize(18);
+    doc.text(`Fecha recogida: ${this.formatDate(this.return.datePickup)}`, currentWidth, currentHeight);
+    currentHeight += 10;
+
+    //Table
+    let head: string[][];
+    let body: string[][];
+    if (this.return.type.defective) {
+      head = [['Artículo', 'Talla', 'Unidades', 'Motivo Defecto']];
+      if (this.includePhotos) {
+        body = (() => {
+          let result: string[][] = [];
+          for (let product of this.return.products) {
+            const defects: string[] = [];
+            if (product.defect.defectTypeParent && product.defect.defectTypeParent.includeInDeliveryNote) {
+              defects.push(product.defect.defectTypeParent.name);
+            }
+            if (product.defect.defectTypeChild && product.defect.defectTypeChild.includeInDeliveryNote) {
+              defects.push(product.defect.defectTypeChild.name);
+            }
+            if (product.defect.defectZoneParent && product.defect.defectZoneParent.includeInDeliveryNote) {
+              defects.push(product.defect.defectZoneParent.name);
+            }
+            if (product.defect.defectZoneChild && product.defect.defectZoneChild.includeInDeliveryNote) {
+              defects.push(product.defect.defectZoneChild.name);
+            }
+            let data = [
+              product.model.reference,
+              product.size.name,
+              '1',
+              defects.join('/')
+            ];
+            result.push(data);
+            if (product.defect.photos.length > 0) {
+              result.push(['', '', '', '']);
+              result.push(['', '', '', '']);
+              result.push(['', '', '', '']);
+              imageRows.push(true);
+            } else {
+              imageRows.push(false);
+            }
+          }
+          return result;
+        })();
+      } else {
+        body = (() => {
+          let result: string[][] = [];
+          for (let product of this.return.products) {
+            const defects: string[] = [];
+            if (product.defect.defectTypeParent && product.defect.defectTypeParent.includeInDeliveryNote) {
+              defects.push(product.defect.defectTypeParent.name);
+            }
+            if (product.defect.defectTypeChild && product.defect.defectTypeChild.includeInDeliveryNote) {
+              defects.push(product.defect.defectTypeChild.name);
+            }
+            if (product.defect.defectZoneParent && product.defect.defectZoneParent.includeInDeliveryNote) {
+              defects.push(product.defect.defectZoneParent.name);
+            }
+            if (product.defect.defectZoneChild && product.defect.defectZoneChild.includeInDeliveryNote) {
+              defects.push(product.defect.defectZoneChild.name);
+            }
+            let data = [
+              product.model.reference,
+              product.size.name,
+              '1',
+              defects.join('/')
+            ];
+            result.push(data);
+            imageRows.push(false);
+          }
+          return result;
+        })();
+      }
+    } else {
+      head = [['Artículo', 'Talla', 'Unidades']];
+      body = (() => {
+        let result: string[][] = [];
+        const modelIds = this.return.products.map(prod => prod.model.id).filter((elem, index, self) => {
+          return index === self.indexOf(elem);
+        });
+        for (let modelId of modelIds) {
+          const sizeIds = this.return.products.filter(prod => prod.model.id == modelId).map(prod => prod.size.id).filter((elem, index, self) => {
+            return index === self.indexOf(elem);
+          });
+          for (let sizeId of sizeIds) {
+            const products = this.return.products.filter(prod => prod.model.id == modelId && prod.size.id == sizeId);
+            let data = [
+              products[0].model.reference,
+              products[0].size.name,
+              products.length.toString()
+            ];
+            result.push(data);
+            imageRows.push(false);
+          }
+        }
+        return result;
+      })();
+    }
+    doc.autoTable({startY: currentHeight, head: head, body: body, styles: {halign: 'center', fontSize: 15}});
+    currentHeight += 10;
+
+    //Table images
+    if (this.includePhotos) {
+      for (let row = 0; row < imageRows.length; row++) {
+        currentHeight += 10;
+        if (imageRows[row]) {
+          currentHeight -= 2;
+          let counter: number = 0;
+          for (let photo of this.return.products[row].defect.photos) {
+            if (counter == 3) {
+              break;
+            }
+            let img: any = await this.getMeta(this.baseUrlPhoto + photo.pathMedium);
+            let dimensions: { width: number, height: number } = NewReturnComponent.checkImageAndResize(img.naturalWidth, img.naturalHeight);
+            doc.addImage(img, "PNG", currentWidth + (61 * counter), currentHeight, dimensions.width, dimensions.height);
+            counter++;
+          }
+          currentHeight += 32;
+        }
+      }
+      currentHeight += 5;
+    } else {
+      currentHeight += (10 * body.length) + 5;
+    }
+
+    //Images
+    if (this.includePhotos) {
+      doc.setFontSize(16);
+      doc.text(`Fotos`, currentWidth, currentHeight);
+      currentHeight += 5;
+      let counter: number = 0;
+      for (let photo of this.return.archives) {
+        if (counter == 3) {
+          counter = 0;
+          currentHeight += 32;
+        }
+        let img: any = await this.getMeta(this.baseUrlPhoto + photo.pathMedium);
+        let dimensions: { width: number, height: number } = NewReturnComponent.checkImageAndResize(img.naturalWidth, img.naturalHeight);
+        doc.addImage(img, "PNG", currentWidth + (61 * counter), currentHeight, dimensions.width, dimensions.height);
+        counter++;
+      }
+    }
+
+    doc.save('albaran.pdf');
+  }
+
+  getMeta(url) {
+    return new Promise((resolve, reject) => {
+      let img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  static checkImageAndResize(width: number, height: number): {width: number, height: number}{
+    let ratio: number;
+    if( (width/height) == 2 ){
+      ratio = 58/width;
+    }else{
+      if( (width/height) > 2 ){
+        ratio = 58/width;
+      }else{
+        ratio = 29/height;
+      }
+    }
+    return {width: width*ratio, height: height*ratio};
   }
 }

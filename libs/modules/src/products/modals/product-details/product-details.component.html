@@ -161,11 +161,11 @@
                         Almacén {{ historical.destinationWarehouse?.reference }} -
                         {{ historical.destinationWarehouse?.name }}
                     </p>
-                    <p *ngIf="historical.typeAction != 27">
+                    <p *ngIf="historical.typeAction != 28">
                         Ubicación:
                         {{ historical.locationType == 3 ? 'Sorter' : historical.destinationPacking ? historical.destinationPacking.reference : historical.destinationContainer ? historical.destinationContainer.reference: (historical.destinationCarrier ? historical.destinationCarrier.reference: historical.destinationPallet?.reference) }}
                     </p>
-                    <p *ngIf="historical.typeAction == 27">
+                    <p *ngIf="historical.typeAction == 28">
                         Pedido: {{historical?.deliveryRequestExternalId}}
                     </p>
                     <p>

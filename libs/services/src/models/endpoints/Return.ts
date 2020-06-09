@@ -17,6 +17,8 @@ import Size = SizeModel.Size;
 import {ShoesPickingModel} from "./ShoesPicking";
 import Inventory = ShoesPickingModel.Inventory;
 import {HttpRequestModel} from "./HttpRequest";
+import {DefectiveRegistryModel} from "./DefectiveRegistry";
+import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 
 export namespace ReturnModel{
 
@@ -46,8 +48,24 @@ export namespace ReturnModel{
     datePickup: string,
     printTagPackages: boolean,
     products?: ReturnProduct[],
-    archives?: (any)[],
+    archives?: Files[],
     delivery_notes?: (any)[],
+  }
+
+  export interface Files {
+    id: number,
+    originalName: string,
+    mimetype: string,
+    fileName: string,
+    pathOriginal: string,
+    pathMedium: string,
+    pathIcon: string,
+    locationOriginal: string,
+    locationMedium: string,
+    locationIcon: string,
+    size: number,
+    hash: string,
+    extension: string
   }
 
   export interface ReturnPacking {
@@ -63,7 +81,8 @@ export namespace ReturnModel{
     model: Model,
     size: Size,
     status: number,
-    inventory: Inventory
+    inventory: Inventory,
+    defect: DefectiveRegistry
   }
 
   export interface SearchParameters {

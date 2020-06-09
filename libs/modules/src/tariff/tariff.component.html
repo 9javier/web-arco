@@ -1,16 +1,4 @@
 <ion-content padding="true">
-    <ion-text color="primary">
-        <suite-breadcrumb></suite-breadcrumb>
-    </ion-text>
-    <ion-row>
-        <ion-col size="4" [formGroup]="filters">
-            <!--<ion-select formControlName="warehouseId" (ionChange)="filterByWarehouse($event)">
-                <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
-                    {{warehouse.name}}
-                </ion-select-option>
-            </ion-select>-->
-        </ion-col>
-    </ion-row>
     <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

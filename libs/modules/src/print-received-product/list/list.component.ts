@@ -10,6 +10,7 @@ import {TagsInputOption} from "../../components/tags-input/models/tags-input-opt
 import {AppFiltersService} from "../../../../services/src/lib/endpoint/app-filters/app-filters.service";
 import {AppFiltersModel} from "../../../../services/src/models/endpoints/AppFilters";
 import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {ToolbarProvider} from "../../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'list-received-product',
@@ -52,6 +53,7 @@ export class ListReceivedProductTemplateComponent implements OnInit, AfterViewIn
   ordertypes: Array<TagsInputOption> = [];
 
   showFilters: boolean = false;
+  ngInit: boolean;
 
   requestTimeout: any = null;
   pauseListenFormChange = false;
@@ -70,12 +72,30 @@ export class ListReceivedProductTemplateComponent implements OnInit, AfterViewIn
     private printerService: PrinterService,
     private intermediaryService: IntermediaryService,
     private appFiltersService: AppFiltersService,
-    private dateTimeParserService: DateTimeParserService
+    private dateTimeParserService: DateTimeParserService,
+    private toolbarProvider: ToolbarProvider,
   ) {}
 
+  ionViewWillEnter() {
+    this.toolbarProvider.optionsActions.next([
+      {
+        icon: 'funnel',
+        label: 'Filtros',
+        action: () => this.showFilters = !this.showFilters
+      }
+    ]);
+    if (this.ngInit == false) {
+      this.searchProductsReceived(this.sanitize(this.getFormValueCopy()));
+
+    }
+    this.ngInit = false;
+  }
+
   async ngOnInit() {
+    this.ngInit = true;
     await this.intermediaryService.presentLoading('Cargando productos...');
     this.clearFilters();
+    this.ionViewWillEnter();
   }
 
   async refresh() {

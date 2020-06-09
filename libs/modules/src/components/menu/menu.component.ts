@@ -630,8 +630,16 @@ export class MenuComponent implements OnInit {
           url: '/expedition-inside',
           icon: 'folder'
         },
+        {
+          title: 'Logística Interna',
+          id: 'package-history',
+          url: '/package-history',
+          icon: 'cube'
+        },
+
       ]
     },
+   
   ];
 
   alPages: MenuItemList = [
@@ -726,7 +734,13 @@ export class MenuComponent implements OnInit {
           icon: 'barcode',
           tooltip: 'Órdenes no procesadas'
         },
-
+        {
+          title: 'Pedidos Recibidos',
+          id: 'package-received',
+          url: '/package-received',
+          icon: 'cube',
+          tooltip: 'Lista de bultos recibidos por Logística Interna'
+        }
       ]
     },
     {

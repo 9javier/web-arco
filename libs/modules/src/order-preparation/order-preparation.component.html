@@ -24,8 +24,9 @@
                     <div *ngFor="let expediton of dataSource">
                     <ion-icon  class="close-icon" name="close" color="danger" style="margin-top: 5%;"></ion-icon>
                     <div style="margin-top: 5%;">
-                        <ion-label class="text-title">Pedido MARKET </ion-label>
-                        <ion-label class="text-title">Nº {{expediton.expedition.barcode }}</ion-label>
+                        <ion-label class="text-title">Pedido {{expediton.opMarketInstruction.market.name}} </ion-label>
+                            <ion-label class="text-title"> Nº {{ expediton.expedition.barcode }}</ion-label><br><br>
+                            <ion-label>{{expediton.opMarketInstruction.label}}</ion-label>
                     </div>
                    
                 <div class="item">
@@ -64,8 +65,10 @@
                         <ion-icon class="close-icon" name="checkmark" color="success"></ion-icon>
                         <div class="item-expedition">
                             
-                            <ion-label class="text-title">Pedido MARKET </ion-label>
-                            <ion-label class="text-title"> Nº {{ expediton.expedition.barcode }}</ion-label>
+                            <ion-label class="text-title">Pedido {{expediton.opMarketInstruction.market.name}} </ion-label>
+                            <ion-label class="text-title"> Nº {{ expediton.expedition.barcode }}</ion-label><br><br>
+                            <ion-label>{{expediton.opMarketInstruction.label}}</ion-label>
+
                         </div>
                            <div class="wrapp-description" style="margin-top: 10%">
                                 <ion-label class="description" color="dark" >{{expediton.expedition.packages[0].shippingNote}}</ion-label>
