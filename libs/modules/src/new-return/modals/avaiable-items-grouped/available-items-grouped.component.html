@@ -5,21 +5,30 @@
         <ion-icon name="close" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Unidades disponibles</ion-title>
+    <ion-title>{{assigned ? 'Unidades asignadas' : 'Unidades disponibles'}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <cdk-virtual-scroll-viewport class="scroll-container" autosize minBufferPx="1000" maxBufferPx="2000" [style.height.px]="'auto'">
-    <mat-list>
-      <div class="item-loop" *cdkVirtualFor="let provider of listUnitiesGrouped"  [style.height.px]="provider">
-        <div mat-subheader>{{provider.name}}</div>
-        <mat-list-item *ngFor="let brand of provider.brands">
-          <div mat-line>{{brand.name}}</div>
-          <span class="unities">{{brand.unities == 1 ? brand.unities + ' ud.' : brand.unities + ' uds.'}}</span>
-        </mat-list-item>
-        <mat-divider></mat-divider>
-      </div>
-    </mat-list>
-  </cdk-virtual-scroll-viewport>
+  <ion-list *ngIf="assigned else listAvailable">
+    <ion-item *ngFor="let item of listUnitiesGrouped">
+      <ion-label>{{item.model}} - {{item.size}}</ion-label>
+      <ion-note slot="end">{{item.quantity == 1 ? item.quantity + ' ud.' : item.quantity + ' uds.'}}</ion-note>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #listAvailable>
+    <cdk-virtual-scroll-viewport class="scroll-container" autosize minBufferPx="1000" maxBufferPx="2000" [style.height.px]="'auto'">
+      <mat-list>
+        <div class="item-loop" *cdkVirtualFor="let provider of listUnitiesGrouped" [style.height.px]="provider">
+          <div mat-subheader>{{provider.name}}</div>
+          <mat-list-item *ngFor="let brand of provider.brands">
+            <div mat-line>{{brand.name}}</div>
+            <span class="unities">{{brand.unities == 1 ? brand.unities + ' ud.' : brand.unities + ' uds.'}}</span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        </div>
+      </mat-list>
+    </cdk-virtual-scroll-viewport>
+  </ng-template>
 </ion-content>

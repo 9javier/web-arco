@@ -13,7 +13,7 @@
               <ion-input disabled>
                 <span class="unities-total">{{return.products.length}} uds. asignadas</span> -<span class="unities-scanned">{{getCountProductsScanned(return.products)}} uds. escaneadas</span>
               </ion-input>
-              <ion-button slot="end" class="btn-see-unities" *ngIf="availableUnities" (click)="showAvailableUnities()">{{return.id ? 'Ver unidades' : 'Ver unidades disponibles'}}</ion-button>
+              <ion-button slot="end" class="btn-see-unities" *ngIf="availableUnities" (click)="showAvailableUnities()">{{return.id && return.products ? 'Ver unidades' : 'Ver unidades disponibles'}}</ion-button>
               <ion-button slot="end" class="btn-select-unities" [disabled]="!return.id || isHistoric || return.status != ReturnStatus.RETURN_ORDER" (click)="selectUnitiesItems()">Seleccionar unidades</ion-button>
             </ion-item>
           </ion-col>

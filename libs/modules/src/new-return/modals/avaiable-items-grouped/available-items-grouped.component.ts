@@ -9,7 +9,8 @@ import {ReturnModel} from "../../../../../services/src/models/endpoints/Return";
 })
 export class AvailableItemsGroupedComponent implements OnInit {
 
-  @Input() listUnitiesGrouped: ReturnModel.AvailableProductsGrouped[] = [];
+  @Input() listUnitiesGrouped: ReturnModel.AvailableProductsGrouped[]|ReturnModel.AssignedProductsGrouped[] = [];
+  @Input() assigned: boolean = false;
 
   constructor(
     private modalController: ModalController

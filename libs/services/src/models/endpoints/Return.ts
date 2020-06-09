@@ -330,6 +330,15 @@ export namespace ReturnModel{
     data: { available_products: boolean }
   }
 
+  export interface AssignedProductsGrouped {
+    model: string,
+    size: number,
+    quantity: number
+  }
+  export interface AssignedProductsGroupedResponse extends HttpRequestModel.Response {
+    data: { items: AssignedProductsGrouped[] }
+  }
+
   export interface AvailableProductsGroupedParams {
     warehouse: number,
     defective: boolean

@@ -80,7 +80,8 @@ export class NewReturnComponent implements OnInit {
 
   productsByBrand;
 
-  public availableUnities: any[] = null;
+  public availableUnities: ReturnModel.AvailableProductsGrouped[]|ReturnModel.AssignedProductsGrouped[] = null;
+  public assignedItems: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -325,23 +326,14 @@ export class NewReturnComponent implements OnInit {
         this.listStatusAvailable = this.ReturnStatusNames.filter(r => r.id != this.ReturnStatus.UNKNOWN);
         this.initForm();
 
-        this.returnService.postLoadWithProducts({returnId:  this.return.id}).then(async (response: LoadResponse) => {
-          if (response.code == 200) {
-            let brandsProducts = [];
-            if(response.data.brands){
-              for (let brand of response.data.brands) {
-                let numProducts = 0;
-                for (let product of response.data.products) {
-                  if(brand.id == product.product.model.brand.id){
-                    numProducts++;
-                  }
-                }
-                brandsProducts.push({id: brand.id, name: brand.name, numProducts: numProducts});
-              }
+        this.returnService
+          .getGetAssignedProductsGrouped(this.return.id)
+          .subscribe(res => {
+            if (res.code == 200 && res.data.items && res.data.items.length > 0) {
+              this.availableUnities = res.data.items;
+              this.assignedItems = true;
             }
-            this.productsByBrand = brandsProducts;
-          }
-        });
+          });
       } else {
         console.error(response);
       }
@@ -568,7 +560,7 @@ export class NewReturnComponent implements OnInit {
             defective: this.return.type.defective
           })
           .subscribe(res => {
-            if (res.code == 200 && res.data.available_products) {
+            if (res.code == 200 && res.data.available_products && res.data.available_products.length > 0) {
               this.availableUnities = res.data.available_products;
             } else {
               this.availableUnities = null;
@@ -583,7 +575,7 @@ export class NewReturnComponent implements OnInit {
   public async showAvailableUnities() {
     const modal = await this.modalController.create({
       component: AvailableItemsGroupedComponent,
-      componentProps: {listUnitiesGrouped: this.availableUnities}
+      componentProps: {listUnitiesGrouped: this.availableUnities, assigned: this.assignedItems}
     });
 
     await modal.present();
