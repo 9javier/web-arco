@@ -7,6 +7,7 @@ import {PickingNewProductsService} from "../../../services/src/lib/endpoint/pick
 import {IntermediaryService, ProductModel} from "@suite/services";
 import Product = ProductModel.Product;
 import NoOnlineSearchParameters = PickingNewProductsModel.NoOnlineSearchParameters;
+import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'app-unfit-online-products',
@@ -19,6 +20,7 @@ export class UnfitOnlineProductsComponent implements OnInit, AfterViewInit {
   pagerValues: Array<number> = [50, 100, 500];
   limit: number = this.pagerValues[0];
   page: number = 1;
+  ngInit: boolean;
 
   products: Product[] = [];
   filterOptions: {
@@ -47,10 +49,26 @@ export class UnfitOnlineProductsComponent implements OnInit, AfterViewInit {
   constructor(
     private formBuilder: FormBuilder,
     private pickingNewProductsService: PickingNewProductsService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private toolbarProvider: ToolbarProvider,
   ) {}
 
+  ionViewWillEnter() {
+    this.toolbarProvider.optionsActions.next([
+      {
+        icon: 'funnel',
+        label: 'Filtros',
+        action: () => this.showFilters = !this.showFilters
+      }
+    ]);
+    if (this.ngInit == false) {
+      this.getProducts();
+    }
+    this.ngInit = false;
+  }
+
   ngOnInit(){
+    this.ngInit = true;
     this.getFilters();
     this.resetFilters();
     this.getProducts();

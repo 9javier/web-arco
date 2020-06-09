@@ -1,7 +1,3 @@
-<ion-item class="filters-button-row">
-  <ion-label>Filtros</ion-label>
-  <i class="material-icons" [ngClass]="showFilters ? 'black-background' : 'filter-icon'" (click)="showFilters = !showFilters">filter_list</i>
-</ion-item>
 <form *ngIf="showFilters" [formGroup]="filtersForm">
   <ion-grid>
     <ion-row>

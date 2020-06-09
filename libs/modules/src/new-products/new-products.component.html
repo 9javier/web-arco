@@ -97,11 +97,6 @@
                   <span>Imp. nº stock</span>
                 </div>
               </ion-col>
-              <ion-col size="2" class="filters-mobile" (click)="openFiltersMobile()">
-                <div class="filters-mobile" [ngClass]="showFiltersMobileVersion ? 'filters-opened' : ''">
-                  <i class="material-icons">filter_list</i>
-                </div>
-              </ion-col>
             </ion-row>
             <form *ngIf="showFiltersMobileVersion" [formGroup]="form">
               <ion-grid>
