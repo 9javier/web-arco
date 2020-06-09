@@ -68,6 +68,10 @@ export class HistoryDetailsComponent implements OnInit {
     return moment(date).format("DD/MM/YYYY")
   }
 
+  formattedDateTime(date) {
+    return moment(date).format("DD/MM/YYYY HH:mm")
+  }
+
   close() {
     this.modalController.dismiss();
   }
@@ -76,30 +80,30 @@ export class HistoryDetailsComponent implements OnInit {
   getStatus(status){
     switch (status) {
       case InternOrderPackageStatus.PENDING_COLLECTED:
-        return 'Pendiente recogida';
+        return 'Etiqueta generada';
         break;
       case InternOrderPackageStatus.COLLECTED:
         return 'Recogido';
         break;
       case InternOrderPackageStatus.SORTER_IN:
-        return 'Dentro del sorter';
+        return 'Entrada Sorter';
         break;
       case InternOrderPackageStatus.SORTER_OUT:
-        return 'Salio del sorter';
+        return 'Salida Sorter';
         break;
       case InternOrderPackageStatus.JAIL_IN:
-        return 'Dentro de la jaula';
-        break;
-      case InternOrderPackageStatus.PENDING_COLLECTED:
-        return 'Pendiente recogida';
+        return 'Ubicado embalaje';
         break;
       case InternOrderPackageStatus.SORTER_RACK_IN :
-        return 'Ingreso Estanteria anexa';
+        return 'Estantería anexa Sorter';
         break;
       case InternOrderPackageStatus.RECEIVED:
         return 'Recepcionado';
         break;
-    
+      case InternOrderPackageStatus.WAREHOUSE_OUTPUT:
+        return 'Salida Almacén';
+        break;
+
       default:
         break;
     }

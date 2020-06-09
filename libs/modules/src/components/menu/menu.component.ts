@@ -631,10 +631,10 @@ export class MenuComponent implements OnInit {
           icon: 'folder'
         },
         {
-          title: 'Bultos',
+          title: 'Logística Interna',
           id: 'package-history',
           url: '/package-history',
-          icon: 'archive'
+          icon: 'cube'
         },
 
       ]
@@ -704,13 +704,6 @@ export class MenuComponent implements OnInit {
           url: '/print/product/relabel',
           icon: 'barcode',
           tooltip: 'Imprimir nuevas etiquetas de productos introduciendo el código manualmente'
-        },
-        {
-          title: 'Pedidos Recibidos',
-          id: 'package-received',
-          url: '/package-received',
-          icon: 'archive',
-          tooltip: 'Lista de bultos recibidos'
         }
       ]
     },
@@ -741,7 +734,13 @@ export class MenuComponent implements OnInit {
           icon: 'barcode',
           tooltip: 'Órdenes no procesadas'
         },
-        
+        {
+          title: 'Pedidos Recibidos',
+          id: 'package-received',
+          url: '/package-received',
+          icon: 'cube',
+          tooltip: 'Lista de bultos recibidos por Logística Interna'
+        }
       ]
     },
     {

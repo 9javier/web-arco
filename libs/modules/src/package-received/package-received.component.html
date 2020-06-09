@@ -8,7 +8,7 @@
           multiple="true"></suite-tags-input>
       </ion-col>
       <ion-col size="6">
-        <ion-label>Tienda Origen:</ion-label>
+        <ion-label>Origen:</ion-label>
         <suite-tags-input placeholder="Marca" [options]="origin" formControlName="origin" multiple="true">
         </suite-tags-input>
       </ion-col>
@@ -149,12 +149,12 @@
                         <ion-row class="row-family-lifestyle-size">
                           <ion-col class="family-lifestyle" size="7">
                             <p>
-                              Pedido: {{package?.deliveryRequestExternalId}}
+                              Pedido: {{package?.orderPackage?.order?.deliveryRequestExternalId}}
                             </p>
                           </ion-col>
                           <ion-col class="family-lifestyle" size="5">
                             <p>
-                              {{formattedDate(package?.createdAt)}}
+                              {{formattedDate(package?.orderPackage?.updatedAt)}}
                             </p>
                           </ion-col>
                         </ion-row>

@@ -69,7 +69,7 @@ export class PackageHistoryComponent implements OnInit {
     {
       name: 'date',
       title:'Fecha',
-      field: ['order', 'date'],
+      field: ['order', 'package', 'updatedAt'],
       filters:true,
       type:'date',
       format:'dd/MM/yyyy'
@@ -303,28 +303,27 @@ length: any;
   getStatus(status){
     switch (status) {
       case InternOrderPackageStatus.PENDING_COLLECTED:
-        return 'Pendiente recogida';
+        return 'Etiqueta generada';
         break;
       case InternOrderPackageStatus.COLLECTED:
         return 'Recogido';
         break;
       case InternOrderPackageStatus.SORTER_IN:
-        return 'Dentro del sorter';
+        return 'Entrada Sorter';
         break;
       case InternOrderPackageStatus.SORTER_OUT:
-        return 'Salio del sorter';
+        return 'Salida Sorter';
         break;
       case InternOrderPackageStatus.JAIL_IN:
-        return 'Dentro de la jaula';
-        break;
-      case InternOrderPackageStatus.PENDING_COLLECTED:
-        return 'Pendiente recogida';
+        return 'Ubicado embalaje';
         break;
       case InternOrderPackageStatus.SORTER_RACK_IN :
-        return 'Ingreso Estanteria anexa';
+        return 'Estantería anexa Sorter';
         break;
       case InternOrderPackageStatus.RECEIVED:
         return 'Recepcionado';
+      case InternOrderPackageStatus.WAREHOUSE_OUTPUT:
+        return 'Salida Almacén';
         break;
     
       default:

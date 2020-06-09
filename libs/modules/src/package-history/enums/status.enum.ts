@@ -6,6 +6,6 @@ export enum InternOrderPackageStatus {
     JAIL_IN = 5,
     JAIL_OUT = 6,
     SORTER_RACK_IN = 7,
-    RECEIVED = 8
+    RECEIVED = 8,
+    WAREHOUSE_OUTPUT = 9
   }
-  
