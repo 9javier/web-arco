@@ -1146,9 +1146,6 @@ export class MenuComponent implements OnInit {
       return false;
     }
     /**iterate over all pages of the application */
-
-    console.log('T:auxPages', auxPages);
-
     auxPages.forEach((page: any) => {
       /**to save the childrens of the actual page */
       let auxChildren = [];
@@ -1156,7 +1153,7 @@ export class MenuComponent implements OnInit {
       if (page.type == "wrapper") {
         page.children.forEach(children => {
           /**if the childen is allowed then add if */
-          if (dictionary[children.id] || children.id == 'expedition-manual' || children.id == 'expedition-collected' || children.id == 'unlock-expeditions' || children.id == 'package' || children.id == 'transports' || children.id == 'expedition-inside' || children.id == 'order-preparation' || children.id == 'order-no-processed') {
+          if (dictionary[children.id]) {
             auxChildren.push(children);
           }
         });
@@ -1169,7 +1166,7 @@ export class MenuComponent implements OnInit {
         }
         /**if not is a wrapper then is a normal category the check if plus easy */
       } else {
-        if (dictionary[page.id] || page.id == 'expedition-manual' || page.id == 'expedition-collected' || page.id == 'unlock-expeditions' || page.id == 'package' || page.id == 'transports' || page.id == 'expedition-inside' || page.id == 'order-preparation' || page.id == 'order-no-processed') {
+        if (dictionary[page.id]) {
           this.menuPagesFiltered.push(page);
         }
       }
@@ -1272,10 +1269,6 @@ export class MenuComponent implements OnInit {
   }
 
   openSubMenuItem(menuItem) {
-    // if (this.iconsDirection === 'end') {
-    //   this.toggleSidebar();
-    // }
-
     menuItem.open = !menuItem.open;
   }
 
