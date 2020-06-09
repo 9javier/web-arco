@@ -1,0 +1,23 @@
+<ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+          <ion-icon name="close" class="toogleArrow"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>{{type=='archive' ? 'Ver Archivos/Imágenes' : 'Ver Albaranes Agencia'}}</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content style="height:100%;">
+    <ion-item *ngIf="this.images?.length > 0" lines="none">
+      <ion-label class="label-text">{{type=='archive' ? 'Archivos actuales' : 'Albaranes actuales'}}</ion-label>
+    </ion-item>
+    <ion-list>
+      <ion-item lines="none" *ngFor="let item of files; let i = index">
+        <ion-img (click)="openReviewImage(item)" slot="start" [src]="baseUrlPhoto + item.pathIcon"></ion-img>
+        <ion-button slot="end" (click)="deleteImage(item, i, files)">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+</ion-content>
