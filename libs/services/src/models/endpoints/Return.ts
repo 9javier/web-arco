@@ -319,7 +319,7 @@ export namespace ReturnModel{
 
   }
 
-  export interface CheckProductsToAssignReturn {
+  export interface CheckProductsToAssignReturnParams {
     returnId: number,
     warehouse: number,
     provider: number,
@@ -328,6 +328,18 @@ export namespace ReturnModel{
   }
   export interface CheckProductsToAssignReturnResponse extends HttpRequestModel.Response {
     data: { available_products: boolean }
+  }
+
+  export interface AvailableProductsGroupedParams {
+    warehouse: number,
+    defective: boolean
+  }
+  export interface AvailableProductsGrouped {
+    name: string,
+    brands: {name: string, unities: number}[]
+  }
+  export interface AvailableProductsGroupedResponse extends HttpRequestModel.Response {
+    data: { available_products: AvailableProductsGrouped[] }
   }
 
   export enum Status {

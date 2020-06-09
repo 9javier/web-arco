@@ -22,6 +22,7 @@ import {MatDividerModule} from "@angular/material/divider";
 import {FilterButtonModule} from "../components/filter-button/filter-button.module";
 import {ViewButtonModule} from "../components/view-button/view-button.module";
 import {MatSortModule} from "@angular/material/sort";
+import {AvailableItemsGroupedModule} from "./modals/avaiable-items-grouped/available-items-grouped.module";
 
 const routes: Routes = [{
     path: '',
@@ -54,7 +55,8 @@ const routes: Routes = [{
     MatDividerModule,
     FilterButtonModule,
     ViewButtonModule,
-    MatSortModule
+    MatSortModule,
+    AvailableItemsGroupedModule
   ]
 })
 

@@ -36,6 +36,7 @@ export class ReturnService {
   private postAssignProductsUrl = environment.apiBase + '/returns/products/assign';
   private postSearchAndAssignProductsUrl = environment.apiBase + '/returns/products/search/assign/';
   private postCheckProductsToAssignReturnUrl = environment.apiBase + '/returns/products/availability/check';
+  private postGetAvailableProductsGroupedUrl = environment.apiBase + '/returns/products/available/grouped';
 
   constructor(
     private requestsProvider: RequestsProvider,
@@ -116,7 +117,11 @@ export class ReturnService {
     return this.http.post(this.postSearchAndAssignProductsUrl + requestId, {});
   }
 
-  public postCheckProductsToAssignReturn(params: ReturnModel.CheckProductsToAssignReturn): Observable<ReturnModel.CheckProductsToAssignReturnResponse> {
+  public postCheckProductsToAssignReturn(params: ReturnModel.CheckProductsToAssignReturnParams): Observable<ReturnModel.CheckProductsToAssignReturnResponse> {
     return this.http.post<ReturnModel.CheckProductsToAssignReturnResponse>(this.postCheckProductsToAssignReturnUrl, params);
+  }
+
+  public postGetAvailableProductsGrouped(params: ReturnModel.AvailableProductsGroupedParams): Observable<ReturnModel.AvailableProductsGroupedResponse> {
+    return this.http.post<ReturnModel.AvailableProductsGroupedResponse>(this.postGetAvailableProductsGroupedUrl, params);
   }
 }

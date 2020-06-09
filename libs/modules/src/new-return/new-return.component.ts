@@ -35,6 +35,7 @@ import {TimesToastType} from "../../../services/src/models/timesToastType";
 import {ProductsComponent} from "../new-return-unities/products/products.component";
 import {DefectiveProductsComponent} from "../new-return-unities/defective-products/defective-products.component";
 import {PositionsToast} from "../../../services/src/models/positionsToast.type";
+import {AvailableItemsGroupedComponent} from "./modals/avaiable-items-grouped/available-items-grouped.component";
 
 @Component({
   selector: 'suite-new-return',
@@ -78,6 +79,8 @@ export class NewReturnComponent implements OnInit {
   };
 
   productsByBrand;
+
+  public availableUnities: any[] = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -476,9 +479,11 @@ export class NewReturnComponent implements OnInit {
         switch (type) {
           case 1:
             this.return.type = this.types.find(v => v.id == result.data);
+            this.preloadOfAvailabilities();
             break;
           case 2:
             this.return.warehouse = this.warehouses.find(v => v.id == result.data);
+            this.preloadOfAvailabilities();
             break;
           case 3:
             this.return.provider = this.providers.find(v => v.id == result.data);
@@ -552,5 +557,35 @@ export class NewReturnComponent implements OnInit {
 
   public getPackingNames(packingList: ReturnModel.ReturnPacking[]) {
     return packingList.map(p => p.packing.reference).join(', ');
+  }
+
+  private preloadOfAvailabilities() {
+    if (this.return && !this.return.id) {
+      if (this.return.type && this.return.warehouse) {
+        this.returnService
+          .postGetAvailableProductsGrouped({
+            warehouse: this.return.warehouse.id,
+            defective: this.return.type.defective
+          })
+          .subscribe(res => {
+            if (res.code == 200 && res.data.available_products) {
+              this.availableUnities = res.data.available_products;
+            } else {
+              this.availableUnities = null;
+            }
+          }, error => this.availableUnities = null);
+      } else {
+        this.availableUnities = null;
+      }
+    }
+  }
+
+  public async showAvailableUnities() {
+    const modal = await this.modalController.create({
+      component: AvailableItemsGroupedComponent,
+      componentProps: {listUnitiesGrouped: this.availableUnities}
+    });
+
+    await modal.present();
   }
 }
