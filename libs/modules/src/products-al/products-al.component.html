@@ -1,19 +1,6 @@
 <ion-content padding="true">
     <div>
-      <div class="list-header-filters-mobile">
-        <ion-grid>
-          <ion-row class="header-mobile">
-            <ion-col>
-              <ion-text color="primary">
-                <suite-breadcrumb></suite-breadcrumb>
-              </ion-text>
-            </ion-col>
-            <ion-col size="1" class="filters-mobile" (click)="openFiltersMobile()">
-              <div class="filters-mobile" [ngClass]="showFiltersMobileVersion ? 'filters-opened' : ''">
-                <i class="material-icons">filter_list</i>
-              </div>
-            </ion-col>
-          </ion-row>
+      <div class="list-header-filters-mobile" >
           <form *ngIf="showFiltersMobileVersion" [formGroup]="form">
             <ion-grid>
                 <ion-row>
@@ -112,7 +99,6 @@
                 </ion-row>
             </ion-grid>
           </form>
-        </ion-grid>
       </div>
       <div class="mat-table-wrapper-overflow-x">
         <table mat-table [dataSource]="dataSource">

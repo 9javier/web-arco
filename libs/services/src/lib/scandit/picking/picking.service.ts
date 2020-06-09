@@ -9,6 +9,9 @@ import {environment} from "../../../environments/environment";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 import ListItem = PickingStoreModel.ListItem;
+import {TimesToastType} from "../../../models/timesToastType";
+import {IntermediaryService} from "@suite/services";
+import {PositionsToast} from "../../../models/positionsToast.type";
 
 declare let Scandit;
 declare let GScandit;
@@ -33,7 +36,8 @@ export class PickingScanditService {
     private pickingStoreService: PickingStoreService,
     private scanditProvider: ScanditProvider,
     private pickingProvider: PickingProvider,
-    private itemReferencesProvider: ItemReferencesProvider
+    private itemReferencesProvider: ItemReferencesProvider,
+    private intermediaryService: IntermediaryService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
@@ -164,9 +168,10 @@ export class PickingScanditService {
                 this.hideTextMessage(2000);
               }
             } else if (scanMode == 'carriers') {
+              ScanditMatrixSimple.hideLoadingDialog();
               if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
                 ScanditMatrixSimple.showLoadingDialog('Cargando embalaje...');
-                ScanditMatrixSimple.setTimeout("scannedPacking", 0.5 * 1000, JSON.stringify([codeScanned]));
+                ScanditMatrixSimple.setTimeout("scannedPacking", 1000, JSON.stringify([codeScanned]));
               } else {
                 ScanditMatrixSimple.setText(
                   `Escanee un embalaje válido`,
@@ -232,7 +237,7 @@ export class PickingScanditService {
             }
           } else {
             if (response.action == 'matrix_simple') {
-              ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
+              if(scanMode != 'carriers') ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
               ScanditMatrixSimple.setTimeout("loadProducts", 1 * 1000, JSON.stringify([listProductsToStorePickings, listProductsProcessed, filtersPicking, listRejectionReasons]));
               if (listProductsToStorePickings.length < 1) {
                 ScanditMatrixSimple.setText(
@@ -300,7 +305,7 @@ export class PickingScanditService {
               const typesFiltered = response.filters.type.map(filter => {
                 return filter.id;
               });
-              ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
+              if(scanMode != 'carriers') ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
               if(typesFiltered.length == 0 || (typesFiltered.length > 0 && typesFiltered.includes(1))){
                 this.pickingStoreService
                   .postLineRequestFiltered(filtersToGetProducts)
@@ -428,11 +433,12 @@ export class PickingScanditService {
       .postPackings({
         packingReferences: this.packingReferences
       })
-      .then((res: PickingStoreModel.ResponsePostPacking) => {
+      .then(async (res: PickingStoreModel.ResponsePostPacking) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200 || res.code == 201) {
           ScanditMatrixSimple.finishPickingStores();
           this.refreshListPickingsStores();
+          await this.intermediaryService.presentToastSuccess('Finalizada correctamente la asociación de pares a embalajes', TimesToastType.DURATION_SUCCESS_TOAST_4550, PositionsToast.BOTTOM);
         } else {
           ScanditMatrixSimple.setText(
             res.errors,

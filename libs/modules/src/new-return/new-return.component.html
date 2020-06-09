@@ -206,7 +206,7 @@
 
 <ion-footer>
   <ion-toolbar>
-    <ion-button matTooltip="Imprimir/enviar albarán" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="true || isHistoric"><ion-icon name="print" slot="start"></ion-icon>albarán</ion-button>
+    <ion-button matTooltip="Imprimir/enviar albarán" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="!return || !return.id" (click)="deliveryNote()"><ion-icon name="print" slot="start"></ion-icon> albarán</ion-button>
     <ion-button matTooltip="Adjuntar archivos/imágenes" matTooltipClass="tooltip" slot="start" fill="clear" [disabled]="!return || !return.id || isHistoric" (click)="searchArchive()"><ion-icon name="attach" slot="start"></ion-icon>archivos/imágenes</ion-button>
 
     <ion-button *ngIf="!isHistoric" slot="end" color="light" (click)="router.navigateByUrl('/return-tracking-list')">Cancelar</ion-button>

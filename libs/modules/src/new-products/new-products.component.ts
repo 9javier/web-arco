@@ -23,6 +23,7 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { isNgTemplate } from '@angular/compiler';
+import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'suite-new-products',
@@ -43,6 +44,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   warehouses: Array<any> = [];
   filterTypes: Array<NewProductModel.StatusType> = [];
   pricesDeleted: Array<NewProductModel.NewProduct> = [];
+  ngInit: boolean;
 
   selectedForm: FormGroup = this.formBuilder.group({
     selector: false
@@ -103,9 +105,26 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     private warehouseService: WarehouseService,
     private warehousesService: WarehousesService,
     private authenticationService: AuthenticationService,
+    private toolbarProvider: ToolbarProvider,
   ) { }
 
+  ionViewWillEnter() {
+    this.toolbarProvider.optionsActions.next([
+      {
+        icon: 'funnel',
+        label: 'Filtros',
+        action: () => this.showFiltersMobileVersion = !this.showFiltersMobileVersion
+      }
+    ]);
+    if (this.ngInit == false) {
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+
+    }
+    this.ngInit = false;
+  }
+
   async ngOnInit() {
+    this.ngInit = true;
     this.isStoreUser = await this.authenticationService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authenticationService.getStoreCurrentUser();

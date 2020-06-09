@@ -134,6 +134,7 @@ export class ScanditService {
           this.hideTextMessage(2000);
           containerReference = code;
           packingReference = null;
+          ScanditMatrixSimple.setFixedText('PRODUCTO/CONTENEDOR/EMBALAJE');
         } else if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PRODUCT) {
           this.positioningLog(2, "1.4", "product matched!");
           //Product

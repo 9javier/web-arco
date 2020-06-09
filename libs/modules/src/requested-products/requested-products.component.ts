@@ -29,13 +29,14 @@ import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/
   templateUrl: './requested-products.component.html',
   styleUrls: ['./requested-products.component.scss'],
 })
-export class RequestedProductsComponent implements OnInit, OnDestroy {
+export class RequestedProductsComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
 
   public showFiltersMobileVersion: boolean = false;
   pauseListenFormChange = false;
+  ngInit: boolean;
   /**timeout for send request */
   requestTimeout;
   /**previous reference to detect changes */
@@ -100,25 +101,25 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
     private dateTimeParserService: DateTimeParserService
   ) { }
 
+  ionViewWillEnter() {
+    if (this.ngInit == false) {
+      this.loadReceivedItemsRequested(this.sanitize(this.getFormValueCopy()));
+    }
+    this.ngInit = false;
+  }
+
   //region Lifecycle events
   ngOnInit() {
+    this.ngInit = true;
     this.loadToolbarActions();
     this.clearFilters();
     this.listenChanges();
   }
 
-  ngOnDestroy() {
-    this.toolbarProvider.optionsActions.next([]);
-  }
   //endregion
 
   private loadToolbarActions() {
-    const actionsToolbar = [
-      {
-        icon: 'refresh',
-        label: 'Recargar',
-        action: () => this.restartScreen()
-      }];
+    let actionsToolbar = [];
 
     if (this.itemIdsSelected.length > 0) {
       actionsToolbar.unshift({
@@ -126,6 +127,18 @@ export class RequestedProductsComponent implements OnInit, OnDestroy {
         label: 'Marcar como atendidos',
         action: () => this.attendItems()
       });
+    }else{
+      actionsToolbar = [
+        {
+          icon: 'refresh',
+          label: 'Recargar',
+          action: () => this.restartScreen()
+        },
+        {
+          icon: 'funnel',
+          label: 'Filtros',
+          action: () => this.showFiltersMobileVersion = !this.showFiltersMobileVersion
+        }];
     }
 
     this.toolbarProvider.optionsActions.next(actionsToolbar);

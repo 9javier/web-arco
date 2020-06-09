@@ -27,6 +27,7 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { TagsInputComponent } from "../components/tags-input/tags-input.component";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'app-products',
@@ -84,6 +85,7 @@ export class ProductsAlComponent implements OnInit {
   dataSource: any;
   flagPageChange: boolean = false;
   flagSizeChange: boolean = false;
+  ngInit: boolean;
 
   /**Filters */
   colors:Array<TagsInputOption> = [];
@@ -118,6 +120,7 @@ export class ProductsAlComponent implements OnInit {
     private modalController:ModalController,
     private printerService:PrinterService,
     private holderTooltipText: HolderTooltipText,
+    private toolbarProvider: ToolbarProvider,
   ) {}
 
 
@@ -129,8 +132,19 @@ export class ProductsAlComponent implements OnInit {
     this.showFiltersMobileVersion = !this.showFiltersMobileVersion;
   }
 
-
-
+  ionViewWillEnter() {
+    this.toolbarProvider.optionsActions.next([
+      {
+        icon: 'funnel',
+        label: 'Filtros',
+        action: () => this.showFiltersMobileVersion = !this.showFiltersMobileVersion
+      }
+    ]);
+    if (this.ngInit == false) {
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+    }
+    this.ngInit = false;
+  }
 
   /**
    * clear empty values of objecto to sanitize it
@@ -208,6 +222,7 @@ export class ProductsAlComponent implements OnInit {
 
 
   ngOnInit() {
+    this.ngInit = true;
     this.getFilters();
     this.listenChanges();
   }

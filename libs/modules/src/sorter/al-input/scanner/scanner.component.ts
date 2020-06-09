@@ -428,7 +428,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
                 if (!this.modalScanRack) {
                   checkProductInWayLocal(productReference)
                 }
-              }, 0.5 * 1000);
+              }, 1000);
             } else {
               this.timeoutToQuickUser();
               this.sorterNotifyAboutProductScanned();
@@ -493,18 +493,18 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
                     firstCheckOfWayFree = false;
                   }
                   if (this.isWaitingWayWillFree && !this.modalScanRack) {
-                    setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 0.5 * 1000);
+                    setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 1000);
                   }
                 }
               }
             } else {
               if (this.isWaitingWayWillFree && !this.modalScanRack) {
-                setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 0.5 * 1000);
+                setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 1000);
               }
             }
           }, () => {
             if (this.isWaitingWayWillFree && !this.modalScanRack) {
-              setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 0.5 * 1000);
+              setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 1000);
             }
           });
       };
