@@ -1,11 +1,4 @@
 <div class="list-header-filters">
-    <ion-row class="header">
-      <ion-col [formGroup]="selectedForm" size="1" class="check-all">
-        <div class="check-all">
-          <ion-checkbox formControlName="selector" (ionChange)="selectAll($event)"></ion-checkbox>
-        </div>
-      </ion-col>
-    </ion-row>
     <form *ngIf="showFilters" [formGroup]="formFilters">
       <ion-grid>
         <ion-row>
