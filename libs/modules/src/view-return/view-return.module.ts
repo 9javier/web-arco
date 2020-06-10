@@ -12,7 +12,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
 import {MatDividerModule} from "@angular/material/divider";
 import {ViewFilesComponent} from "./modals/view-files/view-files.component";
-import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
+import { ModalReviewReturnComponent } from '../components/modal-return/ModalReviewReturn/modal-review-return.component';
 
 const routes: Routes = [{
     path: '',
@@ -20,8 +20,8 @@ const routes: Routes = [{
 }];
 
 @NgModule({
-  declarations: [ViewReturnComponent, ViewFilesComponent, ModalReviewComponent],
-  entryComponents: [ViewFilesComponent, ModalReviewComponent],
+  declarations: [ViewReturnComponent, ViewFilesComponent, ModalReviewReturnComponent],
+  entryComponents: [ViewFilesComponent, ModalReviewReturnComponent],
   imports: [
     CommonModule,
     IonicModule,

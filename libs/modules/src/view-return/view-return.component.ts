@@ -24,7 +24,7 @@ import {ModalController, NavParams } from "@ionic/angular";
 import {DropFilesService} from "../../../services/src/lib/endpoint/drop-files/drop-files.service";
 import User = UserModel.User;
 import {ReviewImagesComponent} from "../incidents/components/review-images/review-images.component";
-import { ModalReviewComponent } from '../components/modal-defective/ModalReview/modal-review.component';
+import { ModalReviewReturnComponent } from '../components/modal-return/ModalReviewReturn/modal-review-return.component';
 import {Events} from "@ionic/angular";
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {PrintTicketService} from "../../../services/src/lib/print-ticket/print-ticket.service";
@@ -476,7 +476,7 @@ export class ViewReturnComponent implements OnInit {
 
   async openReviewImage(item) {
     const modal = await this.modalController.create({
-      component: ModalReviewComponent,
+      component: ModalReviewReturnComponent,
       componentProps: {
         data: item
       }
