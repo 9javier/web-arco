@@ -34,6 +34,8 @@ export class ReturnsHistoricComponent implements OnInit {
   public dataSource = null;
   public displayedColumns: string[] = ['id', 'type', 'provider', 'brand', 'maxDate', 'warehouse', 'status', 'ueDate', 'ueUser', 'unities'];
 
+  private ReturnStatusNames = ReturnModel.StatusNames;
+
   returns: Return[];
   filters: Filters = {
     ids: [],
@@ -241,21 +243,9 @@ export class ReturnsHistoricComponent implements OnInit {
   }
 
   getStatusName(status: number): string{
-    switch(status){
-      case 1:
-        return 'Orden devolución';
-      case 2:
-        return 'En proceso';
-      case 3:
-        return 'Preparado';
-      case 4:
-        return 'Pendiente recogida';
-      case 5:
-        return 'Recogido';
-      case 6:
-        return 'Facturado';
-      default:
-        return 'Desconocido'
+    const returnItem = this.ReturnStatusNames.find(r => r.id == status);
+    if (returnItem) {
+      return returnItem.name;
     }
   }
 
