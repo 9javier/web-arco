@@ -636,6 +636,8 @@ export class NewReturnComponent implements OnInit {
     currentHeight += 10;
     doc.text(`Transportista: ${this.return.shipper}`, currentWidth, currentHeight);
     currentHeight += 10;
+    doc.text(`Bultos: ${this.return.amountPackages}`, currentWidth, currentHeight);
+    currentHeight += 10;
     doc.text(`Fecha recogida: ${datePickupFormatted}`, currentWidth, currentHeight);
     currentHeight += 10;
 
