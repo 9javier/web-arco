@@ -86,6 +86,7 @@ export class PrintTicketService {
         let htmlToPrintO = htmlToPrintN.replace('{{defectTypeChild}}', defectTypeChild);
         let htmlToPrintP = htmlToPrintO.replace('{{defectZone}}', defectZone);
         let htmlToPrintQ = htmlToPrintP.replace('{{defectZoneChild}}', defectZoneChild);
+        let htmlToPrintR = htmlToPrintQ.replace('{{commercialName}}', warehouseName);
 
         if( ((defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==true)
           || (defective.defectTypeParent && defective.defectTypeParent.includeInIncidenceTicket==true))
@@ -93,7 +94,7 @@ export class PrintTicketService {
           || (defective.defectZoneParent && defective.defectZoneParent.includeInIncidenceTicket==true))
         ){
           if(cordova.plugins.printer) {
-            cordova.plugins.printer.print(htmlToPrintQ);
+            cordova.plugins.printer.print(htmlToPrintR);
           }
         }else{
           if( defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==false
@@ -101,23 +102,23 @@ export class PrintTicketService {
             && defective.defectZoneChild && defective.defectZoneChild.includeInIncidenceTicket==false
             && defective.defectZoneParent && defective.defectZoneParent.includeInIncidenceTicket==false
           ){
-            let htmlToPrintR = htmlToPrintQ.replace('class="type"', displayNone);
-            let htmlToPrintS = htmlToPrintR.replace('class="zone"', displayNone);
+            let htmlToPrintS = htmlToPrintR.replace('class="type"', displayNone);
+            let htmlToPrintT = htmlToPrintS.replace('class="zone"', displayNone);
             if(cordova.plugins.printer) {
-              cordova.plugins.printer.print(htmlToPrintS);
+              cordova.plugins.printer.print(htmlToPrintT);
             }
           }else{
             if( defective.defectTypeChild && defective.defectTypeChild.includeInIncidenceTicket==false
               && defective.defectTypeParent && defective.defectTypeParent.includeInIncidenceTicket==false
           ){
-              let htmlToPrintR = htmlToPrintQ.replace('class="type"', displayNone);
+              let htmlToPrintS = htmlToPrintR.replace('class="type"', displayNone);
               if(cordova.plugins.printer) {
-                cordova.plugins.printer.print(htmlToPrintR);
+                cordova.plugins.printer.print(htmlToPrintS);
               }
             }else{
-              let htmlToPrintR = htmlToPrintQ.replace('class="zone"', displayNone);
+              let htmlToPrintS = htmlToPrintR.replace('class="zone"', displayNone);
               if(cordova.plugins.printer) {
-                cordova.plugins.printer.print(htmlToPrintR);
+                cordova.plugins.printer.print(htmlToPrintS);
               }
             }
           }
