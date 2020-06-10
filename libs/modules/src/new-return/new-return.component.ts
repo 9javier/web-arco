@@ -631,7 +631,12 @@ export class NewReturnComponent implements OnInit {
     doc.text(`Albarán de Devolución - ${this.return.provider.name}`, currentWidth, currentHeight);
     currentHeight += 10;
     doc.setFontSize(18);
-    doc.text(`Fecha recogida: ${this.formatDate(this.return.datePickup)}`, currentWidth, currentHeight);
+    let datePickupFormatted = this.return.datePickup ? this.formatDate(this.return.datePickup) : '';
+    doc.text(`Almacén: ${this.return.warehouse.reference} ${this.return.warehouse.name}`, currentWidth, currentHeight);
+    currentHeight += 10;
+    doc.text(`Transportista: ${this.return.shipper}`, currentWidth, currentHeight);
+    currentHeight += 10;
+    doc.text(`Fecha recogida: ${datePickupFormatted}`, currentWidth, currentHeight);
     currentHeight += 10;
 
     //Table
