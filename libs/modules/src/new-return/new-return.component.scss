@@ -3,6 +3,18 @@ ion-content {
     margin-bottom: 16px;
   }
 
+  mat-card.from-history {
+    ion-col {
+      opacity: 1;
+      ion-item.item-disabled {
+        opacity: 1;
+        ion-label {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
   span.unities-total {
     margin-right: 8px;
   }
