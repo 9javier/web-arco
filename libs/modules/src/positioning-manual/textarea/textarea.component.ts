@@ -21,7 +21,7 @@ export class TextareaComponent implements OnInit {
 
   @ViewChild(LoadingMessageComponent) loadingMessageComponent: LoadingMessageComponent;
 
-  dataToWrite: string = 'CONTENEDOR / EMBALAJE';
+  dataToWrite: string = 'UBICACIÓN/EMBALAJE';
   containerReference: string = null;
   packingReference: string = null;
   inputPositioning: string = null;
@@ -150,7 +150,7 @@ export class TextareaComponent implements OnInit {
         });
         this.containerReference = dataWrited;
         this.packingReference = null;
-        this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
+        this.dataToWrite = 'PRODUCTO/UBICACIÓN/EMBALAJE';
         this.inputPositioning = null;
         this.errorMessage = null;
       } else if (
@@ -187,7 +187,7 @@ export class TextareaComponent implements OnInit {
               });
               this.containerReference = null;
               this.packingReference = dataWrited;
-              this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
+              this.dataToWrite = 'PRODUCTO/UBICACIÓN/EMBALAJE';
               this.inputPositioning = null;
               this.errorMessage = null;
             }

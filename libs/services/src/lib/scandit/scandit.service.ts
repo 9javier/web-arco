@@ -134,7 +134,7 @@ export class ScanditService {
           this.hideTextMessage(2000);
           containerReference = code;
           packingReference = null;
-          ScanditMatrixSimple.setFixedText('PRODUCTO/CONTENEDOR/EMBALAJE');
+          ScanditMatrixSimple.setFixedText('PRODUCTO/UBICACIÓN/EMBALAJE');
         } else if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PRODUCT) {
           this.positioningLog(2, "1.4", "product matched!");
           //Product
@@ -219,7 +219,7 @@ export class ScanditService {
           this.hideTextMessage(2000);
           packingReference = code;
           containerReference = null;
-          ScanditMatrixSimple.setFixedText('PRODUCTO/CONTENEDOR/EMBALAJE');
+          ScanditMatrixSimple.setFixedText('PRODUCTO/UBICACIÓN/EMBALAJE');
         }
       }
     }, 'Ubicar/Escanear', HEADER_BACKGROUND, HEADER_COLOR);
