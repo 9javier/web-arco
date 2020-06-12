@@ -17,6 +17,15 @@
 
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
+        <ng-container matColumnDef="avelonId">
+          <th mat-header-cell *matHeaderCellDef>
+            Id
+          </th>
+          <td class="nameColumn" mat-cell *matCellDef="let tariff" (click)="selectWarehouse($event, tariff)">
+            {{ tariff?.avelonId }}
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>
                 nombre

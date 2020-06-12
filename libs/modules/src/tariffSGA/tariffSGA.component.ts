@@ -36,7 +36,7 @@ export class TariffSGAComponent implements OnInit {
 
   // @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  displayedColumns: string[] = ['name', 'initDate', 'endDate', 'select'];
+  displayedColumns: string[] = ['avelonId', 'name', 'initDate', 'endDate', 'select'];
   dataSource: any;
 
   warehouseId: number = 49;
