@@ -96,7 +96,9 @@ export namespace InventoryModel {
         sizes: FiltersModel.Size[],
         warehouses: FiltersModel.Warehouse[],
         ordertypes: FiltersModel.Group[],
-        online: FiltersModel.Online[]
+        online: FiltersModel.Online[],
+        status: FiltersModel.Online[],
+        found: FiltersModel.Online[]
       }
     }
   }
