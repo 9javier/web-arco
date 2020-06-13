@@ -1,5 +1,5 @@
 <ion-content padding>
-  <mat-card class="card-main" *ngIf="return" [ngClass]="{'from-history': isHistoric}">
+  <mat-card *ngIf="return" [ngClass]="{'from-history': isHistoric}">
     <mat-card-header>
       <mat-card-title># {{return.id}}</mat-card-title>
     </mat-card-header>
@@ -152,6 +152,8 @@
     </mat-card-content>
   </mat-card>
 
+  <div class="space-between-components"></div>
+
   <mat-card *ngIf="return" [ngClass]="{'from-history': isHistoric}">
     <mat-card-header>
       <mat-card-title>
@@ -225,6 +227,13 @@
       </ion-grid>
     </mat-card-content>
   </mat-card>
+
+  <div *ngIf="return && isHistoric">
+    <div class="space-between-components"></div>
+    <horizontal-images-list *ngIf="return.archives && return.archives.length" [title]="'Archivos'" [archives]="return.archives"></horizontal-images-list>
+    <div class="space-between-components" *ngIf="return.delivery_notes && return.delivery_notes.length"></div>
+    <horizontal-images-list *ngIf="return.delivery_notes && return.delivery_notes.length" [title]="'Albaranes'" [archives]="return.delivery_notes"></horizontal-images-list>
+  </div>
 </ion-content>
 
 <ion-footer>
