@@ -63,6 +63,7 @@ export namespace InventoryModel {
           on_right_side: boolean,
           items: number
       },
+      statusNotFound: number,
       warehouse: any,
       carrier?: any,
       locationType?: any
