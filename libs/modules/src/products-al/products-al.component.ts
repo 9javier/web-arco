@@ -56,6 +56,8 @@ export class ProductsAlComponent implements OnInit {
   form:FormGroup = this.formBuilder.group({
     suppliers: [],
     online: [],
+    status: [],
+    found: [],
     brands: [],
     containers: [],
     models: [],
@@ -81,7 +83,7 @@ export class ProductsAlComponent implements OnInit {
 
 
   products: ProductModel.Product[] = [];
-  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container', 'brand', 'supplier', 'online'];
+  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container', 'brand', 'supplier', 'online', 'status', 'found'];
   dataSource: any;
   flagPageChange: boolean = false;
   flagSizeChange: boolean = false;
@@ -97,6 +99,8 @@ export class ProductsAlComponent implements OnInit {
   brands: Array<TagsInputOption> = [];
   suppliers: Array<TagsInputOption> = [];
   online: Array<TagsInputOption> = [];
+  status: Array<TagsInputOption> = [];
+  found: Array<TagsInputOption> = [];
 
   /**List of SearchInContainer */
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
@@ -123,6 +127,41 @@ export class ProductsAlComponent implements OnInit {
     private toolbarProvider: ToolbarProvider,
   ) {}
 
+  getStatusText(status: number): string{
+    const statusProductType = [
+      '',
+      'Stock libre',
+      'Stock preasignado',
+      'Stock asignado',
+      'Stock preventilado',
+      'Stock en cálculo',
+      'Stock en estado de incidencia',
+      'Stock en cálculo Temporal',
+      'Stock preasignado Temporal',
+      'Stock preasignado directo Temporal',
+      'Stock preasignado OT Temporal',
+      'Stock en cálculo Temporal OT',
+      'Stock Preverificado',
+      'Stock Defectuoso',
+      'Stock No Apto Online',
+      'Stock Verificado',
+      'Stock Preverificado Temporal OT',
+      'Stock Bloqueado',
+      'Producto de Operación Logística Interna',
+      'Asociado a Pedido'
+    ];
+    return statusProductType[status];
+  }
+
+  getFoundText(statusNotFound: number): string{
+    const statusProductNotFound = [
+      '',
+      'Producto disponible',
+      'Primer aviso de producto no encontrado',
+      'Segundo aviso de producto no encontrado'
+    ];
+    return statusProductNotFound[statusNotFound];
+  }
 
   btnOnClick(idElement:string, txtElement?:string){
     this.holderTooltipText.setTootlTip(idElement,true,txtElement);
@@ -383,6 +422,8 @@ export class ProductsAlComponent implements OnInit {
           this.updateFilterSourceBrands(searchsInContainer.data.filters.brands);
           this.updateFilterSourceSuppliers(searchsInContainer.data.filters.suppliers);
           this.updateFilterSourceOnline(searchsInContainer.data.filters.online);
+          this.updateFilterSourceStatus(searchsInContainer.data.filters.status);
+          this.updateFilterSourceFound(searchsInContainer.data.filters.found);
           setTimeout(() => {
             this.pauseListenFormChange = false;
             this.pauseListenFormChange = true;
@@ -541,6 +582,36 @@ export class ProductsAlComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
+  private updateFilterSourceStatus(status: FiltersModel.Status[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("status").value;
+    this.status = status.map(status => {
+      status.value = status.name;
+      status.checked = true;
+      status.hide = false;
+      return status;
+    });
+    if (value && value.length) {
+      this.form.get("status").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  private updateFilterSourceFound(found: FiltersModel.Found[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("found").value;
+    this.found = found.map(found => {
+      found.value = found.name;
+      found.checked = true;
+      found.hide = false;
+      return found;
+    });
+    if (value && value.length) {
+      this.form.get("found").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
   applyFilters() {
     if (this.pauseListenFormChange) return;
     ///**format the reference */
@@ -567,6 +638,8 @@ export class ProductsAlComponent implements OnInit {
     this.form = this.formBuilder.group({
       suppliers: [],
       online: [],
+      status: [],
+      found: [],
       brands: [],
       containers: [],
       models: [],
