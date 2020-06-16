@@ -751,8 +751,8 @@ export class ProductsComponent implements OnInit {
     this.form.get("productReferencePattern").patchValue(this.productReferencePatternSelected, { emitEvent: false });
     this.form.get("orderby").patchValue(this.orderbySelected, { emitEvent: false });
     this.form.get("online").patchValue(this.onlineSelected, { emitEvent: false });
-    this.form.get("status").patchValue(this.statusSelected, { emitEvent: false });
-    this.form.get("found").patchValue(this.foundSelected, { emitEvent: false });
+    if(this.form.get("status")) this.form.get("status").patchValue(this.statusSelected, { emitEvent: false });
+    if(this.form.get("found")) this.form.get("found").patchValue(this.foundSelected, { emitEvent: false });
   }
 
   private getFormValueCopy() {
@@ -869,10 +869,6 @@ export class ProductsComponent implements OnInit {
         this.filterButtonStatus.listItems = this.status;
       }
       if (this.lastUsedFilter != 'found') {
-        let filteredFound = searchsInContainer.data.filters['found'] as unknown as string[];
-        for (let index in this.found) {
-          this.found[index].hide = !filteredFound.includes(this.found[index].value);
-        }
         this.filterButtonFound.listItems = this.found;
       }
       if(applyFilter){
@@ -1213,7 +1209,7 @@ export class ProductsComponent implements OnInit {
 
   private updateFilterSourceStatus(status: FiltersModel.Status[]) {
     this.pauseListenFormChange = true;
-    let value = this.form.get("status").value;
+    let value = this.form.get("status") ? this.form.get("status").value : '';
     this.status = status.map(status => {
       status.value = status.name;
       status.checked = true;
@@ -1228,7 +1224,7 @@ export class ProductsComponent implements OnInit {
 
   private updateFilterSourceFound(found: FiltersModel.Found[]) {
     this.pauseListenFormChange = true;
-    let value = this.form.get("found").value;
+    let value = this.form.get("found") ? this.form.get("found").value : '';
     this.found = found.map(found => {
       found.value = found.name;
       found.checked = true;
