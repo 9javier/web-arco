@@ -60,6 +60,18 @@
                   Asociado a pedido: {{product?.deliveryRequestExternalId}}
                 </ion-label>
             </ion-item>
+            <ion-item>
+              <ion-label>
+                Estado:
+                {{getStatusText(product.status)}}
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                No encontrado:
+                {{getFoundText(product.statusNotFound)}}
+              </ion-label>
+            </ion-item>
             <div padding *ngIf="isProductRelocationEnabled">
                 <ion-label class="title-section">Reubicar</ion-label>
                 <div class="form-fields">
