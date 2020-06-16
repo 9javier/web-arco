@@ -78,24 +78,24 @@ export class ProductDetailsComponent implements OnInit {
   getStatusText(status: number): string{
     const statusProductType = [
       '',
-      'Stock libre',
-      'Stock preasignado',
-      'Stock asignado',
-      'Stock preventilado',
-      'Stock en cálculo',
-      'Stock en estado de incidencia',
-      'Stock en cálculo Temporal',
-      'Stock preasignado Temporal',
-      'Stock preasignado directo Temporal',
-      'Stock preasignado OT Temporal',
-      'Stock en cálculo Temporal OT',
-      'Stock Preverificado',
-      'Stock Defectuoso',
-      'Stock No Apto Online',
-      'Stock Verificado',
-      'Stock Preverificado Temporal OT',
-      'Stock Bloqueado',
-      'Producto de Operación Logística Interna',
+      'Libre',
+      'Preasignado',
+      'Asignado',
+      'Preventilado',
+      'Cálculo',
+      'Incidencia',
+      'Cálculo temporal',
+      'Preasignado temporal',
+      'Preasignado directo temporal',
+      'Preasignado OT temporal',
+      'Cálculo OT temporal',
+      'Preverificado',
+      'Defectuoso',
+      'No Apto Online',
+      'Verificado',
+      'Preverificado OT temporal',
+      'Bloqueado',
+      'Logística Interna',
       'Asociado a Pedido'
     ];
     return statusProductType[status];
@@ -104,9 +104,9 @@ export class ProductDetailsComponent implements OnInit {
   getFoundText(statusNotFound: number): string{
     const statusProductNotFound = [
       '',
-      'Producto disponible',
-      'Primer aviso de producto no encontrado',
-      'Segundo aviso de producto no encontrado'
+      'Disponible',
+      'Primer aviso',
+      'Segundo aviso'
     ];
     return statusProductNotFound[statusNotFound];
   }
