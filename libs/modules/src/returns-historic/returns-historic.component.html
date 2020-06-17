@@ -2,7 +2,7 @@
   <div class="mat-table-wrapper-overflow-x">
     <table mat-table [dataSource]="dataSource">
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="router.navigate(['/new-return', {id: row.id, isHistoric: true}])"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="router.navigate(['/new-return', {id: row.id, isHistoric: true}])" class="return-info"></tr>
 
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef class="title">

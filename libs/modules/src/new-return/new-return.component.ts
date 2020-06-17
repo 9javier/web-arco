@@ -380,7 +380,7 @@ export class NewReturnComponent implements OnInit {
   }
 
   getBrandNameList(brands: Brand[]): string{
-    return brands.map(brand => brand.name).join('/');
+    return brands ? brands.map(brand => brand.name.trim()).join(' // ') : '';
   }
 
   async changeStatus(status: number) {
