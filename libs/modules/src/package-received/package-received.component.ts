@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '
 import { MatTableDataSource, MatPaginator } from '@angular/material';
 
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
-
+import {Observable} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 import {
   IntermediaryService,
   LabelsService,
@@ -52,6 +53,10 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
     selector: false
   }, {
     validators: validators.haveItems("toSelect")
+  });
+
+  checkForm: FormGroup = this.formBuilder.group({
+    toSelect: this.formBuilder.array([])
   });
 
   pagerValues: Array<number> = [50, 100, 500];
@@ -168,7 +173,6 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
 
   selectAll(event): void {
     let value = event.detail.checked;
-
     for (let index = 0; index < this.packages.length; index++) {
       if (this.packages[index].status !== 3) {
         this.itemSelected(this.packages[index].id);
@@ -198,7 +202,6 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
       this.itemIdSelected.push(item);
     }
   }
-
 
   openFiltersMobile() {
     this.showFiltersMobileVersion = !this.showFiltersMobileVersion;
@@ -243,6 +246,13 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
   initSelectForm(items): void {
     this.selectedForm.removeControl("toSelect");
     this.selectedForm.addControl("toSelect", this.formBuilder.array(items.map(prices => new FormControl(false))));
+    this.checkForm.removeControl("toSelect");
+    this.checkForm.addControl("toSelect", this.formBuilder.array(this.packages.map(item => {
+      return this.formBuilder.group({
+        id: item.id,
+        selected: false
+      });
+    })));
   }
 
   searchInContainer(parameters): void {
@@ -259,6 +269,13 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
       this.paginatorComponent.pageIndex = paginator.selectPage;
       this.paginatorComponent.lastPage = paginator.lastPage;
       this.groups = data.filters.ordertypes;
+      this.checkForm.removeControl("toSelect");
+      this.checkForm.addControl("toSelect", this.formBuilder.array(this.packages.map(item => {
+        return this.formBuilder.group({
+          id: item.id,
+          selected: false
+        });
+      })));
       this.intermediaryService.dismissLoading();
     }, () => {
       this.intermediaryService.dismissLoading();
@@ -360,6 +377,56 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
     });
 
     await alert.present();
+  }
+
+  async presentAlertConfirmProcess(items) {
+    const num = items.length;
+    const messageSingular = `¿Desea procesar el bulto seleccionado?`;
+    const messagePlural = `¿Desea procesar los bultos seleccionados?`;
+    const alert = await this.alertController.create({
+      header: '¡Confirmar!',
+      message: num > 1 ? messagePlural : messageSingular,
+      buttons: [
+        {
+          text: 'Si',
+          handler: () => {
+            this.processPackages();
+          }
+        }, {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => { }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async processPackages() {
+
+    let observable = new Observable(observer => observer.next());
+    this.checkForm.value.toSelect.forEach(item => {
+      if (item.selected)
+        observable = observable.pipe(switchMap(response => {
+          return this.packageReceivedService.processPackage(item.id)
+        }))
+    });
+      this.intermediaryService.presentLoading();
+      observable.subscribe(
+        () => {
+          this.intermediaryService.dismissLoading();
+          this.intermediaryService.presentToastSuccess(
+            'Pedidos procesados con éxito'
+          );
+          this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+        },
+        () => {
+          this.intermediaryService.dismissLoading();
+          this.intermediaryService.presentToastSuccess('Error al procesar');
+        }
+      );
   }
 
   changeStatusImpress() {
@@ -479,6 +546,10 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
     } else {
       this.printPricesWithoutDeleted(warehouseId, items);
     }
+  }
+
+  async process() {
+    await this.presentAlertConfirmProcess(this.checkForm.value.toSelect);
   }
 
   private sendPrint(price: any, sizeSelect: any) {
@@ -625,5 +696,10 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
   formattedDate(date) {
     return moment(date).format("DD/MM/YYYY")
   }
+
+  hasToProcess(): boolean {
+    return !!this.checkForm.value.toSelect.find(item => item.selected);
+  }
+
 
 }
