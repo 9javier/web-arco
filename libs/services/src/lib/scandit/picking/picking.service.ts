@@ -403,6 +403,29 @@ export class PickingScanditService {
                 scanMode = 'products_disassociate';
               }
             }
+            else if (response.action == 'delete_packing'){
+              const packingToDelete: string = response.params;
+              for(let i = 0; i < this.packingReferences.length; i++){
+                if(this.packingReferences[i] == packingToDelete){
+                  this.packingReferences.splice(i, 1);
+                  break;
+                }
+              }
+              let scannedPackings: { reference: string }[] = [];
+              for(let ref of this.packingReferences){
+                if(!scannedPackings.map(s=>s.reference).includes(ref)){
+                  scannedPackings.push({reference: ref});
+                }
+              }
+              ScanditMatrixSimple.sendPickingStoresProducts(scannedPackings, this.processed, null);
+              ScanditMatrixSimple.sendPickingStoresProducts(scannedPackings, this.processed, null);
+              ScanditMatrixSimple.setText(
+                `Embalaje ${packingToDelete} eliminado del traspaso`,
+                this.scanditProvider.colorsMessage.info.color,
+                this.scanditProvider.colorText.color,
+                18);
+              this.hideTextMessage(2000);
+            }
           }
         }
       }, 'Picking', this.scanditProvider.colorsHeader.background.color, this.scanditProvider.colorsHeader.color.color, textPickingStoresInit, environment.urlBase);

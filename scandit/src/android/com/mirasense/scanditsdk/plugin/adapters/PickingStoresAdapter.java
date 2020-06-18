@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -47,20 +48,24 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
     TextView tvTypeValue = itemView.findViewById(resources.getIdentifier("tvTypeValue", "id", packageName));
 
     LinearLayout sizeLayout = itemView.findViewById(resources.getIdentifier("sizeLayout", "id", packageName));
-    LinearLayout brandLayout = itemView.findViewById(resources.getIdentifier("brandLayout", "id", packageName));
-    LinearLayout typeLayout = itemView.findViewById(resources.getIdentifier("typeLayout", "id", packageName));
+    LinearLayout deleteLayout = itemView.findViewById(resources.getIdentifier("deleteLayout", "id", packageName));
+    LinearLayout secondRowLayout = itemView.findViewById(resources.getIdentifier("secondRowLayout", "id", packageName));
 
     try {
       if (products.get(position).isNull("id")) {
-        sizeLayout.setVisibility(View.INVISIBLE);
-        brandLayout.setVisibility(View.INVISIBLE);
-        typeLayout.setVisibility(View.INVISIBLE);
+        sizeLayout.setVisibility(View.GONE);
+        secondRowLayout.setVisibility(View.GONE);
+        deleteLayout.setVisibility(View.VISIBLE);
 
         tvModelValue.setText(products.get(position).getString("reference"));
+
+        ImageButton deleteButton = itemView.findViewById(resources.getIdentifier("deleteButton", "id", packageName));
+
+        deleteButton.setOnClickListener(view1 -> MatrixPickingStores.deletePacking(tvModelValue.getText().toString()));
       }else{
         sizeLayout.setVisibility(View.VISIBLE);
-        brandLayout.setVisibility(View.VISIBLE);
-        typeLayout.setVisibility(View.VISIBLE);
+        secondRowLayout.setVisibility(View.VISIBLE);
+        deleteLayout.setVisibility(View.GONE);
 
         if (!products.get(position).isNull("model")) {
           tvModelValue.setText(products.get(position).getJSONObject("model").getString("reference"));
