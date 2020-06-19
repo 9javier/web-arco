@@ -172,7 +172,7 @@ export class PickingScanditService {
               if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
                 if(this.packingReferences.includes(codeScanned)){
                   ScanditMatrixSimple.setText(
-                    `Ya ha escaneado ese embalaje.`,
+                    `Ya ha escaneado el embalaje ${codeScanned}`,
                     this.scanditProvider.colorsMessage.error.color,
                     this.scanditProvider.colorText.color,
                     18);
@@ -537,7 +537,7 @@ export class PickingScanditService {
       case 'scannedPacking':
         let codeScanned = params[0];
         ScanditMatrixSimple.hideLoadingDialog();
-        this.packingReferences.push(codeScanned);
+        if(!this.packingReferences.includes(codeScanned)) this.packingReferences.push(codeScanned);
         let scannedPackings: {
           reference: string
         }[] = [];
