@@ -170,8 +170,17 @@ export class PickingScanditService {
             } else if (scanMode == 'carriers') {
               ScanditMatrixSimple.hideLoadingDialog();
               if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
-                ScanditMatrixSimple.showLoadingDialog('Cargando embalaje...');
-                ScanditMatrixSimple.setTimeout("scannedPacking", 1000, JSON.stringify([codeScanned]));
+                if(this.packingReferences.includes(codeScanned)){
+                  ScanditMatrixSimple.setText(
+                    `Ya ha escaneado ese embalaje.`,
+                    this.scanditProvider.colorsMessage.error.color,
+                    this.scanditProvider.colorText.color,
+                    18);
+                  this.hideTextMessage(2000);
+                }else{
+                  ScanditMatrixSimple.showLoadingDialog('Cargando embalaje...');
+                  ScanditMatrixSimple.setTimeout("scannedPacking", 1000, JSON.stringify([codeScanned]));
+                }
               } else {
                 ScanditMatrixSimple.setText(
                   `Escanee un embalaje válido`,
@@ -510,7 +519,9 @@ export class PickingScanditService {
           reference: string
         }[] = [];
         for(let ref of this.packingReferences){
-          scannedPackings.push({reference: ref});
+          if(!scannedPackings.map(s=>s.reference).includes(ref)){
+            scannedPackings.push({reference: ref});
+          }
         }
         ScanditMatrixSimple.sendPickingStoresProducts(scannedPackings, this.processed, null);
         ScanditMatrixSimple.setText(
