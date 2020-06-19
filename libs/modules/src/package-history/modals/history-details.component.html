@@ -5,7 +5,7 @@
                 <ion-icon name="close" class="toogleArrow"></ion-icon>
             </ion-button>
         </ion-buttons>
-        <ion-title>Pedido: {{ delivery }} <span class="ion-float-right">{{orderHistoricalLast.order.package.uniqueCode}}</span></ion-title>
+        <ion-title>Pedido: {{ delivery }} <span class="ion-float-right">{{orderHistoricalLast?.order?.package.uniqueCode}}</span></ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -25,19 +25,19 @@
 				<ion-item>
 					<div>
               <p>
-                Fecha pedido: {{ formattedDate(orderHistoricalLast.order.createdAt)}}
+                Fecha pedido: {{ formattedDate(orderHistoricalLast?.order?.createdAt)}}
               </p>
 							<p>
-									Origen: {{ orderHistoricalLast.order.originShop.reference }}-{{ orderHistoricalLast.order.originShop.name }}
+									Origen: {{ orderHistoricalLast?.order?.originShop.reference }}-{{ orderHistoricalLast?.order?.originShop.name }}
 							</p>
 							<p>
-									Destino: {{ orderHistoricalLast.order.destinyShop.reference}}-{{ orderHistoricalLast.order.destinyShop.name}}
+									Destino: {{ orderHistoricalLast?.order?.destinyShop.reference}}-{{ orderHistoricalLast?.order?.destinyShop.name}}
 							</p>
 							<p>
-									Estado Bulto: {{ getStatus(orderHistoricalLast.order.package.status)}}
+									Estado Bulto: {{ getStatus(orderHistoricalLast?.order?.package.status)}}
 							</p>
               <p>
-                Fecha estado: {{ formattedDateTime(orderHistoricalLast.order.package.udpatedAt)}}
+                Fecha estado: {{ formattedDateTime(orderHistoricalLast?.order?.package.udpatedAt)}}
               </p>
 					</div>
 				</ion-item>
@@ -77,11 +77,11 @@
 				<mat-card class="modal-title-item">
 					Productos en el Bulto
 				</mat-card>
-				<ion-item *ngFor="let product of orderHistoricalLast.order.package.products">
+				<ion-item *ngFor="let product of orderHistoricalLast?.order?.package?.products">
 					<ion-grid>
 						<ion-row>
 							<ion-col>
-								Modelo: {{ product.model.name }}
+								Artículo: {{ product.model.reference }}
 							</ion-col>
 							<ion-col>
 								Talla: {{ product.size.name }}
@@ -140,15 +140,15 @@
 								Referencia: {{ data.product.reference}}
 							</ion-col>
 							<ion-col>
-								Modelo: {{ data.model.name }}
+                <span>Artículo: {{ data.model.reference }}</span><span class="ion-float-right">T:{{data.size.name}}</span>
 							</ion-col>
 						</ion-row>
 						<ion-row>
 							<ion-col>
-								Color: {{ data.model.color.name }}
+								Marca: {{ data.model.brand.name }}
 							</ion-col>
 							<ion-col>
-								Talla: {{ data.size.name }}
+                Color: {{ data.model.color.name }}
 							</ion-col>
 						</ion-row>
 					</ion-grid>

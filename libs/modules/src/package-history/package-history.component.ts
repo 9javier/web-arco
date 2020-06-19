@@ -27,28 +27,28 @@ export class PackageHistoryComponent implements OnInit {
     {
       name: 'package',
       title:'Bulto',
-      field: ['order', 'package', 'uniqueCode'],
+      field: ['package', 'uniqueCode'],
       filters:true,
       type:'text'
     },
     {
       name: 'delivery',
       title:'Pedido',
-      field: ['order', 'deliveryRequestExternalId'],
+      field: ['package', 'order', 'deliveryRequestExternalId'],
       filters:true,
       type:'text'
     },
     {
       name: 'origin',
       title:'Origen',
-      field: ['order', 'originShop', 'nameReference'],
+      field: ['package', 'order', 'originShop', 'nameReference'],
       filters:true,
       type:'text'
     },
     {
       name: 'destiny',
       title:'Destino',
-      field: ['order', 'destinyShop', 'nameReference'],
+      field: ['package', 'order', 'destinyShop', 'nameReference'],
       filters:true,
       type:'text'
     },
@@ -62,14 +62,14 @@ export class PackageHistoryComponent implements OnInit {
     {
       name: 'status',
       title:'Estado',
-      field: ['order', 'package', 'status'],
+      field: ['package', 'status'],
       filters:true,
       type:'text'
     },
     {
       name: 'date',
       title:'Fecha',
-      field: ['order', 'package', 'updatedAt'],
+      field: ['package', 'updatedAt'],
       filters:true,
       type:'date',
       format:'dd/MM/yyyy'
@@ -128,10 +128,10 @@ length: any;
     await this.packageHistoryService.getOpPackageHistory(form.value).subscribe((resp: any) => {
       // console.log("Resultado",resp);
       resp.results.map(data => {
-        data.order.destinyShop.nameReference = data.order.destinyShop.reference + '-' + data.order.destinyShop.name;
-        data.order.originShop.nameReference = data.order.originShop.reference + '-' + data.order.originShop.name;
+        data.package.order.destinyShop.nameReference = data.package.order.destinyShop.reference + '-' + data.package.order.destinyShop.name;
+        data.package.order.originShop.nameReference = data.package.order.originShop.reference + '-' + data.package.order.originShop.name;
 
-        data.order.package.status = this.getStatus(data.order.package.status);
+        data.package.status = this.getStatus(data.package.status);
       });
 
 
@@ -196,9 +196,9 @@ length: any;
     let modal = (await this.modalCtrl.create({
       component: HistoryDetailsComponent,
       componentProps: {
-        order: data.order.id,
-        package:data.order.package.id,
-        delivery:data.order.deliveryRequestExternalId
+        order: data.package.order.id,
+        package:data.package.id,
+        delivery:data.package.order.deliveryRequestExternalId
       }
     }));
 
