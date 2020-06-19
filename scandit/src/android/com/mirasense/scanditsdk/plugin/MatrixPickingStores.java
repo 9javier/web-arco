@@ -860,6 +860,18 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     }
   }
 
+  public static void deletePacking(String reference){
+    JSONObject jsonObject = new JSONObject();
+    try {
+      jsonObject.put("result", true);
+      jsonObject.put("action", "delete_packing");
+      jsonObject.put("params", reference);
+    } catch (JSONException e) {}
+    PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+    pResult.setKeepCallback(true);
+    ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+  }
+
   @Override
   protected void onResume() {
     mPicker.startScanning();
