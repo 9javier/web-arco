@@ -9,4 +9,5 @@ export enum TableEmitter {
   OpenRow = 8,
   Pagination = 9,
   Sorter = 10,
+  iconEdit = 11,
 }

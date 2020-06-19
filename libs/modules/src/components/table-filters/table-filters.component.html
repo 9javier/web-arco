@@ -16,7 +16,7 @@
                   </mat-checkbox>
                 </ng-container>
               </div>
-              <div>Todas</div>
+              <div>--</div>
             </mat-header-cell>
             <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
               <ng-container *ngIf="dataSource !== undefined">
@@ -32,7 +32,27 @@
         </div>
       </div>
 
-      <div *ngIf="col.filters == true || col.filters == undefined && col.name != 'select'">
+      <div *ngIf="buttons == true">
+        <div *ngIf="col.name == 'buttons'">
+          <ng-container matColumnDef="buttons">
+            <mat-header-cell class="my-sticky-col info  checkbox header-checkbox" *matHeaderCellDef>
+              <div class="content-checkbox">
+                <ng-container *ngIf="dataSource !== undefined">
+                
+                </ng-container>
+              </div>
+              <div>Todas</div>
+            </mat-header-cell>
+            <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
+              <ng-container *ngIf="dataSource !== undefined">
+                <i (click)="edit($event,row)" class="material-icons edit">edit</i>
+              </ng-container>
+            </mat-cell>
+          </ng-container>
+        </div>
+      </div>
+
+      <div *ngIf="col.filters == true || col.filters == undefined && col.name != 'select' && col.name != 'buttons'">
         <div *ngIf="col.sorter == undefined || col.sorter == true ">
           <ng-container matColumnDef='{{col.name}}'>
             <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>{{ col.title }}
@@ -97,7 +117,7 @@
         </div>
       </div>
 
-      <div *ngIf="col.filters == false && col.name != 'select'">
+      <div *ngIf="col.filters == false && col.name != 'select' && col.name != 'buttons'">
         <div *ngIf="col.sorter == undefined || col.sorter == true ">
           <ng-container matColumnDef='{{col.name}}'>
             <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>{{ col.title }}

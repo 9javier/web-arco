@@ -639,6 +639,22 @@ export class MenuComponent implements OnInit {
 
       ]
     },
+    {
+      title: 'Clientes',
+      open: false,
+      type: 'wrapper',
+      icon: 'people',
+      children:[
+        {
+          title: 'Administración de clientes',
+          id: 'customers',
+          url: '/customers',
+          icon: 'people',
+          tooltip: 'Lista de clientes'
+        },
+      ]
+     },
+    
    
   ];
 
