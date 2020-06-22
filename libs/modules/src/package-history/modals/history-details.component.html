@@ -41,7 +41,7 @@
 							<p>
 									Estado Bulto: {{ getStatus(orderHistoricalLast.order.package.status)}}
 							</p>
-              <p>
+              <p *ngIf="orderHistoricalLast.location">
 									Ubicación: {{ orderHistoricalLast.location }}
 							</p>
               <p>
@@ -89,7 +89,7 @@
 					<ion-grid>
 						<ion-row>
 							<ion-col>
-								Modelo: {{ product.model.name }}
+								Artículo: {{ product.model.reference }}
 							</ion-col>
 							<ion-col>
 								Talla: {{ product.size.name }}
@@ -118,7 +118,7 @@
                 <p>
                   Almacén: {{ historical.shop.reference}} - {{historical.shop.name }}
                 </p>
-                <p>
+                <p *ngIf="historical.location">
                   Ubicación: {{ historical.location}}
                 </p>
 						</div>
@@ -148,18 +148,18 @@
 					<ion-grid>
 						<ion-row>
 							<ion-col>
-								Referencia: {{ data.model.reference}}
+								Referencia: {{ data.product.reference}}
 							</ion-col>
 							<ion-col>
-								Modelo: {{ data.model.name }}
+								Artículo: {{ data.model.reference }} <span class="ion-float-right">T:{{ data.size.name }}</span>
 							</ion-col>
 						</ion-row>
 						<ion-row>
 							<ion-col>
-								Color: {{ data.model.color.name }}
+                Marca: {{ data.model?.brand?.name }}
 							</ion-col>
 							<ion-col>
-								Talla: {{ data.size.name }}
+                Color: {{ data.model?.color?.name }}
 							</ion-col>
 						</ion-row>
 					</ion-grid>

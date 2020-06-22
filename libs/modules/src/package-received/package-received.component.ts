@@ -381,10 +381,10 @@ export class PackageReceivedComponent implements OnInit, AfterViewInit {
 
   async presentAlertConfirmProcess(items) {
     const num = items.length;
-    const messageSingular = `¿Desea procesar el bulto seleccionado?`;
-    const messagePlural = `¿Desea procesar los bultos seleccionados?`;
+    const messageSingular = `¿Confirma que ya ha procesado el bulto seleccionado?`;
+    const messagePlural = `¿Confirma que ya ha proceado los bultos seleccionados?`;
     const alert = await this.alertController.create({
-      header: '¡Confirmar!',
+      header: 'Procesar Bultos',
       message: num > 1 ? messagePlural : messageSingular,
       buttons: [
         {
