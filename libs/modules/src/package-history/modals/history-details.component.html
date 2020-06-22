@@ -6,6 +6,11 @@
             </ion-button>
         </ion-buttons>
         <ion-title>Pedido: {{ delivery }} <span class="ion-float-right">{{orderHistoricalLast.order.package.uniqueCode}}</span></ion-title>
+        <ion-buttons slot="end">
+          <ion-button matTooltip="Re-imprimir bulto" matTooltipClass="tooltip" (click)="printOrderTag()">
+            <ion-icon name="print" class="toogleArrow"></ion-icon>
+          </ion-button>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -35,6 +40,9 @@
 							</p>
 							<p>
 									Estado Bulto: {{ getStatus(orderHistoricalLast.order.package.status)}}
+							</p>
+              <p>
+									Ubicación: {{ orderHistoricalLast.location }}
 							</p>
               <p>
                 Fecha estado: {{ formattedDateTime(orderHistoricalLast.order.package.udpatedAt)}}
@@ -110,6 +118,9 @@
                 <p>
                   Almacén: {{ historical.shop.reference}} - {{historical.shop.name }}
                 </p>
+                <p>
+                  Ubicación: {{ historical.location}}
+                </p>
 						</div>
 					</ion-item>
 			</div>
@@ -137,7 +148,7 @@
 					<ion-grid>
 						<ion-row>
 							<ion-col>
-								Referencia: {{ data.product.reference}}
+								Referencia: {{ data.model.reference}}
 							</ion-col>
 							<ion-col>
 								Modelo: {{ data.model.name }}

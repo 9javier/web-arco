@@ -16,6 +16,7 @@ import {switchMap} from 'rxjs/operators';
 import {TableEmitter } from './../../../services/src/models/tableEmitterType';
 import {HistoryDetailsComponent}  from './modals/history-details.component';
 import { InternOrderPackageStatus } from './enums/status.enum';
+import {HttpRequestModel} from "../../../services/src/models/endpoints/HttpRequest";
 @Component({
   selector: 'package-history',
   templateUrl: './package-history.component.html',
@@ -67,6 +68,13 @@ export class PackageHistoryComponent implements OnInit {
       type:'text'
     },
     {
+      name: 'location',
+      title:'Ubicación',
+      field: ['order', 'last', 'location'],
+      filters:false,
+      type:'text'
+    },
+    {
       name: 'date',
       title:'Fecha',
       field: ['order', 'package', 'updatedAt'],
@@ -76,9 +84,9 @@ export class PackageHistoryComponent implements OnInit {
     },
   ];
 
-  
-  
-  displayedColumns: string[] = ['package', 'delivery', 'origin', 'destiny', 'cant', 'status' ,'date'];
+
+
+  displayedColumns: string[] = ['package', 'delivery', 'origin', 'destiny', 'cant', 'status', 'location','date'];
   dataSource: MatTableDataSource<any>;
   pagerValues = [10, 20, 100];
 
@@ -87,9 +95,9 @@ export class PackageHistoryComponent implements OnInit {
   lastUsedFilter: string;
   pagination;
   filtersData;
-  
 
- 
+
+
 form: FormGroup = this.formBuilder.group({
   package:[],
   order:[],
@@ -132,10 +140,10 @@ length: any;
         data.order.originShop.nameReference = data.order.originShop.reference + '-' + data.order.originShop.name;
 
         data.order.package.status = this.getStatus(data.order.package.status);
+        this.packageHistoryService.getHistoricalLast(data.order.package.id).subscribe(last => {
+          data.order.last = last;
+        });
       });
-
-
-
       this.intermediaryService.dismissLoading()
       this.dataSource = new MatTableDataSource<any>(resp);
       console.log(resp.pagination)
@@ -149,7 +157,7 @@ length: any;
       })
   }
 
- 
+
 
   getFilters() {
     this.packageHistoryService.getFilters().subscribe((entities) => {
@@ -196,6 +204,7 @@ length: any;
     let modal = (await this.modalCtrl.create({
       component: HistoryDetailsComponent,
       componentProps: {
+        data: data,
         order: data.order.id,
         package:data.order.package.id,
         delivery:data.order.deliveryRequestExternalId
@@ -325,7 +334,7 @@ length: any;
       case InternOrderPackageStatus.WAREHOUSE_OUTPUT:
         return 'Salida Almacén';
         break;
-    
+
       default:
         break;
     }

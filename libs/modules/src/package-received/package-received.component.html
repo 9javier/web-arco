@@ -130,29 +130,33 @@
       <div *ngIf="mobileVersionTypeList == 'list'">
         <div class="list-items-mobile">
           <mat-accordion multi="false" *ngFor="let package of packages; let i = index">
-            <mat-expansion-panel *ngIf=" package.orderPackage.productsQuantity != 0" >
+            <div class="checkbox">
+                <ion-checkbox [formControl]="checkForm['controls']?.toSelect['controls'][i]['controls']?.selected">
+                </ion-checkbox>
+            </div>
+            <mat-expansion-panel *ngIf=" package.orderPackage.productsQuantity != 0">
               <mat-expansion-panel-header class="custom-panel-header">
                 <ion-grid>
                   <ion-row class="custom-panel-header">
-                    <ion-col size="12" class="content-prices-header">
+                    <ion-col size="11" class="content-prices-header">
                       <mat-panel-title>
                         <ion-row class="row-title-prices">
-                          <ion-col class="product" size="7">
+                          <ion-col class="product" size="9">
                             Bulto: {{package?.uniqueCode}}
                           </ion-col>
-                          <ion-col class="product" size="5">
+                          <ion-col class="product" size="3">
                             Cant: {{package?.orderPackage?.productsQuantity}}
                           </ion-col>
                         </ion-row>
                       </mat-panel-title>
                       <mat-panel-description class="panel-description">
                         <ion-row class="row-family-lifestyle-size">
-                          <ion-col class="family-lifestyle" size="7">
+                          <ion-col class="family-lifestyle" size="8">
                             <p>
                               Pedido: {{package?.orderPackage?.order?.deliveryRequestExternalId}}
                             </p>
                           </ion-col>
-                          <ion-col class="family-lifestyle" size="5">
+                          <ion-col class="family-lifestyle" size="4">
                             <p>
                               {{formattedDate(package?.orderPackage?.updatedAt)}}
                             </p>
@@ -167,10 +171,17 @@
                 <ion-list *ngFor="let product of package.orderPackage.products">
                   <div style="border: black 1px solid; padding: 10px;">
                     <ion-row class="list-products">
+                      <ion-col>
                       <p>Modelo: {{product?.model.name}}</p>
+                      </ion-col>
                     </ion-row>
                     <ion-row class="list-products">
+                      <ion-col>
+                      <p>Referencia: {{product?.model.reference}}</p>
+                      </ion-col>
+                      <ion-col>
                       <p>Talla: {{product?.size.number}}</p>
+                      </ion-col>
                     </ion-row>
                   </div>
                 </ion-list>
@@ -322,6 +333,9 @@
       class="material-icons">refresh</i></ion-fab-button>
     <ion-fab-button (click)="printPrices(prices, null)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
       <ion-icon name="print"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="process()" *ngIf="hasToProcess()">
+      <ion-icon name="checkmark-circle"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-footer>
