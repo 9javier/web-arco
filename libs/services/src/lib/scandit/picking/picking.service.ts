@@ -48,7 +48,8 @@ export class PickingScanditService {
       sizes: [],
       colors: [],
       models: [],
-      brands: []
+      brands: [],
+      toAssociate: packing
     };
     let listProductsToStorePickings: ListItem[] = this.pickingProvider.listProductsToStorePickings;
     let listProductsProcessed: ListItem[] = this.pickingProvider.listProductsProcessedToStorePickings;
@@ -309,7 +310,8 @@ export class PickingScanditService {
                     type: filter.id,
                     order: filter.type_sort.toLowerCase()
                   };
-                })
+                }),
+                toAssociate: packing
               };
               const typesFiltered = response.filters.type.map(filter => {
                 return filter.id;

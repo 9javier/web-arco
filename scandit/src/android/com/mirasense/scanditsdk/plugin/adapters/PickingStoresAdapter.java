@@ -81,7 +81,15 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
         if (!products.get(position).isNull("shippingMode")) {
           tvTypeValue.setText("PO");
         }else{
-          tvTypeValue.setText("PT");
+          String typeRequest = "PT";
+          try {
+            if(products.get(position).getInt("source") == 10){
+              typeRequest = "TR";
+            }
+          } catch (JSONException e){
+            Log.d("CORDOVA_MATRIX", "error " + e.getMessage());
+          }
+          tvTypeValue.setText(typeRequest);
         }
 
         if(tvTypeValue.getText().equals("PO")){
