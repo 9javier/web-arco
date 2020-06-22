@@ -1,0 +1,11 @@
+<div class="container">
+  <p class="title" *ngIf="title">
+    {{title}}
+  </p>
+  <div class="scroll-container">
+    <div class="archive" *ngFor="let archive of archives">
+      <thumbnail-image *ngIf="isImage(archive.extension)" [image]="archive"></thumbnail-image>
+      <thumbnail-pdf *ngIf="isPdf(archive.extension)" [archive]="archive"></thumbnail-pdf>
+    </div>
+  </div>
+</div>

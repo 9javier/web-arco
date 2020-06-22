@@ -63,6 +63,7 @@ export namespace InventoryModel {
           on_right_side: boolean,
           items: number
       },
+      statusNotFound: number,
       warehouse: any,
       carrier?: any,
       locationType?: any
@@ -96,7 +97,9 @@ export namespace InventoryModel {
         sizes: FiltersModel.Size[],
         warehouses: FiltersModel.Warehouse[],
         ordertypes: FiltersModel.Group[],
-        online: FiltersModel.Online[]
+        online: FiltersModel.Online[],
+        status: FiltersModel.Online[],
+        found: FiltersModel.Online[]
       }
     }
   }

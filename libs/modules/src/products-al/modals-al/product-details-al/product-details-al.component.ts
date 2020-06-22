@@ -70,6 +70,42 @@ export class ProductDetailsAlComponent implements OnInit {
     this.product = this.navParams.get("product");
   }
 
+  getStatusText(status: number): string{
+    const statusProductType = [
+      '',
+      'Libre',
+      'Preasignado',
+      'Asignado',
+      'Preventilado',
+      'Cálculo',
+      'Incidencia',
+      'Cálculo temporal',
+      'Preasignado temporal',
+      'Preasignado directo temporal',
+      'Preasignado OT temporal',
+      'Cálculo OT temporal',
+      'Preverificado',
+      'Defectuoso',
+      'No Apto Online',
+      'Verificado',
+      'Preverificado OT temporal',
+      'Bloqueado',
+      'Logística Interna',
+      'Asociado a Pedido'
+    ];
+    return statusProductType[status];
+  }
+
+  getFoundText(statusNotFound: number): string{
+    const statusProductNotFound = [
+      '',
+      'Disponible',
+      'Primer aviso',
+      'Segundo aviso'
+    ];
+    return statusProductNotFound[statusNotFound];
+  }
+
   ngOnInit() {
     this.container = this.navParams.data.container;
     this.warehouseId = this.navParams.data.warehouseId;

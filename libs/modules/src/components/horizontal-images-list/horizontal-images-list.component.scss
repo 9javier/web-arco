@@ -1,0 +1,27 @@
+div.container {
+  width: 100%;
+  height: auto;
+
+  p.title {
+    margin: 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--ion-color-secondary);
+    padding-left: 8px;
+  }
+
+  div.scroll-container {
+    width: 100%;
+    height: 150px;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding: 8px 0;
+
+    div.archive {
+      display: inline-block;
+      height: 120px;
+      width: 120px;
+      margin: 0 8px;
+    }
+  }
+}

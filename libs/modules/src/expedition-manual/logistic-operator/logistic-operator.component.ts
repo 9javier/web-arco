@@ -51,9 +51,8 @@ export class LogisticOperatorComponent implements OnInit {
     private navParams: NavParams
   ) {
   }
-  ngOnInit() {
+  async ngOnInit() {
     this.id = this.navParams.get('id');
-    this.getIncidence(this.id);
     this.getTransports();
     this.form = this.formBuilder.group({
       expeditionId: this.id,
@@ -69,21 +68,26 @@ export class LogisticOperatorComponent implements OnInit {
       packages: ['', Validators.required],
       incidence: true
     });
-    this.clean();
+    await this.getIncidence(this.id);
   }
 
-  getIncidence(id) {
-    this.expeManSrv.getExpedition(id).subscribe(data => {
-      this.form.get('operator').setValue(data.transport.transport.id);
-      this.form.get('name').setValue(data.transport.shippingCompanyName);
-      this.form.get('lastname').setValue(data.transport.shippingCompanyName)
-      this.form.get('dni').setValue(data.transport.shippingCompanyName)
-      this.form.get('phone').setValue(data.transport.shippingPhone)
-      this.form.get('direction').setValue(data.transport.invoiceAddressee1)
-      this.form.get('province').setValue(data.transport.invoiceProvince)
-      this.form.get('country').setValue(data.transport.invoiceCountry)
-      this.form.get('postalcode').setValue(data.transport.invoiceZipCode)
-      this.form.get('packages').setValue(data.countPackage)
+  async getIncidence(id) {
+    this.expeManSrv.getExpedition(id).subscribe(async data => {
+      if(data){
+        this.form.get('operator').setValue(data.transport && data.transport.transport && data.transport.transport.id ? data.transport.transport.id : '');
+        this.form.get('name').setValue(data.transport ? data.transport.shippingAddressee1 : '');
+        this.form.get('lastname').setValue(data.transport ? data.transport.shippingAddressee2 : '')
+        this.form.get('dni').setValue(data.transport ? data.transport.shippingCompanyName : '')
+        this.form.get('phone').setValue(data.transport ? data.transport.shippingPhone : '')
+        this.form.get('direction').setValue(data.transport.shippingAddress1 + data.transport.shippingAddress2)
+        this.form.get('province').setValue(data.transport ? data.transport.shippingProvince : '')
+        this.form.get('country').setValue(data.transport ? data.transport.invoiceCountry : '')
+        this.form.get('postalcode').setValue(data.transport ? data.transport.shippingZipCode : '')
+        this.form.get('packages').setValue(data.countPackage)
+      } else {
+        await this.clean();
+      }
+
     });
   }
 
@@ -121,12 +125,12 @@ export class LogisticOperatorComponent implements OnInit {
 
 
 
-  clean() {
+  async clean() {
     this.form.get('operator').setValue("");
     this.form.get('name').setValue("");
     this.form.get('lastname').setValue("")
     this.form.get('dni').setValue("")
-    this.form.get('phone').setValue("data.transport.shippingPhone")
+    this.form.get('phone').setValue("")
     this.form.get('direction').setValue("")
     this.form.get('province').setValue("")
     this.form.get('country').setValue("")

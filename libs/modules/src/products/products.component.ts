@@ -56,10 +56,14 @@ export class ProductsComponent implements OnInit {
   @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
   @ViewChild('filterButtonSuppliers') filterButtonSuppliers: FilterButtonComponent;
   @ViewChild('filterButtonOnline') filterButtonOnline: FilterButtonComponent;
+  @ViewChild('filterButtonStatus') filterButtonStatus: FilterButtonComponent;
+  @ViewChild('filterButtonFound') filterButtonFound: FilterButtonComponent;
 
   form: FormGroup = this.formBuilder.group({
     suppliers: [],
     online: [],
+    status: [],
+    found: [],
     brands: [],
     references: [],
     containers: [],
@@ -84,7 +88,7 @@ export class ProductsComponent implements OnInit {
   });
 
   products: ProductModel.Product[] = [];
-  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container', 'brand', 'supplier', 'online'];
+  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container', 'brand', 'supplier', 'online', 'status', 'found'];
   dataSource: any;
 
   /**Filters */
@@ -98,6 +102,8 @@ export class ProductsComponent implements OnInit {
   suppliers: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
   online: Array<TagsInputOption> = [];
+  status: Array<TagsInputOption> = [];
+  found: Array<TagsInputOption> = [];
 
   /** Filters save **/
   colorsSelected: Array<any> = [];
@@ -111,6 +117,8 @@ export class ProductsComponent implements OnInit {
   productReferencePatternSelected: Array<any> = [];
   orderbySelected: Array<any> = [];
   onlineSelected: Array<any> = [];
+  statusSelected: Array<any> = [];
+  foundSelected: Array<any> = [];
 
   /**List of SearchInContainer */
   searchsInContainer: Array<InventoryModel.SearchInContainer> = [];
@@ -131,12 +139,14 @@ export class ProductsComponent implements OnInit {
   isFilteringBrands: number = 0;
   isFilteringSuppliers: number = 0;
   isFilteringOnline: number = 0;
+  isFilteringStatus: number = 0;
+  isFilteringFound: number = 0;
 
   lastUsedFilter: string = 'warehouses';
   isMobileApp: boolean = false;
 
   //For sorting
-  lastOrder = [true, true, true, true, true, true, true, true, true];
+  lastOrder = [true, true, true, true, true, true, true, true, true, true, true];
 
   constructor(
     private intermediaryService: IntermediaryService,
@@ -154,6 +164,42 @@ export class ProductsComponent implements OnInit {
     private permisionService: PermissionsService
   ) {
     this.isMobileApp = typeof (<any>window).cordova !== "undefined";
+  }
+
+  getStatusText(status: number): string{
+    const statusProductType = [
+      '',
+      'Libre',
+      'Preasignado',
+      'Asignado',
+      'Preventilado',
+      'Cálculo',
+      'Incidencia',
+      'Cálculo temporal',
+      'Preasignado temporal',
+      'Preasignado directo temporal',
+      'Preasignado OT temporal',
+      'Cálculo OT temporal',
+      'Preverificado',
+      'Defectuoso',
+      'No Apto Online',
+      'Verificado',
+      'Preverificado OT temporal',
+      'Bloqueado',
+      'Logística Interna',
+      'Asociado a Pedido'
+    ];
+    return statusProductType[status];
+  }
+
+  getFoundText(statusNotFound: number): string{
+    const statusProductNotFound = [
+      '',
+      'Disponible',
+      'Primer aviso',
+      'Segundo aviso'
+    ];
+    return statusProductNotFound[statusNotFound];
   }
 
   eraseFilters() {
@@ -297,6 +343,30 @@ export class ProductsComponent implements OnInit {
           ProductsComponent.showArrow(8, true);
         }
         this.lastOrder[8] = !this.lastOrder[8];
+        break;
+      }
+      case 'status': {
+        if (this.lastOrder[9]) {
+          this.form.value.orderby = { order: "desc", type: 11 };
+          ProductsComponent.showArrow(9, false);
+        }
+        else {
+          this.form.value.orderby = { order: "asc", type: 11 };
+          ProductsComponent.showArrow(9, true);
+        }
+        this.lastOrder[9] = !this.lastOrder[9];
+        break;
+      }
+      case 'found': {
+        if (this.lastOrder[10]) {
+          this.form.value.orderby = { order: "desc", type: 12 };
+          ProductsComponent.showArrow(10, false);
+        }
+        else {
+          this.form.value.orderby = { order: "asc", type: 12 };
+          ProductsComponent.showArrow(10, true);
+        }
+        this.lastOrder[10] = !this.lastOrder[10];
         break;
       }
     }
@@ -483,6 +553,42 @@ export class ProductsComponent implements OnInit {
           }
         }
         break;
+      case 'status':
+        let statusFiltered: string[] = [];
+        for (let status of filters) {
+          if (status.checked) statusFiltered.push(status.value);
+        }
+        if (statusFiltered.length >= this.status.length) {
+          this.form.value.status = [];
+          this.isFilteringStatus = this.status.length;
+        } else {
+          if (statusFiltered.length > 0) {
+            this.form.value.status = statusFiltered;
+            this.isFilteringStatus = statusFiltered.length;
+          } else {
+            this.form.value.status = ['99999'];
+            this.isFilteringStatus = this.status.length;
+          }
+        }
+        break;
+      case 'found':
+        let foundFiltered: string[] = [];
+        for (let found of filters) {
+          if (found.checked) foundFiltered.push(found.value);
+        }
+        if (foundFiltered.length >= this.found.length) {
+          this.form.value.found = [];
+          this.isFilteringFound = this.found.length;
+        } else {
+          if (foundFiltered.length > 0) {
+            this.form.value.found = foundFiltered;
+            this.isFilteringFound = foundFiltered.length;
+          } else {
+            this.form.value.found = ['99999'];
+            this.isFilteringFound = this.found.length;
+          }
+        }
+        break;
     }
     this.lastUsedFilter = filterType;
     let flagApply = true;
@@ -629,6 +735,8 @@ export class ProductsComponent implements OnInit {
     this.productReferencePatternSelected = this.form.value.productReferencePattern;
     this.orderbySelected = this.form.value.orderby;
     this.onlineSelected = this.form.value.online;
+    this.statusSelected = this.form.value.status;
+    this.foundSelected = this.form.value.found;
   }
 
   private recoverFilters(){
@@ -643,6 +751,8 @@ export class ProductsComponent implements OnInit {
     this.form.get("productReferencePattern").patchValue(this.productReferencePatternSelected, { emitEvent: false });
     this.form.get("orderby").patchValue(this.orderbySelected, { emitEvent: false });
     this.form.get("online").patchValue(this.onlineSelected, { emitEvent: false });
+    if(this.form.get("status")) this.form.get("status").patchValue(this.statusSelected, { emitEvent: false });
+    if(this.form.get("found")) this.form.get("found").patchValue(this.foundSelected, { emitEvent: false });
   }
 
   private getFormValueCopy() {
@@ -750,6 +860,16 @@ export class ProductsComponent implements OnInit {
           this.online[index].hide = !filteredOnline.includes(this.online[index].value);
         }
         this.filterButtonOnline.listItems = this.online;
+      }
+      if (this.lastUsedFilter != 'status') {
+        let filteredStatus = searchsInContainer.data.filters['status'] as unknown as string[];
+        for (let index in this.status) {
+          this.status[index].hide = !filteredStatus.includes(this.status[index].value);
+        }
+        this.filterButtonStatus.listItems = this.status;
+      }
+      if (this.lastUsedFilter != 'found') {
+        this.filterButtonFound.listItems = this.found;
       }
       if(applyFilter){
         this.saveFilters();
@@ -866,6 +986,8 @@ export class ProductsComponent implements OnInit {
           this.updateFilterSourceSuppliers(searchsInContainer.data.filters.suppliers);
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
           this.updateFilterSourceOnline(searchsInContainer.data.filters.online);
+          this.updateFilterSourceStatus(searchsInContainer.data.filters.status);
+          this.updateFilterSourceFound(searchsInContainer.data.filters.found);
 
           for (let index in this.warehouses) {
             this.warehouses[index].checked = false;
@@ -881,6 +1003,8 @@ export class ProductsComponent implements OnInit {
           this.isFilteringBrands = this.brands.length;
           this.isFilteringSuppliers = this.suppliers.length;
           this.isFilteringOnline = this.online.length;
+          this.isFilteringStatus = this.status.length;
+          this.isFilteringFound = this.found.length;
 
           setTimeout(() => {
             this.pauseListenFormChange = false;
@@ -1079,6 +1203,36 @@ export class ProductsComponent implements OnInit {
     });
     if (value && value.length) {
       this.form.get("online").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  private updateFilterSourceStatus(status: FiltersModel.Status[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("status") ? this.form.get("status").value : '';
+    this.status = status.map(status => {
+      status.value = status.name;
+      status.checked = true;
+      status.hide = false;
+      return status;
+    });
+    if (value && value.length) {
+      this.form.get("status").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  private updateFilterSourceFound(found: FiltersModel.Found[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("found") ? this.form.get("found").value : '';
+    this.found = found.map(found => {
+      found.value = found.name;
+      found.checked = true;
+      found.hide = false;
+      return found;
+    });
+    if (value && value.length) {
+      this.form.get("found").patchValue(value, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
