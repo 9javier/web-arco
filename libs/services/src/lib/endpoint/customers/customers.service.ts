@@ -21,6 +21,11 @@ export class CustomersService {
   private customersUrl: string = environment.apiBase + "/customer/all";
   private customersFiltersUrl: string = environment.apiBase + "/customer/filters";
   private customersByIdUrl: string = environment.apiBase + "/customer/get/id";
+  private customersPutUrl: string = environment.apiBase + "/customer/save";
+  private customersAddressPutUrl: string = environment.apiBase + "/customer/address/save";
+  private customersEmailPutUrl: string = environment.apiBase + "/customer/email/";
+  private customersEmailPostUrl: string = environment.apiBase + "/customer/email/save/";
+
 
   constructor(
     private http: HttpClient,
@@ -50,5 +55,29 @@ export class CustomersService {
       return response.data;
     }));
   }
+
+  postUpdateCustomer(data):Observable<any>{
+    return this.http.post<any>(this.customersPutUrl,data).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postUpdateAddress(data):Observable<any>{
+    return this.http.post<any>(this.customersAddressPutUrl,data).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  putUpdateEmail(id,emailBody):Observable<any>{
+    return this.http.put<any>(this.customersEmailPutUrl+`${id}`,emailBody).pipe(map(response => {
+      return response.data;
+    }));
+  }
  
+  postCreateEmail(id,emailBody):Observable<any>{
+    return this.http.post<any>(this.customersEmailPostUrl+`${id}`,emailBody).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
 }

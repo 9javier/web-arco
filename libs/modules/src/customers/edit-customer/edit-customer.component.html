@@ -21,27 +21,50 @@
 <ion-list>
   <div *ngIf="section === 'information'">
     <form [formGroup]="customerForm">
-      <ion-input>
-        <ion-input formControlName="firstName"   class="input-name" text placeholder="Nombre"></ion-input>
-      </ion-input>
-      <ion-input>
-        <ion-input formControlName="surname" class="input-name" text placeholder="Apellido"></ion-input>
-      </ion-input>
-      <ion-input>
-        <ion-input formControlName="companyName" class="input-name" text placeholder="Compañía"></ion-input><br>
-      </ion-input>   
+      <ion-item>
+        <ion-label>Nombre: </ion-label><ion-input type="text" formControlName="firstName"   class="input-name" text placeholder="Nombre"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Apellido: </ion-label><ion-input type="text" formControlName="surname" class="input-name" text placeholder="Apellido"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Compañía: </ion-label><ion-input type="text" formControlName="companyName" class="input-name" text placeholder="Compañía"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Correo electrónico: </ion-label><ion-input type="text" formControlName="email"   [(ngModel)]="emailConfirm" (ngModelChange)="emailConfirmInput(value)" text placeholder="Correo electrónico"></ion-input>
+      </ion-item> 
+      <ion-item>
+        <ion-label>Confirmar electrónico: </ion-label><ion-input type="text" formControlName="confirmEmail" text placeholder="Confirmar electrónico"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Teléfono </ion-label><ion-input type="number" formControlName="phone" text placeholder="Teléfono"></ion-input>
+      </ion-item>      
     </form>
       
   </div>
   <div *ngIf="section === 'address'">
-    <label>Dirección:</label>
-    <ion-input></ion-input><br>
+    <form [formGroup]="addressForm">
+        <ion-item>
+          <ion-label>Dirección: </ion-label><ion-input type="text" formControlName="addressLine" class="input-name" text placeholder="Dirección"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Código postal: </ion-label><ion-input type="text" formControlName="postCode" class="input-name" text placeholder="Código postal"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Ciudad: </ion-label> <ion-input type="text" formControlName="city" class="input-name" text placeholder="Ciudad"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Estado: </ion-label><ion-input type="text" formControlName="state" class="input-name" text placeholder="Estado"></ion-input>
+        </ion-item>
+    </form> 
   </div>
   </ion-list>
 </ion-content>
 
 <ion-footer>
 <ion-toolbar>
-    <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+    <ion-button slot="end" color="dark" (click)="close()">Cancelar</ion-button>
+    <ion-button slot="end" color="dark" (click)="saveInfo()" [disabled]="name.invalid || surname.invalid || companyName.invalid || email.invalid || phone.invalid" *ngIf="section === 'information'">Guardar</ion-button>
+    <ion-button slot="end" color="dark" (click)="saveAddress()" [disabled]="addressLine.invalid || postCode.invalid || city.invalid || state.invalid" *ngIf="section === 'address'">Guardar</ion-button>
   </ion-toolbar>
 </ion-footer>

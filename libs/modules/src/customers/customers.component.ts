@@ -31,11 +31,31 @@ export class CustomersComponent implements OnInit {
     {
       name: 'name',
       title:'Nombre',
-      field: ['firstName'],
+      field: ['fullName'],
       filters:true,
       type:'text'
     },
-
+    {
+      name: 'email',
+      title:'Correo electrónico',
+      field: ['email'],
+      filters:true,
+      type:'text'
+    },
+    {
+      name: 'company',
+      title:'Compañía',
+      field: ['companyName'],
+      filters:true,
+      type:'text'
+    },
+    {
+      name: 'country',
+      title:'Dirección',
+      field: ['address'],
+      filters:true,
+      type:'text'
+    },
   ];
   dataSource;
   filtersData;
@@ -123,6 +143,8 @@ export class CustomersComponent implements OnInit {
       case TableEmitter.Filters:
         let entity = e.value.entityName;
         let filters = e.value.filters;
+        console.log("****filters****");
+        console.log(entity," ",filters);
         this.form.get(entity).patchValue(filters);
         this.getListCustomers(this.form);
         break;
@@ -142,7 +164,6 @@ export class CustomersComponent implements OnInit {
         break;
       case TableEmitter.iconEdit:
         let customer = e.value;
-        console.log("edit", customer);
         this.editCustomer(customer)
         break;
     }
@@ -161,9 +182,7 @@ export class CustomersComponent implements OnInit {
     });
 
     modal.onDidDismiss().then((p) => {
-      if (p && p.data) {
         this.refresh();
-      }
     });
 
     modal.present();
