@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.util.Log;
 
 import com.mirasense.scanditsdk.plugin.MatrixPickingStores;
 import com.mirasense.scanditsdk.plugin.models.LineRequestsProduct;
@@ -57,7 +58,15 @@ public class ProcessedPickingStoresAdapter extends ArrayAdapter<JSONObject> {
       if (!products.get(position).isNull("shippingMode")) {
         tvTypeValue.setText("PO");
       }else{
-        tvTypeValue.setText("PT");
+        String typeRequest = "PT";
+        try {
+          if(products.get(position).getInt("source") == 10){
+            typeRequest = "TR";
+          }
+        } catch (JSONException e){
+          Log.d("CORDOVA_MATRIX", "error " + e.getMessage());
+        }
+        tvTypeValue.setText(typeRequest);
       }
     } catch (JSONException e) {
       e.printStackTrace();
