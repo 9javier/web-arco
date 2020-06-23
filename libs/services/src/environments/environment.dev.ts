@@ -6,7 +6,7 @@ export const environment = {
   apiSorter: 'http://192.168.254.111:8080/api',
   apiLogisticOperator: 'http://192.168.254.111:3051/api',
   apiRule: 'http://192.168.254.111:5000',
-  apiMiddleware: 'http://192.168.254.111:3002',
+  apiMiddleware: 'http://192.168.254.111:3049',
   urlBase: 'http://192.168.254.111:8080',
   uploadFiles: 'http://192.168.254.111:8080/api/upload-files',
   downloadFiles: 'http://192.168.254.111:8080',
