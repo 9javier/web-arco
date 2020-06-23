@@ -1,6 +1,6 @@
 <div class="mp-mapping-wrapper">
   <mat-accordion>
-    <mat-expansion-panel #brands hideToggle="true">
+    <mat-expansion-panel #brands hideToggle="true" *ngIf="marketExternalId != 'B002B2BB-3DBD-47CD-8B6B-A4AC2D903669'">
       <mat-expansion-panel-header (click)="expandPanel('brand')">
         <mat-panel-title>
           Marcas

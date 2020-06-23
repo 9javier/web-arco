@@ -59,14 +59,15 @@ export class MappingsComponent implements OnInit {
   market;
   marketExternalId;
 
-  private static readonly MINIPRECIOS_MARKET_ID = '406A51C8-EA12-4D6D-B05D-C2EA70A1A609';
+  private static readonly MIDDLEWARE_MINIPRECIOS_MARKET_ID = '406A51C8-EA12-4D6D-B05D-C2EA70A1A609';
+  private static readonly RULE_ENGINE_MINIPRECIOS_MARKET_ID = '1';
+  private static readonly MIDDLEWARE_AMAZON_MARKET_ID = 'B002B2BB-3DBD-47CD-8B6B-A4AC2D903669';
+  private static readonly RULE_ENGINE_AMAZON_MARKET_ID = 'ed4eecc8-b1b9-460e-a7dc-d4daa3d67591';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private marketplacesService: MarketplacesService,
-    private marketplacesPrestaService: MarketplacesPrestaService,
-    private http: HttpClient
+    private marketplacesService: MarketplacesService
   ) {
   }
 
@@ -92,27 +93,21 @@ export class MappingsComponent implements OnInit {
 
     this.displayedColumns = ['blank', 'avelonData', 'marketData'];
 
-    this.marketplacesService.getMarkets().subscribe((data: any) => {
-      this.market = null;
-      this.marketExternalId = '';
-      if (data && data.length) {
-        for (let market of data) {
-          switch (this.route.snapshot.data['name']) {
-            case "Miniprecios":
-              this.market = market.id;
-              this.marketExternalId = MappingsComponent.MINIPRECIOS_MARKET_ID;
-              break;
-          }
+    this.market = '';
+    this.marketExternalId = '';
 
-          if (this.market) {
-            break;
-          }
-        }
-      }
+    switch (this.route.snapshot.data['name']) {
+      case "Miniprecios":
+        this.market = MappingsComponent.RULE_ENGINE_MINIPRECIOS_MARKET_ID;
+        this.marketExternalId = MappingsComponent.MIDDLEWARE_MINIPRECIOS_MARKET_ID;
+        break;
+      case "Amazon":
+        this.market = MappingsComponent.RULE_ENGINE_AMAZON_MARKET_ID;
+        this.marketExternalId = MappingsComponent.MIDDLEWARE_AMAZON_MARKET_ID;
+        break;
+    }
 
       this.getMappingValue();
-
-    });
 
   }
 
@@ -378,7 +373,9 @@ export class MappingsComponent implements OnInit {
 
       let features = [];
       for (let feature of results[3]) {
-        features.push({id: feature.externalId, name: feature.name, group: feature.additionalGrouping});
+        if (feature.additionalGrouping == "6" || feature.additionalGrouping == "7" || feature.additionalGrouping == "9" || feature.additionalGrouping == "14" || feature.additionalGrouping == "16" || feature.additionalGrouping == "inner material" || feature.additionalGrouping == "outer material" || feature.additionalGrouping == "heel" || feature.additionalGrouping == "genre" || feature.additionalGrouping == "product type") {
+          features.push({id: feature.externalId, name: feature.name, group: feature.additionalGrouping});
+        }
       }
 
       this.brandsList = brands;
@@ -402,18 +399,23 @@ export class MappingsComponent implements OnInit {
         let groupName = "";
         switch (feature.group) {
           case "6":
+          case "inner material":
             groupName = "Mat. Interior: ";
             break;
           case "7":
+          case "outer material":
             groupName = "Mat. Exterior: ";
             break;
           case "9":
+          case "heel":
             groupName = "Medidas: ";
             break;
           case "14":
+          case "genre":
             groupName = "Familias: ";
             break;
           case "16":
+          case "product type":
             groupName = "Tipo de producto: ";
             break;
         }
