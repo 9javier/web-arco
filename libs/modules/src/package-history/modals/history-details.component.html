@@ -41,8 +41,8 @@
 							<p>
 									Estado Bulto: {{ getStatus(orderHistoricalLast?.order?.package.status)}}
 							</p>
-              <p *ngIf="orderHistoricalLast.location">
-									Ubicación: {{ orderHistoricalLast.location }}
+              <p *ngIf="orderHistoricalLast?.location">
+									Ubicación: {{ orderHistoricalLast?.location }}
 							</p>
               <p>
                 Fecha estado: {{ formattedDateTime(orderHistoricalLast?.order?.package.udpatedAt)}}

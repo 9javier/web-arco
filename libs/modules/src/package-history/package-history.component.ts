@@ -70,7 +70,7 @@ export class PackageHistoryComponent implements OnInit {
     {
       name: 'location',
       title:'Ubicación',
-      field: ['order', 'last', 'location'],
+      field: ['location'],
       filters:false,
       type:'text'
     },
@@ -138,11 +138,7 @@ length: any;
       resp.results.map(data => {
         data.package.order.destinyShop.nameReference = data.package.order.destinyShop.reference + '-' + data.package.order.destinyShop.name;
         data.package.order.originShop.nameReference = data.package.order.originShop.reference + '-' + data.package.order.originShop.name;
-
         data.package.status = this.getStatus(data.package.status);
-        this.packageHistoryService.getHistoricalLast(data.package.id).subscribe(last => {
-          data.package.order.last = last;
-        });
       });
       this.intermediaryService.dismissLoading()
       this.dataSource = new MatTableDataSource<any>(resp);
