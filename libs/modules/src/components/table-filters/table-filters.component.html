@@ -51,6 +51,9 @@
                 <div *ngIf='col.field.length == 3'>
                   <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]'  [disabled]="true" color="primary"></mat-checkbox>
                 </div>
+                <div *ngIf='col.field.length == 4'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]]'  [disabled]="true" color="primary"></mat-checkbox>
+                </div>
               </mat-cell>
             </div>
             <div *ngIf='col.field.length == 1 && col.type != "checkbox"'>
@@ -61,6 +64,9 @@
             </div>
             <div *ngIf='col.field.length == 3 &&  col.type != "checkbox" '>
               <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 4 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2] ] [col.field[3] ] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] }} </mat-cell>
             </div>
           </ng-container> 
         </div>
@@ -82,6 +88,9 @@
                 <div *ngIf='col.field.length == 3'>
                   <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
+                <div *ngIf='col.field.length == 4'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
               </mat-cell>
             </div>
             <div *ngIf='col.field.length == 1 && col.type != "checkbox"'>
@@ -92,6 +101,9 @@
             </div>
             <div *ngIf='col.field.length == 3 &&  col.type != "checkbox" '>
               <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 4 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] }} </mat-cell>
             </div>
           </ng-container>
         </div>
@@ -114,6 +126,9 @@
                 <div *ngIf='col.field.length == 3'>
                   <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
+                <div *ngIf='col.field.length == 4'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
               </mat-cell>
             </div>
             <div *ngIf='col.field.length == 1 && col.type != "checkbox"'>
@@ -124,6 +139,9 @@
             </div>
             <div *ngIf='col.field.length == 3 &&  col.type != "checkbox" '>
               <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 4 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] }} </mat-cell>
             </div>
           </ng-container>
         </div>
@@ -143,6 +161,9 @@
                 <div *ngIf='col.field.length == 3'>
                   <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true" color="primary"></mat-checkbox>
                 </div>
+                <div *ngIf='col.field.length == 4'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
               </mat-cell>
             </div>
             <div *ngIf='col.field.length == 1 && col.type != "checkbox"'>
@@ -153,6 +174,9 @@
             </div>
             <div *ngIf='col.field.length == 3 &&  col.type != "checkbox" '>
               <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] | date:"dd/mm/yyyy" ) : element[col.field[0]] [col.field[1]] [col.field[2]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 4 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] | date:"dd/mm/yyyy" ) : element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] }} </mat-cell>
             </div>
           </ng-container>
         </div>

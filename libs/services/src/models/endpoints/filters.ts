@@ -135,6 +135,24 @@ export namespace FiltersModel{
       hide:boolean;
     }
 
+  export interface Status extends Enum {
+    id:number;
+    name:string;
+    reference:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
+  export interface Found extends Enum {
+    id:number;
+    name:string;
+    reference:string;
+    value:string;
+    checked:boolean;
+    hide:boolean;
+  }
+
   export interface Family extends Enum {
     id:number;
     name:string;

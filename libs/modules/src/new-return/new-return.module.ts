@@ -23,6 +23,7 @@ import {FilterButtonModule} from "../components/filter-button/filter-button.modu
 import {ViewButtonModule} from "../components/view-button/view-button.module";
 import {MatSortModule} from "@angular/material/sort";
 import {AvailableItemsGroupedModule} from "./modals/avaiable-items-grouped/available-items-grouped.module";
+import {HorizontalImagesListModule} from "../components/horizontal-images-list/horizontal-images-list.module";
 
 const routes: Routes = [{
     path: '',
@@ -56,7 +57,8 @@ const routes: Routes = [{
     FilterButtonModule,
     ViewButtonModule,
     MatSortModule,
-    AvailableItemsGroupedModule
+    AvailableItemsGroupedModule,
+    HorizontalImagesListModule
   ]
 })
 

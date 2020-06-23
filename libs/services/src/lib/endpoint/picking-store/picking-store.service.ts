@@ -21,6 +21,7 @@ export class PickingStoreService {
   private getByProductReferenceUrl = environment.apiBase + '/processes/picking-store/get-by-product-reference';
   private getInitiatedUrl = environment.apiBase + '/processes/picking-store/initiated';
   private getLineRequestsUrl = environment.apiBase + '/processes/picking-store/lines-request';
+  private getLineRequestsToAssociatePackagingUrl = environment.apiBase + '/processes/picking-store/lines-request-to-associate';
   private getLineRequestsStoreOnlineUrl = environment.apiBase + '/processes/picking-store/lines-request-store-online';
   private getLineRequestsStoreOnlineAmountUrl = environment.apiBase + '/processes/picking-store/lines-request-store-online-amount';
   private postLineRequestsPendingUrl = environment.apiBase + '/processes/picking-store/lines-request/pending';
@@ -59,6 +60,10 @@ export class PickingStoreService {
 
   getLineRequests() : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.get(this.getLineRequestsUrl);
+  }
+
+  getLineRequestsToAssociatePackaging() : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getLineRequestsToAssociatePackagingUrl);
   }
 
   getLineRequestsStoreOnline() : Promise<HttpRequestModel.Response> {

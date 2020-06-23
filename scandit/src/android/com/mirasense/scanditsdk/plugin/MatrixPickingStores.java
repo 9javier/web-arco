@@ -161,9 +161,11 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     ScanditSDK.setViewDataMatrixSimple(this.findViewById(android.R.id.content).getRootView());
 
     if(this.packing){
-      TabLayout tabLayout = findViewById(resources.getIdentifier("tlProductsLists", "id", package_name));
-      TabLayout.Tab tab = tabLayout.getTabAt(0);
-      if(tab != null) tab.setText("Embalajes");
+      TabLayout tlProductsLists = findViewById(resources.getIdentifier("tlProductsLists", "id", package_name));
+      TabLayout.Tab tab0 = tlProductsLists.getTabAt(0);
+      if(tab0 != null) tab0.setText("Embalajes");
+      TabLayout.Tab tab1 = tlProductsLists.getTabAt(1);
+      if(tab1 != null) tab1.setText("Artículos Procesados");
     }
 
     initializeScanditPicker(resources, package_name);
@@ -856,6 +858,18 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     if (dialogInfoForProduct != null) {
       dialogInfoForProduct.hide();
     }
+  }
+
+  public static void deletePacking(String reference){
+    JSONObject jsonObject = new JSONObject();
+    try {
+      jsonObject.put("result", true);
+      jsonObject.put("action", "delete_packing");
+      jsonObject.put("params", reference);
+    } catch (JSONException e) {}
+    PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+    pResult.setKeepCallback(true);
+    ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
   }
 
   @Override

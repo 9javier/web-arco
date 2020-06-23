@@ -48,7 +48,8 @@ export class PickingScanditService {
       sizes: [],
       colors: [],
       models: [],
-      brands: []
+      brands: [],
+      toAssociate: packing
     };
     let listProductsToStorePickings: ListItem[] = this.pickingProvider.listProductsToStorePickings;
     let listProductsProcessed: ListItem[] = this.pickingProvider.listProductsProcessedToStorePickings;
@@ -170,8 +171,17 @@ export class PickingScanditService {
             } else if (scanMode == 'carriers') {
               ScanditMatrixSimple.hideLoadingDialog();
               if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
-                ScanditMatrixSimple.showLoadingDialog('Cargando embalaje...');
-                ScanditMatrixSimple.setTimeout("scannedPacking", 1000, JSON.stringify([codeScanned]));
+                if(this.packingReferences.includes(codeScanned)){
+                  ScanditMatrixSimple.setText(
+                    `Ya ha escaneado el embalaje ${codeScanned}`,
+                    this.scanditProvider.colorsMessage.error.color,
+                    this.scanditProvider.colorText.color,
+                    18);
+                  this.hideTextMessage(2000);
+                }else{
+                  ScanditMatrixSimple.showLoadingDialog('Cargando embalaje...');
+                  ScanditMatrixSimple.setTimeout("scannedPacking", 1000, JSON.stringify([codeScanned]));
+                }
               } else {
                 ScanditMatrixSimple.setText(
                   `Escanee un embalaje válido`,
@@ -300,7 +310,8 @@ export class PickingScanditService {
                     type: filter.id,
                     order: filter.type_sort.toLowerCase()
                   };
-                })
+                }),
+                toAssociate: packing
               };
               const typesFiltered = response.filters.type.map(filter => {
                 return filter.id;
@@ -393,6 +404,29 @@ export class PickingScanditService {
                 ScanditMatrixSimple.setTextPickingStores(true, 'Escanee los productos a desasociar');
                 scanMode = 'products_disassociate';
               }
+            }
+            else if (response.action == 'delete_packing'){
+              const packingToDelete: string = response.params;
+              for(let i = 0; i < this.packingReferences.length; i++){
+                if(this.packingReferences[i] == packingToDelete){
+                  this.packingReferences.splice(i, 1);
+                  break;
+                }
+              }
+              let scannedPackings: { reference: string }[] = [];
+              for(let ref of this.packingReferences){
+                if(!scannedPackings.map(s=>s.reference).includes(ref)){
+                  scannedPackings.push({reference: ref});
+                }
+              }
+              ScanditMatrixSimple.sendPickingStoresProducts(scannedPackings, this.processed, null);
+              ScanditMatrixSimple.sendPickingStoresProducts(scannedPackings, this.processed, null);
+              ScanditMatrixSimple.setText(
+                `Embalaje ${packingToDelete} eliminado del traspaso`,
+                this.scanditProvider.colorsMessage.info.color,
+                this.scanditProvider.colorText.color,
+                18);
+              this.hideTextMessage(2000);
             }
           }
         }
@@ -505,12 +539,14 @@ export class PickingScanditService {
       case 'scannedPacking':
         let codeScanned = params[0];
         ScanditMatrixSimple.hideLoadingDialog();
-        this.packingReferences.push(codeScanned);
+        if(!this.packingReferences.includes(codeScanned)) this.packingReferences.push(codeScanned);
         let scannedPackings: {
           reference: string
         }[] = [];
         for(let ref of this.packingReferences){
-          scannedPackings.push({reference: ref});
+          if(!scannedPackings.map(s=>s.reference).includes(ref)){
+            scannedPackings.push({reference: ref});
+          }
         }
         ScanditMatrixSimple.sendPickingStoresProducts(scannedPackings, this.processed, null);
         ScanditMatrixSimple.setText(

@@ -71,7 +71,8 @@ export namespace ScanditModel {
     request_reject = 'request_reject',
     products_out_of_packing = 'products_out_of_packing',
     finish = 'matrix_simple_finish',
-    request_cancel = 'request_cancel'
+    request_cancel = 'request_cancel',
+    delete_packing = 'delete_packing'
   }
 
   enum ActionsPrintTags {

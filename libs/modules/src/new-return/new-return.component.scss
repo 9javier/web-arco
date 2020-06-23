@@ -1,6 +1,19 @@
 ion-content {
-  mat-card.card-main {
-    margin-bottom: 16px;
+  .space-between-components {
+    height: 16px;
+    width: 100%;
+  }
+
+  mat-card.from-history {
+    ion-col {
+      opacity: 1;
+      ion-item.item-disabled {
+        opacity: 1;
+        ion-label {
+          opacity: 1;
+        }
+      }
+    }
   }
 
   span.unities-total {

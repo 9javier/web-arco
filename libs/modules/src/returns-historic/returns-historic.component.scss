@@ -1,5 +1,12 @@
 ion-content{
 
+  tr.return-info {
+    cursor: pointer;
+  }
+  tr.return-info:hover {
+    background-color: var(--hover-state-bg);
+  }
+
   th.title {
     padding-right: 12px;
 
@@ -13,6 +20,11 @@ ion-content{
   div.title {
     border-right: 1px solid var(--ion-color-secondary);
     padding-right: 40px;
+  }
+  th.title:last-child {
+    div.title {
+      border-right: none;
+    }
   }
 
   ion-item {

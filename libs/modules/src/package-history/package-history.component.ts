@@ -16,6 +16,7 @@ import {switchMap} from 'rxjs/operators';
 import {TableEmitter } from './../../../services/src/models/tableEmitterType';
 import {HistoryDetailsComponent}  from './modals/history-details.component';
 import { InternOrderPackageStatus } from './enums/status.enum';
+import {HttpRequestModel} from "../../../services/src/models/endpoints/HttpRequest";
 @Component({
   selector: 'package-history',
   templateUrl: './package-history.component.html',
@@ -27,28 +28,28 @@ export class PackageHistoryComponent implements OnInit {
     {
       name: 'package',
       title:'Bulto',
-      field: ['order', 'package', 'uniqueCode'],
+      field: ['package', 'uniqueCode'],
       filters:true,
       type:'text'
     },
     {
       name: 'delivery',
       title:'Pedido',
-      field: ['order', 'deliveryRequestExternalId'],
+      field: ['package', 'order', 'deliveryRequestExternalId'],
       filters:true,
       type:'text'
     },
     {
       name: 'origin',
       title:'Origen',
-      field: ['order', 'originShop', 'nameReference'],
+      field: ['package', 'order', 'originShop', 'nameReference'],
       filters:true,
       type:'text'
     },
     {
       name: 'destiny',
       title:'Destino',
-      field: ['order', 'destinyShop', 'nameReference'],
+      field: ['package', 'order', 'destinyShop', 'nameReference'],
       filters:true,
       type:'text'
     },
@@ -62,23 +63,30 @@ export class PackageHistoryComponent implements OnInit {
     {
       name: 'status',
       title:'Estado',
-      field: ['order', 'package', 'status'],
+      field: ['package', 'status'],
       filters:true,
+      type:'text'
+    },
+    {
+      name: 'location',
+      title:'Ubicación',
+      field: ['location'],
+      filters:false,
       type:'text'
     },
     {
       name: 'date',
       title:'Fecha',
-      field: ['order', 'package', 'updatedAt'],
+      field: ['package', 'updatedAt'],
       filters:true,
       type:'date',
       format:'dd/MM/yyyy'
     },
   ];
 
-  
-  
-  displayedColumns: string[] = ['package', 'delivery', 'origin', 'destiny', 'cant', 'status' ,'date'];
+
+
+  displayedColumns: string[] = ['package', 'delivery', 'origin', 'destiny', 'cant', 'status', 'location','date'];
   dataSource: MatTableDataSource<any>;
   pagerValues = [10, 20, 100];
 
@@ -87,9 +95,9 @@ export class PackageHistoryComponent implements OnInit {
   lastUsedFilter: string;
   pagination;
   filtersData;
-  
 
- 
+
+
 form: FormGroup = this.formBuilder.group({
   package:[],
   order:[],
@@ -128,14 +136,10 @@ length: any;
     await this.packageHistoryService.getOpPackageHistory(form.value).subscribe((resp: any) => {
       // console.log("Resultado",resp);
       resp.results.map(data => {
-        data.order.destinyShop.nameReference = data.order.destinyShop.reference + '-' + data.order.destinyShop.name;
-        data.order.originShop.nameReference = data.order.originShop.reference + '-' + data.order.originShop.name;
-
-        data.order.package.status = this.getStatus(data.order.package.status);
+        data.package.order.destinyShop.nameReference = data.package.order.destinyShop.reference + '-' + data.package.order.destinyShop.name;
+        data.package.order.originShop.nameReference = data.package.order.originShop.reference + '-' + data.package.order.originShop.name;
+        data.package.status = this.getStatus(data.package.status);
       });
-
-
-
       this.intermediaryService.dismissLoading()
       this.dataSource = new MatTableDataSource<any>(resp);
       console.log(resp.pagination)
@@ -149,7 +153,7 @@ length: any;
       })
   }
 
- 
+
 
   getFilters() {
     this.packageHistoryService.getFilters().subscribe((entities) => {
@@ -196,9 +200,10 @@ length: any;
     let modal = (await this.modalCtrl.create({
       component: HistoryDetailsComponent,
       componentProps: {
-        order: data.order.id,
-        package:data.order.package.id,
-        delivery:data.order.deliveryRequestExternalId
+        data: data,
+        order: data.package.order.id,
+        package:data.package.id,
+        delivery:data.package.order.deliveryRequestExternalId
       }
     }));
 
@@ -325,7 +330,7 @@ length: any;
       case InternOrderPackageStatus.WAREHOUSE_OUTPUT:
         return 'Salida Almacén';
         break;
-    
+
       default:
         break;
     }
