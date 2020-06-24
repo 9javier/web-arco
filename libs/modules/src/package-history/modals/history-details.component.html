@@ -6,6 +6,11 @@
             </ion-button>
         </ion-buttons>
         <ion-title>Pedido: {{ delivery }} <span class="ion-float-right">{{orderHistoricalLast?.order?.package.uniqueCode}}</span></ion-title>
+        <ion-buttons slot="end">
+          <ion-button matTooltip="Re-imprimir bulto" matTooltipClass="tooltip" (click)="printOrderTag()">
+            <ion-icon name="print" class="toogleArrow"></ion-icon>
+          </ion-button>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -35,6 +40,9 @@
 							</p>
 							<p>
 									Estado Bulto: {{ getStatus(orderHistoricalLast?.order?.package.status)}}
+							</p>
+              <p *ngIf="orderHistoricalLast?.location">
+									Ubicación: {{ orderHistoricalLast?.location }}
 							</p>
               <p>
                 Fecha estado: {{ formattedDateTime(orderHistoricalLast?.order?.package.udpatedAt)}}
@@ -110,6 +118,9 @@
                 <p>
                   Almacén: {{ historical.shop.reference}} - {{historical.shop.name }}
                 </p>
+                <p *ngIf="historical.location">
+                  Ubicación: {{ historical.location}}
+                </p>
 						</div>
 					</ion-item>
 			</div>
@@ -140,15 +151,15 @@
 								Referencia: {{ data.product.reference}}
 							</ion-col>
 							<ion-col>
-                <span>Artículo: {{ data.model.reference }}</span><span class="ion-float-right">T:{{data.size.name}}</span>
+								Artículo: {{ data.model.reference }} <span class="ion-float-right">T:{{ data.size.name }}</span>
 							</ion-col>
 						</ion-row>
 						<ion-row>
 							<ion-col>
-								Marca: {{ data.model.brand.name }}
+                Marca: {{ data.model?.brand?.name }}
 							</ion-col>
 							<ion-col>
-                Color: {{ data.model.color.name }}
+                Color: {{ data.model?.color?.name }}
 							</ion-col>
 						</ion-row>
 					</ion-grid>

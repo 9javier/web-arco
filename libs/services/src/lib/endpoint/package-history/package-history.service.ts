@@ -21,6 +21,7 @@ export class PackageHistoryService {
   private getHistoryDeatilsPackages: string = environment.apiBase +  "/opl-expedition/order-package-history/all";
   private getHistoryDeatilsPackagesLast: string = environment.apiBase +  "/opl-expedition/order-package/history/last";
   private getHistoryDeatilsPackagesProduct: string = environment.apiBase +  "/opl-expedition/order-package/history/products";
+  private getContainerUrl: string = environment.apiBase + '/warehouses/containers/info/';
 
   constructor(
     private http: HttpClient,
@@ -81,5 +82,9 @@ export class PackageHistoryService {
     return this.http.post<HttpRequestModel.Response>(this.getHistoryDeatilsPackagesProduct, body).pipe(
       map(resp => resp.data)
     )
+  }
+
+  getContainer(id: string) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getContainerUrl + id);
   }
 }

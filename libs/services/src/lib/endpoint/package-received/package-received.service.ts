@@ -7,6 +7,7 @@ import { RequestsProvider } from '../../../providers/requests/requests.provider'
 import { ExcellModell } from 'libs/services/src/models/endpoints/Excell';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { from, Observable } from "rxjs";
+import {CarrierModel} from "../../../models/endpoints/carrier.model";
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class PackageReceivedService {
   private getListNewProductsFiltersUrl: string = environment.apiBase + '/processes/receive-store/list-new-product/filters';
   private getListNewProducts: string = environment.apiBase + '/processes/receive-store/list-new-product/all';
   private getListNewProductsFileExcel: string = environment.apiBase + '/inventory/export-to-excel/list-new-product';
+  private putProcessPackageUrl: string = environment.apiBase + "/package/process/{{id}}";
 
   constructor(
     private http: HttpClient,
@@ -44,7 +46,6 @@ export class PackageReceivedService {
     }));
   }
 
-  
   getFileExcell(form: any){
     return this.http.post(this.getListNewProductsFileExcel, form,{responseType: 'blob'})
   }
@@ -64,6 +65,12 @@ export class PackageReceivedService {
   getListNewProductsFilters(form: any):Observable<any>{
     return this.http.post(this.getListNewProductsFiltersUrl, form).pipe(map((response:any)=>{
       return response.data;
+    }));
+  }
+
+  processPackage(id: number):Observable<any> {
+    return this.http.put(this.putProcessPackageUrl.replace("{{id}}", String(id)), null).pipe(map(response => {
+      return response;
     }));
   }
 

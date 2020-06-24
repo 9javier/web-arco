@@ -42,7 +42,8 @@ export namespace PickingStoreModel {
   export interface ChangeStatus {
     status: 1|2|3,
     warehouseIds: number[],
-    requestIds: number[]
+    requestIds: number[],
+    packing?: boolean
   }
 
   export interface InitiatedPicking {
@@ -95,7 +96,8 @@ export namespace PickingStoreModel {
     colors: number[],
     sizes: string[],
     brands: number[],
-    orderbys: FiltersSortTypes[]
+    orderbys: FiltersSortTypes[],
+    toAssociate?: boolean
   }
 
   export interface FilterObj {

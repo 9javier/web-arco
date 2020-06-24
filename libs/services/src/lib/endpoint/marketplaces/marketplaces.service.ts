@@ -35,10 +35,10 @@ export class MarketplacesService {
   private getProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
   private getProductCatalogUrl = this.apiMiddleware + "/api/v1/product";
   private getCategories = this.apiMiddleware + "/api/v1/marketCategory/byMarket/";
-  private getMarketSizesUrl = this.apiMiddleware + "/api/v1/marketProductProperty/sizes/byMarket/";
-  private getMarketBrandsUrl = this.apiMiddleware + "/api/v1/marketProductProperty/brands/byMarket/";
-  private getMarketColorsUrl = this.apiMiddleware + "/api/v1/marketProductProperty/colors/byMarket/";
-  private getMarketFeaturesUrl = this.apiMiddleware + "/api/v1/marketProductProperty/features/byMarket/";
+  private getMarketSizesUrl = this.apiMiddleware + "/market/product-property/sizes/by-market/";
+  private getMarketBrandsUrl = this.apiMiddleware + "/market/product-property/brands/by-market/";
+  private getMarketColorsUrl = this.apiMiddleware + "/market/product-property/colors/by-market/";
+  private getMarketFeaturesUrl = this.apiMiddleware + "/market/product-property/features/by-market/";
 
   constructor(
     private http: HttpClient

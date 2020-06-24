@@ -19,7 +19,7 @@ import {IntermediaryService} from "@suite/services";
 })
 export class ListPickingTasksTemplateComponent implements OnInit {
 
-  private userId: number = 0;
+  userId: number = 0;
   private loading = null;
   public pickingAssignments: PickingModel.Picking[] = [];
   private removePickingFinished: boolean = false;
@@ -44,8 +44,6 @@ export class ListPickingTasksTemplateComponent implements OnInit {
     this.isLoadingPickings = true;
 
     this.userId = await this.authenticationService.getCurrentUserId();
-
-this.loadPickings();
 
     this.events.subscribe('picking:remove', () => {
       if (this.removePickingFinished) {
