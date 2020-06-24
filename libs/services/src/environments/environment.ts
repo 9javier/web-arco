@@ -2,7 +2,7 @@ export const environment = {
   production: false,
   printerRequired: false,
   apiBasePhoto: 'http://localhost:8080',
-  apiBase: 'http://localhost:8080/api',
+  apiBase: 'http://developer1.fremitech.com:8080/api',
   apiSorter: 'http://localhost:8080/api',
   apiLogisticOperator: 'http://localhost:3051/api',
   apiRule: "http://localhost:5000",
