@@ -604,6 +604,14 @@ const routes: Routes = [
       name: 'Marketplaces'
     }
   },
+  {
+    path: 'brands',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/brands/brands.module#BrandsModule',
+    data: {
+      name: 'Brands'
+    }
+  },
 ];
 
 @NgModule({

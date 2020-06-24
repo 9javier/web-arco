@@ -636,7 +636,12 @@ export class MenuComponent implements OnInit {
           url: '/package-history',
           icon: 'cube'
         },
-
+        {
+          title: 'Marcas',
+          id: 'brands',
+          url: '/brands',
+          icon: 'logo-octocat'
+        },
       ]
     },
    

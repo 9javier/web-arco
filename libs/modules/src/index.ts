@@ -492,3 +492,7 @@ export  * from './marketplaces/marketplaces.module';
 export  * from './marketplaces/create-mapping/create-mapping.component';
 export  * from './marketplaces/create-mapping/create-mapping.module';
 
+
+/**Transportes */
+export * from './brands/brands.component'
+export * from './brands/brands.module'
