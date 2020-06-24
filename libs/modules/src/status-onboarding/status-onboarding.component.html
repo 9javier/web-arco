@@ -1,1 +1,79 @@
-<h1>Hola...</h1>
+<ion-content>
+    <div class="mat-table-wrapper-overflow-x">
+      
+      <table mat-table [dataSource]="dataSource">
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <!-- <tr mat-row (click)="goDetails(row)" *matRowDef="let row; columns: displayedColumns"></tr> -->
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  
+        <ng-container matColumnDef="reference">
+          <th mat-header-cell *matHeaderCellDef>
+            Referencia
+          </th>
+          <td mat-cell *matCellDef="let model">
+            {{model.reference}}
+          </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="domain">
+          <th mat-header-cell *matHeaderCellDef>
+            Dominio
+          </th>
+          <td mat-cell *matCellDef="let model">
+            {{model.domain}}
+          </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="variations">
+          <th mat-header-cell *matHeaderCellDef>
+            Variaciones
+          </th>
+          <td mat-cell *matCellDef="let model">
+            {{model.variations}}
+          </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="successfull">
+          <th mat-header-cell *matHeaderCellDef>
+            Concluido
+          </th>
+          <td mat-cell *matCellDef="let model">
+            {{model.successfull}}
+          </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="note">
+          <th mat-header-cell *matHeaderCellDef>
+            Nota
+          </th>
+          <td mat-cell *matCellDef="let model">
+            {{model.note}}
+          </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>
+            Status
+          </th>
+          <td mat-cell *matCellDef="let model">
+            {{model.statusName}}
+          </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>
+            Acciones
+          </th>
+          <td mat-cell *matCellDef="let model">
+            <ion-button (click)="test(model.id)">Ver tallas</ion-button>
+          </td>
+        </ng-container>
+  
+        
+      </table>
+  
+      <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+    </div>
+  
+    </ion-content>

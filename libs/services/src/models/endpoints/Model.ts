@@ -24,6 +24,15 @@ export namespace ModelModel {
     lifestyle?: LifestyleModel.Lifestyle
   }
 
+  export interface ModelT {
+    model?,
+    groupOfSizes?:string,
+    quantityGroup?: number,
+    quantitySuccess?: boolean,
+    note?: string,
+    status?
+  }
+
   export interface ResponseIndex {
     data: Model[];
   }

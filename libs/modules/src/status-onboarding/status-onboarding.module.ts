@@ -1,21 +1,23 @@
 import { NgModule,CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { MatCheckboxModule, MatSortModule, MatTableModule } from '@angular/material';
+import { MatCheckboxModule, MatTableModule } from '@angular/material';
 import { MatListModule } from '@angular/material';
 import { RouterModule, Routes } from "@angular/router";
 import { MatPaginatorModule } from '@angular/material';
-import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
-import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
-import { FilterButtonModule } from "../components/filter-button/filter-button.module";
-import { MatTooltipModule } from "@angular/material";
 import { StatusOnBoardingComponent } from './status-onboarding.component';
 import {
   MatRippleModule,
 } from '@angular/material';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TableFiltersModule } from "../components/table-filters/table-filters.component.module";
+import { FormsModule} from '@angular/forms';
+
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule, MatSelectModule} from '@angular/material';
+import {MatButtonModule} from '@angular/material/button';
+
+import {InfoModalModule} from "./info-modal/info-modal.module";
 
 const routes: Routes = [
   {
@@ -28,22 +30,21 @@ const routes: Routes = [
   declarations: [StatusOnBoardingComponent],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
+    RouterModule,
     IonicModule,
-    MatListModule,
-    MatTableModule,
-    MatPaginatorModule,
-    BreadcrumbModule,
     RouterModule.forChild(routes),
-    TagsInputModule,
-    PaginatorComponentModule,
-    FilterButtonModule,
-    MatTooltipModule,
-    MatSortModule,
+    MatExpansionModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatCheckboxModule,
-    MatRippleModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatListModule,
+    MatPaginatorModule,
     FormsModule,
-    TableFiltersModule,
+    PaginatorComponentModule,
+    InfoModalModule
   ],
   entryComponents:[],
   providers:[

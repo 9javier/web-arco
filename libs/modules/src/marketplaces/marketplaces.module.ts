@@ -27,6 +27,10 @@ import {CategorizeProductsModule} from "./catalog/modals/categorize-products/cat
 import {FormsModule} from "@angular/forms";
 import {LogisticsOperatorsModule} from "./logistics-operators/logistics-operators.module";
 
+import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
+
+import {InfoModalModule} from "./info-modal/info-modal.module";
+
 const routes: Routes = [
   {
     path: '',
@@ -143,7 +147,9 @@ const routes: Routes = [
     LogisticsOperatorsModule,
     MatListModule,
     MatPaginatorModule,
-    FormsModule
+    FormsModule,
+    PaginatorComponentModule,
+    InfoModalModule
   ]
 })
 export class MarketplacesModule { }

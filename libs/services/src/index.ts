@@ -175,4 +175,5 @@ export * from './lib/endpoint/package-received/package-received.service'
 //package-history
 export * from './lib/endpoint/package-history/package-history.service'
 
-
+//model 
+export * from './lib/endpoint/model/model.service'

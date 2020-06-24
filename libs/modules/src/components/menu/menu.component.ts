@@ -638,19 +638,6 @@ export class MenuComponent implements OnInit {
         },
       ]
     },
-    {
-      title: 'Marcas',
-      id: 'brands',
-      url: '/brands',
-      icon: 'logo-octocat'
-    },
-    {
-      title: 'Estado de OnBoarding',
-      id: 'status-onboarding',
-      url: '/status-onboarding',
-      icon: 'logo-octocat'
-    },
-   
   ];
 
   alPages: MenuItemList = [
@@ -1076,9 +1063,25 @@ export class MenuComponent implements OnInit {
 
 
   ];
+
+  onboarding: MenuItemList = [
+    {
+      title: 'Marcas',
+      id: 'brands',
+      url: '/brands',
+      icon: 'logo-octocat'
+    },
+    {
+      title: 'Estado de OnBoarding',
+      id: 'status-onboarding',
+      url: '/status-onboarding',
+      icon: 'logo-octocat'
+    },
+  ];
   private menuPages = {
-    sga: this.sgaPages,
-    al: this.alPages
+    sga: this.onboarding,
+    al: this.alPages,
+    onBoarding: this.onboarding,
   }
 
   menuPagesFiltered: MenuItemList = [];
