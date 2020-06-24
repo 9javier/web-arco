@@ -496,3 +496,6 @@ export  * from './marketplaces/create-mapping/create-mapping.module';
 /**Transportes */
 export * from './brands/brands.component'
 export * from './brands/brands.module'
+
+export * from './status-onboarding/status-onboarding.component'
+export * from './status-onboarding/status-onboarding.module'

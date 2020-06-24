@@ -612,6 +612,14 @@ const routes: Routes = [
       name: 'Brands'
     }
   },
+  {
+    path: 'status-onboarding',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/status-onboarding/status-onboarding.module#StatusOnBoardingModule',
+    data: {
+      name: 'Brands'
+    }
+  },
 ];
 
 @NgModule({
