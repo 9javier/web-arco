@@ -16,7 +16,7 @@ import {AlertController, ModalController} from '@ionic/angular';
 })
 export class StatusOnBoardingComponent implements OnInit {
 
-  displayedColumns: string[] = ['reference', 'domain','variations','successfull', 'note','status', 'actions'];
+  displayedColumns: string[] = ['reference', 'domain','variations','successfull', 'note','status', 'proccessing', 'processing_graph', 'actions'];
   dataSource: any;
   pagerValues: Array<number> = [10, 20, 50];
 
