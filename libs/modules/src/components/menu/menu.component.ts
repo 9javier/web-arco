@@ -636,7 +636,6 @@ export class MenuComponent implements OnInit {
           url: '/package-history',
           icon: 'cube'
         },
-
       ]
     },
     {
@@ -1081,9 +1080,25 @@ export class MenuComponent implements OnInit {
 
 
   ];
+
+  onboarding: MenuItemList = [
+    {
+      title: 'Marcas',
+      id: 'brands',
+      url: '/brands',
+      icon: 'pricetags'
+    },
+    {
+      title: 'Estado de OnBoarding',
+      id: 'status-onboarding',
+      url: '/status-onboarding',
+      icon: 'pricetags'
+    },
+  ];
   private menuPages = {
-    sga: this.sgaPages,
-    al: this.alPages
+    sga: this.onboarding,
+    al: this.alPages,
+    onBoarding: this.onboarding,
   }
 
   menuPagesFiltered: MenuItemList = [];

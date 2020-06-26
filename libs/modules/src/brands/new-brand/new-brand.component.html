@@ -1,0 +1,79 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>{{title}}</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content padding="true">
+    <form [formGroup]="form">
+        <ion-item lines="none">
+            <label>Marcas:     </label>
+            <mat-select (selectionChange)="selectBrand($event)" formControlName="brand">
+              <mat-option *ngFor="let brand of brands" [value]="brand.id">
+                <div>
+                  {{ brand.name }}
+                </div> 
+              </mat-option>
+            </mat-select>
+        </ion-item>
+                
+        <ion-item lines="none">
+            <label>SubMarcas:    </label>
+            <mat-select (selectionChange)="selectSubBrand($event)" formControlName="subbrand">
+              <mat-option *ngFor="let subbrand of subbrands" [value]="subbrand.id">
+                <div>
+                  {{ subbrand.reference }} - {{subbrand.name}}
+                </div> 
+              </mat-option>
+            </mat-select>
+        </ion-item>
+    </form>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Grupos
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+            <mat-table [dataSource]="groups">
+            <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
+            
+                <ng-container matColumnDef='group'>
+                    <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>
+                                    
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{ element.name}}
+                      </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef='actions'>
+                    <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>
+                        
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <div class="actions">
+                          <mat-icon class="button-info" (click)="info(row)">info</mat-icon>
+                        </div>
+                        <div>
+                          <mat-checkbox  (click)="$event.stopPropagation();"  color="primary"
+                        (change)="checkboxRow($event,row)" [checked]="selection.isSelected(row)"
+                        ></mat-checkbox>
+                        </div>
+                      </mat-cell>
+                </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+            </mat-table>
+      </mat-expansion-panel>
+      
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary" (click)="submit($event)" [disabled]="false" >Guardar</ion-button>
+    </ion-toolbar>
+</ion-footer>

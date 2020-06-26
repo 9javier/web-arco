@@ -612,6 +612,22 @@ const routes: Routes = [
       name: 'Clientes'
     }
   },
+  {
+    path: 'brands',
+      canActivate: [AuthGuard],
+      loadChildren: '../../../../libs/modules/src/brands/brands.module#BrandsModule',
+      data: {
+        name: 'Brands'
+      }
+    },
+    {
+      path: 'status-onboarding',
+      canActivate: [AuthGuard],
+      loadChildren: '../../../../libs/modules/src/status-onboarding/status-onboarding.module#StatusOnBoardingModule',
+      data: {
+        name: 'Brands'
+      }
+    },
 ];
 
 @NgModule({

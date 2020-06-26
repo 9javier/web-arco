@@ -494,3 +494,10 @@ export  * from './marketplaces/create-mapping/create-mapping.module';
 
 export  * from './customers/customers.component';
 export  * from './customers/customers.module';
+
+/**Transportes */
+export * from './brands/brands.component'
+export * from './brands/brands.module'
+
+export * from './status-onboarding/status-onboarding.component'
+export * from './status-onboarding/status-onboarding.module'
