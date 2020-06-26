@@ -1069,13 +1069,13 @@ export class MenuComponent implements OnInit {
       title: 'Marcas',
       id: 'brands',
       url: '/brands',
-      icon: 'logo-octocat'
+      icon: 'pricetags'
     },
     {
       title: 'Estado de OnBoarding',
       id: 'status-onboarding',
       url: '/status-onboarding',
-      icon: 'logo-octocat'
+      icon: 'pricetags'
     },
   ];
   private menuPages = {
