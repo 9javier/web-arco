@@ -18,6 +18,7 @@ import {MatInputModule, MatSelectModule} from '@angular/material';
 import {MatButtonModule} from '@angular/material/button';
 
 import {InfoModalModule} from "./info-modal/info-modal.module";
+import {JsonModalModule} from "./json-modal/json-modal.module";
 
 const routes: Routes = [
   {
@@ -44,7 +45,8 @@ const routes: Routes = [
     MatPaginatorModule,
     FormsModule,
     PaginatorComponentModule,
-    InfoModalModule
+    InfoModalModule,
+    JsonModalModule
   ],
   entryComponents:[],
   providers:[
