@@ -14,14 +14,15 @@ export class BrandsService {
 
   private postGetFilterOplExpeditionUrl: string = environment.apiBase + "/opl-expedition/filter";
   private postNewTrasnportUrl: string = environment.apiBase + "/opl-expedition/expedition/transport/new";
-  private postBrandsUrl: string = environment.apiBase + "/brands/brands";
+  private postBrandsUrl: string = environment.apiBase + "/marketplace/brands/brands-list/";
   private deleteTransportUrl: string = environment.apiBase + "/opl-expedition/expedition/transport/";
   private putUpdateTrasnportUrl: string = environment.apiBase + "/opl-expedition/expedition/transport/";
-  private getBrandsFiltersUrl: string = environment.apiBase + "/brands/filters";
-  private getBrandsAllUrl: string = environment.apiBase + "/brands/all";
-  private getSubBrandsUrl: string = environment.apiBase + "/brands/subbrands/";
-  private getGroupsUrl: string = environment.apiBase + "/brands/groups/";
-  private getSizesUrl: string = environment.apiBase + "/brands/sizes-group/";
+  private getBrandsFiltersUrl: string = environment.apiBase + "/marketplace/brands/filters";
+  private getBrandsAllUrl: string = environment.apiBase + "/marketplace/prestashop/brands";
+  private getSubBrandsUrl: string = environment.apiBase + "/marketplace/brands/subbrands/";
+  private getGroupsUrl: string = environment.apiBase + "/marketplace/prestashop/brands/";
+  private getSizesUrl: string = environment.apiBase + "/marketplace/brands/sizes-group/";
+  private postOnBoardMatchUrl: string = environment.apiBase + "/marketplace/brands/brands/";
 
 
   constructor(
@@ -57,13 +58,19 @@ export class BrandsService {
   }
  
   getGroups(id): Observable<any> {
-    return this.http.get<HttpRequestModel.Response>(this.getGroupsUrl+`${id}`).pipe(
+    return this.http.get<HttpRequestModel.Response>(this.getGroupsUrl+`${id}/zalando/sizes/`).pipe(
       map(resp => resp.data)
     )
   }
 
-  getSizes(id:number): Observable<any> {
-    return this.http.get<HttpRequestModel.Response>(this.getSizesUrl+`${id}`).pipe(
+  getSizes(body): Observable<any> {
+    return this.http.post<HttpRequestModel.Response>(this.getSizesUrl,body).pipe(
+      map(resp => resp.data)
+    )
+  }
+
+  postOnBoardingMatchingBrand(body): Observable<any> {
+    return this.http.post<HttpRequestModel.Response>(this.postOnBoardMatchUrl,body).pipe(
       map(resp => resp.data)
     )
   }

@@ -23,6 +23,7 @@ export class NewBrandComponent implements OnInit {
   displayedColumns=['group','actions'];
   brands;
   subbrands;
+  brandId:number;
   groups;
   form: FormGroup = this.formBuilder.group({
     brand: [],
@@ -50,7 +51,7 @@ export class NewBrandComponent implements OnInit {
     this.brandsServices.getBrandsAll().subscribe(result =>{
       console.log(result);
       this.intermediaryService.dismissLoading();
-      this.brands = result.brand;
+      this.brands = result;
     
     },(error)=>{
       this.intermediaryService.presentToastError("Error al cargar Marcas");
@@ -68,21 +69,25 @@ export class NewBrandComponent implements OnInit {
     $event.stopPropagation();
     console.log(this.selection.selected);
    let data ={
-     brandId: this.form.get('brand').value,
-     subbrandId: this.form.get('subbrand').value,
+     brand:this.form.get('brand').value,
+     model: this.form.get('subbrand').value,
    };
-
+   let body={
+    "zalandoSize":2,
+    "onBoardingMatchingBrand":3
+  }
    console.log("*******DATA*********");
    console.log(data)
+   this.createOnBoardMatchingBrand(data);
   }
 
   selectBrand($event){
-    console.log($event.value);
-    this.getSubBrands($event.value);
+    this.brandId = $event.value;
+    this.getSubBrands(this.brandId);
   }
   selectSubBrand($event){
     console.log($event);
-    this.getGroups($event.value);
+    this.getGroups(this.brandId);
   }
   selectGroups($event){
     console.log($event);
@@ -97,7 +102,9 @@ export class NewBrandComponent implements OnInit {
     this.brandsServices.getSubBrands(id).subscribe(result =>{
       console.log(result);
       this.intermediaryService.dismissLoading();
-      this.subbrands = result.subbrands;
+      let data =[];
+      data.push(result);
+      this.subbrands = data;
     
     },(error)=>{
       this.intermediaryService.presentToastError("Error al cargar Submarcas");
@@ -108,20 +115,27 @@ export class NewBrandComponent implements OnInit {
 
   getGroups(id){
     this.brandsServices.getGroups(id).subscribe(result =>{
-      this.groups = result.groups;
+      this.groups = result;
     },(error)=>{
+      this.intermediaryService.presentToastError("Error Falta parametrizar Marcas, Tallas.");
       console.log(error);
     }); 
   }
 
   info(row){
-    this.goToModalSizes(row.id);
-  }
-  async goToModalSizes(id){
+    const groupId = row.id;
+    const data ={  
+    brandId:this.brandId,
+    groupSizeId:groupId
+    };
+    this.goToModalSizes(data);
+
+}
+  async goToModalSizes(data){
     let modal = (await this.modalCtrl.create({
       component: SizeModalComponent,
       componentProps:{
-        groupId: id
+        data: data
       }
     }));
 
@@ -134,5 +148,19 @@ export class NewBrandComponent implements OnInit {
   checkboxRow($event, row) {
     $event ? this.selection.toggle(row) : null;
     console.log(this.selection.selected);
+  }
+
+  createOnBoardMatchingBrand(body){
+    this.intermediaryService.presentLoading("Guardado Registro...");
+    this.brandsServices.postOnBoardingMatchingBrand(body).subscribe(result =>{
+      console.log(result);
+      this.intermediaryService.dismissLoading();
+      this.close();
+    
+    },(error)=>{
+      this.intermediaryService.presentToastError("Error al guardar Registro.");
+      this.intermediaryService.dismissLoading();
+      console.log(error);
+    }); 
   }
 }

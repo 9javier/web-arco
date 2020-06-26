@@ -1,4 +1,4 @@
-<ion-content>
+<!--<ion-content>
   <suite-table-filters
 [columnsData]="columnsData" 
 [dataSource]="dataSource" 
@@ -9,4 +9,52 @@
 [btnAdd]="true"
 (emitMain)="emitMain($event)">
  </suite-table-filters> 
-</ion-content>
+</ion-content>-->
+<mat-table [dataSource]="dataSource">
+  <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
+       
+      <ng-container matColumnDef='brand'>
+          <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>
+            Marca 
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+              {{ element.brands.name}}
+            </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef='model'>
+          <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>
+              Modelo
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+              {{ element.models.name }}
+          </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef='reference'>
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>
+            Reference
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{ element.models.reference }}
+        </mat-cell>
+    </ng-container>
+
+      <ng-container matColumnDef='group'>
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>
+            Grupos
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{ element.groups }}
+        </mat-cell>
+    </ng-container>
+  <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+  </mat-table>
+  <ion-footer class="footer-products">
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+      <ion-fab-button matTooltip="Refrescar datos" matTooltipClass="tooltip" (click)="refresh()"><i
+        class="material-icons">refresh</i></ion-fab-button>
+      <ion-fab-button matTooltip="Crear embalaje" matTooltipClass="tooltip" (click)="createTransport()"><i
+        class="material-icons">add</i></ion-fab-button>
+    </ion-fab>
+  </ion-footer>

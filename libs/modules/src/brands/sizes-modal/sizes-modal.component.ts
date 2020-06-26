@@ -14,7 +14,8 @@ export class SizeModalComponent implements OnInit {
   title = 'Tallas';
   
   displayedColumns=['us','uk','ue'];
-  groupId:number;
+  data:any;
+  currentZone:String;
   sizes;
   form: FormGroup = this.formBuilder.group({
     brand: [],
@@ -28,23 +29,26 @@ export class SizeModalComponent implements OnInit {
     private formBuilder: FormBuilder,
 
   ) {
-    this.groupId = this.navParams.get("groupId");
+    this.data = this.navParams.get("data");
   }
 
   ngOnInit() {
-   this.getSizes(this.groupId);
+   this.getSizes(this.data);
   }
  
   close():void{
     this.modalController.dismiss();
   }
 
-  async getSizes(id){
+  async getSizes(data){
     this.intermediaryService.presentLoading("Cargando Tallas...");
-    this.brandsServices.getSizes(id).subscribe(result =>{
+    this.brandsServices.getSizes(data).subscribe(result =>{
+      console.log("*****RESULTADO******");
       console.log(result);
       this.intermediaryService.dismissLoading();
-      this.sizes = result.tallas;
+      this.currentZone = result.currentZone;
+      console.log("currentZone",this.currentZone);
+      this.sizes = result.sizes;
     
     },(error)=>{
       this.intermediaryService.presentToastError("Error al cargar las Tallas del grupo.");

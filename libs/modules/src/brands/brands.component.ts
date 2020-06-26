@@ -21,6 +21,7 @@ import {CreateTransportComponent} from './create-transport/create-transport.comp
   styleUrls: ['./brands.component.scss'],
 })
 export class BrandsComponent implements OnInit {
+  displayedColumns=['brand','model','reference','group'];
 
   columnsData = [
     {
@@ -98,8 +99,8 @@ length: any;
       console.log(resp);
       this.intermediaryService.dismissLoading()
       this.dataSource = new MatTableDataSource<any>(resp);
-      console.log(resp.data.pagination)
-      this.pagination = resp.data.pagination;
+     // console.log(resp.data.pagination)
+      //this.pagination = resp.data.pagination;
     },
       async err => {
         await this.intermediaryService.dismissLoading()

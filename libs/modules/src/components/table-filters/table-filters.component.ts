@@ -30,6 +30,7 @@ export class TableFiltersComponent implements OnInit {
   @Input() pagination;
   @Input() btnSend = false;
   @Input() btnAdd = false;
+  @Input() buttons = false;
 
   
   @Output() emitMain = new EventEmitter<any>();
@@ -58,12 +59,25 @@ export class TableFiltersComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initButtons();
     this.initCheckbox();
     this.initColums();
     this.initEntity();
     this.initPaginator();
     this.getEntities();
     this.listenChanges();
+  }
+
+  initButtons(){
+    if (this.buttons == true) {
+      this.columnsData.push({
+        name: 'buttons',
+        title: '--',
+        field: 'buttons',
+        filters: false,
+      });
+     
+    }
   }
 
   initCheckbox() {
@@ -296,6 +310,12 @@ export class TableFiltersComponent implements OnInit {
     let emit={event:this.bodyEmitter,value:this.selection.selected};
     this.emitMain.emit(emit);
     this.bodyEmitter=0;
+  }
+
+  edit($event,row){
+    this.bodyEmitter = TableEmitter.iconEdit;
+    let emit={event:this.bodyEmitter,value:row};
+    this.emitMain.emit(emit);
   }
 
   applyFilters(filtersResult, entityName) {

@@ -638,6 +638,23 @@ export class MenuComponent implements OnInit {
         },
       ]
     },
+    {
+      title: 'Clientes',
+      open: false,
+      type: 'wrapper',
+      icon: 'people',
+      children:[
+        {
+          title: 'Administración de clientes',
+          id: 'customers',
+          url: '/customers',
+          icon: 'people',
+          tooltip: 'Lista de clientes'
+        },
+      ]
+     },
+    
+   
   ];
 
   alPages: MenuItemList = [
@@ -1069,13 +1086,13 @@ export class MenuComponent implements OnInit {
       title: 'Marcas',
       id: 'brands',
       url: '/brands',
-      icon: 'logo-octocat'
+      icon: 'pricetags'
     },
     {
       title: 'Estado de OnBoarding',
       id: 'status-onboarding',
       url: '/status-onboarding',
-      icon: 'logo-octocat'
+      icon: 'pricetags'
     },
   ];
   private menuPages = {
