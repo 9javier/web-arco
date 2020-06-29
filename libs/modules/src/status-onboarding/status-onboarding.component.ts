@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import {InfoModalComponent} from "./info-modal/info-modal.component";
+import {JsonModalComponent} from "./json-modal/json-modal.component";
 import {  ModelService } from '@suite/services';
 import { MatSort, MatTableDataSource, Sort } from '@angular/material';
 import { IntermediaryService } from '@suite/services';
@@ -16,7 +17,7 @@ import {AlertController, ModalController} from '@ionic/angular';
 })
 export class StatusOnBoardingComponent implements OnInit {
 
-  displayedColumns: string[] = ['reference', 'domain','variations','successfull', 'note','status', 'actions'];
+  displayedColumns: string[] = ['reference', 'domain','variations','successfull', 'note','status', 'proccessing', 'processing_graph', 'actions'];
   dataSource: any;
   pagerValues: Array<number> = [10, 20, 50];
 
@@ -68,14 +69,23 @@ export class StatusOnBoardingComponent implements OnInit {
 
   }
 
-  async test(modelid){
+  async sizes(modelid){
     const modal = await this.modalController.create({
       component: InfoModalComponent,
       componentProps: {
         modelId:modelid
       }
     });
-
+    modal.present();
+  }
+  
+  async json(model){
+    const modal = await this.modalController.create({
+      component: JsonModalComponent,
+      componentProps: {
+        model:model
+      }
+    });
     modal.present();
   }
 
