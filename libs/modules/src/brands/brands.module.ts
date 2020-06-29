@@ -12,13 +12,12 @@ import { FilterButtonModule } from "../components/filter-button/filter-button.mo
 import { MatTooltipModule } from "@angular/material";
 import { BrandsComponent } from './brands.component';
 import {NewBrandComponent} from './new-brand/new-brand.component';
-import {CreateTransportComponent} from './create-transport/create-transport.component';
 
 import {
   MatRippleModule,
 } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TableFiltersModule } from "../components/table-filters/table-filters.component.module";
+import { TableFiltersModule } from "../components/table-filters-updated/table-filters.component.module";
 import { MatSelectModule} from "@angular/material";
 import { MatExpansionModule } from '@angular/material';
 import {SizeModalComponent} from './sizes-modal/sizes-modal.component';
@@ -32,7 +31,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [BrandsComponent,NewBrandComponent,CreateTransportComponent,SizeModalComponent],
+  declarations: [BrandsComponent,NewBrandComponent,SizeModalComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -55,10 +54,9 @@ const routes: Routes = [
     MatExpansionModule,
     MatIconModule,
   ],
-  entryComponents:[NewBrandComponent,CreateTransportComponent,SizeModalComponent],
+  entryComponents:[NewBrandComponent,SizeModalComponent],
   providers:[
     NewBrandComponent,
-    CreateTransportComponent,
     SizeModalComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

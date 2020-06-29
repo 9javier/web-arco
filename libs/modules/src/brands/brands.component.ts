@@ -13,7 +13,6 @@ import {ModalController, AlertController} from '@ionic/angular';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 import {TableEmitter } from './../../../services/src/models/tableEmitterType';
-import {CreateTransportComponent} from './create-transport/create-transport.component';
 
 @Component({
   selector: 'brands',
@@ -21,52 +20,63 @@ import {CreateTransportComponent} from './create-transport/create-transport.comp
   styleUrls: ['./brands.component.scss'],
 })
 export class BrandsComponent implements OnInit {
-  displayedColumns=['brand','model','reference','group'];
+  displayedColumns=['brand','model','reference','group','edit'];
+  dataSource: MatTableDataSource<any>;
+  pagerValues = [10, 20, 100];
+  @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('filterButtonBrand') filterButtonBrand: FilterButtonComponent;
+  isFilteringBrand: number = 0;
+  entities;
+  pauseListenFormChange: boolean;
+  lastUsedFilter: string;
+  pagination;
+  filtersData=[];
+  brand: Array<TagsInputOption> = [];
 
   columnsData = [
     {
       name: 'brand',
       title:'Marca',
-      field: ['brand'],
-      filters:false,
-      sorter:false,
+      field: ['brand','name'],
+      filters:true,
       type:'text'
     },
-    // {
-    //   name: 'subbrand',
-    //   title:'Sub Marca',
-    //   field: ['subbrand'],
-    //   filters:false,
-    //   sorter:false,
-    //   type: 'text'
-    // }, 
-    // {
-    //   name: 'group',
-    //   title:'Grupo',
-    //   field: ['group'],
-    //   filters:false,
-    //   sorter:false,
-    //   type: 'text'
-    // } 
+    {
+      name: 'model',
+      title:'Modelo',
+      field: ['model','name'],
+      filters:true,
+      type: 'text'
+    }, 
+    {
+      name: 'reference',
+      title:'Referencia',
+      field: ['model','reference'],
+      filters:true,
+      sorter:true,
+      type: 'text'
+    },
+    {
+      name: 'Grupo',
+      title:'Grupo',
+      field: ['numberGroups'],
+      filters:false,
+      sorter:false,
+      type: 'text'
+    }  
   ];
 
   
   
-  dataSource: MatTableDataSource<any>;
-  pagerValues = [10, 20, 100];
-
-  entities;
-  pauseListenFormChange: boolean;
-  lastUsedFilter: string;
-  pagination;
-  filtersData;
+ 
   
 
  
 form: FormGroup = this.formBuilder.group({
   brand: [],
-  subbrand: [],
-  group: [],
+  model: [],
+  reference: [],
   pagination: this.formBuilder.group({
     page: 1,
     limit: this.pagerValues[0]
@@ -94,13 +104,11 @@ length: any;
 
   async getList(form?: FormGroup) {
     this.intermediaryService.presentLoading("Cargando Marcas...");
-    await this.brandsService.getBrands().subscribe((resp: any) => {
-      console.log("Resultado");
-      console.log(resp);
+    await this.brandsService.getBrands(form.value).subscribe((resp: any) => {
       this.intermediaryService.dismissLoading()
       this.dataSource = new MatTableDataSource<any>(resp);
-     // console.log(resp.data.pagination)
-      //this.pagination = resp.data.pagination;
+     console.log(resp.pagination)
+      this.pagination = resp.pagination;
     },
       async err => {
         await this.intermediaryService.dismissLoading()
@@ -126,10 +134,25 @@ length: any;
   }
 
 
-  async newTransport(transport, update) {
+  async newTransport(row) {
     let modal = (await this.modalCtrl.create({
       component: NewBrandComponent,
-      
+      componentProps: {update: false}
+    }));
+
+    modal.onDidDismiss().then(() => {
+      this.refresh();
+    });
+
+    modal.present();
+  }
+
+  async editSizes(row) {
+    let modal = (await this.modalCtrl.create({
+      component: NewBrandComponent,
+      componentProps: {
+      update: true,
+      data:row}
     }));
 
     modal.onDidDismiss().then(() => {
@@ -149,11 +172,11 @@ length: any;
 
   createTransport() {
     let body = [];
-    this.newTransport(body, false);
+    this.newTransport(body);
   }
 
   openRow(row) {
-    this.newTransport(row, true);
+    this.newTransport(row);
   }
 
   refresh() {
@@ -161,7 +184,9 @@ length: any;
     this.getFilters();
   }
 
-  
+  edit(row){
+    this.editSizes(row);
+  }
 
 
   emitMain(e) {
@@ -178,13 +203,13 @@ length: any;
         break;
       case TableEmitter.BtnRefresh:
         /**Refresh funtion*/
-        // this.refresh();
+         this.refresh();
         break;
       case TableEmitter.Filters:
-        // let entity = e.value.entityName;
-        // let filters = e.value.filters;
-        // this.form.get(entity).patchValue(filters);
-        // this.getList(this.form);
+        let entity = e.value.entityName;
+        let filters = e.value.filters;
+        this.form.get(entity).patchValue(filters);
+        this.getList(this.form);
         break;
       case TableEmitter.OpenRow:
         // let row = e.value;
@@ -192,18 +217,18 @@ length: any;
         // this.openRow(row);
         break;
       case TableEmitter.Pagination:
-        // let pagination = e.value;
-        // this.form.value.pagination = pagination;
-        // this.getList(this.form);
+        let pagination = e.value;
+        this.form.value.pagination = pagination;
+        this.getList(this.form);
         break;
       case TableEmitter.Sorter:
-        // let orderby = e.value;
-        // this.form.value.orderby = orderby;
-        // this.getList(this.form);
+        let orderby = e.value;
+        this.form.value.orderby = orderby;
+        this.getList(this.form);
         break;
-      case TableEmitter.BtnDelete:
-        // let select = e.value;
-        // this.delete(select);
+      case TableEmitter.iconEdit:
+        console.log(e.value);
+        this.edit(e.value);
         break;
     }
 

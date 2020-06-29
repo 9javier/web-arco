@@ -1083,10 +1083,19 @@ export class MenuComponent implements OnInit {
 
   onboarding: MenuItemList = [
     {
-      title: 'Marcas',
-      id: 'brands',
-      url: '/brands',
-      icon: 'pricetags'
+      title: 'Parametrización',
+      open: true,
+      type: 'wrapper',
+      icon: 'pricetags',
+      children: [
+        {
+          title: 'Tallas',
+          id: 'brands',
+          url: '/brands',
+          icon: 'pricetags',
+          tooltip: 'Tallas'
+        },
+      ]
     },
     {
       title: 'Estado de OnBoarding',

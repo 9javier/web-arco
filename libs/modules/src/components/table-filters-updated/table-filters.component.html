@@ -1,0 +1,252 @@
+<div *ngIf="dataSource != null">
+  <mat-table [dataSource]="dataSource.data.results" class="table-incidences" matSort (matSortChange)="sortData($event)">
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openRow(row)"></mat-row>
+
+    <div *ngFor="let col of columnsData">
+      <div *ngIf="checkbox == true || checkbox == null">
+        <div *ngIf="col.name == 'select'">
+          <ng-container matColumnDef="select">
+            <mat-header-cell class="my-sticky-col info  checkbox header-checkbox" *matHeaderCellDef>
+              <div class="content-checkbox">
+                <ng-container *ngIf="dataSource !== undefined">
+                  <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true"
+                    [matRippleRadius]="20" [matRippleColor]="'white'" class="custom-checkbox"
+                    (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+                    [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()" color="primary">
+                  </mat-checkbox>
+                </ng-container>
+              </div>
+              <div>--</div>
+            </mat-header-cell>
+            <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
+              <ng-container *ngIf="dataSource !== undefined">
+                <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true"
+                  [matRippleRadius]="20" [matRippleColor]="'black'" (click)="$event.stopPropagation();"
+                  (change)="checkboxRow($event,row)" [checked]="selection.isSelected(row)"
+                  [aria-label]="checkboxLabel(row)"
+                  color="primary">
+                </mat-checkbox>
+              </ng-container>
+            </mat-cell>
+          </ng-container>
+        </div>
+      </div>
+
+      <div *ngIf="buttons == true">
+        <div *ngIf="col.name == 'buttons'">
+          <ng-container matColumnDef="buttons">
+            <mat-header-cell class="my-sticky-col info  checkbox header-checkbox" *matHeaderCellDef>
+              <div class="content-checkbox">
+                <ng-container *ngIf="dataSource !== undefined">
+                
+                </ng-container>
+              </div>
+              <div>--</div>
+            </mat-header-cell>
+            <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
+              <ng-container *ngIf="dataSource !== undefined">
+                <i (click)="edit($event,row)" class="material-icons edit">edit</i>
+                <!--<i  class="material-icons lock">lock</i>-->
+              </ng-container>
+            </mat-cell>
+          </ng-container>
+        </div>
+      </div>
+
+      <div *ngIf="col.filters == true || col.filters == undefined && col.name != 'select' && col.name != 'buttons'">
+        <div *ngIf="col.sorter == undefined || col.sorter == true ">
+          <ng-container matColumnDef='{{col.name}}'>
+            <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>{{col.title}}
+              <suite-filter-button class="ion-margin-vertical filter" #filterButtonName [title]='col.title'
+                [listItems]="list[col.name]" (applyFilters)="applyFilters($event, col.name)">
+              </suite-filter-button>
+            </mat-header-cell>
+            <div *ngIf='col.type == "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">
+                <div *ngIf='col.field.length == 1'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 2'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true"  color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 3'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]'  [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 4'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]]'  [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+              </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 1 && col.type != "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ? (element[col.field[0]] | date: col.format ) : element[col.field[0]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 2 && col.type != "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]]  | date: col.format)  : element[col.field[0]] [col.field[1]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 3 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 4 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2] ] [col.field[3] ] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] }} </mat-cell>
+            </div>
+          </ng-container> 
+        </div>
+        <div *ngIf="col.sorter != undefined && col.sorter == false">
+          <ng-container matColumnDef='{{col.name}}'>
+            <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>{{ col.title }}
+              <suite-filter-button class="ion-margin-vertical filter" #filterButtonName [title]='col.title'
+                [listItems]="list[col.name]" (applyFilters)="applyFilters($event, col.name)">
+              </suite-filter-button>
+            </mat-header-cell>
+            <div *ngIf='col.type == "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">
+                <div *ngIf='col.field.length == 1'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 2'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 3'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 4'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+              </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 1 && col.type != "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ? (element[col.field[0]] | date: col.format ) : element[col.field[0]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 2 && col.type != "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]]  | date: col.format)  : element[col.field[0]] [col.field[1]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 3 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 4 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] }} </mat-cell>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <div *ngIf="col.filters == false && col.name != 'select' && col.name != 'buttons'">
+        <div *ngIf="col.sorter == undefined || col.sorter == true ">
+          <ng-container matColumnDef='{{col.name}}'>
+            <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>{{ col.title }}
+
+            </mat-header-cell>
+            <div *ngIf='col.type == "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">
+                <div *ngIf='col.field.length == 1'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 2'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 3'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 4'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+              </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 1 && col.type != "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ? (element[col.field[0]] | date: col.format ) : element[col.field[0]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 2 && col.type != "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]]  | date: col.format)  : element[col.field[0]] [col.field[1]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 3 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 4 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] | date: col.format) : element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] }} </mat-cell>
+            </div>
+          </ng-container>
+        </div>
+        <div *ngIf="col.sorter != undefined && col.sorter == false">
+          <ng-container matColumnDef='{{col.name}}'>
+            <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>{{ col.title }}
+
+            </mat-header-cell>
+            <div *ngIf='col.type == "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">
+                <div *ngIf='col.field.length == 1'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 2'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 3'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+                <div *ngIf='col.field.length == 4'>
+                  <mat-checkbox class="checkbox" [checked]='element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]]' [disabled]="true" color="primary"></mat-checkbox>
+                </div>
+              </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 1 && col.type != "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ? (element[col.field[0]] | date:"dd/mm/yyyy") : element[col.field[0]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 2 && col.type != "checkbox"'>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]]  | date:"dd/mm/yyyy")  : element[col.field[0]] [col.field[1]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 3 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] | date:"dd/mm/yyyy" ) : element[col.field[0]] [col.field[1]] [col.field[2]] }} </mat-cell>
+            </div>
+            <div *ngIf='col.field.length == 4 &&  col.type != "checkbox" '>
+              <mat-cell *matCellDef="let element" class="my-sticky-col info number">{{ col.type == "date" ?  (element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] | date:"dd/mm/yyyy" ) : element[col.field[0]] [col.field[1]] [col.field[2]] [col.field[3]] }} </mat-cell>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+  </mat-table>
+</div>
+
+<ion-grid>
+  <ion-row>
+    <ion-col size='8'>
+      <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+    </ion-col>
+    <ion-col>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
+
+<!--<ion-content *ngIf="filtersData == undefined || filtersData == null">
+  <h1 style="text-align:center;">Faltan datos para construir la tabla :(</h1><br>
+  <h2 *ngIf="filtersData == null || filtersData ==undefined">Filtros de tabla vacios...</h2><br>
+</ion-content>
+
+<ion-content *ngIf="dataSource == undefined || dataSource == null">
+  <h1 style="text-align:center;">Faltan datos para construir la tabla :(</h1><br>
+  <h2 *ngIf="dataSource == null || dataSource ==undefined">DataSource es null</h2>
+</ion-content>-->
+
+
+<div class="footer-transport">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button *ngIf="selection.selected.length > 0 && btnDelete == true" (click)="delete()" color="danger"
+      matTooltip="Eliminar" matTooltipClass="tooltip">
+      <ion-icon name="trash"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button *ngIf="btnExcell != undefined && btnExcell == true" (click)="excell()" matTooltip="Descargar excell"
+      matTooltipClass="tooltip">
+    <ion-icon name="document"></ion-icon>
+  </ion-fab-button>
+    <ion-fab-button *ngIf="selection.selected.length > 0 && btnSend == true" (click)="send()" matTooltip="Enviar" matTooltipClass="tooltip">
+      <ion-icon name="send"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button *ngIf="btnAdd == true" (click)="add()" matTooltip="Agregar" matTooltipClass="tooltip">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button *ngIf="btnRefresh == true" (click)="refresh()" matTooltip="Actualizar" matTooltipClass="tooltip">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</div>

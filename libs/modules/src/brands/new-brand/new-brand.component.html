@@ -11,7 +11,7 @@
 <ion-content padding="true">
     <form [formGroup]="form">
         <ion-item lines="none">
-            <label>Marcas:     </label>
+            <label class="title-select">Marca:     </label>
             <mat-select (selectionChange)="selectBrand($event)" formControlName="brand">
               <mat-option *ngFor="let brand of brands" [value]="brand.id">
                 <div>
@@ -22,7 +22,7 @@
         </ion-item>
                 
         <ion-item lines="none">
-            <label>SubMarcas:    </label>
+            <label class="title-select">Modelo:    </label>
             <mat-select (selectionChange)="selectSubBrand($event)" formControlName="subbrand">
               <mat-option *ngFor="let subbrand of subbrands" [value]="subbrand.id">
                 <div>
@@ -43,25 +43,41 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
             
                 <ng-container matColumnDef='group'>
-                    <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>
+                    <mat-header-cell class="header-hidden" *matHeaderCellDef>
                                     
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{ element.name}}
+                        {{ element.name ?  element.name : element.sizes.name }}
                       </mat-cell>
                 </ng-container>
 
-                <ng-container matColumnDef='actions'>
-                    <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>
+                <ng-container matColumnDef='actions' *ngIf="!update">
+                  <mat-header-cell class="header-hidden" *matHeaderCellDef>
+                      
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                      <div class="actions">
+                        <mat-icon class="button-info" (click)="info(row)">info</mat-icon>
+                      </div>
+                      <div>
+                        <mat-checkbox  (click)="$event.stopPropagation();"  color="primary"
+                      (change)="checkboxRow($event,row)" [checked]="selection.isSelected(row)"
+                      ></mat-checkbox>
+                      </div>
+                    </mat-cell>
+              </ng-container>
+
+                <ng-container matColumnDef='actions' *ngIf="update">
+                    <mat-header-cell class="header-hidden" *matHeaderCellDef>
                         
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let row">
+                    <mat-cell *matCellDef="let element">
                         <div class="actions">
-                          <mat-icon class="button-info" (click)="info(row)">info</mat-icon>
+                          <mat-icon class="button-info" (click)="info(element)">info</mat-icon>
                         </div>
                         <div>
-                          <mat-checkbox  (click)="$event.stopPropagation();"  color="primary"
-                        (change)="checkboxRow($event,row)" [checked]="selection.isSelected(row)"
+                          <mat-checkbox  (click)="$event.stopPropagation();" color="primary"
+                        (change)="checkboxRow($event,element)" [checked]="element.check == true"
                         ></mat-checkbox>
                         </div>
                       </mat-cell>
@@ -74,6 +90,7 @@
 <ion-footer>
     <ion-toolbar>
         <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
-        <ion-button slot="end" color="primary" (click)="submit($event)" [disabled]="false" >Guardar</ion-button>
-    </ion-toolbar>
+        <ion-button *ngIf="!update" slot="end" color="primary" (click)="submit($event)" [disabled]="selection.selected.length <= 0" >Guardar</ion-button>
+        <ion-button *ngIf="update" slot="end" color="primary" (click)="submit($event)" >Guardar</ion-button>
+      </ion-toolbar>
 </ion-footer>

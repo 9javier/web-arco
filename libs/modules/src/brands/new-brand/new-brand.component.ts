@@ -13,7 +13,7 @@ import { SelectionModel } from '@angular/cdk/collections';
   styleUrls: ['./new-brand.component.scss']
 })
 export class NewBrandComponent implements OnInit {
-  title = 'Crear Marca';
+  title = 'Crear Talla';
   destinations;
   transport;
   log_internal;
@@ -24,7 +24,11 @@ export class NewBrandComponent implements OnInit {
   brands;
   subbrands;
   brandId:number;
-  groups;
+  groups=[];
+  currentSizes=[];
+  bodySizes:any;
+  selectSizes=[];
+  dataSource;
   form: FormGroup = this.formBuilder.group({
     brand: [],
     subbrand: [],
@@ -39,17 +43,89 @@ export class NewBrandComponent implements OnInit {
     private modalCtrl: ModalController,
 
 
-  ) {}
+  ) {
+    this.update = this.navParams.get("update");
+  }
 
   ngOnInit() {
-   this.getBrands();
+    this.getBrands();
+    if(!this.update){
+      
+    }else{
+      this.title = "Editar Talla"
+      this.bodySizes = this.navParams.get("data");
+      this.initFormToEdit();
+    }
   }
  
+  async initFormToEdit(){
+    const brandId = this.bodySizes.brand.id;
+    this.form.get('brand').patchValue(brandId);
+    await this.getSubBrands(brandId);
+    this.form.get('subbrand').patchValue(this.bodySizes.model.id);
+    await this.initSelectedCurrentSizes(this.bodySizes.id);
+    await this.getGroups(brandId);
+
+  }
+
+  async initSelectedCurrentSizes(matchingBrandId){
+    this.brandsServices.getCurrentSizes(matchingBrandId).subscribe(result =>{
+      console.log(result);
+       this.currentSizes = result;
+       this.selectSizes = this.currentSizes;
+      /*this.groups.map((element,index) => {
+        this.currentSizes.forEach(e =>{
+          if(element.id == e.id ){
+            console.log("es Igual",element)
+          }
+        });
+      })
+     */
+    },(error)=>{
+      this.intermediaryService.presentToastError("Error al tallas de esta Marca");
+      console.log(error);
+    }); 
+  }
+
+  initCheckbox(){
+  console.log("tallas *******",this.currentSizes);
+  this.groups =  this.groups.map(element => {
+     let res = this.currentSizes.find(e => e.sizes.id == element.id);   
+      if(res){
+        console.log("*****encontre iguales****");
+        console.log("*******",element);
+       // this.selectSizes.push({...element,check:true})
+        return{
+          ...element,check:true
+        }
+       }else{
+//        this.selectSizes.push({...element,check:false})
+        return{
+          ...element,check:false
+        }
+       }
+
+    });
+console.log(this.groups,"****Grupos*****")
+  }
+
+  compareSizeId(row){
+   /* let res:boolean = false;
+    this.currentSizes.forEach(element => {
+      if(row.id == element.sizes.id){
+        console.log("iguales",row.id);
+        res= true;
+        this.selection.selected.push(row);
+      }
+    });
+  return res;*/
+  
+  }
+
 
   async getBrands(){
     this.intermediaryService.presentLoading("Cargando Marcas...");
     this.brandsServices.getBrandsAll().subscribe(result =>{
-      console.log(result);
       this.intermediaryService.dismissLoading();
       this.brands = result;
     
@@ -66,27 +142,31 @@ export class NewBrandComponent implements OnInit {
   }
 
   submit($event){
-    $event.stopPropagation();
-    console.log(this.selection.selected);
-   let data ={
-     brand:this.form.get('brand').value,
-     model: this.form.get('subbrand').value,
-   };
-   let body={
-    "zalandoSize":2,
-    "onBoardingMatchingBrand":3
+    if(!this.update){
+      $event.stopPropagation();
+      let dataSizesId=[];
+      this.selection.selected.map(element => {
+           dataSizesId.push(element.id);
+      });
+      let body={
+       "brand":this.form.get('brand').value,
+       "model":this.form.get('subbrand').value,
+       "sizeId":dataSizesId,
+     }
+      this.createOnBoardMatchingBrand(body);
+    }else{
+      
+    }
+    
   }
-   console.log("*******DATA*********");
-   console.log(data)
-   this.createOnBoardMatchingBrand(data);
-  }
+
+
 
   selectBrand($event){
     this.brandId = $event.value;
     this.getSubBrands(this.brandId);
   }
   selectSubBrand($event){
-    console.log($event);
     this.getGroups(this.brandId);
   }
   selectGroups($event){
@@ -116,6 +196,7 @@ export class NewBrandComponent implements OnInit {
   getGroups(id){
     this.brandsServices.getGroups(id).subscribe(result =>{
       this.groups = result;
+      this.initCheckbox();
     },(error)=>{
       this.intermediaryService.presentToastError("Error Falta parametrizar Marcas, Tallas.");
       console.log(error);
@@ -146,8 +227,29 @@ export class NewBrandComponent implements OnInit {
   }
 
   checkboxRow($event, row) {
-    $event ? this.selection.toggle(row) : null;
-    console.log(this.selection.selected);
+    if(!this.update){
+      $event ? this.selection.toggle(row) : null;
+      console.log(this.selection.selected);
+      let resAux=[];
+     const result = this.selectSizes.map(element => {
+      if(element.id != row.id){
+        resAux.push(element)
+      }
+     });
+     this.selectSizes =[];
+     this.selectSizes = resAux;
+     console.log(this.selectSizes);
+    }else{
+     /* console.log("ROW**",row);
+      this.groups = this.groups.map((e,index) =>{
+        if(e.sizes.id == row.id){
+          this.groups[index].check = true;
+        }
+        
+      });*/
+    }
+ 
+
   }
 
   createOnBoardMatchingBrand(body){

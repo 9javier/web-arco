@@ -23,6 +23,7 @@ export class BrandsService {
   private getGroupsUrl: string = environment.apiBase + "/marketplace/prestashop/brands/";
   private getSizesUrl: string = environment.apiBase + "/marketplace/brands/sizes-group/";
   private postOnBoardMatchUrl: string = environment.apiBase + "/marketplace/brands/brands/";
+  private getCurrentSizesUrl: string = environment.apiBase + "/marketplace/brands/get-onboard-group-size/";
 
 
   constructor(
@@ -32,8 +33,8 @@ export class BrandsService {
   ) {}
 
 
-  getBrands(): Observable<any> {
-    return this.http.get<HttpRequestModel.Response>(this.postBrandsUrl).pipe(
+  getBrands(body): Observable<any> {
+    return this.http.post<HttpRequestModel.Response>(this.postBrandsUrl,body).pipe(
       map(resp => resp.data)
     )
   }
@@ -75,4 +76,9 @@ export class BrandsService {
     )
   }
 
+  getCurrentSizes(id): Observable<any> {
+    return this.http.get<HttpRequestModel.Response>(this.getCurrentSizesUrl+`${id}`).pipe(
+      map(resp => resp.data)
+    )
+  }
 }

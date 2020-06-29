@@ -1,16 +1,19 @@
-<!--<ion-content>
-  <suite-table-filters
-[columnsData]="columnsData" 
-[dataSource]="dataSource" 
-[filters]="true"
-[btnRefresh]="true"
-[pagination]="pagination"
-[checkbox]="false"
-[btnAdd]="true"
-(emitMain)="emitMain($event)">
- </suite-table-filters> 
-</ion-content>-->
-<mat-table [dataSource]="dataSource">
+<ion-content>
+  <suite-table-filters-updated
+  [columnsData]="columnsData" 
+  [dataSource]="dataSource" 
+  [filters]="true"
+  [filtersData]="filtersData"
+  [buttons]="true"
+  [btnRefresh]="true"
+  [pagination]="pagination"
+  [btnAdd]="true"
+  [checkbox]="false"
+  (emitMain)="emitMain($event)">
+ </suite-table-filters-updated> 
+</ion-content>
+
+<!---<mat-table [dataSource]="dataSource">
   <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
        
       <ng-container matColumnDef='brand'>
@@ -48,7 +51,16 @@
             {{ element.groups }}
         </mat-cell>
     </ng-container>
-  <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+    <ng-container matColumnDef='edit'>
+      <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>
+          --
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <mat-icon class="button-edit" (click)="edit(row)">create</mat-icon>
+      </mat-cell>
+  </ng-container>-->
+<!--
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
   </mat-table>
   <ion-footer class="footer-products">
     <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
@@ -57,4 +69,4 @@
       <ion-fab-button matTooltip="Crear embalaje" matTooltipClass="tooltip" (click)="createTransport()"><i
         class="material-icons">add</i></ion-fab-button>
     </ion-fab>
-  </ion-footer>
+  </ion-footer>-->
