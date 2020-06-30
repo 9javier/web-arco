@@ -19,7 +19,7 @@
                     US
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" [ngClass]="currentZone == 'US' ? 'colum-currentSize' : ''">
-                    {{ element.US}}
+                    {{ element.US  != 0 ? element.US : 'Sin Talla'}}
                   </mat-cell>
             </ng-container>
 
@@ -28,7 +28,7 @@
                     UK
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" [ngClass]="currentZone == 'UK' ? 'colum-currentSize' : ''">
-                    {{element.UK}}
+                    {{element.UK != 0 ? element.UK : 'Sin Talla'}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef='ue'>
@@ -36,7 +36,7 @@
                     EU
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" [ngClass]="currentZone == 'EU' ? 'colum-currentSize' : ''">
-                  {{element.EU}}
+                  {{element.EU != 0 ? element.EU : 'Sin Talla'  }}
                 </mat-cell>
             </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
