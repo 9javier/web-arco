@@ -53,8 +53,8 @@ export class BrandsService {
   }
 
   
-  getSubBrands(id): Observable<any> {
-    return this.http.get<HttpRequestModel.Response>(this.getSubBrandsUrl+`${id}`).pipe(
+  getSubBrands(body): Observable<any> {
+    return this.http.post<HttpRequestModel.Response>(this.getSubBrandsUrl,body).pipe(
       map(resp => resp.data)
     )
   }

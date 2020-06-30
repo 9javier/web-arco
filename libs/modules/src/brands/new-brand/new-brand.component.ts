@@ -54,7 +54,6 @@ export class NewBrandComponent implements OnInit {
     }else{
       this.title = "Editar Talla"
       this.bodySizes = this.navParams.get("data");
-      console.log(this.bodySizes);
       this.initFormToEdit();
     }
   }
@@ -71,7 +70,6 @@ export class NewBrandComponent implements OnInit {
 
   async initSelectedCurrentSizes(matchingBrandId){
     this.brandsServices.getCurrentSizes(matchingBrandId).subscribe(result =>{
-      console.log(result);
        this.currentSizes = result;
     },(error)=>{
       this.intermediaryService.presentToastError("Error al tallas de esta Marca");
@@ -94,7 +92,6 @@ export class NewBrandComponent implements OnInit {
        }
 
     });
-    console.log(this.selectSizes);
   }
 
 
@@ -169,12 +166,16 @@ export class NewBrandComponent implements OnInit {
   }
 
   getSubBrands(id){
+    let body;
+    if(this.update){
+     body= {update:true,brandId:id}
+    }else{
+      body= {update:false,brandId:id}
+    }
     this.intermediaryService.presentLoading("Cargando Submarcas...");
-    this.brandsServices.getSubBrands(id).subscribe(result =>{
-      this.intermediaryService.dismissLoading();
-      let data =[];
-      data.push(result);
-      this.subbrands = data;
+    this.brandsServices.getSubBrands(body).subscribe(result =>{
+      this.intermediaryService.dismissLoading();      
+      this.subbrands = result;
     
     },(error)=>{
       this.intermediaryService.presentToastError("Error al cargar Submarcas");
@@ -193,15 +194,12 @@ export class NewBrandComponent implements OnInit {
     }); 
   }
 
-  info(row){
-    console.log(row);
-   
+  info(row){   
       const groupId = row.id;
       const data ={  
       brandId:this.brandId,
       groupSizeId:groupId
       };
-      console.log(data)
       this.goToModalSizes(data);
   
 }
@@ -222,10 +220,8 @@ export class NewBrandComponent implements OnInit {
   checkboxRow($event, row) {
     if(!this.update){
       $event ? this.selection.toggle(row) : null;
-      console.log(this.selection.selected);
     }else{
       this.eventMatSelect(row);
-      console.log(this.selectSizes)
     }
 
   }
@@ -249,7 +245,6 @@ export class NewBrandComponent implements OnInit {
   createOnBoardMatchingBrand(body){
     this.intermediaryService.presentLoading("Guardado Registro...");
     this.brandsServices.postOnBoardingMatchingBrand(body).subscribe(result =>{
-      console.log(result);
       this.intermediaryService.dismissLoading();
       this.close();
     
@@ -263,7 +258,6 @@ export class NewBrandComponent implements OnInit {
   updateRegister(body){
     this.intermediaryService.presentLoading("Guardado Registro...");
     this.brandsServices.putUpdateMatchingBrand(body).subscribe(result =>{
-      console.log(result);
       this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastSuccess("Registro actualizado exitosamente.");
       this.close();

@@ -1175,6 +1175,13 @@ export class MenuComponent implements OnInit {
       url: '/logout',
       icon: 'log-out'
     });
+    if (!this.onboarding.find(item => (<any>item).id == "logout"))
+      this.onboarding.push(logoutItem);
+    else
+      this.onboarding.forEach((item, i) => {
+        if ((<any>item).id == "logout")
+          this.onboarding[i] = logoutItem;
+      });
     if (!this.alPages.find(item => (<any>item).id == "logout"))
       this.alPages.push(logoutItem);
     else
