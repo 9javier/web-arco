@@ -37,3 +37,7 @@ export * from './components/scanner-manual/scanner-manual.module';
 export * from './brands/brands.component'
 export * from './brands/brands.module'
 
+
+export * from './status-onboarding/status-onboarding.component'
+export * from './status-onboarding/status-onboarding.module'
+
