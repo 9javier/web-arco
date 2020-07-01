@@ -22,18 +22,7 @@ import { Location } from '@angular/common';
 import { UpdateComponent as updateUser } from '../../../../../../modules/src/users/update/update.component';
 import { StoreComponent as storeUser } from '../../../../../../modules/src/users/store/store.component';
 import { StoreComponent as storeRol } from "../../../../../../modules/src/roles/store/store.component";
-import { StoreComponent as storeHall } from "../../../../../../modules/src/halls/store/store.component";
-import { StoreComponent as storeWarehouse } from "../../../../../../modules/src/warehouses/store/store.component";
-import { StoreComponent as storeJail } from "../../../../../../modules/src/jail/store/store.component";
-import { StoreComponent as storePallet } from "../../../../../../modules/src/pallets/store/store.component";
-import { StoreComponent as storeGroup } from "../../../../../../modules/src/groups/store/store.component";
-import { UpdateComponent as updateRol } from "../../../../../../modules/src/roles/update/update.component";
-import { UpdateComponent as updateHall } from "../../../../../../modules/src/halls/update/update.component";
-import { UpdateComponent as updateWarehouse } from "../../../../../../modules/src/warehouses/update/update.component";
-import { UpdateComponent as updateJail } from "../../../../../../modules/src/jail/update/update.component";
-import { UpdateComponent as updatePallet } from "../../../../../../modules/src/pallets/update/update.component";
-import { UpdateComponent as updateGroup } from "../../../../../../modules/src/groups/update/update.component";
-import { HallsService } from "../../../../../../services/src/lib/endpoint/halls/halls.service";
+
 import { HallModel } from "../../../../../../services/src/models/endpoints/Hall";
 import { WarehouseService } from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { PrinterService } from "../../../../../../services/src/lib/printer/printer.service";
@@ -66,7 +55,6 @@ export class ListComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private modalController: ModalController,
     public loadingController: LoadingController,
-    private hallsService: HallsService,
     private route: ActivatedRoute,
     private location: Location,
     private warehouseService: WarehouseService,
@@ -124,34 +112,7 @@ export class ListComponent implements OnInit {
 
   initHalls() {
     this.presentLoading();
-    this.hallsService
-      .getIndex(this.warehouseSelected)
-      .then(
-        (
-          data: Observable<
-            HttpResponse<HallModel.ResponseIndex | RolModel.ResponseIndex>
-          >
-        ) => {
-          data.subscribe(
-            (
-              res: HttpResponse<
-                HallModel.ResponseIndex
-              >
-            ) => {
-              this.dataSource = res.body.data;
-            },
-            (err) => {
-              // console.log(err)
-            }, () => {
-              this.dismissLoading();
-            }
-          );
-        }
-      );
-    this.selection = new SelectionModel<UserModel.User | RolModel.Rol>(
-      true,
-      []
-    );
+    
     this.showDeleteButton = false;
   }
 
@@ -197,80 +158,13 @@ export class ListComponent implements OnInit {
     let storeComponent = null;
     let componentProps: any = { routePath: this.routePath };
 
-    if (this.routePath === '/roles') {
-      storeComponent = storeRol;
-    } else if (this.routePath === '/users') {
-      storeComponent = storeUser;
-    } else if (this.routePath === '/halls') {
-      storeComponent = storeHall;
-      componentProps.warehouse = this.warehouseSelected;
-    } else if (this.routePath === '/warehouses') {
-      storeComponent = storeWarehouse;
-    } else if (this.routePath === '/jails') {
-      storeComponent = storeJail;
-    } else if (this.routePath === '/groups') {
-      storeComponent = storeGroup;
-    } else if (this.routePath === '/pallets') {
-      storeComponent = storePallet;
-    }
-
-    if (storeComponent) {
-      const modal = await this.modalController.create({
-        component: storeComponent,
-        componentProps: componentProps
-      });
-
-      modal.onDidDismiss()
-        .then(() => {
-          this.loadData();
-        });
-
-      return await modal.present();
-    }
   }
 
   async goToUpdate(row) {
     let updateComponent = null;
 
-    if (this.routePath === '/roles') {
-      updateComponent = updateRol;
-    } else if (this.routePath === '/users') {
-      updateComponent = updateUser;
-    } else if (this.routePath === '/halls') {
-      updateComponent = updateHall;
-    } else if (this.routePath === '/warehouses') {
-      updateComponent = updateWarehouse;
-    } else if (this.routePath === '/jails') {
-      updateComponent = updateJail;
-    } else if (this.routePath === '/pallets') {
-      updateComponent = updatePallet;
-    } else if (this.routePath === '/groups') {
-      updateComponent = updateGroup;
-    }
-
-    if (updateComponent) {
-      const modal = await this.modalController.create({
-        component: updateComponent,
-        componentProps: { id: row.id, row: row, routePath: this.routePath }
-      });
-      // console.log("test", { id: row.id, row: row, routePath: this.routePath });
-      modal.onDidDismiss()
-        .then(() => {
-          this.loadData();
-          if (this.routePath === '/warehouses') {
-            this.warehouseService
-              .init()
-              .then((data: Observable<HttpResponse<any>>) => {
-                data.subscribe((res: HttpResponse<any>) => {
-                  // Load of main warehouse in memory
-                  this.warehouseService.idWarehouseMain = res.body.data.id;
-                });
-              });
-          }
-        });
-
-      return await modal.present();
-    }
+    
+    
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

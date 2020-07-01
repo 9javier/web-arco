@@ -18,9 +18,8 @@ import { PipesModule } from "../../../../libs/pipes/src";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpInterceptorService } from './interceptor/http-interceptor.service';
 import { ErrordialogComponent } from './interceptor/errordialog-component/errordialog.component';
-import {IncidencesButtonModule, ScannerConfigurationModule} from "@suite/common-modules";
 import { AddTokenToRequestInterceptor } from '@suite/services';
-import { BreadcrumbModule,MenuModule} from '@suite/common-modules';
+import { MenuModule} from '@suite/common-modules';
 
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import localeEs from '@angular/common/locales/es';
@@ -29,13 +28,7 @@ import {MondayStartingDateAdapterService} from "../../../../libs/services/src/li
 import { NgxMaskModule } from 'ngx-mask';
 import { VirtualKeyboardComponent } from '../../../../libs/modules/src/components/virtual-keyboard/virtual-keyboard.component';
 import { VirtualKeyboardModule } from '../../../../libs/modules/src/components/virtual-keyboard/virtual-keyboard.module';
-import { DropFilesModule } from '../../../../libs/modules/src/drop-files/drop-files.module';
-import { ModalReviewModule } from '../../../../libs/modules/src/components/modal-defective/ModalReview/modal-review.module';
 
-import {SignatureModule} from '../../../../libs/modules/src/signature/signature.module';
-import { ReviewImagesModule } from '../../../../libs/modules/src/incidents/components/review-images/review-images.module';
-import { RegistryDetailsModule } from 'libs/modules/src/components/modal-defective/registry-details/registry-details.module';
-import { LogisticOperatorModule } from '../../../../libs/modules/src/expedition-manual/logistic-operator/logistic-operator.module';
  
 registerLocaleData(localeEs);
 @NgModule({
@@ -51,19 +44,11 @@ registerLocaleData(localeEs);
     PipesModule,
     BrowserAnimationsModule,
     MatDialogModule,
-    ScannerConfigurationModule,
-    IncidencesButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    BreadcrumbModule,
     MenuModule,
     NgxMaskModule.forRoot(),
     VirtualKeyboardModule,
-    DropFilesModule,
-    ModalReviewModule,
-    SignatureModule,
-    ReviewImagesModule, 
-    RegistryDetailsModule,
   ],
   providers: [
     StatusBar,

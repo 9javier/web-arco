@@ -1,8 +1,0 @@
-<suite-breadcrumb></suite-breadcrumb>
-<div class="scroll-list">
-    <title-list-workwaves-history></title-list-workwaves-history>
-    <workwave-list-workwaves-history *ngFor="let workwave of workwavesHistory" [workwaveHistory]="workwave" (click)="showWorkwave(workwave)"></workwave-list-workwaves-history>
-</div>
-<ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-  <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="loadWorkWave()"><i class="material-icons">refresh</i></ion-fab-button>
-</ion-fab>

@@ -2,15 +2,14 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild, NgZone } fro
 import { app, environment } from '../../../../services/src/environments/environment';
 import { AuthenticationService, Oauth2Service, TariffService, WarehouseModel } from '@suite/services';
 import { Router } from '@angular/router';
-import { ScanditService } from "../../../../services/src/lib/scandit/scandit.service";
-import { ReceptionScanditService } from "../../../../services/src/lib/scandit/reception/reception.service";
-import { PrintTagsScanditService } from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
+
+
+
 import { MenuController, PopoverController } from "@ionic/angular";
-import { SealScanditService } from "../../../../services/src/lib/scandit/seal/seal.service";
-import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/product-info/product-info.service";
+
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 import { LoginComponent } from '../../login/login.page';
-import { AuditMultipleScanditService } from "../../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
+
 import { AlertPopoverComponent } from "../alert-popover/alert-popover.component";
 import { WarehouseReceptionAlertService } from "../../../../services/src/lib/endpoint/warehouse-reception-alert/warehouse-reception-alert.service";
 import Warehouse = WarehouseModel.Warehouse;
@@ -1117,12 +1116,6 @@ export class MenuComponent implements OnInit {
     private loginService: Oauth2Service,
     private router: Router,
     private authenticationService: AuthenticationService,
-    private scanditService: ScanditService,
-    private receptionScanditService: ReceptionScanditService,
-    private printTagsScanditService: PrintTagsScanditService,
-    private sealScanditService: SealScanditService,
-    private productInfoScanditService: ProductInfoScanditService,
-    private auditMultipleScanditService: AuditMultipleScanditService,
     private menuController: MenuController,
     private toolbarProvider: ToolbarProvider,
     private tariffService: TariffService,
@@ -1245,13 +1238,13 @@ export class MenuComponent implements OnInit {
           });
       });
     } else if (p.url === 'positioning') {
-      this.scanditService.positioning();
+      
     } else if (p.url === 'reception') {
-      this.receptionScanditService.reception(1);
+      
     } else if (p.url == 'reception/empty-carrier') {
       this.checkAlertsAndRedirect();
     } else if (p.url === 'audits/scan') {
-      this.auditMultipleScanditService.init();
+      
     }
   }
 
@@ -1269,11 +1262,10 @@ export class MenuComponent implements OnInit {
               if (typeof response.data == 'boolean' && response.data) {
                 await this.localStorageProvider.set('hideAlerts', true);
               }
-              this.receptionScanditService.reception(2);
             });
             await popover.present();
           } else {
-            this.receptionScanditService.reception(2);
+
           }
         } else {
           console.error(response);
@@ -1289,25 +1281,25 @@ export class MenuComponent implements OnInit {
   tapOptionSubitem(p) {
     this.menuController.close();
     if (p.url === 'print/tag/ref') {
-      this.printTagsScanditService.printTagsReferences();
+
     } else if (p.url === 'print/tag/price') {
-      this.printTagsScanditService.printTagsPrices();
+      
     } else if (p.url === 'packing/seal') {
-      this.sealScanditService.seal();
+      
     } else if (p.url === 'reception') {
-      this.receptionScanditService.reception(1);
+      
     } else if (p.url == 'reception/empty-carrier') {
       this.checkAlertsAndRedirect();
     } else if (p.url == 'print/product/relabel') {
-      this.printTagsScanditService.printRelabelProducts();
+      
     } else if (p.url == 'products/info') {
-      this.productInfoScanditService.init();
+      
     } else if (p.url === 'positioning') {
-      this.scanditService.positioning();
+      
     } else if (p.url === 'defective-positioning'){
-      this.scanditService.defectivePositioning();
+      
     } else if (p.url === 'audits/scan') {
-      this.auditMultipleScanditService.init();
+      
     } else {
       this.returnTitle(p);
     }

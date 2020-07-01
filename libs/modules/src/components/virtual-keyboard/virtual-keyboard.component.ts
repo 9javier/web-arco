@@ -3,7 +3,6 @@ import Keyboard from 'simple-keyboard';
 import layout from 'simple-keyboard-layouts/build/layouts/spanish';
 import { KeyboardFilteringService } from '../../../../services/src/lib/keyboard-filtering/keyboard-filtering.service';
 import { NavParams, PopoverController } from '@ionic/angular';
-import {Type} from "../../receptions-avelon/enums/type.enum";
 
 @Component({
   selector: 'suite-virtual-keyboard',
@@ -81,12 +80,7 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
     if (button === "{shift}" || button === "{lock}") {
       this.handleShift();
     }
-    if (button === "{enter}" && (!this.type || this.type == Type.EXPEDITION_NUMBER || this.type == Type.EAN_CODE || this.type == Type.DELIVERY_NOTE)) {
-      this.selectItem(this.searchTerm);
-    }
-    if (button === '{down_hide}') {
-      this.popoverController.dismiss();
-    }
+    
   };
 
   handleShift = () => {

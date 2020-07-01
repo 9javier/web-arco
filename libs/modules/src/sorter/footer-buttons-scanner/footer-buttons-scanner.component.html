@@ -1,8 +1,0 @@
-<div class="footer">
-  <div class="button left" *ngIf="leftButton">
-    <button (click)="clickLeftButton()" [ngClass]="leftButtonDanger ? 'danger' : ''" [hidden]="leftButtonHidden">{{leftButton}}</button>
-  </div>
-  <div class="button right" *ngIf="rightButton">
-    <button (click)="clickRightButton()" [hidden]="rightButtonHidden">{{rightButton}}</button>
-  </div>
-</div>

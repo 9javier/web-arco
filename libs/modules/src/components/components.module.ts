@@ -6,7 +6,6 @@ import { ResponsiveLayoutModule } from './responsive-layout/responsive-layout.mo
 import { BreadcrumbModule } from './breadcrumb/breadcrumb.module';
 import { MenuModule } from "./menu/menu.module";
 import { VirtualKeyboardModule } from './virtual-keyboard/virtual-keyboard.module';
-import { ModalDefectiveModule } from './modal-defective/modal-defective.module';
 
 @NgModule({
   declarations: [UtilsComponent, DropdownComponent],
@@ -16,7 +15,6 @@ import { ModalDefectiveModule } from './modal-defective/modal-defective.module';
     MenuModule,
     ResponsiveLayoutModule,
     VirtualKeyboardModule,
-    ModalDefectiveModule
   ],
   exports:[UtilsComponent, DropdownComponent]
 })

@@ -1,6 +1,0 @@
-<div class="content-ta">
-  <p class="origin" *ngIf="packingReferenceOrigin">Origen: <b>{{ packingReferenceOrigin }}</b></p>
-  <p class="error-positioning">{{ msgTop }}</p>
-  <input hideKeyboard id="input-ta" class="ta-positioning" [placeholder]="placeholderDataToWrite" (keyup)="keyUpInput($event)"
-         (focus)="onFocus($event)" [(ngModel)]="codeWrote">
-</div>
