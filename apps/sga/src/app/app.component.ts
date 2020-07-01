@@ -147,7 +147,7 @@ export class AppComponent implements OnInit {
 
   // Presentation layer
   showMainHeader = false;
-  showSidebar = false;
+  showSidebar = true;
   displaySmallSidebar = false;
   iconsDirection = 'start';
   currentRoute: string = "Inicio";
@@ -185,14 +185,14 @@ export class AppComponent implements OnInit {
   }
 
   initializeApp() {
-    this.mainHeaderShowHide(false);
+    this.mainHeaderShowHide(true);
     this.displaySmallSidebar = false;
-    this.showSidebar = false;
+    this.showSidebar = true;
     // TODO ERROR EN ESTA FUNCTION
     this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      this.menu.enable(false, 'sidebar');
+      this.menu.enable(true, 'sidebar');
 
       // Initialization of Scandit settings that app will display
       this.scannerConfigurationService.init();

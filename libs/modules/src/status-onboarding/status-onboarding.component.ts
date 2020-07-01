@@ -32,6 +32,11 @@ export class StatusOnBoardingComponent implements OnInit {
 
   async ngOnInit() {
 
+    this.loadDataAgain();
+    this.listenChanges();
+  }
+
+  async loadDataAgain(){
     let data = {
       "pagination":{
         "page":1,
@@ -39,7 +44,6 @@ export class StatusOnBoardingComponent implements OnInit {
       }
     }
     await this.loadTableInfo(data);
-    this.listenChanges();
   }
 
   async loadTableInfo(data){

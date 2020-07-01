@@ -95,6 +95,15 @@
       </table>
   
       <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+
+
+      <div class="footer-transport">
+        <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+          <ion-fab-button (click)="loadDataAgain()" matTooltip="Actualizar" matTooltipClass="tooltip">
+            <ion-icon name="refresh"></ion-icon>
+          </ion-fab-button>
+         </ion-fab>
+      </div>
     </div>
   
     </ion-content>
