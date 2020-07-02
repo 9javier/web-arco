@@ -69,18 +69,8 @@ export class NewBrandComponent implements OnInit {
   }
 
   async initSelectedCurrentSizes(matchingBrandId){
-    this.brandsServices.getCurrentSizes(matchingBrandId).subscribe(result =>{
-      console.log(result);
+  await this.brandsServices.getCurrentSizes(matchingBrandId).subscribe(result =>{
        this.currentSizes = result;
-       this.selectSizes = this.currentSizes;
-      /*this.groups.map((element,index) => {
-        this.currentSizes.forEach(e =>{
-          if(element.id == e.id ){
-            console.log("es Igual",element)
-          }
-        });
-      })
-     */
     },(error)=>{
       this.intermediaryService.presentToastError("Error al tallas de esta Marca");
       console.log(error);
@@ -88,44 +78,26 @@ export class NewBrandComponent implements OnInit {
   }
 
   initCheckbox(){
-  console.log("tallas *******",this.currentSizes);
   this.groups =  this.groups.map(element => {
      let res = this.currentSizes.find(e => e.sizes.id == element.id);   
       if(res){
-        console.log("*****encontre iguales****");
-        console.log("*******",element);
-       // this.selectSizes.push({...element,check:true})
+        this.selectSizes.push(element);
         return{
           ...element,check:true
         }
        }else{
-//        this.selectSizes.push({...element,check:false})
         return{
           ...element,check:false
         }
        }
 
     });
-console.log(this.groups,"****Grupos*****")
-  }
-
-  compareSizeId(row){
-   /* let res:boolean = false;
-    this.currentSizes.forEach(element => {
-      if(row.id == element.sizes.id){
-        console.log("iguales",row.id);
-        res= true;
-        this.selection.selected.push(row);
-      }
-    });
-  return res;*/
-  
   }
 
 
   async getBrands(){
     this.intermediaryService.presentLoading("Cargando Marcas...");
-    this.brandsServices.getBrandsAll().subscribe(result =>{
+   await this.brandsServices.getBrandsAll().subscribe(result =>{
       this.intermediaryService.dismissLoading();
       this.brands = result;
     
@@ -142,8 +114,7 @@ console.log(this.groups,"****Grupos*****")
   }
 
   submit($event){
-    if(!this.update){
-      $event.stopPropagation();
+    $event.stopPropagation();
       let dataSizesId=[];
       this.selection.selected.map(element => {
            dataSizesId.push(element.id);
@@ -152,12 +123,29 @@ console.log(this.groups,"****Grupos*****")
        "brand":this.form.get('brand').value,
        "model":this.form.get('subbrand').value,
        "sizeId":dataSizesId,
-     }
+     };
+    if(!this.update){
       this.createOnBoardMatchingBrand(body);
     }else{
-      
+      const sizesId = this.getSelectedSizes();
+      let data={
+        "matchingBrandId":this.bodySizes.id,
+        "brand":this.form.get('brand').value,
+        "model":this.form.get('subbrand').value,
+        "sizeId":sizesId,
+      };
+      console.log(this.groups);
+      this.updateRegister(data);
     }
     
+  }
+
+  getSelectedSizes(){
+    let sizesId=[];
+    this.selectSizes.map(e=>{
+      sizesId.push(e.id);
+    });
+    return sizesId;
   }
 
 
@@ -177,14 +165,17 @@ console.log(this.groups,"****Grupos*****")
     this.modalController.dismiss();
   }
 
-  getSubBrands(id){
+  async getSubBrands(id){
+    let body;
+    if(this.update){
+     body= {update:true,brandId:id}
+    }else{
+      body= {update:false,brandId:id}
+    }
     this.intermediaryService.presentLoading("Cargando Submarcas...");
-    this.brandsServices.getSubBrands(id).subscribe(result =>{
-      console.log(result);
-      this.intermediaryService.dismissLoading();
-      let data =[];
-      data.push(result);
-      this.subbrands = data;
+   await this.brandsServices.getSubBrands(body).subscribe(result =>{
+      this.intermediaryService.dismissLoading();      
+      this.subbrands = result;
     
     },(error)=>{
       this.intermediaryService.presentToastError("Error al cargar Submarcas");
@@ -193,24 +184,27 @@ console.log(this.groups,"****Grupos*****")
     }); 
   }
 
-  getGroups(id){
-    this.brandsServices.getGroups(id).subscribe(result =>{
+  async getGroups(id){
+    this.intermediaryService.presentLoading("Cargando Tallas...");
+  await  this.brandsServices.getGroups(id).subscribe(result =>{
+      this.intermediaryService.dismissLoading();
       this.groups = result;
       this.initCheckbox();
     },(error)=>{
+      this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastError("Error Falta parametrizar Marcas, Tallas.");
       console.log(error);
     }); 
   }
 
-  info(row){
-    const groupId = row.id;
-    const data ={  
-    brandId:this.brandId,
-    groupSizeId:groupId
-    };
-    this.goToModalSizes(data);
-
+  info(row){   
+      const groupId = row.id;
+      const data ={  
+      brandId:this.brandId,
+      groupSizeId:groupId
+      };
+      this.goToModalSizes(data);
+  
 }
   async goToModalSizes(data){
     let modal = (await this.modalCtrl.create({
@@ -229,34 +223,46 @@ console.log(this.groups,"****Grupos*****")
   checkboxRow($event, row) {
     if(!this.update){
       $event ? this.selection.toggle(row) : null;
-      console.log(this.selection.selected);
-      let resAux=[];
-     const result = this.selectSizes.map(element => {
-      if(element.id != row.id){
-        resAux.push(element)
-      }
-     });
-     this.selectSizes =[];
-     this.selectSizes = resAux;
-     console.log(this.selectSizes);
     }else{
-     /* console.log("ROW**",row);
-      this.groups = this.groups.map((e,index) =>{
-        if(e.sizes.id == row.id){
-          this.groups[index].check = true;
-        }
-        
-      });*/
+      this.eventMatSelect(row);
     }
- 
 
   }
 
-  createOnBoardMatchingBrand(body){
+  eventMatSelect(row){
+    let array =[];
+    let res = this.selectSizes.find(e => e.id == row.id);   
+     if(res){
+        for(let i=0;i<this.selectSizes.length;i++){
+          if(this.selectSizes[i].id != res.id){
+            array.push(this.selectSizes[i]);
+          }
+        }
+        this.selectSizes=[];
+        this.selectSizes = array;
+     }else{
+       this.selectSizes.push(row);
+     }
+  }
+
+ async createOnBoardMatchingBrand(body){
     this.intermediaryService.presentLoading("Guardado Registro...");
-    this.brandsServices.postOnBoardingMatchingBrand(body).subscribe(result =>{
-      console.log(result);
+    await  this.brandsServices.postOnBoardingMatchingBrand(body).subscribe(result =>{
       this.intermediaryService.dismissLoading();
+      this.close();
+    
+    },(error)=>{
+      this.intermediaryService.presentToastError("Error al guardar Registro.");
+      this.intermediaryService.dismissLoading();
+      console.log(error);
+    }); 
+  }
+
+  async updateRegister(body){
+    this.intermediaryService.presentLoading("Guardado Registro...");
+    await this.brandsServices.putUpdateMatchingBrand(body).subscribe(result =>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastSuccess("Registro actualizado exitosamente.");
       this.close();
     
     },(error)=>{

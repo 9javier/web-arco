@@ -12,7 +12,7 @@
     <form [formGroup]="form">
         <ion-item lines="none">
             <label class="title-select">Marca:     </label>
-            <mat-select (selectionChange)="selectBrand($event)" formControlName="brand">
+            <mat-select (selectionChange)="selectBrand($event)" formControlName="brand" [disabled]="update">
               <mat-option *ngFor="let brand of brands" [value]="brand.id">
                 <div>
                   {{ brand.name }}
@@ -23,7 +23,7 @@
                 
         <ion-item lines="none">
             <label class="title-select">Modelo:    </label>
-            <mat-select (selectionChange)="selectSubBrand($event)" formControlName="subbrand">
+            <mat-select (selectionChange)="selectSubBrand($event)" formControlName="subbrand" [disabled]="update">
               <mat-option *ngFor="let subbrand of subbrands" [value]="subbrand.id">
                 <div>
                   {{ subbrand.reference }} - {{subbrand.name}}
@@ -36,7 +36,7 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Grupos
+            Grupo de tallas
           </mat-panel-title>
         </mat-expansion-panel-header>
             <mat-table [dataSource]="groups">
@@ -46,7 +46,7 @@
                     <mat-header-cell class="header-hidden" *matHeaderCellDef>
                                     
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
+                    <mat-cell *matCellDef="let element" [ngClass]="element.recommended == true ? 'size-recomended' : ''">
                         {{ element.name ?  element.name : element.sizes.name }}
                       </mat-cell>
                 </ng-container>
