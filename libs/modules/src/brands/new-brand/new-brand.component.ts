@@ -69,7 +69,7 @@ export class NewBrandComponent implements OnInit {
   }
 
   async initSelectedCurrentSizes(matchingBrandId){
-    this.brandsServices.getCurrentSizes(matchingBrandId).subscribe(result =>{
+  await this.brandsServices.getCurrentSizes(matchingBrandId).subscribe(result =>{
        this.currentSizes = result;
     },(error)=>{
       this.intermediaryService.presentToastError("Error al tallas de esta Marca");
@@ -97,7 +97,7 @@ export class NewBrandComponent implements OnInit {
 
   async getBrands(){
     this.intermediaryService.presentLoading("Cargando Marcas...");
-    this.brandsServices.getBrandsAll().subscribe(result =>{
+   await this.brandsServices.getBrandsAll().subscribe(result =>{
       this.intermediaryService.dismissLoading();
       this.brands = result;
     
@@ -165,7 +165,7 @@ export class NewBrandComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  getSubBrands(id){
+  async getSubBrands(id){
     let body;
     if(this.update){
      body= {update:true,brandId:id}
@@ -173,7 +173,7 @@ export class NewBrandComponent implements OnInit {
       body= {update:false,brandId:id}
     }
     this.intermediaryService.presentLoading("Cargando Submarcas...");
-    this.brandsServices.getSubBrands(body).subscribe(result =>{
+   await this.brandsServices.getSubBrands(body).subscribe(result =>{
       this.intermediaryService.dismissLoading();      
       this.subbrands = result;
     
@@ -184,11 +184,14 @@ export class NewBrandComponent implements OnInit {
     }); 
   }
 
-  getGroups(id){
-    this.brandsServices.getGroups(id).subscribe(result =>{
+  async getGroups(id){
+    this.intermediaryService.presentLoading("Cargando Tallas...");
+  await  this.brandsServices.getGroups(id).subscribe(result =>{
+      this.intermediaryService.dismissLoading();
       this.groups = result;
       this.initCheckbox();
     },(error)=>{
+      this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastError("Error Falta parametrizar Marcas, Tallas.");
       console.log(error);
     }); 
@@ -242,9 +245,9 @@ export class NewBrandComponent implements OnInit {
      }
   }
 
-  createOnBoardMatchingBrand(body){
+ async createOnBoardMatchingBrand(body){
     this.intermediaryService.presentLoading("Guardado Registro...");
-    this.brandsServices.postOnBoardingMatchingBrand(body).subscribe(result =>{
+    await  this.brandsServices.postOnBoardingMatchingBrand(body).subscribe(result =>{
       this.intermediaryService.dismissLoading();
       this.close();
     
@@ -255,9 +258,9 @@ export class NewBrandComponent implements OnInit {
     }); 
   }
 
-  updateRegister(body){
+  async updateRegister(body){
     this.intermediaryService.presentLoading("Guardado Registro...");
-    this.brandsServices.putUpdateMatchingBrand(body).subscribe(result =>{
+    await this.brandsServices.putUpdateMatchingBrand(body).subscribe(result =>{
       this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastSuccess("Registro actualizado exitosamente.");
       this.close();

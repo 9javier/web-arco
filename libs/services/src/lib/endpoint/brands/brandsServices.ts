@@ -25,6 +25,7 @@ export class BrandsService {
   private postOnBoardMatchUrl: string = environment.apiBase + "/marketplace/brands/brands/";
   private getCurrentSizesUrl: string = environment.apiBase + "/marketplace/brands/get-onboard-group-size/";
   private putMatchBrandUrl: string = environment.apiBase + "/marketplace/brands/update-matching-brand";
+  private deleteMatchBrandUrl: string = environment.apiBase + "/marketplace/brands/delete-matching-brand";
 
 
   constructor(
@@ -88,4 +89,11 @@ export class BrandsService {
       map(resp => resp.data)
     )
   }
+
+  deleteUpdateMatchingBrand(body): Observable<any> {
+    return this.http.post<HttpRequestModel.Response>(this.deleteMatchBrandUrl,body).pipe(
+      map(resp => resp.data)
+    )
+  }
+
 }

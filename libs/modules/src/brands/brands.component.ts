@@ -13,6 +13,7 @@ import {ModalController, AlertController} from '@ionic/angular';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 import {TableEmitter } from './../../../services/src/models/tableEmitterType';
+import { BODY } from 'config/base';
 
 @Component({
   selector: 'brands',
@@ -187,7 +188,28 @@ length: any;
   edit(row){
     this.editSizes(row);
   }
+  delete(select:Array<any>){
+    let selectedId=[];
+    select.map(element=>{
+      selectedId.push(element.id);
+    });
+    const body ={matchingBrandId:selectedId}
+    this.deleteSelected(body);
+  }
 
+ async deleteSelected(body){
+    this.intermediaryService.presentLoading("Eliminando Registro...");
+    await this.brandsService.deleteUpdateMatchingBrand(body).subscribe(result =>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastSuccess("Registros elimindo exitosamente.");
+      this.refresh();
+    },(error)=>{
+      this.intermediaryService.presentToastError("Error al eliminar Registros.");
+      this.intermediaryService.dismissLoading();
+      console.log(error);
+    }); 
+  }
+  
 
   emitMain(e) {
     switch (e.event) {
@@ -229,6 +251,11 @@ length: any;
       case TableEmitter.iconEdit:
         console.log(e.value);
         this.edit(e.value);
+        break;
+      case TableEmitter.BtnDelete:
+        let select = e.value;
+        console.log(select);
+        this.delete(select);
         break;
     }
 
