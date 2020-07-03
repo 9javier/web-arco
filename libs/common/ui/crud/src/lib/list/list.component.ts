@@ -21,7 +21,7 @@ import {
 import { Location } from '@angular/common';
 import { UpdateComponent as updateUser } from '../../../../../../modules/src/users/update/update.component';
 import { StoreComponent as storeUser } from '../../../../../../modules/src/users/store/store.component';
-import { StoreComponent as storeRol } from "../../../../../../modules/src/roles/store/store.component";
+
 
 import { HallModel } from "../../../../../../services/src/models/endpoints/Hall";
 import { WarehouseService } from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
