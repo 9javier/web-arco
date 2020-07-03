@@ -1082,19 +1082,11 @@ export class MenuComponent implements OnInit {
 
   onboarding: MenuItemList = [
     {
-      title: 'Parametrización',
-      open: true,
-      type: 'wrapper',
+      title: 'Tallas',
+      id: 'brands',
+      url: '/brands',
       icon: 'pricetags',
-      children: [
-        {
-          title: 'Tallas',
-          id: 'brands',
-          url: '/brands',
-          icon: 'pricetags',
-          tooltip: 'Tallas'
-        },
-      ]
+      tooltip: 'Tallas'
     },
     {
       title: 'Estado de OnBoarding',
@@ -1102,6 +1094,12 @@ export class MenuComponent implements OnInit {
       url: '/status-onboarding',
       icon: 'pricetags'
     },
+    {
+      title: 'Cerrar sesión',
+      id: 'logout',
+      url: '/logout',
+      icon: 'log-out'
+    }
   ];
   private menuPages = {
     sga: this.onboarding,
@@ -1168,13 +1166,6 @@ export class MenuComponent implements OnInit {
       url: '/logout',
       icon: 'log-out'
     });
-    if (!this.alPages.find(item => (<any>item).id == "logout"))
-      this.alPages.push(logoutItem);
-    else
-      this.alPages.forEach((item, i) => {
-        if ((<any>item).id == "logout")
-          this.alPages[i] = logoutItem;
-      });
     if (!this.sgaPages.find(item => (<any>item).id == "logout"))
       this.sgaPages.push(logoutItem);
     else

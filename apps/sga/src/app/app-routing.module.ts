@@ -50,11 +50,24 @@ const routes: Routes = [
       pathMatch: 'full'
     },
     {
+      path: 'logout',
+      redirectTo: 'login',
+      pathMatch: 'full'
+    },
+    {
       path: 'status-onboarding',
       canActivate: [AuthGuard],
       loadChildren: '../../../../libs/modules/src/status-onboarding/status-onboarding.module#StatusOnBoardingModule',
       data: {
         name: 'Brands'
+      }
+    },
+    {
+      path: 'welcome',
+      canActivate: [AuthGuard],
+      loadChildren: './welcome/welcome.module#WelcomePageModule',
+      data: {
+        name: 'Bienvenido' 
       }
     },
     
