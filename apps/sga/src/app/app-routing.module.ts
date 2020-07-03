@@ -57,6 +57,14 @@ const routes: Routes = [
         name: 'Brands'
       }
     },
+    {
+      path: 'welcome',
+      canActivate: [AuthGuard],
+      loadChildren: './welcome/welcome.module#WelcomePageModule',
+      data: {
+        name: 'Bienvenido' 
+      }
+    },
     
 ];
 

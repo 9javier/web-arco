@@ -195,12 +195,12 @@ export class AppComponent implements OnInit {
       this.menu.enable(true, 'sidebar');
 
       // Initialization of Scandit settings that app will display
-      this.scannerConfigurationService.init();
+      //this.scannerConfigurationService.init();
 
       // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
-      this.warehouseService.loadWarehousesData();
+      //this.warehouseService.loadWarehousesData();
       // Load in array only warehouses with racks
-      this.warehouseService.loadWarehousesWithRacks();
+      //this.warehouseService.loadWarehousesWithRacks();
 
       // Load all types from backend
       let typesToLoad: TypeModel.TypeLoad = {
@@ -220,29 +220,36 @@ export class AppComponent implements OnInit {
         this.loginTimeout = setTimeout(()=>{
           if (state) {
             // Load of main warehouse in memory
-            this.warehouseService
-              .init()
-              .then((data: Observable<HttpResponse<any>>) =>
-                new Promise((resolve, reject) => {
-                  data.subscribe((res: HttpResponse<any>) => {
-                    // Load of main warehouse in memory
-                    this.warehouseService.idWarehouseMain = res.body.data.id;
-                    // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
-                    this.warehouseService.loadWarehousesData();
-                    // Load in array only warehouses with racks
-                    this.warehouseService.loadWarehousesWithRacks();
-                    resolve();
-                  }, reject);
-                })
-              )
-              .catch((possibleMainWarehouse404Error) => {})
-              .then(() => this.router.navigate(
-                [this.dictionary['welcome']?'/welcome':'/welcome']
-                ).then(sucess => {
-                  this.mainHeaderShowHide(true);
-                  this.menu.enable(true, 'sidebar');
-                })
-              );
+            // this.warehouseService
+            //   .init()
+            //   .then((data: Observable<HttpResponse<any>>) =>
+            //     new Promise((resolve, reject) => {
+            //       data.subscribe((res: HttpResponse<any>) => {
+            //         // Load of main warehouse in memory
+            //         this.warehouseService.idWarehouseMain = res.body.data.id;
+            //         // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
+            //         this.warehouseService.loadWarehousesData();
+            //         // Load in array only warehouses with racks
+            //         this.warehouseService.loadWarehousesWithRacks();
+            //         resolve();
+            //       }, reject);
+            //     })
+            //   )
+            //   .catch((possibleMainWarehouse404Error) => {})
+            //   .then(() => this.router.navigate(
+            //     [this.dictionary['welcome']?'/welcome':'/welcome']
+            //     ).then(sucess => {
+            //       this.mainHeaderShowHide(true);
+            //       this.menu.enable(true, 'sidebar');
+            //     })
+            //   );
+
+            this.router.navigate(
+                  [this.dictionary['welcome']?'/welcome':'/welcome']
+                  ).then(sucess => {
+                    this.mainHeaderShowHide(true);
+                    this.menu.enable(true, 'sidebar');
+                  })
           } else {
             this.menu.enable(false, 'sidebar');
             this.mainHeaderShowHide(false);

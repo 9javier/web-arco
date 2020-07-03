@@ -100,35 +100,35 @@ export class TypesService {
 
   init = (listTypes: TypeModel.TypeLoad) => {
     if (listTypes.all) {
-      this.loadType(PATH_GET_INDEX_ACTIONS, 'actions');
-      //this.loadType(PATH_GET_INDEX_ACTIVITIES, 'activities');
-      this.loadType(PATH_GET_INDEX_EXECUTION, 'execution');
-      this.loadType(PATH_GET_INDEX_GENERATION, 'generation');
-      this.loadType(PATH_GET_INDEX_INCIDENCES, 'incidences');
-      this.loadType(PATH_GET_INDEX_PACKING, 'packing');
-      this.loadType(PATH_GET_INDEX_PICKING, 'picking');
-      this.loadType(PATH_GET_INDEX_PREPARATION_LINES, 'preparationLines');
-      this.loadType(PATH_GET_INDEX_PRODUCT, 'product');
-      this.loadType(PATH_GET_INDEX_SELECTION_CRITERIA, 'selectionCriteria');
-      this.loadType(PATH_GET_INDEX_PROCESS, 'process');
-      this.loadType(PATH_GET_INDEX_SHIPPING_ORDER, 'shippingOrder');
-      this.loadType(PATH_GET_INDEX_STATUS_PRODUCT, 'statusProduct');
-      this.loadType(PATH_GET_INDEX_STORE, 'store');
+      // this.loadType(PATH_GET_INDEX_ACTIONS, 'actions');
+      // //this.loadType(PATH_GET_INDEX_ACTIVITIES, 'activities');
+      // this.loadType(PATH_GET_INDEX_EXECUTION, 'execution');
+      // this.loadType(PATH_GET_INDEX_GENERATION, 'generation');
+      // this.loadType(PATH_GET_INDEX_INCIDENCES, 'incidences');
+      // this.loadType(PATH_GET_INDEX_PACKING, 'packing');
+      // this.loadType(PATH_GET_INDEX_PICKING, 'picking');
+      // this.loadType(PATH_GET_INDEX_PREPARATION_LINES, 'preparationLines');
+      // this.loadType(PATH_GET_INDEX_PRODUCT, 'product');
+      // this.loadType(PATH_GET_INDEX_SELECTION_CRITERIA, 'selectionCriteria');
+      // this.loadType(PATH_GET_INDEX_PROCESS, 'process');
+      // this.loadType(PATH_GET_INDEX_SHIPPING_ORDER, 'shippingOrder');
+      // this.loadType(PATH_GET_INDEX_STATUS_PRODUCT, 'statusProduct');
+      // this.loadType(PATH_GET_INDEX_STORE, 'store');
     } else {
-      if (listTypes.actions) this.loadType(PATH_GET_INDEX_ACTIONS, 'actions');
-      //if (listTypes.activities) this.loadType(PATH_GET_INDEX_ACTIVITIES, 'activities');
-      if (listTypes.execution) this.loadType(PATH_GET_INDEX_EXECUTION, 'execution');
-      if (listTypes.generation) this.loadType(PATH_GET_INDEX_GENERATION, 'generation');
-      if (listTypes.incidences) this.loadType(PATH_GET_INDEX_INCIDENCES, 'incidences');
-      if (listTypes.packing) this.loadType(PATH_GET_INDEX_PACKING, 'packing');
-      if (listTypes.picking) this.loadType(PATH_GET_INDEX_PICKING, 'picking');
-      if (listTypes.preparation_lines) this.loadType(PATH_GET_INDEX_PREPARATION_LINES, 'preparationLines');
-      if (listTypes.product) this.loadType(PATH_GET_INDEX_PRODUCT, 'product');
-      if (listTypes.selection_criteria) this.loadType(PATH_GET_INDEX_SELECTION_CRITERIA, 'selectionCriteria');
-      if (listTypes.process) this.loadType(PATH_GET_INDEX_PROCESS, 'process');
-      if (listTypes.shipping_order) this.loadType(PATH_GET_INDEX_SHIPPING_ORDER, 'shippingOrder');
-      if (listTypes.status_product) this.loadType(PATH_GET_INDEX_STATUS_PRODUCT, 'statusProduct');
-      if (listTypes.store) this.loadType(PATH_GET_INDEX_STORE, 'store');
+      // if (listTypes.actions) this.loadType(PATH_GET_INDEX_ACTIONS, 'actions');
+      // //if (listTypes.activities) this.loadType(PATH_GET_INDEX_ACTIVITIES, 'activities');
+      // if (listTypes.execution) this.loadType(PATH_GET_INDEX_EXECUTION, 'execution');
+      // if (listTypes.generation) this.loadType(PATH_GET_INDEX_GENERATION, 'generation');
+      // if (listTypes.incidences) this.loadType(PATH_GET_INDEX_INCIDENCES, 'incidences');
+      // if (listTypes.packing) this.loadType(PATH_GET_INDEX_PACKING, 'packing');
+      // if (listTypes.picking) this.loadType(PATH_GET_INDEX_PICKING, 'picking');
+      // if (listTypes.preparation_lines) this.loadType(PATH_GET_INDEX_PREPARATION_LINES, 'preparationLines');
+      // if (listTypes.product) this.loadType(PATH_GET_INDEX_PRODUCT, 'product');
+      // if (listTypes.selection_criteria) this.loadType(PATH_GET_INDEX_SELECTION_CRITERIA, 'selectionCriteria');
+      // if (listTypes.process) this.loadType(PATH_GET_INDEX_PROCESS, 'process');
+      // if (listTypes.shipping_order) this.loadType(PATH_GET_INDEX_SHIPPING_ORDER, 'shippingOrder');
+      // if (listTypes.status_product) this.loadType(PATH_GET_INDEX_STATUS_PRODUCT, 'statusProduct');
+      // if (listTypes.store) this.loadType(PATH_GET_INDEX_STORE, 'store');
     }
   };
 

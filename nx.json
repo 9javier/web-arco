@@ -8,12 +8,6 @@
     "nx.json": "*"
   },
   "projects": {
-    "al": {
-      "tags": []
-    },
-    "al-e2e": {
-      "tags": []
-    },
     "sga": {
       "tags": []
     },
