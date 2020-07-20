@@ -21,14 +21,6 @@ const routes: Routes = [
       name: 'Usuarios'
     }
   },
-  {
-    path: 'brands',
-      canActivate: [AuthGuard],
-      loadChildren: '../../../../libs/modules/src/brands/brands.module#BrandsModule',
-      data: {
-        name: 'Brands'
-      }
-    },
     {
       path: 'login',
       resolve: {
@@ -50,11 +42,11 @@ const routes: Routes = [
       pathMatch: 'full'
     },
     {
-      path: 'status-onboarding',
+      path: 'customers-list',
       canActivate: [AuthGuard],
-      loadChildren: '../../../../libs/modules/src/status-onboarding/status-onboarding.module#StatusOnBoardingModule',
+      loadChildren: '../../../../libs/modules/src/customers/customers.module#CustomersComponentModule',
       data: {
-        name: 'Brands'
+        name: 'clientes'
       }
     },
     {
@@ -65,6 +57,7 @@ const routes: Routes = [
         name: 'Bienvenido' 
       }
     },
+    
     
 ];
 
