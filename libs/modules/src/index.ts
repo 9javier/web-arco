@@ -28,16 +28,6 @@ export * from './components/popover-menu-toolbar/popover-menu-toolbar.module';
 export * from './components/scanner-manual/scanner-manual.component';
 export * from './components/scanner-manual/scanner-manual.module';
 
-// /**Regions */
 
-
-
-
-/**Transportes */
-export * from './brands/brands.component'
-export * from './brands/brands.module'
-
-
-export * from './status-onboarding/status-onboarding.component'
-export * from './status-onboarding/status-onboarding.module'
-
+export  * from './customers/customers.component';
+export  * from './customers/customers.module';
