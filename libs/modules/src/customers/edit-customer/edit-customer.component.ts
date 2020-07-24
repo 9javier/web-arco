@@ -140,7 +140,7 @@ export class EditCustomerComponent implements OnInit {
 
   public async updateAddress(data){
     this.intermediaryService.presentLoading("Actualizando dirección..");
-    await this.customersService.postUpdateAddress(data).subscribe((resp: any) => {  
+    await this.customersService.postUpdateAddress(data,1).subscribe((resp: any) => {  
       this.intermediaryService.dismissLoading();   
       this.close();
     },

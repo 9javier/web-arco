@@ -25,6 +25,8 @@ export class CustomersService {
   private customersAddressPutUrl: string = environment.apiBase + "/customer/address/save";
   private customersEmailPutUrl: string = environment.apiBase + "/customer/email/";
   private customersEmailPostUrl: string = environment.apiBase + "/customer/email/save/";
+  private addressByIdUrl: string = environment.apiBase + "/customer/address/id/";
+  private updateAddressByIdUrl: string = environment.apiBase + "/customer/address/id/";
 
 
   constructor(
@@ -62,8 +64,8 @@ export class CustomersService {
     }));
   }
 
-  postUpdateAddress(data):Observable<any>{
-    return this.http.post<any>(this.customersAddressPutUrl,data).pipe(map(response => {
+  postUpdateAddress(data,addressId):Observable<any>{
+    return this.http.put<any>(this.updateAddressByIdUrl+`${addressId}`,data).pipe(map(response => {
       return response.data;
     }));
   }
@@ -76,6 +78,12 @@ export class CustomersService {
  
   postCreateEmail(id,emailBody):Observable<any>{
     return this.http.post<any>(this.customersEmailPostUrl+`${id}`,emailBody).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  getAddressById(id):Observable<any>{
+    return this.http.get<any>(this.addressByIdUrl+`${id}`).pipe(map(response => {
       return response.data;
     }));
   }

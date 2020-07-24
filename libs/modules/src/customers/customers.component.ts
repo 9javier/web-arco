@@ -21,19 +21,24 @@ import {EditCustomerComponent} from './edit-customer/edit-customer.component'
 import { Router } from '@angular/router';
 import * as _ from "lodash";
 import {CustomerModel} from "../../../services/src/models/endpoints/Customer";
-
+import {MatAccordion} from '@angular/material/expansion';
+import {Countries} from './CountriesList';
 @Component({
   selector: 'customer',
   templateUrl: './customers.component.html',
   styleUrls: ['./customers.component.scss']
 })
 export class CustomersComponent implements OnInit {
-
+  @ViewChild(MatAccordion) accordion: MatAccordion;
+  initFormAddress:boolean = false;
   emailConfirm:String;
   section:String;
   customer ={
     id:1
   };
+  countries= Countries;
+  addressId:number;
+  address:[];
   customerId: number;
   dataAddress:CustomerModel.CustomerAddress;
   dataClient:CustomerModel.Customer;
@@ -42,6 +47,7 @@ export class CustomersComponent implements OnInit {
   addressForm: FormGroup = this.formBuilder.group({
     addressLine:['', [Validators.required, Validators.minLength(4)]],
     postCode:['', [Validators.required, Validators.minLength(3)]],
+    countryOriginalName:['',[Validators.required,Validators.minLength(2)]],
     city:['', [Validators.required, Validators.minLength(3)]],
     state:['', [Validators.required, Validators.minLength(3)]]
   });
@@ -68,8 +74,6 @@ export class CustomersComponent implements OnInit {
 
   }
 
- 
-
   async getCustomer(customerId) {
     this.intermediaryService.presentLoading("Buscado cliente..");
     let body={id:customerId};
@@ -78,7 +82,7 @@ export class CustomersComponent implements OnInit {
       this.initCustomer(resp);
       this.dataClient = resp;
       this.customerId = resp.id;
-      this.dataAddress = resp.address[0];
+      this.address = resp.address;
       if(resp.email != null && resp.email != ""){
         this.dataEmail = resp.email;
       }
@@ -98,18 +102,45 @@ export class CustomersComponent implements OnInit {
     this.customerForm.get('companyName').patchValue(client.companyName);
     this.customerForm.get('email').patchValue(client.email && client.email != null && client.email.address ? client.email.address : '');
   }
-
   initAddress(address){
+    this.addressForm.get('countryOriginalName').patchValue(address.countryOriginalName);
     this.addressForm.get('addressLine').patchValue(address.addressLine);
     this.addressForm.get('postCode').patchValue(address.postCode);
     this.addressForm.get('city').patchValue(address.city);
-    this.addressForm.get('state').patchValue(address.state); 
+    this.addressForm.get('state').patchValue(address.state);
   }
 
  
+  async getAddressById(addressId:number){
+    this.intermediaryService.presentLoading("Cargando Dirección...");
+    this.customersService.getAddressById(addressId).subscribe(result =>{
+      this.intermediaryService.dismissLoading();
+      this.initAddress(result);
 
+    },async error=>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError("Error al cargar la dirección.");
+    });
+  }
   
-  
+  saveAddress(){
+    this.updateAddress(this.addressForm.value);
+  }
+
+  public async updateAddress(data){
+    this.intermediaryService.presentLoading("Actualizando dirección..");
+    await this.customersService.postUpdateAddress(data,this.addressId).subscribe((resp: any) => {  
+      this.intermediaryService.dismissLoading();   
+    },
+      async err => {
+        await this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError("No se pudo actualizar la dirección del cliente.");
+
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      })
+  }
 
   async editCustomer(customer) {
     event.stopPropagation();
@@ -179,6 +210,13 @@ export class CustomersComponent implements OnInit {
   }
   get state(){
     return this.addressForm.get('state');
+  }
+
+  setStep(addressId){
+    this.accordion.openAll();
+    this.initFormAddress = true;
+    this.addressId = addressId;
+    this.getAddressById(addressId);
   }
   
 }

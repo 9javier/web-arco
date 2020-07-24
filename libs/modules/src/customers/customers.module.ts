@@ -23,7 +23,8 @@ import {MatRadioModule} from "@angular/material/radio";
 import { TableFiltersModule } from "../components/table-filters/table-filters.component.module";
 import {EditCustomerComponent} from './edit-customer/edit-customer.component'
 import {MatTabsModule} from '@angular/material/tabs';
-
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatSelectModule} from '@angular/material/select';
 
 const routes: Routes = [
   {
@@ -54,7 +55,9 @@ const routes: Routes = [
     MatRadioModule,
     ReactiveFormsModule,
     TableFiltersModule,
-    MatTabsModule
+    MatTabsModule,
+    MatExpansionModule,
+    MatSelectModule,
   ],
   providers:[EditCustomerComponent],
 })

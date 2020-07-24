@@ -32,20 +32,39 @@
               </form>
         </div>
         <div *ngIf="section === 'address'">
-            <form [formGroup]="addressForm">
-                <ion-item>
-                  <ion-label>Dirección: </ion-label><ion-input type="text" formControlName="addressLine" class="input-name" text placeholder="Dirección"></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Código postal: </ion-label><ion-input type="text" formControlName="postCode" class="input-name" text placeholder="Código postal"></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Ciudad: </ion-label> <ion-input type="text" formControlName="city" class="input-name" text placeholder="Ciudad"></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Estado: </ion-label><ion-input type="text" formControlName="state" class="input-name" text placeholder="Estado"></ion-input>
-                </ion-item>
-            </form> 
+        <mat-accordion class="example-headers-align">
+            <div *ngFor="let direction of address; index as i">
+                <mat-expansion-panel (opened)="setStep(direction.id)">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      Dirección {{(i+1)}}
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <form [formGroup]="addressForm" *ngIf="initFormAddress == true">
+                    <ion-item>
+                      <ion-label>Dirección: </ion-label><ion-input type="text" formControlName="addressLine" class="input-name" text placeholder="Dirección"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label>Código postal: </ion-label><ion-input type="text" formControlName="postCode" class="input-name" text placeholder="Código postal"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                      <mat-select placeholder="País" formControlName="countryOriginalName" class="input-name">
+                        <mat-option *ngFor="let country of countries" [value]="country.name">
+                          {{country.name}}
+                        </mat-option>
+                      </mat-select>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label>Ciudad: </ion-label> <ion-input type="text" formControlName="city" class="input-name" text placeholder="Ciudad"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label>Estado: </ion-label><ion-input type="text" formControlName="state" class="input-name" text placeholder="Estado"></ion-input>
+                    </ion-item>
+                  </form> 
+                </mat-expansion-panel>
+              </div>
+        </mat-accordion> 
+            
         </div>
     </ion-list>
 </ion-content>
