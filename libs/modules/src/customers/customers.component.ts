@@ -14,12 +14,13 @@ import { catchError } from 'rxjs/operators';
 import { from, Observable } from "rxjs";
 import { of } from 'rxjs';
 import { CustomersService } from '../../../services/src/lib/endpoint/customers/customers.service';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl,Validators } from '@angular/forms';
 import {TableEmitter } from './../../../services/src/models/tableEmitterType';
 import {ModalController} from '@ionic/angular';
 import {EditCustomerComponent} from './edit-customer/edit-customer.component'
 import { Router } from '@angular/router';
 import * as _ from "lodash";
+import {CustomerModel} from "../../../services/src/models/endpoints/Customer";
 
 @Component({
   selector: 'customer',
@@ -27,54 +28,32 @@ import * as _ from "lodash";
   styleUrls: ['./customers.component.scss']
 })
 export class CustomersComponent implements OnInit {
-  columnsData = [
-    {
-      name: 'name',
-      title:'Nombre',
-      field: ['fullName'],
-      filters:true,
-      type:'text'
-    },
-    {
-      name: 'email',
-      title:'Correo electrónico',
-      field: ['email'],
-      filters:true,
-      type:'text'
-    },
-    {
-      name: 'company',
-      title:'Compañía',
-      field: ['companyName'],
-      filters:true,
-      type:'text'
-    },
-    {
-      name: 'country',
-      title:'Dirección',
-      field: ['address'],
-      filters:true,
-      type:'text'
-    },
-  ];
-  dataSource;
-  filtersData;
-  entities;
-  pagerValues = [10, 20, 80,100,500];
-  pagination;
 
-  form: FormGroup = this.formBuilder.group({
-    name:[],
-    pagination: this.formBuilder.group({
-      page: 1,
-      limit: this.pagerValues[0]
-    }),
-    orderby: this.formBuilder.group({
-      type: 1,
-      order: "asc"
-    })
+  emailConfirm:String;
+  section:String;
+  customer ={
+    id:1
+  };
+  customerId: number;
+  dataAddress:CustomerModel.CustomerAddress;
+  dataClient:CustomerModel.Customer;
+  dataEmail:CustomerModel.CustomerEmail
+  newEmail:CustomerModel.CreateCustomerEmail;
+  addressForm: FormGroup = this.formBuilder.group({
+    addressLine:['', [Validators.required, Validators.minLength(4)]],
+    postCode:['', [Validators.required, Validators.minLength(3)]],
+    city:['', [Validators.required, Validators.minLength(3)]],
+    state:['', [Validators.required, Validators.minLength(3)]]
   });
-  length: any;
+  customerForm: FormGroup = this.formBuilder.group({
+    firstName: ['', [Validators.required, Validators.minLength(4)]],
+    surname:['',[Validators.required,Validators.minLength(4)]],
+    companyName:['',[Validators.required,Validators.minLength(4)]],
+    email:['',[Validators.required,Validators.minLength(4)]],
+    confirmEmail:['',[Validators.required,Validators.minLength(4)]],
+    phone:['',[Validators.required,Validators.minLength(4)]],
+  });
+  
   constructor(
     private intermediaryService: IntermediaryService,
     private customersService: CustomersService,
@@ -84,21 +63,26 @@ export class CustomersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getListCustomers(this.form);
-    this.getFilters();
+   this.section ='information';
+   this.getCustomer(this.customer.id);
+
   }
 
  
 
-  async getListCustomers(form) {
-    this.intermediaryService.presentLoading("Cargando clientes..");
-    await this.customersService.getIndex(form.value).subscribe((resp: any) => {  
-       if (resp.results) {
-        this.dataSource = new MatTableDataSource<any>(resp);
-        this.pagination = resp.pagination;
-
-       }
+  async getCustomer(customerId) {
+    this.intermediaryService.presentLoading("Buscado cliente..");
+    let body={id:customerId};
+    await this.customersService.getCustomerById(body).subscribe((resp: any) => {  
       this.intermediaryService.dismissLoading();
+      this.initCustomer(resp);
+      this.dataClient = resp;
+      this.customerId = resp.id;
+      this.dataAddress = resp.address[0];
+      if(resp.email != null && resp.email != ""){
+        this.dataEmail = resp.email;
+      }
+      this.initAddress(resp.address[0]);
     },
       async err => {
         await this.intermediaryService.dismissLoading()
@@ -108,67 +92,24 @@ export class CustomersComponent implements OnInit {
       })
   }
 
-  getFilters() {
-    this.customersService.getFiltersCustomer().subscribe((entities) => {
-      
-      this.filtersData = entities;
-    },(error)=>{
-      console.log(error);
-    })
+  initCustomer(client){
+    this.customerForm.get('firstName').patchValue(client.firstName);
+    this.customerForm.get('surname').patchValue(client.surname);
+    this.customerForm.get('companyName').patchValue(client.companyName);
+    this.customerForm.get('email').patchValue(client.email && client.email != null && client.email.address ? client.email.address : '');
   }
 
-  refresh(){
-    this.getListCustomers(this.form);
-    this.getFilters();
+  initAddress(address){
+    this.addressForm.get('addressLine').patchValue(address.addressLine);
+    this.addressForm.get('postCode').patchValue(address.postCode);
+    this.addressForm.get('city').patchValue(address.city);
+    this.addressForm.get('state').patchValue(address.state); 
   }
 
-  emitMain(e) {
-    switch (e.event) {
-      case TableEmitter.BtnAdd:
-        /**Add function*/
-        break;
-      case TableEmitter.BtnExcell:
-        /** Excell download Function*/
-        //this.fileExcell();
-        break;
-      case TableEmitter.BtnSend:
-        /**Send function */
-        let selectSend = e.value;
-        break;
-      case TableEmitter.BtnRefresh:
-        /**Refresh funtion*/
-        this.getListCustomers(this.form);
-        this.getFilters();
-        break;
-      case TableEmitter.Filters:
-        let entity = e.value.entityName;
-        let filters = e.value.filters;
-        console.log("****filters****");
-        console.log(entity," ",filters);
-        this.form.get(entity).patchValue(filters);
-        this.getListCustomers(this.form);
-        break;
-      case TableEmitter.OpenRow:
-        let row = e.value;
-        //this.goDetails(row);
-        break;
-      case TableEmitter.Pagination:
-        let pagination = e.value;
-        this.form.value.pagination = pagination;
-        this.getListCustomers(this.form);
-        break;
-      case TableEmitter.Sorter:
-        let orderby = e.value;
-        this.form.value.orderby = orderby;
-        this.getListCustomers(this.form);
-        break;
-      case TableEmitter.iconEdit:
-        let customer = e.value;
-        this.editCustomer(customer)
-        break;
-    }
+ 
 
-  }
+  
+  
 
   async editCustomer(customer) {
     event.stopPropagation();
@@ -182,11 +123,63 @@ export class CustomersComponent implements OnInit {
     });
 
     modal.onDidDismiss().then((p) => {
-        this.refresh();
+        
     });
 
     modal.present();
   }
 
+  get name(){
+    return this.customerForm.get('firstName');
+  }
+
+  get surname(){
+    return this.customerForm.get('surname');
+  }
+  get companyName(){
+    return this.customerForm.get('companyName');
+  }
+  get email(){
+    return this.customerForm.get('email');
+  }
+  get confirmEmail(){
+    return this.customerForm.get('confirmEmail');
+  }
+
+  get phone(){
+    return this.customerForm.get('phone');
+  }
+  
+  emailValidate(){
+    if(this.customerForm.get('email').value == this.customerForm.get('confirmEmail').value){
+      return true
+    }
+    return false
+  }
+  
+  confirmEmailValidate(){
+    if(this.emailConfirm.length >0){
+      return true
+    }
+    return false;
+  }
+
+  emailConfirmInput(value){
+    this.emailConfirm = value;
+  }
+
+  get addressLine(){
+    return this.addressForm.get('addressLine');
+  }
+  get postCode(){
+    return this.addressForm.get('postCode');
+  }
+  get city(){
+    return this.addressForm.get('city');
+  }
+  get state(){
+    return this.addressForm.get('state');
+  }
+  
 }
 

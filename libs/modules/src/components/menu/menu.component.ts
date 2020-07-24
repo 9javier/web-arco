@@ -67,17 +67,17 @@ export class MenuComponent implements OnInit {
   
   onboarding: MenuItemList = [
     {
-      title: 'Clientes',
+      title: 'Cuenta',
       open: true,
       type: 'wrapper',
       icon: 'people',
       children:[
         {
-          title: 'Administración de clientes',
+          title: 'Perfil',
           id: 'customers-list',
           url: '/customers-list',
           icon: 'people',
-          tooltip: 'Lista de clientes'
+          tooltip: 'Perfil'
         },
       ]
      },
