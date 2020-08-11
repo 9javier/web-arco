@@ -73,11 +73,11 @@ export class MenuComponent implements OnInit {
       icon: 'people',
       children:[
         {
-          title: 'Perfil',
+          title: 'Cuenta',
           id: 'customers-list',
           url: '/customers-list',
           icon: 'people',
-          tooltip: 'Perfil'
+          tooltip: 'Cuenta'
         },
       ]
      },

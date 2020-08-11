@@ -26,7 +26,10 @@
                 <ion-toolbar>
                     <ion-title>
                         <ion-icon name="menu" padding-right (click)="toggleSidebar()"></ion-icon>
-                        <img *ngIf="!displaySmallSidebar" class="ion-padding-start" src="assets/img/Krack-Logo.svg" width="125vw" alt="krack logo sidebar" />
+                        <!--<img *ngIf="!displaySmallSidebar" class="ion-padding-start" src="assets/img/Krack-Logo.svg" width="125vw" alt="krack logo sidebar" />-->
+                        <div style="display: inline-block; max-height: 10px;" *ngIf="!displaySmallSidebar" class="ion-padding-start">
+                            <h1  style="font-size: 20px; " >ARCO</h1>
+                        </div> 
                     </ion-title>
                 </ion-toolbar>
             </ion-header>
