@@ -5,7 +5,7 @@ import { RemoteTokenResolver } from './guards/auth.remove-token-resolver';
 //import { UsersModule } from '../../../../libs/modules/src/users/users.module'
 
 const routes: Routes = [
-  {
+ /* {
     path: 'home',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/home/home.module#HomePageModule',
@@ -35,7 +35,7 @@ const routes: Routes = [
       path: '',
       redirectTo: 'login',
       pathMatch: 'full'
-    },
+    },*/
     {
       path: 'logout',
       redirectTo: 'arco-customer/12313',

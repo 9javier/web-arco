@@ -217,13 +217,12 @@ export class MenuComponent implements OnInit {
   }
 
   tapOption(p) {
-    console.log("*****TAP OPTION",p);
     this.currentRoute = p.title;
     this.toolbarProvider.currentPage.next(p.title);
     this.toolbarProvider.optionsActions.next([]);
     this.menuTitle.emit(p.title);
     if(p.id == 'logout'){
-      this.router.navigateByUrl(p.url);
+      //this.router.navigateByUrl(p.url);
     
     }
 
