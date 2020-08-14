@@ -38,25 +38,26 @@ const routes: Routes = [
     },
     {
       path: 'logout',
-      redirectTo: 'login',
+      redirectTo: 'arco-customer/12313',
       pathMatch: 'full'
     },
     {
-      path: 'customers-list',
+      path: 'arco-customer/:token',
       canActivate: [AuthGuard],
       loadChildren: '../../../../libs/modules/src/customers/customers.module#CustomersComponentModule',
       data: {
         name: 'clientes'
-      }
+      },
+      pathMatch: 'full'
     },
-    {
+    /*{
       path: 'welcome',
       canActivate: [AuthGuard],
       loadChildren: './welcome/welcome.module#WelcomePageModule',
       data: {
         name: 'Bienvenido' 
       }
-    },
+    },*/
     
     
 ];

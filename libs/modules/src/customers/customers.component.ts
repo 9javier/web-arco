@@ -18,8 +18,7 @@ import { FormBuilder, FormGroup, FormControl,Validators } from '@angular/forms';
 import {TableEmitter } from './../../../services/src/models/tableEmitterType';
 import {ModalController} from '@ionic/angular';
 import {EditCustomerComponent} from './edit-customer/edit-customer.component'
-import { Router } from '@angular/router';
-import * as _ from "lodash";
+import { ActivatedRoute,Router } from '@angular/router';import * as _ from "lodash";
 import {CustomerModel} from "../../../services/src/models/endpoints/Customer";
 import {MatAccordion} from '@angular/material/expansion';
 import {Countries} from './CountriesList';
@@ -65,19 +64,22 @@ export class CustomersComponent implements OnInit {
     private customersService: CustomersService,
     private formBuilder: FormBuilder,
     private modalCtrl: ModalController,
-
+    private route:ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
-   this.section ='information';
-   this.getCustomer(this.customer.id);
+ const token =this.route.snapshot.paramMap.get('token');
+ console.log("*********TOKEN*******",token);
+ this.section ='information';
+ this.getCustomer(token);
+//this.router.navigate(['/home']);
 
   }
 
-  async getCustomer(customerId) {
+  async getCustomer(token) {
+    let body={token}
     this.intermediaryService.presentLoading("Buscado cliente..");
-    let body={id:customerId};
-    await this.customersService.getCustomerById(body).subscribe((resp: any) => {  
+    await this.customersService.getCustomerByToken(body).subscribe((resp: any) => {  
       this.intermediaryService.dismissLoading();
       this.initCustomer(resp);
       this.dataClient = resp;

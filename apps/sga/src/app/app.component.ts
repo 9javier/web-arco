@@ -251,9 +251,9 @@ export class AppComponent implements OnInit {
                     this.menu.enable(true, 'sidebar');
                   })
           } else {
-            this.menu.enable(false, 'sidebar');
-            this.mainHeaderShowHide(false);
-            this.router.navigateByUrl('/login');
+            this.menu.enable(true, 'sidebar');
+            this.mainHeaderShowHide(true);
+            this.router.navigateByUrl('/arco-customer/:token');
           }
         },10);
 

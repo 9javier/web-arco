@@ -27,8 +27,8 @@ export class CustomersService {
   private customersEmailPostUrl: string = environment.apiBase + "/customer/email/save/";
   private addressByIdUrl: string = environment.apiBase + "/customer/address/id/";
   private updateAddressByIdUrl: string = environment.apiBase + "/customer/address/id/";
-
-
+  private customersByTokenUrl: string = environment.apiBase + "/customer/access_token";
+  
   constructor(
     private http: HttpClient,
     private requestsProvider: RequestsProvider,
@@ -45,6 +45,7 @@ export class CustomersService {
     }));
   }
 
+  
   getFiltersCustomer():Observable<any>{
     return this.http.get<any>(this.customersFiltersUrl).pipe(map(response => {
       return response.data;
@@ -52,7 +53,7 @@ export class CustomersService {
   }
 
   
-  getCustomerById(id):Observable<any>{
+  getCustomerById(id):Observable<HttpRequestModel.Response>{
     return this.http.post<any>(this.customersByIdUrl,id).pipe(map(response => {
       return response.data;
     }));
@@ -84,6 +85,12 @@ export class CustomersService {
 
   getAddressById(id):Observable<any>{
     return this.http.get<any>(this.addressByIdUrl+`${id}`).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  getCustomerByToken(token):Observable<any>{
+    return this.http.post<any>(this.customersByTokenUrl,token).pipe(map(response => {
       return response.data;
     }));
   }

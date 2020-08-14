@@ -26,7 +26,7 @@ export class AuthenticationService {
   }
 
   async checkToken() {
-    return await this.localStorageProvider.get(this.localStorageProvider.KEYS.ACCESS_TOKEN).then(res => {
+    /*return await this.localStorageProvider.get(this.localStorageProvider.KEYS.ACCESS_TOKEN).then(res => {
       if (res) {
         this.authenticationState.next(true);
         return true;
@@ -36,7 +36,9 @@ export class AuthenticationService {
       }
     }, error => {
       return false
-    });
+    });*/
+    this.authenticationState.next(true);
+    return true;
   }
 
   async getDictionaryAccess() {
@@ -49,7 +51,7 @@ export class AuthenticationService {
   }
 
   async login(accessToken: string, user?: any, dictionary?, refreshToken?: string) {
-    if (user) {
+   /* if (user) {
       await this.localStorageProvider.set(this.localStorageProvider.KEYS.USER_ID, user.id);
       await this.localStorageProvider.set(this.localStorageProvider.KEYS.USER, JSON.stringify(user));
     }
@@ -63,6 +65,8 @@ export class AuthenticationService {
     return this.localStorageProvider.set(this.localStorageProvider.KEYS.ACCESS_TOKEN, `Bearer ${accessToken}`).then(() => {
       this.authenticationState.next(true);
     });
+    */
+   return  this.authenticationState.next(true);
   }
 
   logout() {

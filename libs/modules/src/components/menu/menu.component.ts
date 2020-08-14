@@ -66,7 +66,7 @@ export class MenuComponent implements OnInit {
 
   
   onboarding: MenuItemList = [
-    {
+    /*{
       title: 'Cuenta',
       open: true,
       type: 'wrapper',
@@ -74,13 +74,13 @@ export class MenuComponent implements OnInit {
       children:[
         {
           title: 'Cuenta',
-          id: 'customers-list',
-          url: '/customers-list',
+          id: 'arco-customer',
+          url: '/arco-customer/:token',
           icon: 'people',
           tooltip: 'Cuenta'
         },
       ]
-     },
+     },*/
   ];
   private menuPages = {
     sga: this.onboarding,
@@ -106,6 +106,19 @@ export class MenuComponent implements OnInit {
     this.loginService.availableVersion.subscribe(res => {
       this.versionUpdate = res;
     })
+  }
+
+  initMenu(){
+    this.onboarding.push({
+          title: 'Cuenta',
+          id: 'arco-customer',
+          url: '/arco-customer/:token',
+          icon: 'people',
+          tooltip: 'Cuenta'
+      
+      
+     },);
+
   }
 
   returnTitle(item: MenuSectionItem) {
@@ -140,12 +153,22 @@ export class MenuComponent implements OnInit {
         }, 5 * 60 * 1000);
       });
     }
+
+
+    //this.initMenu();
+
+    
+
+
+
     let logoutItem = ({
-      title: 'Cerrar sesión',
+      title: 'Cuenta',
       id: 'logout',
-      url: '/logout',
-      icon: 'log-out'
+      url: 'logout',
+      icon: 'people'
     });
+
+
     if (!this.onboarding.find(item => (<any>item).id == "logout"))
       this.onboarding.push(logoutItem);
     else
@@ -194,10 +217,19 @@ export class MenuComponent implements OnInit {
   }
 
   tapOption(p) {
+    console.log("*****TAP OPTION",p);
     this.currentRoute = p.title;
     this.toolbarProvider.currentPage.next(p.title);
     this.toolbarProvider.optionsActions.next([]);
     this.menuTitle.emit(p.title);
+    if(p.id == 'logout'){
+      this.router.navigateByUrl(p.url);
+    
+    }
+
+    /*if(p.id === 'logout'){
+      this.router.navigateByUrl(p.url)
+    }
     if (p.url === 'logout') {
       this.authenticationService.getCurrentToken().then(accessToken => {
         this.loginService
@@ -216,7 +248,7 @@ export class MenuComponent implements OnInit {
       this.checkAlertsAndRedirect();
     } else if (p.url === 'audits/scan') {
       
-    }
+    }*/
   }
 
   async checkAlertsAndRedirect() {
@@ -286,6 +318,7 @@ export class MenuComponent implements OnInit {
   }
 
   openSubMenuItem(menuItem) {
+    console.log("******MENU ITEM**********",menuItem);
     menuItem.open = !menuItem.open;
   }
 

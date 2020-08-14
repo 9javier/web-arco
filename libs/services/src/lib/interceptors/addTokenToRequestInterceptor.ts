@@ -32,77 +32,7 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
   ];
 
   addTokenToRequest(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return from(this.authenticationService.getCurrentToken()).pipe(switchMap(token => {
-      if (!token && !(request.url.includes("/api/oauth2/"))) {
-        this.authenticationService.logout();
-        return Observable.create(empty);
-      } else if (token) {
-        return next.handle(!(request.url.includes("/api/oauth2/")) ? request.clone({
-          setHeaders: {
-            Authorization: token
-          }
-        }) : request)
-          /**Catch http response error to detect if it is 401 or 403(authentication) */
-          .pipe(catchError((err, caught) => {
-          switch (err.status) {
-              case 403:
-                return this.handle401Error(request, next);
-              case 401:
-                if (!request.url.includes("/api/oauth2/")) {
-                  return this.handle401Error(request, next);
-                }
-                this.authenticationService.logout();
-                return new Observable(observer => observer.error(err));
-              case 400:
-                if (request.url.includes('token')) {
-                  return new Observable(observer => {
-                    observer.error();
-                  }).pipe(map((error) => {
-                    this.authenticationService.logout();
-                    return error;
-                  }));
-                }
-                break;
-              case 500:
-                if (this.authenticationService.isAuthenticated) {
-                  this.authenticationService.logout();
-                  if (!this.isToastVisible) {
-                    this.intermediaryService.presentToastError('Ha ocurrido un error al conectar con el servidor.');
-                    this.isToastVisible = true;
-                    setTimeout(() => {
-                      this.isToastVisible = false;
-                    }, TimesToastType.DURATION_ERROR_TOAST);
-                  }
-                }
-                break;
-              case 0:
-                // check if the page is assigned to exclude that will manage itself the connection error
-                let customErrorManagement = !!this.listRoutesWithCustomErrorConnectionManagement.find(url => url === this.router.url);
-                /*
-                * NO CONNECTION TO API
-                * status = 0
-                * statusText = 'Unknown Error'
-                * */
-                if (!customErrorManagement && err.statusText == 'Unknown Error' && this.authenticationService.isAuthenticated()) {
-                  this.authenticationService.logout();
-                  if (!this.isToastVisible) {
-                    this.intermediaryService.presentToastError('Ha ocurrido un error al intentar conectarse con el servidor. Compruebe que su conexión a la red es estable para continuar.');
-
-                    this.isToastVisible = true;
-                    setTimeout(() => {
-                      this.isToastVisible = false;
-                    }, TimesToastType.DURATION_ERROR_TOAST);
-                  }
-                }
-                break;
-            }
-            return new Observable(observer => observer.error(err));
-          }));
-      } else {
-        this.intermediaryService.dismissLoading();
-        return next.handle(request);
-      }
-    }));
+   return next.handle(request);
   }
 
   /**
