@@ -40,6 +40,7 @@ export class CustomersComponent implements OnInit {
   address:[];
   customerId: number;
   dataAddress:CustomerModel.CustomerAddress;
+  closedAddressPanel=true;
   dataClient:CustomerModel.Customer;
   dataEmail:CustomerModel.CustomerEmail
   newEmail:CustomerModel.CreateCustomerEmail;
@@ -48,7 +49,8 @@ export class CustomersComponent implements OnInit {
     postCode:['', [Validators.required, Validators.minLength(3)]],
     countryOriginalName:['',[Validators.required,Validators.minLength(2)]],
     city:['', [Validators.required, Validators.minLength(3)]],
-    state:['', [Validators.required, Validators.minLength(3)]]
+    state:['', [Validators.required, Validators.minLength(3)]],
+    phoneNumber:['',[Validators.required,Validators.minLength(4)]],
   });
   customerForm: FormGroup = this.formBuilder.group({
     firstName: ['', [Validators.required, Validators.minLength(4)]],
@@ -56,7 +58,6 @@ export class CustomersComponent implements OnInit {
     companyName:['',[Validators.required,Validators.minLength(4)]],
     email:['',[Validators.required,Validators.minLength(4)]],
     confirmEmail:['',[Validators.required,Validators.minLength(4)]],
-    phone:['',[Validators.required,Validators.minLength(4)]],
   });
   
   constructor(
@@ -85,7 +86,7 @@ export class CustomersComponent implements OnInit {
       if(resp.email != null && resp.email != ""){
         this.dataEmail = resp.email;
       }
-      this.initAddress(resp.address[0]);
+      //this.initAddress(resp.address[0]);
     },
       async err => {
         await this.intermediaryService.dismissLoading()
@@ -101,12 +102,18 @@ export class CustomersComponent implements OnInit {
     this.customerForm.get('companyName').patchValue(client.companyName);
     this.customerForm.get('email').patchValue(client.email && client.email != null && client.email.address ? client.email.address : '');
   }
+
   initAddress(address){
     this.addressForm.get('countryOriginalName').patchValue(address.countryOriginalName);
     this.addressForm.get('addressLine').patchValue(address.addressLine);
     this.addressForm.get('postCode').patchValue(address.postCode);
-    this.addressForm.get('city').patchValue(address.city);
+    this.addressForm.get('city').patchValue(address.city ? address.city :'');
     this.addressForm.get('state').patchValue(address.state);
+    let phone ='';
+    if(address.phoneNumbers.length >0){
+       phone = address.phoneNumbers[0].fullNumber+"".trim();
+    }
+    this.addressForm.get('phoneNumber').patchValue(phone);  
   }
 
  
@@ -122,18 +129,93 @@ export class CustomersComponent implements OnInit {
     });
   }
   
+  saveInfo(){
+    if(this.emailValidate()){
+      this.dataClient.firstName = (this.customerForm.get("firstName").value).toString().toUpperCase();
+      this.dataClient.surname = (this.customerForm.get('surname').value).toString().toUpperCase();
+      this.dataClient.companyName = (this.customerForm.get("companyName").value).toString().toUpperCase();
+      this.updateCustomer(this.dataClient);
+    }else{
+      this.intermediaryService.presentToastError("Las direcciones de correo electrónico deben ser iguales.");
+    }
+  
+  }
   saveAddress(){
-    this.updateAddress(this.addressForm.value);
+    if(this.phoneValidate()){
+      this.updateAddress(this.addressForm.value);
+    }else{
+      this.intermediaryService.presentToastError("Teléfono invalido, este debe contener solo numeros y máximo de 15 caracteres");
+    }
+  }
+
+
+  public async updateCustomer(data){
+    this.intermediaryService.presentLoading("Actualizando cliente..");
+    await this.customersService.postUpdateCustomer(data).subscribe((resp: any) => { 
+      if(this.dataEmail){
+        this.dataEmail.address = this.customerForm.get("email").value; 
+        this.updateEmail(this.dataEmail.id,this.dataEmail.address);  
+      }else{
+        let body ={
+          address: this.customerForm.get('email').value,
+          kind : "contact_email"
+        }
+
+        this.createEmail(this.customerId,body);
+      }
+     
+    },
+      async err => {
+        await this.intermediaryService.dismissLoading();
+       
+        this.intermediaryService.presentToastError("Error al actualizar el cliente.");
+
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      })
+  }
+
+  public async updateEmail(emailId,emailAddress){
+    await this.customersService.putUpdateEmail(emailId,{address: emailAddress}).subscribe((resp: any) => {  
+      this.intermediaryService.dismissLoading();   
+      this.intermediaryService.presentToastSuccess("Cliente actualizado exitosamente");
+     
+    },
+      async err => {
+        await this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError("Error al actualizar el correo electrónico, intentalo de nuevo");
+      
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading();
+      })
+  }
+
+  public async createEmail(customerId,email){
+    await this.customersService.postCreateEmail(customerId,email).subscribe((resp: any) => {  
+      this.intermediaryService.dismissLoading();   
+      this.intermediaryService.presentToastSuccess("Cliente actualizado exitosamente");
+     
+    },
+      async err => {
+        await this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError("Error al actualizar el correo electrónico, intentalo de nuevo");
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading();
+      })
   }
 
   public async updateAddress(data){
     this.intermediaryService.presentLoading("Actualizando dirección..");
     await this.customersService.postUpdateAddress(data,this.addressId).subscribe((resp: any) => {  
       this.intermediaryService.dismissLoading();   
+      this.intermediaryService.presentToastSuccess("Dirección actualizada exitosamente");
     },
       async err => {
         await this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastError("No se pudo actualizar la dirección del cliente.");
+        this.intermediaryService.presentToastError("No se pudo actualizar la dirección");
 
       },
       async () => {
@@ -176,9 +258,7 @@ export class CustomersComponent implements OnInit {
     return this.customerForm.get('confirmEmail');
   }
 
-  get phone(){
-    return this.customerForm.get('phone');
-  }
+ 
   
   emailValidate(){
     if(this.customerForm.get('email').value == this.customerForm.get('confirmEmail').value){
@@ -201,6 +281,9 @@ export class CustomersComponent implements OnInit {
   get addressLine(){
     return this.addressForm.get('addressLine');
   }
+  get countryOriginalName(){
+    return this.addressForm.get('countryOriginalName');
+  }
   get postCode(){
     return this.addressForm.get('postCode');
   }
@@ -211,16 +294,33 @@ export class CustomersComponent implements OnInit {
     return this.addressForm.get('state');
   }
 
+  get fullNumber(){
+    return this.addressForm.get('phoneNumber');
+  } 
+
+  phoneValidate(){
+    if(isNaN(this.customerForm.get('phoneNumber').value)){
+      return false
+    }
+    return true
+  }
+
+  get closedPanel(){
+    return this.closedAddressPanel;
+  }
+
   setStep(addressId){
+    this.closedAddressPanel = false;
     this.accordion.openAll();
     this.initFormAddress = true;
     this.addressId = addressId;
     this.getAddressById(addressId);
   }
   
-  saveInfo(){
-    
+  closedPanelAddress(){
+    this.closedAddressPanel=true;
   }
+  
 
 }
 

@@ -87,16 +87,22 @@ export class EditCustomerComponent implements OnInit {
   }
 
   initAddress(address){
+    this.addressForm.get('countryOriginalName').patchValue(address.countryOriginalName);
     this.addressForm.get('addressLine').patchValue(address.addressLine);
     this.addressForm.get('postCode').patchValue(address.postCode);
-    this.addressForm.get('city').patchValue(address.city);
-    this.addressForm.get('state').patchValue(address.state); 
+    this.addressForm.get('city').patchValue(address.city ? address.city :'');
+    this.addressForm.get('state').patchValue(address.state);
+    let phone ='';
+    if(address.phoneNumbers.length >0){
+       phone = address.phoneNumbers[0].fullNumber+"".trim();
+    }
+    this.addressForm.get('phoneNumber').patchValue(phone);  
   }
   saveInfo(){
     if(this.emailValidate()){
-      this.dataClient.firstName = this.customerForm.get("firstName").value;
-      this.dataClient.surname = this.customerForm.get('surname').value;
-      this.dataClient.companyName = this.customerForm.get("companyName").value;
+      this.dataClient.firstName = (this.customerForm.get("firstName").value).toString().toUpperCase();
+      this.dataClient.surname = (this.customerForm.get('surname').value).toString().toUpperCase();
+      this.dataClient.companyName = (this.customerForm.get("companyName").value).toString().toUpperCase();
       this.updateCustomer(this.dataClient);
     }else{
       this.intermediaryService.presentToastError("Las direcciones de correo electrónico deben ser iguales.");
@@ -104,6 +110,7 @@ export class EditCustomerComponent implements OnInit {
   
   }
   saveAddress(){
+    this.dataAddress.countryOriginalName = this.addressForm.get("countryOriginalName").value;
     this.dataAddress.addressLine = this.addressForm.get("addressLine").value;
     this.dataAddress.postCode = this.addressForm.get('postCode').value;
     this.dataAddress.city = this.addressForm.get("city").value;
