@@ -68,12 +68,9 @@ export class CustomersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
- const token =this.route.snapshot.paramMap.get('token');
- console.log("*********TOKEN*******",token);
- this.section ='information';
- this.getCustomer(token);
-//this.router.navigate(['/home']);
-
+    const token =this.route.snapshot.paramMap.get('token');
+    this.section ='information';
+    this.getCustomer(token);
   }
 
   async getCustomer(token) {
@@ -221,5 +218,9 @@ export class CustomersComponent implements OnInit {
     this.getAddressById(addressId);
   }
   
+  saveInfo(){
+    
+  }
+
 }
 
