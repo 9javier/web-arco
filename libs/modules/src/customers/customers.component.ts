@@ -71,6 +71,7 @@ export class CustomersComponent implements OnInit {
   ngOnInit(): void {
     const token =this.route.snapshot.paramMap.get('token');
     this.section ='information';
+    
     this.getCustomer(token);
   }
 
