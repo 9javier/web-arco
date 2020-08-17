@@ -70,7 +70,7 @@
 </ion-content>
 <ion-footer>
     <ion-toolbar>
-        <ion-button slot="end" color="dark" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="dark">Cancelar</ion-button>
         <ion-button slot="end" color="dark" (click)="saveInfo()" [disabled]="name.invalid || surname.invalid || companyName.invalid || email.invalid " *ngIf="section === 'information'">Guardar</ion-button>
     <ion-button slot="end" color="dark" (click)="saveAddress()" [disabled]="addressLine.invalid || postCode.invalid || city.invalid || state.invalid || fullNumber.invalid || closedPanel" *ngIf="section === 'address'">Guardar</ion-button>
       </ion-toolbar>
